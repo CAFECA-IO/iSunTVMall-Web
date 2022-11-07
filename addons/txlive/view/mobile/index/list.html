@@ -1,0 +1,84 @@
+{extend name="$LAYOUT_MOBILE_BASE" /}
+{block name="title"}直播 - {__block__}{/block}
+{block name="meta"}
+{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__ROOT__/addons/txlive/view/mobile/index/css/list.css?v={$v}">
+{/block}
+{block name="header"}
+<header class="ui-header ui-header-positive wst-se-header2" style="border-bottom: 1px solid #f5f5f5;background:#FF594D;z-index:2000;">
+  <a href="{:url('mobile/index/index')}"><i class="ui-icon-return" style="color:#fff;"></i></a>
+  <div class="wst-se-search">
+    <i class="wst-icon-search" onclick="javascript:searchRooms();" ></i>
+    <form action＝"" class="input-form" onsubmit="return false">
+    <input type="search" value="{$keyword}" placeholder="试试搜 直播间名称" onsearch="searchRooms()" autocomplete="off" id="keyword">
+    </form>
+  </div>
+</header>
+{/block}
+{block name="main"}
+  <input type="hidden" value="0" id="currPage" autocomplete="off">
+  <input type="hidden" value="0" id="totalPage" autocomplete="off">
+  <section class="ui-container">
+
+  <div class="wst-fi-list wst-container content">
+    <div id="rooms-list" class="rooms-list"></div>
+  </div>
+  <div class="wst-flex-row wst-center wst-load-text"></div>
+  </section>
+  <script id="list" type="text/html">
+  {{# if(d && d.length>0){ }}
+    {{# for(var i=0; i< d.length; i++){ }}
+        <div class="wst-flex-column wst-ac room" onclick="goRoom({{d[i].id}})">
+          <div class="wst-flex-row wst-ac live-item">
+            <div class="cover-img-container">
+              <img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{{d[i].coverImg}}"/>
+              <div class="state-box {{d[i].liveStatus==101?'state-box-bg1':'state-box-bg2'}}" >
+              </div>
+              <div class="cover-label" style="padding-left:0.3rem">{{ liveStatus[d[i].liveStatus]}}</div>
+            </div>
+            <div class="content-container">
+              <div class="room-name">{{d[i].roomName}}</div>
+              <div class="wst-flex-row wst-jc wst-ac">
+                <img src="{{d[i].userPhoto}}" class="author-img" />
+                <div class="author-name">{{d[i].anchorName}}</div>
+              </div>
+
+              <div class="goods-container wst-flex-row wst-jsb">
+                {{# for(var j=0,goods=d[i].goods; j< goods.length; j++){ }}
+                  {{# if(j==0||j==1){ }}
+                    <div class="goods-item wst-flex-row wst-center" >
+                      <img src="__RESOURCE_PATH__/{{goods[j].goodsImg}}" />
+                      {{# if(j==0){ }}
+                        <div class="goods-price-mask wst-flex-row wst-jc wst-afe">
+                          <div class="goods-price">{:lang('currency_symbol')}{{goods[j].shopPrice}}</div>
+                        </div>
+                      {{# } }}
+                      {{# if(j==1){ }}
+                        <div class="goods-price-mask wst-flex-column wst-jfe wst-ac">
+                          <div class="goods-num">{{goods.length}}</div>
+                          <div class="goods-price">商品</div>
+                        </div>
+                      {{# } }}
+                    </div>
+                  {{# } }}
+                {{# } }}
+              </div>
+            </div>
+          </div>
+        </div>
+      {{# } }}
+      <div class="wst-clear"></div>
+  {{# }else{ }}
+    <div class="wst-prompt-icon" style="width:1.395rem;"><img src="__MOBILE__/img/no_data.png"></div>
+    <div class="wst-prompt-info">
+      <p>暂无数据</p>
+    </div>
+  {{# } }}
+  </script>
+{/block}
+{block name="footer"}
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__ROOT__/addons/txlive/view/mobile/index/js/list.js?v={$v}'></script>
+{/block}

@@ -1,0 +1,28 @@
+{extend name="$LAYOUT_SHOP_BASE" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="main"}
+<div class="wst-toolbar">
+   <select id='useCondition' onchange="loadGrid(1)">
+      <option value='-1'>{:lang('coupon_type2')}</option>
+      <option value='0'>{:lang('coupon_title')}</option>
+      <option value='1'>{:lang('coupon_full_reduction2')}</option>
+   </select>
+   
+   <button class="btn btn-success f-right" onclick="javascript:toEdit(0);"><i class='fa fa-plus'></i>{:lang('coupon_add')}</button>
+</div>
+<div class='wst-grid'>
+    <div id="mmg" class="mmg"></div>
+    <div id="pg" style="text-align: right;"></div>
+</div>
+{/block}  
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script type="text/javascript" src="__ROOT__/addons/coupon/view/shop/shop.js?v={$v}"></script>
+<script type="text/javascript">
+$(function(){
+	 initGrid({$p});
+});
+</script>
+{/block}

@@ -1,0 +1,110 @@
+{if count($data)>0}
+<style>
+    .wst-in-seckill{width:100%;margin-top:0.1rem;background: #fff;}
+    .wst-in-seckill .seckill-header{padding:0.15rem 0.12rem 0 0.12rem;}
+    .wst-in-seckill .seckill-title p{font-size:0.17rem;font-weight: bold;color:#000;margin-right:0.08rem;}
+    .wst-in-seckill .seckill-title-text{width:0.99rem;height:0.18rem;border:0.005rem solid #EA4341;}
+    .wst-in-seckill .seckill-title-text .title{width:0.43rem;height:0.18rem;line-height:0.18rem;background: linear-gradient(to right,#f36a77,#EA4341);font-size:0.12rem;color:#fff;text-align: center;}
+    .wst-in-seckill .seckill-title-text .lab_timer{width:0.56rem;color:#EA4341;font-size:0.12rem;font-weight: bold;display: block;margin-left:0.05rem}
+    em{color:#EA4341;}
+    .wst-in-seckill .seckill-title .more{color:#999;font-size:0.12rem;font-weight: normal;}
+    .wst-in-seckill .seckill-content{margin-top:0.1rem;margin-left:0.12rem}
+    .wst-in-seckill .wst-in-seckill-goods{width:0.95rem;}
+    .wst-in-seckill .wst-in-seckill-goods .title{color:#333;font-size: 0.11rem;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+    .wst-in-seckill .wst-in-seckill-goods .price{color:#EA4341;font-size: 0.11rem;}
+    .wst-in-seckill .wst-in-seckill-goods .seckill-text{width:0.34rem;height:0.13rem;background: url(__ROOT__/addons/seckill/view/images/seckill_text.png) center center no-repeat;background-size: 100%;}
+    .wst-in-seckill .wst-in-seckill-goods .goods-info{padding:0.1rem;}
+    .wst-in-seckill .seckill-content .swiper-slide{margin-right:0.1rem;}
+</style>
+<input type="hidden" value="{$rs['secStartTime']}" class="stime">
+<input type="hidden" value="{$rs['secEndTime']}" class="etime">
+<div class="wst-in-seckill">
+    <div class="seckill-header">
+        <div class="seckill-title wst-flex-row wst-jsb wst-ac">
+            <div class="wst-flex-row wst-ac">
+                <p>{:lang('seckill_time_limit_seckill')}</p>
+                {if $rs}
+                <div class='seckill-title-text wst-flex-row'>
+                    <div class="title wst-flex-row wst-center">{:lang('seckill_field_tips',[$rs['secTitle']])}</div>
+                    <label class="lab_timer">
+                        <span>00</span><em>:</em><span>00</span><em>:</em><span>00</span>
+                    </label>
+                </div>
+                {/if}
+            </div>
+            <p class="more" onclick="javascript:location.href=WST.AU('seckill://goods/molists')">{:lang('seckill_see_more')}></p>
+        </div>
+    </div>
+    <div class="seckill-content">
+        <div class="swiper-container seckill-container1">
+            <div class="swiper-wrapper">
+                {volist name="data" id="re"}
+                <div class="swiper-slide" >
+                    <div class="wst-in-seckill-goods" onclick="javascript:location.href=WST.AU('seckill://goods/modetail','id={$re[\'id\']}')">
+                        <div>
+                            <img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{:WSTImg($re['goodsImg'],3)}" title="{$re['goodsName']}" style="width:0.95rem;height:0.95rem;">
+                        </div>
+                        <div class="goods-info">
+                            <p class="title">{$re['goodsName']}</p>
+                            <div class="wst-flex-row wst-jsb wst-ac">
+                                <p class="price">{:lang('currency_symbol')}{$re['secPrice']}</p>
+                                <div class="seckill-text"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/volist}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        //头部倒计时
+        var stime = $('.stime').val();
+        var etime = $('.etime').val();
+        var timer = null;
+        $.post(WST.AU('seckill://goods/getNowTime'),{},function(data,textStatus){
+            var nowTime = new Date(Date.parse(data.nowTime.replace(/-/g, "/")));
+            var startTime = new Date(Date.parse(stime.replace(/-/g, "/")));
+            var endTime = new Date(Date.parse(etime.replace(/-/g, "/")));
+            timer = countDown(nowTime,endTime);
+        });
+        new Swiper('.seckill-container1', {
+            slidesPerView: 4,
+            freeMode : true,
+            spaceBetween: 0,
+            autoplay : false,
+            speed:1200,
+            loop : false,
+            autoHeight: true, //高度随内容变化
+            on: {
+                resize: function(){
+                    this.params.width = window.innerWidth;
+                    this.update();
+                },
+                slideChange(){
+                    echo.init();
+                }
+            }
+        });
+    });
+    function countDown(nowTime,endTime){
+        var opts = {
+            nowTime:nowTime,
+            endTime: endTime,
+            callback: function(data){
+                if(data.last>0){
+                    // html.push(data.hour+"小时"+data.mini+"分"+data.sec+"秒");
+                    $(".lab_timer").html('<span>'+data.hour+'</span><em>:</em><span>'+data.mini+'</span><em>:</em><span>'+data.sec+'</span>');
+                }else{
+                    //$(".lab_timer").html('<label class="lab_timer"></label>');
+                    location.reload();
+                }
+            }
+        };
+        return WST.countDown(opts);
+    }
+</script>
+{/if}
+

@@ -1,0 +1,155 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/shops/shops.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+    <ul class="layui-tab-title">
+        <li class="layui-this">{:lang('product_pc')}</li>
+        <li>{:lang('mobile_terminal')}</li>
+    </ul>
+    <div class="layui-tab-content" style="padding: 10px 0;">
+      <div class="layui-tab-item layui-show">
+          <div class="wst-toolbar" style='padding-top:0px;'>
+          <select id="areaId1" class='j-ipt j-areas' level="0" onchange="WST.ITAreas({id:'areaId1',val:this.value,className:'j-areas'});">
+            <option value="">-{:lang('goods_shop_area_select')}-</option>
+            {volist name="areaList" id="vo"}
+            <option value="{$vo['areaId']}">{$vo['areaName']}</option>
+            {/volist}
+          </select>
+          <input type="text" id="shopName"  placeholder='{:lang("store_name")}' id="shopName" class='j-ipt'/>
+          <select id="tradeId" class='j-ipt'>
+            <option value="">-{:lang('industry')}-</option>
+            {volist name=":WSTTrades(0)" id="vo"}
+            <option value="{$vo['tradeId']}">{$vo['tradeName']}</option>
+            {/volist}
+          </select>
+          <select id="isInvestment" class='j-ipt'>
+             <option value="-1">-{:lang('investment_promotion_or_not')}-</option>
+             <option value="1">{:lang('yes')}</option>
+             <option value="0">{:lang('no')}</option>
+          </select>
+          <select id="isApply" class='j-ipt'>
+             <option value="-1">-{:lang('application_status')}-</option>
+             <option value="1">{:lang("submitted")}</option>
+             <option value="0">{:lang('filling_in')}</option>
+          </select>
+          <button class="btn btn-primary" onclick='javascript:loadApplyGrid(0)'><i class='fa fa-search'></i>{:lang('query')}</button>
+          <div style='clear:both'></div>
+          </div>
+          <div class='wst-grid'>
+           <div id="mmg" class="mmg"></div>
+           <div id="pg" style="text-align: right;"></div>
+          </div>
+      </div>
+      <div class="layui-tab-item">
+          <div class="wst-toolbar" style='padding-top:0px;'>
+          <input type="text" id="linkkey"  placeholder='{:lang("shop_tips7")}' id="linkkey" class='ja-ipt'/>
+          <select id="applyStatus" class='ja-ipt'>
+             <option value="-1">-{:lang('application_status')}-</option>
+             <option value="0">{:lang('label_cashdraws_status2')}</option>
+             <option value="1">{:lang('label_feedback_status2')}</option>
+             <option value="-1">{:lang('invalid')}</option>
+          </select>
+          <button class="btn btn-primary" onclick='javascript:loadApplyGrid2(0)'><i class='fa fa-search'></i>{:lang('query')}</button>
+          <div style='clear:both'></div>
+          </div>
+          <div class='wst-grid'>
+           <div id="mmg2" class="mmg"></div>
+           <div id="pg2" style="text-align: right;"></div>
+          </div>
+      </div>
+    </div>
+</div>
+<div id='applyBox' style='display:none'>
+    <form id='applyForm' method="post" autocomplete="off">
+    <table class='wst-form wst-box-top'>
+      <tr>
+          <th width='150'>{:lang('apply_for_an_account_number')}：</th>
+          <td id='loginName'></td>
+       </tr>
+       <tr>
+          <th width='150'>{:lang('contacts')}：</th>
+          <td id='linkman'></td>
+       </tr>
+       <tr>
+          <th width='150'>{:lang('config_mall_tel')}：</th>
+          <td id='linkPhone'></td>
+       </tr>
+       <tr>
+          <th width='150'>{:lang('business_scope')}：</th>
+          <td id='applyIntention'></td>
+       </tr>
+       <tr>
+          <th width='150'>{:lang('brand_apply_result')}<font color='red'>*</font>：</th>
+          <td class="layui-form" lay-filter='applyStatusBox'>
+             <input type='radio' name='applyStatus' id='applyStatus1' lay-filter='applyStatus' value='1' class='eipt' title='{:lang("successful_application")}' data-rule="{:lang('brand_apply_result')}:checked">
+             <input type='radio' name='applyStatus' id='applyStatus0' lay-filter='applyStatus' value='-1' class='eipt' title='{:lang("application_failed")}'>
+          </td>
+       </tr>
+       <tr class='applyStatusTr1' style='display:none'>
+        <th width='150'>&nbsp;</th>
+          <td style='color:red'>{:lang('shop_tips8')}</td>
+       </tr>
+       <tr class='applyStatusTr1' style='display:none'>
+        <th width='150'>{:lang('shop_tips9')}<font color='red'>*</font></th>
+          <td><input type='text' id='shopName' style='width:60%;' class='eipt' data-rule="{:lang('brand_apply_shop_name')}:required(#applyStatus1:checked)" maxlenght='20' placeholder="{:lang('the_name_of_the_shop_that_passed_the_application')}"></textarea></td>
+       </tr>
+       <tr class='applyStatusTr0' style='display:none'>
+          <th width='150'>{:lang('reasons_for_failure')}<font color='red'>*</font>：</th>
+          <td>
+             <textarea id='handleReamrk' style='width:90%;height:100px;' class='eipt' data-rule="{:lang('reasons_for_failure')}:required(#applyStatus0:checked)" placeholder="{:lang('shop_tips10')}" data-target='#msg_handleReamrk'></textarea>
+            <div id='msg_handleReamrk'></div>
+          </td>
+       </tr>
+    </table>
+    </form>
+</div>
+<div id='applyBox2' style='display:none'>
+    <table class='wst-form wst-box-top'>
+      <tr>
+          <th width='150'>{:lang('apply_for_an_account_number')}：</th>
+          <td id='vloginName'></td>
+       </tr>
+       <tr>
+          <th width='150'>{:lang('contacts')}：</th>
+          <td id='vlinkman'></td>
+       </tr>
+       <tr>
+          <th width='150'>{:lang('config_mall_tel')}：</th>
+          <td id='vlinkPhone'></td>
+       </tr>
+       <tr>
+          <th width='150'>{:lang('business_scope')}：</th>
+          <td id='vapplyIntention'></td>
+       </tr>
+       <tr>
+          <th width='150'>{:lang('brand_apply_result')}：</th>
+          <td id='vapplyStatus'></td>
+       </tr>
+       <tr class='vapplyStatusTr1' style='display:none'>
+          <th width='150'>{:lang('brand_apply_shop_name')}：</th>
+          <td id='vshopName'></td>
+       </tr>
+       <tr class='vapplyStatusTr0' style='display:none'>
+          <th width='150'>{:lang('reasons_for_failure')}：</th>
+          <td id='vhandleReamrk'></td>
+       </tr>
+    </table>
+</div>
+<script>
+$(function(){
+  initApplyGrid({$p});
+  var element = layui.element;
+  element.on('tab(msgTab)', function(data){
+     console.log(data.index);
+     if(data.index==0)initApplyGrid({$p});
+     if(data.index==1)initApplyGrid2({$p});
+  });
+})
+</script>
+{/block}

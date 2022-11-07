@@ -1,0 +1,173 @@
+{extend name="default/base" /}
+{block name="title"}{:lang("main_title")}{__block__}{/block}
+{block name="css"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link rel="stylesheet" href="__STATIC__/plugins/jcrop/css/jquery.Jcrop.css?v={$v}" type="text/css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+{/block}
+{block name="main"}
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+<form id="userEditForm" autocomplete="off" >
+    <div id='tab' class="wst-tab-box">
+        <ul class="wst-tab-nav uinfo-nav" style='border:none;'>
+            <li id="wst-msg-li-0">{:lang("user_info")}<span style="display:none;" class="wst-order-tips-box"></span></li>
+            <li id="wst-msg-li-1">{:lang("user_pic")}<span style="display:none;"></span></li>
+        </ul>
+        <div class="wst-tab-content" style='width:99%;border:none;'>
+            <div class='wst-tab-item'>
+                <table class='wst-form uinfo-form' >
+                    <tr>
+                        <th width='150'>{:lang("login_name")}<font color='red'>  </font>：</th>
+                        <td width="260" class="gray">
+                            <div id='user_account'>{:session('WST_STORE.loginName')}</div>
+                        </td>
+                        <td class="gray" style='padding-left:15px;'>{:lang("user_photo")}：</td>
+                    </tr>
+                    <tr>
+                        <th><font color='red'>*</font>{:lang("nickname")}：</th>
+                        <td class="uinfo">
+                            <input type="text" class="ipt" id="userName" name="userName" value="{$data['userName']}" />
+                        </td>
+                        <td rowspan="6" valign="top">
+                            <div id='userPhotoPreview1' style="border:1px solid #f1f1f1;width:152px;height:152px;text-align: center; margin-top: 5px;">
+                                <img  class="usersImg" data-original='{:WSTUserPhoto($data['userPhoto'])}' height='150'/>
+                            </div>
+                        </td>
+                    </tr>
+                   
+                    <tr>
+                        <th>{:lang("real_name")}<font color='red'>  </font>：</th>
+                        <td class="uinfo">
+                            <input type="text" class="ipt" id="trueName" name="trueName" value="{$data['trueName']}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>{:lang("gender")}<font color='red'>  </font>：</th>
+                        <td class="layui-form">
+                            <label><input type='radio' name='userSex'  id="userSex-1" class='ipt wst-radio' value='1' {if $data['userSex']==1}checked{/if} title='{:lang("male")}'/></label>
+                            <label><input type='radio' name='userSex'  id="userSex-2" class='ipt wst-radio' value='2' {if $data['userSex']==2}checked{/if} title='{:lang("female")}'/></label>
+                            <label><input type='radio' name='userSex'  id="userSex-3" class='ipt wst-radio' value='0' {if $data['userSex']==0}checked{/if} title='{:lang("secrecy")}'/></label>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th>{:lang("birthday")}<font color='red'></font>：</th>
+                        <td class="uinfo">
+                            <input type="text" name="brithday" id="brithday" class="s-query ipt" value="{$data['brithday']}" />
+                        </td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <th>{:lang("qq")}<font color='red'>  </font>：</th>
+                        <td class="uinfo">
+                            <input type="text" class="ipt" id="userQQ" name="userQQ" value="{$data['userQQ']}" />
+                        </td>
+                        <td></td>
+                    </tr>
+
+
+
+                    <tr>
+                        <td colspan='2' class='wst-bottombar'>
+                            <input type="hidden" name="id" id="userId" class="ipt" value="{$data['userId']}" />
+                            <button type="submit"  class="wst-sec-but u-btn btn btn-primary btn-mright"><i class='fa fa-check'></i>{:lang("save")}</button>
+                            <button type="reset"  class="wst-sec-but u-btn btn"><i class='fa fa-refresh'></i>{:lang("reset")}</button>
+                        </td>
+                        <td></td>
+                    </tr>
+                </table>
+
+            </div>
+
+
+            <div class='wst-tab-item' style="display:none" >
+                <table class='wst-form'  id="userPhoto">
+                    <tr>
+                        <th width='150'>{:lang("preview_u_photo")}<font color='red'> </font>：</th>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <div id='userPhotoPreview'>
+                                {if ($data['userPhoto'])}
+                                <img  class="usersImg" data-original='__RESOURCE_PATH__/{$data['userPhoto']}' height='150' width="150"/>
+                                {else}
+                                <img class="usersImg" data-original='' height='150' width="150" />
+                                {/if}
+                                <br/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>{:lang("u_photo_tips")}</td></tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type='hidden' id='userPic' value='{$data['userPhoto']}' />
+                            <div id="userPhotoPicker" style='margin-left:0px;margin-top:5px;height:30px;overflow:hidden'>{:lang("upload_user_photo")}</div>
+                        </td>
+                    </tr>
+                </table>
+
+
+
+                <div class="container"  id="userPhotoCut" style="display:none;">
+                    <div class="row">
+                        <div class="span12">
+                            <div class="jc-demo-box">
+                                <div id="img-src" style="text-align:center;max-width:500px;height:auto;">
+                                    <p>{:lang("cut_area")}</p>
+                                </div>
+
+
+                                <div id="userPhotoCutBox" style="position:relative;min-height:505px;">
+                                    <div id="cutArea"></div><p></p>
+                                </div>
+
+
+
+
+                                <form action="<?=url('store/Users/editUserPhoto')?>" method="post" id="userPhotoInfo">
+                                    <input type="hidden" id="x" name="x" class="photo-size" />
+                                    <input type="hidden" id="y" name="y" class="photo-size" />
+                                    <input type="hidden" id="w" name="w" class="photo-size" />
+                                    <input type="hidden" id="h" name="h" class="photo-size" />
+                                    <input type="hidden" id="photoSrc" name="photoSrc" value="">
+                                    <div id="c-btn">
+                                        <button type="button" class="btn btn-primary btn-mright" onclick="checkCoords()"><i class='fa fa-check'></i>{:lang("save")}</button>
+                                        <button type="button" class="btn btn-primary" onclick="returnPhotoPage()"><i class='fa fa-undo'></i>{:lang("cancel")}</button>
+                                    </div>
+                                </form>
+
+                                <div class="wst-clear"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+
+
+
+</form>
+
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/plugins/jcrop/js/jquery.Jcrop.js?v={$v}"></script>
+<script type='text/javascript' src='__STORE__/users/user.js?v={$v}'></script>
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script>
+    var laydate = layui.laydate;
+    laydate.render({
+        elem: '#brithday'
+    });
+</script>
+{/block}

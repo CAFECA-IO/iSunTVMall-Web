@@ -1,0 +1,85 @@
+{extend name="default/base" /}
+{block name="js"}
+<script src="__SHOP__/shopusers/notify.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<style>
+td.head-ititle{padding-left:30px;}
+.staffName {min-width:120px;padding-right:10px;display:inline-block;}
+.layui-form-checkbox {
+    height: 20px;
+    line-height: 18px;
+    padding-right: 20px;
+}
+.layui-form-checkbox i {
+    width: 20px;
+    left: -5px;
+    top: 1px;
+}
+</style>
+{php}$langId = WSTCurrLang();{/php}
+<form class="layui-form" action="" lay-filter="example">
+     <div class="wst-tips-box">
+        <div class="icon"></div>
+        <div class="tips">{:lang('shopUsers_tips8')}</div>
+        <div style="clear:both"></div>
+    </div>
+      <fieldset class="layui-elem-field layui-field-title">
+	  <legend>{:lang('shopUsers_tips9')}</legend>
+	  <table class='wst-form wst-box-top layui-form'>
+	  <tr>
+	     <th>{:lang('shopUsers_tips10')}：</th>
+	     <td>
+	     	<input class='ipt' type="hidden" id="id" value="{$object['id']}">
+	     	<span class='staffName'>
+	     		<input type='checkbox' name='privilegeMsgTypes' class='ipt' value="1" {if in_array(1,$object['privilegeMsgTypes'])}checked{/if}/>{:lang('shopUsers_tips12')}
+	     	</span>
+	     	<span class='staffName'>
+	     		<input type='checkbox' name='privilegeMsgTypes' class='ipt' value="4" {if in_array(4,$object['privilegeMsgTypes'])}checked{/if}/>{:lang('shopUsers_tips13')}
+	     	</span>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th valign="top">{:lang('shopUsers_tips11')}：</th>
+	     <td>
+	     	{volist name=":WSTDatas('SHOP_MESSAGE')" id="vo"}
+	           	<span class='staffName'>
+	            <input type="checkbox" name="privilegeMsgs" class="ipt" value="{$vo['dataVal']}" {if $object['privilegeMsgs']}{:in_array($vo['dataVal'],$object['privilegeMsgs'])?"checked":""}{/if}/> {$vo["langParams"][$langId]}
+	           	</span>
+           	{/volist}
+	     </td>
+	  </tr>
+	  </table>
+	  </fieldset>
+      <fieldset class="layui-elem-field layui-field-title">
+	  <legend>{:lang('shopUsers_tips14')}</legend>
+	  <table class='wst-form wst-box-top layui-form'>
+	  <tr>
+	     <th>{:lang('shopUsers_tips10')}：</th>
+	     <td>
+	     	<span class='staffName'>
+	     		<input type='checkbox' name='privilegeMsgTypes' class='ipt' value="2" {if in_array(2,$object['privilegeMsgTypes'])}checked{/if}/>{:lang('shopUsers_tips15')}
+	     	</span>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th valign="top">{:lang('shopUsers_tips11')}：</th>
+	     <td>
+	     
+	     	{volist name=":WSTSubDatas('SHOP_MESSAGE')" id="vo"}
+	           	<span class='staffName'>
+	            <input type="checkbox" name="privilegePhoneMsgs" class="ipt" value="{$vo['subDataVal']}" {if $object['privilegePhoneMsgs']}{:in_array($vo['subDataVal'],$object['privilegePhoneMsgs'])?"checked":""}{/if}/> {$vo["langParams"][$langId]}
+	           	</span>
+           	{/volist}
+	     </td>
+	  </tr>
+	  <tr>
+	     <td colspan='2' align='center'>
+	     	<button type="button" class="btn btn-primary btn-mright" onclick='javascript:edit()'><i class="fa fa-check"></i>{:lang('save')}</button> 
+        	<button type="button" class="btn" onclick="javascript:location.href='{:Url(\'shop/shopusers/index\',\'p=\'.$p)}'"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+	     </td>
+	  </tr>
+	 </table>
+	 </fieldset>
+</form>
+{/block}

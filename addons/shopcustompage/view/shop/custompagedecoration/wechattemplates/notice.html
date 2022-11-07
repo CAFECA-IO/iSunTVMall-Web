@@ -1,0 +1,46 @@
+{php}$style='';{/php}
+{php}
+    $direction = ($vo['direction'] == 1)?'vertical':'horizontal';
+    $style="background:".$vo['backgroundColor'].";";
+{/php}
+{if $vo['verticalPadding']}
+    {php}
+        $style.="padding-top:".intval($vo['verticalPadding'])."px;";
+        $style.="padding-bottom:".intval($vo['verticalPadding'])."px;";
+    {/php}
+{/if}
+<div class="notice-container" style="{$style}">
+    <img src="__RESOURCE_PATH__/{$vo['img']}" alt=''/>
+    <div class="wst-in-notices">
+        <div class="article">
+            <div class="swiper-container notice-swiper-container1">
+                <div class="swiper-wrapper">
+                    {volist name="$vo['notices']" id="voo"}
+                    <div class="swiper-slide" style="width:100%;">
+                        <a class="words" href="{$voo['link']}"><p class="ui-nowrap-flex" style="color:{$voo['textColor']}">{$voo['text']}</p></a>
+                    </div>
+                    {/volist}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type='text/javascript' src='__STATIC__/plugins/swiper/swiper.min.js'></script>
+<script>
+    // 公告
+    if($('.wst-in-notices a').hasClass("words")){
+        new Swiper('.notice-swiper-container1', {
+            direction : "{$direction}",
+            autoplay: true,
+            autoHeight: true, //高度随内容变化
+            width: window.innerWidth,
+            height:30,
+            on: {
+                resize: function(){
+                    this.params.width = window.innerWidth;
+                    this.update();
+                }
+            }
+        });
+    }
+</script>

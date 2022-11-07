@@ -1,0 +1,424 @@
+{extend name="$LAYOUT_WECHAT_BASE" /}
+{block name="title"}{$info['goodsName']} - {:lang('auction_activity_title')}- {__block__}{/block}
+{block name="meta"}
+<meta name="description" content="{$info['goodsSeoDesc']}">
+<meta name="Keywords" content="{$info['goodsSeoKeywords']}">
+{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__STATIC__/plugins/swiper/swiper.min.css"/>
+<link rel="stylesheet"  href="__ROOT__/addons/auction/view/wechat/index/css/detail.css?v={$v}">
+
+<link rel="stylesheet" href="__STATIC__/plugins/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="__STATIC__/plugins/photoswipe/default-skin/default-skin.css">
+<link rel="stylesheet" href="{:request()->scheme()}://g.alicdn.com/de/prismplayer/2.8.2/skins/default/aliplayer-min.css" />
+<style>
+.prism-player .prism-big-play-btn{top:calc(50vw - 32px)!important;left:calc(50vw - 32px)!important;} 
+</style>
+{/block}
+{block name="header"}
+{/block}
+{block name="footer"}
+{if($info)}
+
+<div class="ui-loading-wrap wst-Load" id="Load">
+	<i class="ui-loading"></i>
+</div>
+<input type="hidden" name="" value="{$info['currPrice']+$info['fareInc']}" id="currPrices" autocomplete="off">
+<footer class="ui-footer" style="height:68px;" id="footer">
+	<div class="wst-toTop" id="toTop">
+		<i class="wst-toTopimg"><span></span></i>
+	</div>
+	<div class="wst-goods-bac"></div>
+	<div class="wst-flex-row btn-container">
+		<div class="wst-flex-column wst-center wst-goods-ensure">
+			<p class="auction">{:lang('auction_bond_money')}:<span class="money">{:lang('currency_symbol')}{$info['cautionMoney']}</span></p>
+			<p class="tips">{:lang('auction_not_returned_in_full')}</p>
+		</div>
+		<div  class="wst-goods_buy wst-flex-row wst-ac" style="margin:0  0.12rem 0 0;">
+			{if $info['payMoney']==0}
+			<button id="buyBtn" class="wst-goods_buym active" type="button" onclick="javascript:addBond();" disabled>{:lang('auction_deposit_registration')}</button>
+			{else}
+			<button id="buyBtn" class="wst-goods_buym active" type="button" onclick="javascript:cartShow(1);" disabled>{:lang('auction_iwant_bid')}</button>
+			{/if}
+		</div>
+	</div>
+</footer>
+{/if}
+{/block}
+{block name="main"}
+{/* 图片查看层 */}
+<div id="gallery" class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="pswp__bg"></div>
+	<div class="pswp__scroll-wrap">
+		<div class="pswp__container">
+			<div class="pswp__item"></div>
+			<div class="pswp__item"></div>
+			<div class="pswp__item"></div>
+		</div>
+		<div class="pswp__ui pswp__ui--hidden">
+			<div class="pswp__top-bar">
+				<div class="pswp__counter"></div>
+				<button class="pswp__button pswp__button--close" title="{:lang('auction_close')}"></button>
+				<button class="pswp__button pswp__button--fs" title="{:lang('auction_submit')}"></button>
+				<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+				<div class="pswp__preloader">
+					<div class="pswp__preloader__icn">
+						<div class="pswp__preloader__cut">
+							<div class="pswp__preloader__donut"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+				<div class="pswp__share-tooltip">
+				</div>
+			</div>
+			<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+			<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+			<div class="pswp__caption">
+				<div class="pswp__caption__center">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{if($info)}
+{/* 商品  */}
+<section class="ui-container"  id="goods1">
+	<a class="wst-go-headerl" href="{:addon_url('auction://goods/wxlists')}"><i class="ui-icon-return" style="line-height: 0.28rem;"></i></a>
+	<a class="wst-go-headerr" href="javascript:void(0);" onclick="dialogShare();"><i class="ui-icon-share"></i></a>
+	<div id="groupon-time" sc="{:date("Y-m-d H:i:s")}" sv="{$info['startTime']}" ev="{$info['endTime']}">
+	<div class="swiper-container">
+		<div class="swiper-wrapper">
+			{if $info['goodsVideo']!=""}
+			<div class="swiper-slide" style="width:100%;">
+				<div class="wst-video-box" id='previewVideo'></div>
+			</div>
+			{/if}
+			{volist name="info['gallery']" id="ga" key="i"}
+			{php}$_i = $i-1;{/php}
+			<div onclick="gViewImg({$_i})" class="swiper-slide" style="width:100%;">
+				<div class="wst-go-img"><a><img src="__RESOURCE_PATH__/{:WSTImg($ga,2)}"></a></div>
+			</div>
+			{/volist}
+		</div>
+		{if(count($info['gallery'])>1)}<div class="swiper-pagination"></div>{/if}
+	</div>
+	</div>
+	<div class="auction-time wst-flex-row wst-jsb wst-ac">
+		<span class="title">{:lang('auction_activity_title')}</span><span class="wst-goods-time" id="grouptime">{if $info['status']==-1}{:lang('auction_the_auction_is_over')}{else}{:lang('auction_calculating_auction_time')}{/if}</span>
+	</div>
+	<div class="ui-nowrap-multi ui-whitespace wst-go-name">{$info['goodsName']}</div>
+	<div class="wst-go-price">
+		<div class="wst-flex-row wst-jsb wst-ac">
+			<p class="price">{:lang('auction_curr_price2')}:<span class="market">{:lang('currency_symbol')}{$info['currPrice']}</span></p>
+			<p><span class="red">{$info['auctionNum']}</span>{:lang('auction_user_bid_tips',[''])}   | <span class="red">{$info['visitNum']}</span>{:lang('auction_look_number_tips',[''])}</p>
+		</div>
+		{if!empty($info['spec'])}
+		<div class="wst-go-spec">
+			{volist name="$info['spec']" id="sp"}
+			<div class="spec">
+				{volist name="sp['list']" id="sp2"}
+				{if $sp2['itemImg']!=''}
+				<span class="introduce">{$sp['name']}:</span><img class="j-option img active" data-val="{$sp2['itemId']}" src="__RESOURCE_PATH__/{$sp2['itemImg']}" title="{$sp2['itemName']|WSTStripTags}">
+				{else}
+				<span class="introduce">{$sp['name']}:</span><span class="j-option words active" data-val="{$sp2['itemId']}">{$sp2['itemName']}</span>
+				{/if}
+				{/volist}
+				<div class="wst-clear"></div>
+			</div>
+			{/volist}
+		</div>
+		{/if}
+	</div>
+	<div class="auction-tips">
+		<p><span class="red">{:lang('auction_order_money_paytime_tips',[$endPayDate])}</span></p>
+	</div>
+	<ul class="ui-list ui-list-text wst-go-ul ui-list-active" style="margin-top:0;">
+		<li onclick="javascript:wholeShow('record');">
+			<div class="ui-list-info" style="padding-right:0;">
+				<div class="ui-nowrap wst-flex-row wst-jsb wst-ac">
+					<span class="record-title">{:lang('auction_bid_history')}</span>
+					<div>
+						<span class="record-num">{$info['auctionNum']}次</span><i class="icon-right-arrow"></i>
+					</div>
+				</div>
+			</div>
+
+		</li>
+	</ul>
+	<ul class="ui-list ui-list-text wst-go-li ui-list-active">
+		<li class="wst-flex-row wst-jsb wst-ac" style="margin:0 0.12rem;padding-right:0;">
+			<p style="font-size: 0.14rem;color:#333;">{:lang('auction_auction_process')}</p>
+			<p class="ui-nowrap rule-tips">{:lang('auction_margin_rules')}:<span style="color: #a8a8a8;">{:lang('auction_end_bond_money_tips')}</span></p>
+		</li>
+		<li class="step">
+			<div class="wst-flex-row wst-jsb" style="width:100%;position: relative">
+				<div class="wst-flex-column wst-center" >
+					<div class="num">1</div>
+					<p class="text">{:lang('auction_deposit')}</p>
+				</div>
+				<div class="wst-flex-column wst-center">
+					<div class="num">2</div>
+					<p class="text">{:lang('auction_deposit')}</p>
+				</div>
+				<div class="wst-flex-column wst-center">
+					<div class="num">3</div>
+					<p class="text">{:lang('auction_successful_auction')}</p>
+				</div>
+				<div class="wst-flex-column wst-center">
+					<div class="num">4</div>
+					<p class="text">{:lang('auction_pay_the_price_of_goods')}</p>
+				</div>
+				<div class="wst-flex-column wst-center">
+					<div class="num">5</div>
+					<p class="text">{:lang('auction_successful_trade')}</p>
+				</div>
+				<div class="line"></div>
+			</div>
+		</li>
+	</ul>
+	<ul class="ui-list ui-list-text wst-go-ul ui-list-active" >
+		<li onclick="javascript:wholeShow('rule');">
+			<div class="ui-list-info" style="padding-right:0;">
+				<div class="ui-nowrap wst-flex-row wst-jsb wst-ac">
+					<span class="record-title">{:lang('auction_notice')}</span>
+					<i class="icon-right-arrow"></i>
+				</div>
+			</div>
+
+		</li>
+	</ul>
+
+	<ul class="ui-list ui-list-one ui-list-link wst-go-shop">
+		<div class="info">
+			<div class="img"><a><img src="__RESOURCE_PATH__/{:WSTImg($info['shop']['shopImg'],3)}" title="{$info['shop']['shopName']|WSTStripTags}"></a></div>
+			<div class="name"><p class="ui-nowrap-flex name1">{$info['shop']['shopName']}</p><p class="ui-nowrap-flex name2"><span>{:lang('auction_main_business')}: {$info['shop']['cat']}</span></p></div>
+			<div class="wst-clear"></div>
+		</div>
+		<div class="ui-row-flex score">
+			<div class="ui-col ui-col" style="text-align:left;">{:lang('auction_goods_score')}: <span class="red">{$info['shop']['scores']['goodsScore']}</span></div><span class="line">|</span>
+			<div class="ui-col ui-col" style="text-align:center;">{:lang('auction_timeliness_score')}: <span class="red">{$info['shop']['scores']['timeScore']}</span></div><span class="line">|</span>
+			<div class="ui-col ui-col" style="text-align:right;">{:lang('auction_service_score')}: <span class="red">{$info['shop']['scores']['serviceScore']}</span></div>
+		</div>
+		<div class="ui-row-flex button">
+			<div class="ui-col ui-col"><a href="{:url('wechat/shops/goods',['shopId'=>$info['shop']['shopId']])}" class="goods">{:lang('auction_all_goods')}</a></div>
+			<div class="ui-col ui-col"><a href="{:url('wechat/shops/index',['shopId'=>$info['shop']['shopId']])}" class="shop">{:lang('auction_enter_the_shop')}</a></div>
+		</div>
+	</ul>
+
+	{if($info['auctionDesc'])}
+	<div class="wst-go-details">
+		<p>拍品介绍</p>
+		{$info['auctionDesc']}
+	</div>
+	{/if}
+	<div class="wst-shl-ads">
+		<div class="wst-flex-row wst-center">
+			<div class="line"></div>
+			<p class="title">热门拍卖</p>
+			<div class="line"></div>
+		</div>
+		<div class="wst-guess-goods">
+			{volist name='hot_auctions' id='vo'}
+			<div class="wst-go-goods" onclick="javascript:goGoods({$vo['auctionId']});">
+				<div class="img j-imgAdapt">
+					<a href="javascript:void(0);" onclick="javascript:goGoods({$vo['auctionId']});"><img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{:WSTImg($vo['goodsImg'],3)}" title="{$vo['goodsName']|WSTStripTags}"></a>
+				</div>
+				<p class="name ui-nowrap-multi">{$vo['goodsName']}</p>
+				<div class="info"><span class="ui-nowrap-flex price">{:lang('currency_symbol')}{$vo['currPrice']}</span></div>
+			</div>
+			{/volist}
+			<div class="wst-clear"></div>
+		</div>
+	</div>
+	<div class="wst-go-top" style="display: none;">{:lang('auction_view_all')}</div>
+</section>
+{/* 详情  */}
+{else}
+<ul class="ui-row-flex wst-flexslp">
+	<li class="ui-col ui-flex ui-flex-pack-center">
+		<p>{:lang('auction_sorry_no_product_found')}</p>
+	</li>
+</ul>
+{/if}
+{/block}
+{block name="include"}
+{/* 提示分享对话框 share */}
+<div class="ui-dialog" id="wst-di-share" onclick="WST.dialogHide('share');">
+	<div class="wst-prompt"></div>
+</div>
+{if($info)}
+{/* 遮盖层  */}
+<div class="wst-cover" id="cover"></div>
+{/*加入购物车框  */}
+<div class="wst-cart-box wst-flex-column wst-jsb" id="frame-cart">
+	<div class="title">
+		<div class="picture"><div class="img"><a href="javascript:void(0);"><img src="__RESOURCE_PATH__/{:WSTImg($info['goodsImg'],3)}" title="{$info['goodsName']|WSTStripTags}" id="specImage"></a></div></div>
+		<i class="icon-close" onclick="javascript:cartHide();"></i>
+		<p class="ui-nowrap-flex price">{:lang('currency_symbol')}{$info['currPrice']}</p>
+		<div class="wst-clear"></div>
+	</div>
+	<div class="number wst-flex-row wst-jsb wst-ac">
+		<?php
+			$currPrice = $info['currPrice']+$info['fareInc'];
+		?>
+		<div class="wst-flex-column wst-afs">
+			<p>（{:lang('auction_add_price_rate',[$info['fareInc']])}）</p>
+			<div class="stock">{:lang('auction_bidding_price')}：{$currPrice}</div>
+		</div>
+		<div class="wst-buy_l wst-flex-row wst-ac">
+			<div class="wst-buy-minus" onclick='javascript:WST.changeIptNum(-{$info['fareInc']},"#buyNum")'></div><input id="buyNum" class="wst-buy_l2" data-min='{$currPrice}' data-max='' type="number" value="{$currPrice}" autocomplete="off" onkeyup='WST.changeIptNum(0,"#buyNum")'><div class="wst-buy-add"  onclick='javascript:WST.changeIptNum({$info['fareInc']},"#buyNum")'></div>
+</div>
+</div>
+<button class="button" onclick="javascript:addOffer();">{:lang('auction_confirm')}</button>
+</div>
+
+
+{/* 记录  */}
+<div class="wst-fr-rule" id="record">
+	<div class="title"><span><i onclick="javascript:wholeHide('record');"></i>{:lang('auction_bid_history')}</span><div class="wst-clear"></div></div>
+	<input type="hidden" name="" value="" id="currPage" autocomplete="off">
+	<input type="hidden" name="" value="" id="totalPage" autocomplete="off">
+	<div class="contents" id="record-list"></div>
+
+</div>
+<script id="list" type="text/html">
+
+	{{# if(d && d.length>0){ }}
+	<div class="wst-details_content">
+
+		{{# for(var i=0; i<d.length; i++){ }}
+		<div class="record-item wst-flex-row wst-jsb wst-ac">
+			<div class="wst-flex-row wst-ac">
+				<img class="img" src="{{ d[i].userPhoto }}">
+				<div class="wst-flex-column detail">
+					<p class="name">{{ d[i].loginName }}</p>
+					<p class="time">{{ d[i].createTime }}</p>
+				</div>
+			</div>
+			<div class="price">
+				{:lang('currency_symbol')}{{ d[i].payPrice }}
+			</div>
+		</div>
+		{{# } }}
+
+	</div>
+	{{# }else{ }}
+	<ul class="ui-row-flex wst-flexslp">
+		<li class="ui-col ui-flex ui-flex-pack-center">
+			<p style="margin-top:0.1rem;">{:lang('auction_sorry_there_is_no_relevant_bid_record')}。</p>
+		</li>
+	</ul>
+	{{# } }}
+</script>
+{/* 规则  */}
+<div class="wst-fr-rule" id="rule">
+	<div class="title"><i onclick="javascript:wholeHide('rule');"></i><span>{:lang('auction_notice')}</span><div class="wst-clear"></div></div>
+	<div class="content">
+		{$info['article']|htmlspecialchars_decode}
+	</div>
+</div>
+
+<!--二维码海报-->
+<div class="ui-dialog" id="wst-di-qrcod" >
+    <div class="ui-dialog-cnt wst-dialog-cnt5" style="width:auto;height:auto;background: none;">
+        <div class="wst-dialog-bd">
+            <div id="qrcodes" style="width: 3rem;height: 4.96rem;">
+            	<div id="shareImg"></div>
+            	<div data-role="button" class="close-dialog">
+					<img src="__WECHAT__/img/icon-close2.png">
+				</div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+
+
+{block name="js"}
+{if(!empty($datawx))}
+<script src="{:request()->scheme()}://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+wx.config({
+    debug: false,
+    appId: '<?php echo WSTConf('CONF.wxAppId'); ?>', //公众号的唯一标识
+    timestamp: '<?php echo $datawx['timestamp'];?>', //生成签名的时间戳
+    nonceStr: '<?php echo $datawx['noncestr'];?>', //生成签名的随机串
+    signature: '<?php echo $datawx['signature'];?>',//签名
+    jsApiList: [ //需要使用的JS接口
+       	'onMenuShareTimeline',
+		'onMenuShareAppMessage',
+		'onMenuShareQQ',
+		'onMenuShareWeibo',
+		'onMenuShareQZone'
+    ]
+});
+
+wx.ready(function(){
+	var shareData = {
+			title: '{$shareInfo["title"]}',
+			desc: '{$shareInfo["desc"]}',
+			link: '{$shareInfo["link"]}',
+			imgUrl: '{$shareInfo["imgUrl"]}'
+	};
+	wx.onMenuShareAppMessage(shareData);
+	wx.onMenuShareTimeline(shareData);
+	wx.onMenuShareQQ(shareData);
+	wx.onMenuShareWeibo(shareData);
+	wx.onMenuShareQZone(shareData);
+
+	{if $info['goodsVideo']!=""}
+	var width = $(document).width();
+	var u = navigator.userAgent;
+	var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+	var player = new Aliplayer({
+	  "id": "previewVideo",
+	  "source": "__RESOURCE_PATH__/{$info['goodsVideo']}",
+	  "cover":"__RESOURCE_PATH__/{$info['goodsImg']}",
+	  "width": "100%", 
+	  "height": width+"px",
+	  "autoplay": isiOS?true:false,
+	  "isLive": false,
+	  "rePlay": false,
+	  "playsinline": true,
+	  "preload": true,
+	  "controlBarVisibility": "hover",
+	  "useH5Prism": true
+	});
+	{/if}
+});
+</script>
+{/if}
+<script>
+{php}
+	$gallery = implode(',',$info['gallery']);
+{/php}
+var goodsInfo = {
+		auctionId:{$info['auctionId']},
+		id:{$info['goodsId']}
+		,gallery:"{$gallery}",
+	}
+$(function(){
+	if(goodsInfo.gallery!=''){
+		goodsInfo.gallery = goodsInfo.gallery.split(',').map(function(imgUrl,i){
+			imgUrl = WST.conf.RESOURCE_PATH+"/"+imgUrl;
+			var _obj = { src:imgUrl, w:WST.pageWidth(), h:100 };
+			gGetImgWH(imgUrl,i);
+			return _obj;
+		})
+	}
+});
+
+
+</script>
+{/if}
+<script type='text/javascript' src='__WECHAT__/js/jquery.min.js'></script>
+<script type="text/javascript" charset="utf-8" src="{:request()->scheme()}://g.alicdn.com/de/prismplayer/2.8.2/aliplayer-min.js"></script>
+<script type='text/javascript' src='__STATIC__/plugins/swiper/swiper.min.js'></script>
+<script type='text/javascript' src='__ROOT__/addons/auction/view/wechat/index/js/detail.js?v={$v}'></script>
+<script type='text/javascript' src='__ROOT__/addons/auction/view/wechat/index/js/time.js?v={$v}'></script>
+<script src="__STATIC__/plugins/photoswipe/photoswipe.min.js"></script>
+<script src="__STATIC__/plugins/photoswipe/photoswipe-ui-default.min.js"></script>
+{/block}

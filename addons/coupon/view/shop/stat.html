@@ -1,0 +1,36 @@
+{extend name="$LAYOUT_SHOP_BASE" /}
+{block name="main"}
+<style>
+#mainTable{width:95%;text-align:center;border:1px solid #eee;margin: 0px auto;margin-bottom:40px;font-size:13px;}
+.wst-list .num{text-align:center;}
+.wst-list tr th{background:#f5f5f5;border-bottom:1px solid #eee;}
+.wst-list tr td,.wst-list tr th {height: 35px;line-height: 35px;}
+.wst-list tr td{border-bottom:1px dotted #eee;}
+.wst-list tbody tr:hover{background:#f5f5f5;}
+</style>
+<div class='wst-toolbar'>
+    <span style="float: left; line-height: 40px">{:lang('coupon_date')}：</span><input type='text' class="laydate-icon j-ipt" id='startDate' value='{:date("Y-m-d",strtotime("-1 month"))}'/> <span style="float: left; line-height: 40px">{:lang('coupon_to_title')}</span>
+    <input type='text' class="laydate-icon j-ipt" id='endDate' value='{:date("Y-m-d")}'/>
+    <input type='hidden' class="j-ipt" id='couponId' value='{$id}'/>
+    <a class="s-btn btn btn-primary" onclick="loadStat()"><i class="fa fa-search"></i>{:lang('coupon_query')}</a>
+    <button class="btn f-right" onclick="javascript:toBack({$p});"><i class='fa fa-angle-double-left'></i>{:lang('coupon_back')}</button>
+</div>
+<div class='wst-grid'>
+    <div id='main' style='height:400px;width:99%'></div>
+</div>
+{/block}  
+{block name="js"}
+<script src="__STATIC__/plugins/echarts/echarts.min.js?v={$v}" type="text/javascript"></script>
+<script type="text/javascript" src="__ROOT__/addons/coupon/view/shop/stat.js?v={$v}"></script>
+<script>$(function(){
+  var laydate = layui.laydate;
+    laydate.render({
+        elem: '#startDate'
+    });
+    laydate.render({
+        elem: '#endDate'
+    });
+  loadStat();
+})
+</script>
+{/block}

@@ -1,0 +1,61 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('forget_password')} - {:WSTConf('CONF.mallName')}{/block}
+{block name="css"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link href="__STYLE__/css/login.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="nav"}
+    {php}$liteTitle = "{:lang('find_password')}"{/php}
+	{include file="default/header_lite" /}
+{/block}
+{block name="main"}
+	<div class="wst-container">
+           <div id="stepflex" class="stepflex">
+               <dl class="first doing">
+                   <dt class="s-num">1</dt>
+                   <dd class="s-text">{:lang('fill_account_name')}</dd>
+                   <dd></dd>
+               </dl>
+               <dl class="first doing">
+                   <dt class="s-num">2</dt>
+                   <dd class="s-text">{:lang('authentication')}</dd>
+               </dl>
+               <dl class="first doing">
+                   <dt class="s-num">3</dt>
+                   <dd class="s-text">{:lang('reset_password')}</dd>
+               </dl>
+               <dl class="last">
+                   <dt class="s-num1">4</dt>
+                   <dd class="s-text">{:lang('complete')}</dd>
+               </dl>
+           </div>
+         <div class="wst-clear"></div>
+         <div class="forget-pwd">
+           <form  id="forgetPwdForm3" autocomplete="off">
+           <input type="hidden" id="token" value='{:WSTConf("CONF.pwdModulusKey")}'/>
+           <input type="hidden" id="step" name="step" class="ipt" value="3" autocomplete="off">
+	                <table class="phone-verify">
+	                    <tbody>
+	                        <tr class="wst-login-tr">
+	                            <td class="wst-regist-td" style='width:220px;'>{:lang('new_password')}：</td>
+	                            <td><input type="password" class="ipt wst-forget-input"  name="loginPwd" id="loginPwd" placeholder="{:lang('new_password_placeholder')}"></td>
+	                        </tr>
+	                        <tr class="wst-login-tr">
+	                            <td class="wst-regist-td" style='width:220px;'>{:lang('confirm_password')}：</td>
+	                            <td><input type="password" class="ipt wst-forget-input" name="repassword" id="repassword" placeholder="{:lang('new_password_placeholder')}"></td>
+	                        </tr>
+	                        <tr class="wst-login-tr">
+	                            <td colspan="2" style="padding-left:242px;">
+	                                <input type="submit" class="wst-regist-but" value="{:lang('submit')}" style="width: 100px;height:32px;">
+	                            </td>
+	                        </tr>
+	                    </tbody></table>
+               </form>
+           </div>
+	</div>
+{/block}
+{block name="js"}
+	<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+	<script type="text/javascript" src="__STATIC__/js/rsa.js"></script>
+	<script type='text/javascript' src='__STYLE__/js/findpass.js?v={$v}'></script>
+{/block}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>{:lang('wstim_title1')}</title>
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+<link rel="stylesheet" href="__ROOT__/addons/wstim/view/static/bootstrap/css/bootstrap.min.css" type="text/css" />
+<link rel="stylesheet" href="__ROOT__/addons/wstim/view/static/layui/css/layui.css" type="text/css" />
+<link rel="stylesheet" type="text/css" href="__ROOT__/addons/wstim/view/static/mmgrid/mmGrid.css" />
+
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script src="__ROOT__/addons/wstim/view/static/js/jquery.min.js"></script>
+<script language="javascript" type="text/javascript" src="__ROOT__/addons/wstim/view/static/js/common.js"></script>
+<style>
+input[type=text], input[type=password] {display: inline-block; width: auto; height: 30px; padding: 6px 12px; line-height: 1.42857143; color: #666; background-color: #fff; background-image: none; border: 1px solid #f1f1f1; border-radius: 4px; -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075); box-shadow: inset 0 1px 1px rgba(0,0,0,.075); -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s; -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s; transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;}
+.mmGrid .mmg-headWrapper {
+position: relative; overflow: hidden; width: 9999px; background: -moz-linear-gradient(top, #f9f9f9 0%, #eaeaea 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f9f9f9), color-stop(100%,#eaeaea)); background: -webkit-linear-gradient(top, #f9f9f9 0%,#eaeaea 100%); background: -o-linear-gradient(top, #f9f9f9 0%,#eaeaea 100%); background: -ms-linear-gradient(top, #f9f9f9 0%,#eaeaea 100%); background: linear-gradient(to bottom, #f9f9f9 0%,#eaeaea 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f9f9f9', endColorstr='#eaeaea',GradientType=0 ); -moz-box-shadow: 0 0px 2px #bbb; -webkit-box-shadow: 0 0px 2px #bbb; box-shadow: 0 0px 2px #bbb; z-index: 1; border-top: none; background: #f9f9f9; }
+.wst-toolbar {border-bottom: 0px; line-height: 30px; padding: 5px; width: 100%; }
+.btn {padding: 3px 12px; } 
+.layui-form-switch {width: 60px; }
+.mmGrid .mmg-headWrapper .mmg-head th {padding: 6px 5px; border: 0px; } 
+.mmGrid .mmg-bodyWrapper .mmg-body td {color: #777; padding: 4px 5px; border-left: 0px; border-right: 0px; border-bottom: 1px solid #f5f5f5; word-wrap: break-word; word-break: break-all;}
+</style>
+</head>
+
+<div class="wst-toolbar">
+	<input type="text" name="loginName"  placeholder='{:lang("wstim_username")}' id="loginName" class='j-ipt'/>
+	<input type="text" name="shopName"  placeholder='{:lang("wstim_business_name")}' id="shopName" class='j-ipt'/>
+	<input type="text" id="startDate" name="startDate" class="laydate-icon j-ipt" maxLength="20" placeholder='{:lang("wstim_start_date")}'/>
+	{:lang('wstim_to')}
+	<input type="text" id="endDate" name="endDate" class="laydate-icon j-ipt" maxLength="20" placeholder='{:lang("wstim_end_date")}'/>
+	<button class="btn btn-primary" onclick='javascript:loadGrid(0)'><i class='fa fa-search'></i>{:lang('wstim_query')}</button>
+	<div style='clear:both'></div>
+</div>
+<table id="mmg" class="mmg">
+	<tr>
+		<th rowspan="" colspan=""></th>
+	</tr>
+</table>
+<div id="pg" style="text-align: right;"></div>
+
+
+<script src="__ROOT__/addons/wstim/view/static/bootstrap/js/bootstrap.min.js"></script>
+<script language="javascript" type="text/javascript" src="__ROOT__/addons/wstim/view/static/layui/layui.all.js"></script>
+<script src="__ROOT__/addons/wstim/view/static/mmgrid/mmGrid.js" type="text/javascript"></script>
+<script src="__ROOT__/addons/wstim/view/admin/list.js" type="text/javascript"></script>
+<script>
+$(function(){
+    getApis(function(){
+    	initGrid();
+	    var laydate = layui.laydate;
+	    laydate.render({
+	        elem: '#startDate'
+	    });
+	    laydate.render({
+	        elem: '#endDate'
+	    });
+    })
+})
+</script>
+
+</html>

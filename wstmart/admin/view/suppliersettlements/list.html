@@ -1,0 +1,53 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/suppliersettlements/suppliersettlements.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<style type="text/css">
+    #mmg td:nth-child(4){color: red;}
+    #mmg td:nth-child(5){color: #31c15a;}
+    #mmg td:nth-child(6){color: #1890ff;}
+</style>
+<div id='alertTips' class='alert alert-success alert-tips fade in'>
+  <div id='headTip' class='head'><i class='fa fa-lightbulb-o'></i>{:lang('menu_tips')}</div>
+  <ul class='body'>
+    <li>{:lang('supp_settlement_menu_tips1')}</li>
+    <li>{:lang('supp_settlement_menu_tips2')}</li>
+  </ul>
+</div>
+<div class="wst-toolbar">
+<input type="text" id="startDate" style='width:120px' name="startDate" class="laydate-icon j-ipt" maxLength="20" value='' placeholder="{:lang('supp_settlement_start_date')}"/>
+{:lang('to')}
+<input type="text" id="endDate" name="endDate" style='width:120px' class="laydate-icon j-ipt" maxLength="20" value='' placeholder="{:lang('supp_settlement_end_date')}"/>
+<input type="text" name="settlementNo"  placeholder="{:lang('supp_settlement_no')}" id="settlementNo" class='j-ipt'/>
+<input type="text" name="supplierName"  placeholder="{:lang('supp_settlement_name')}/{:lang('supp_settlement_sn')}" id="supplierName" class='j-ipt'/>
+<select id='settlementStatus' class='j-ipt'>
+    <option value='-1'>{:lang('supp_settlement_all')}</option>
+    <option value='0'>{:lang('supp_settlement_no_settle')}</option>
+    <option value='1'>{:lang('supp_settlement_yes_settle')}</option>
+</select>
+<button class="btn btn-primary" onclick='javascript:loadGrid(0)'><i class='fa fa-search'></i>{:lang('query')}</button>
+<button class="btn btn-primary f-right btn-fixtop" onclick='javascript:toExport(0)'><i class="fa fa-sign-in"></i>{:lang('export')}</button>
+<div style='clear:both'></div>
+</div>
+<div class='wst-grid'>
+<div id="mmg" class="mmg"></div>
+<div id="pg" style="text-align: right;"></div>
+</div>
+<script>
+$(function(){
+	initGrid({$p});
+    var laydate = layui.laydate;
+    laydate.render({
+        elem: '#startDate'
+    });
+    laydate.render({
+        elem: '#endDate'
+    });
+})
+</script>
+{/block}

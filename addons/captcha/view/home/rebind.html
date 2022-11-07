@@ -1,0 +1,91 @@
+<button type="button" id="timeObtain" onclick="javascript:getSmsCaptch();" class="wst-sec-obtain">{:lang('captcha_press_get_check_code')}</button>
+<style>
+.ma_loading{position: relative;top: 4px;left: 5px;display: none}
+.ma_head{height: 50px;line-height: 50px;font-size: 14px;border-bottom: 1px solid #f5f5f5;margin-bottom: 15px;padding-left: 35px;font-weight: bold;background:#f5f5f5;}
+.ma_head .close{float: right;margin-right: 25px;}
+.ma_head #maImg{position: relative;}
+#maBox{margin-left: 25px;}
+#maBox li{width:100px;height:100px;float:left;margin-right:2px;margin-bottom:2px;border:3px solid #fff;cursor: pointer;}
+#maBox li img{width:100px;height:100px;}
+#maBox li.select{border:3px solid #24D798;}
+#maBox li .sign{position: relative;top: -66px;left: 36px;width: 25px;height: 25px;}
+</style>
+<script>
+var box = null;
+function getCaptcha(){
+   $('.ma_loading').show();
+   $.post(WST.AU('captcha://captchas/getCaptcha'),{rnd:Math.random()},function(data,textStatus){
+       var json = WST.toJson(data);
+       $('.ma_loading').hide();
+       if(json.status==1){
+          var data = json.data;
+          $('#maImg').attr('src',WST.AU("captcha://captchas/captcha"));
+          var html = [];
+          for(var i=0;i<data['list'].length;i++){
+             html.push('<li><img src="'+WST.conf.RESOURCE_PATH+'/'+data['list'][i]['imgPath']+'" code="'+data['list'][i]['code']+'"></li>');
+          }
+          $('#maBox').html(html.join(''));
+          var isChk = false;
+          $('#maBox li').each(function(){
+              $(this).click(function(){
+                  if(isChk)return;
+                  isChk = true;
+                  $(this).addClass('select');
+                  $(this).append('<img class="sign" src="'+WST.conf.ROOT+'/addons/captcha/view/images/select.png'+'">');
+                  checkCaptch($(this).find('img').attr('code'));
+              });
+          })
+       }else{
+          WST.msg(json.msg,{icon:2});
+       }
+  });
+}
+function checkCaptch(code){
+    $.post(WST.AU('captcha://captchas/checkReBindCaptcha'),{code:code,userPhone:$('#userPhone').val()},function(data,textStatus){
+       var json = WST.toJson(data);
+       if(json.status==1){
+           layer.close(box);
+           WST.msg(json.msg,{icon:1});
+           var time = 120;
+           $('#timeObtain').attr('disabled', 'disabled').css('background','#e8e6e6');
+           $('#timeObtain').html("{:lang('captcha_get_phone_check_code1')}").css('width','130px');
+           var task = setInterval(function(){
+              time--;
+              $('#timeObtain').html("{:lang('captcha_get_phone_check_code2')}("+time+")");
+              if(time==0){
+                isSend = false;           
+                clearInterval(task);
+                $('#timeObtain').html("{:lang('captcha_get_check_code_again')}").css('width','100px');
+                $('#timeObtain').removeAttr('disabled');
+              }
+           },1000);
+       }else{
+           WST.msg(json.msg,{icon:2});
+           getCaptcha();
+       }
+    });
+}
+function getSmsCaptch(){
+   if($.trim($('#userPhone').val())==''){
+      WST.msg('请输入要绑定的手机号',{icon:2});
+      return;
+   }
+   if(WST.conf.SMS_VERFY!=1){
+       getPhoneVerify('o');
+   }else{
+     box = layer.open({
+        title: false,
+        closeBtn: 0,
+        type: 1,
+        area: ['370px', '430px'], //宽高
+        content: '<div><div class="ma_head">{:lang("captcha_select_picture")}：<img height="30" id="maImg">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:getCaptcha()">{:lang("captcha_refresh")}</a><img  class="ma_loading" src="'+WST.conf.ROOT+'/static/images/loading_16x16.gif'+'"/><a class="close" href="javascript:closeCaptchaBox()">{:lang("captcha_close")}</a></div><ul id="maBox"></ul></div>',
+        success: function(layero, index){
+          getCaptcha();
+        },
+      });
+   }
+}
+function closeCaptchaBox(){
+   layer.close(box);
+}
+</script>

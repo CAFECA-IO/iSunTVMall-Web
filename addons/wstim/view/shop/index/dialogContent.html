@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <link rel="stylesheet" href="__ROOT__/addons/wstim/view/shop/index/dialogcontent.css">
+   <script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+</head>
+<body>
+<div class="dialog_content_box">
+   <div class="dialog_content_titbox">
+   </div>
+   <div class="" id="scrollDiv">
+      <div class="chat-more" id="clickMore" onclick="clickMore(this)">
+         <p class="tc"><span class="icon"></span><span class="txt">{:lang('wstim_click_to_load_more')}</span></p>
+      </div>
+   </div>
+</div>
+<input type="hidden" id="userId" value="#@userId@#" />
+<input type="hidden" id="currPage" value="0" />
+<input type="hidden" id="totalPage" value="1" />
+<script src="__ROOT__/addons/wstim/view/shop/index/dialogcontents.js" type="text/javascript"></script>
+<script>
+$(function(){
+   getApis(function(){
+      clickMore($('#clickMore'));
+   })
+})
+</script>
+   
+</body>
+</html>

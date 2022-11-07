@@ -1,0 +1,93 @@
+<div class="search-container">
+    <div class='wst-logo'>
+        <?php $mallName = WSTConf('CONF.mallName'); ?>
+        <a href="{$vo['link']}" title="{$mallName|WSTStripTags}" >
+            <img src="__RESOURCE_PATH__/{$vo['img']}" height="120" width='240' title="{$mallName|WSTStripTags}" alt="{$mallName|WSTStripTags}">
+        </a>
+    </div>
+    <div class="wst-search-box">
+        <div class='wst-search'>
+            <input type="hidden" id="search-type" value="{:isset($keytype)?1:0}"/>
+            <ul class="c-search-box">
+                <li class="c-search-type">
+                    <span>{$vo['type'][0]}</span>&nbsp;<i class="arrow"> </i>
+                </li>
+                <li class="c-type-list">
+                    {if isset($keytype)}
+                    <div data="0">{$vo['type'][0]}</div>
+                    {else}
+                    <div data="1">{$vo['type'][1]}</div>
+                    {/if}
+                </li>
+            </ul>
+            <input type="text" id='search-ipt' class='search-ipt' placeholder="{$vo['placeholder'][0]}" value='{:isset($keyword)?$keyword:""}'/>
+            <input type='hidden' id='adsGoodsWordsSearch' value="{$vo['placeholder'][0]}">
+            <input type='hidden' id='adsShopWordsSearch' value="{$vo['placeholder'][1]}">
+            <input type='hidden' id='searchGoodsType' value="{$vo['type'][0]}">
+            <input type='hidden' id='searchShopsType' value="{$vo['type'][1]}">
+            <div id='search-btn' class="search-btn" onclick='javascript:WST.search(this.value)'>{:lang('shopcustompage_search')}</div>
+        </div>
+        <div class="wst-search-keys">
+            {for start="0" end="count($vo['hots'])"  }
+                 {if $i>0}&nbsp;&nbsp;|&nbsp;&nbsp;{/if}
+                 <a href="{:Url('home/goods/search','keyword='.$vo['hots'][$i])}">{$vo['hots'][$i]}</a>
+            {/for}
+        </div>
+    </div>
+    <div class="wst-cart-box">
+        <a href="{:url('home/carts/index')}" target="_blank" onclick="WST.currentUrl('{:url("home/carts/index")}');"><span class="word j-word">{:lang('shopcustompage_my_cart')}<span class="num" id="goodsTotalNum" style='display:none'>0</span></span></a>
+        <div class="wst-cart-boxs hide">
+            <div id="list-carts"></div>
+            <div id="list-carts2"></div>
+            <div id="list-carts3"></div>
+            <div class="wst-clear"></div>
+        </div>
+    </div>
+    {/* 购物车 */}
+    <script id="list-cart" type="text/html">
+        {{# for(var i = 0; i < d.list.length; i++){ }}
+        <div class="goods" id="j-goods{{ d.list[i].cartId }}">
+            <div class="imgs"><a href="{{ WST.U('home/goods/detail','goodsId='+d.list[i].goodsId) }}"><img class="goodsImgc" data-original="__RESOURCE_PATH__/{{ d.list[i].goodsImg }}" title="{{ d.list[i].goodsName }}"></a></div>
+            <div class="number"><p><a  href="{{ WST.U('home/goods/detail','goodsId='+d.list[i].goodsId) }}">{{WST.cutStr(d.list[i].goodsName,26)}}</a></p><p>{{ WST.lang('shopcustompage_num') }}：{{ d.list[i].cartNum }}</p></div>
+            <div class="price"><p>{:lang('currency_symbol')}{{ d.list[i].shopPrice }}</p><span><a href="javascript:WST.delCheckCart({{ d.list[i].cartId }})">{{ WST.lang('shopcustompage_del') }}</a></span></div>
+        </div>
+        {{# } }}
+    </script>
+</div>
+<script>
+    customSearchIpt();
+    function customSearchIpt(){
+        $('.c-search-box').hover(function(){
+            $(".c-type-list").show();
+            $(this).find('i').removeClass('arrow').addClass('over');
+            $(this).css({"border-left":"1px solid #D4D4D4;"});
+        },function(){
+            $(".c-type-list").hide();
+            $(this).css({"border-left":"1px solid #D4D4D4;"});
+            $(this).find('i').removeClass('over').addClass('arrow');
+        });
+
+        $('c-type-list').hover(function(){
+            $(".c-type-list").show();
+            $(this).find('i').removeClass('arrow').addClass('over');
+            $(this).css({"border-left":"1px solid #D4D4D4;"});
+        });
+
+        $(".c-type-list div").click(function(){
+            $("#search-type").val($(this).attr("data"));
+            $(".c-search-type span").html($(this).html());
+            if($(this).attr("data")==1){
+                $(this).attr("data",0);
+                $(this).html($('#searchGoodsType').val());
+                $('#search-ipt').attr('placeholder',$('#adsShopWordsSearch').val());
+            }else{
+                $(this).attr("data",1);
+                $(this).html($('#searchShopsType').val());
+                $('#search-ipt').attr('placeholder',$('#adsGoodsWordsSearch').val());
+            }
+            $(".c-type-list").hide();
+            $(".c-search-type").find('i').removeClass('over').addClass('arrow');
+        });
+    }
+</script>
+<div class="wst-clear"></div>

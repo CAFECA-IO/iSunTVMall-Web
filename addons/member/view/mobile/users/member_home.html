@@ -1,0 +1,155 @@
+{extend name="$LAYOUT_MOBILE_BASE" /}
+{block name="title"}我的 - {__block__}{/block}
+{block name="meta"}
+<meta property="og:url"           content="{:url('mobile/index/index','shareUserId='.base64_encode(session('WST_USER.userId')),true,true)}" />
+<meta property="og:type"          content="website" />
+<meta property="og:title"         content="{:WSTConf('CONF.mallName')}" />
+<meta property="og:description"   content="" />
+<meta property="og:image"         content="{:WSTConf('CONF.resourcePath')}/{:WSTConf('CONF.mallLogo')}" />
+<meta property="og:site_name" content="{:WSTConf('CONF.mallName')}">
+{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__ROOT__/addons/member/view/mobile/users/member.css?v={$v}">
+<link rel="stylesheet"  href="__MOBILE__/js/share/nativeShare.css?v={$v}">
+<style>
+
+</style>
+{/block}
+{block name="header"}
+
+{/block}
+{block name="main"}
+    <section class="ui-container">
+        	<div class="wst-users_info">
+	        	<div class="wst-flex-row wst-center" >
+		     		<div class="wst-flex-column">
+		     			<div class="wst-users_infol" id="previewImages">
+		     			    <img src="{:WSTUserPhoto($user['userPhoto'])}" class="wst-useri_portrait" id="imgurl">
+		     			</div>
+						<div class="wst-flex-column">
+							<p class="wst-users_infor wst-users_infortop">{:$user['userName']?$user['userName']:$user['loginName']}</p>
+						</div>
+		     		</div>
+				</div>
+				<div class="ui-whitespace wst-sha_icon wst-flex-row wst-center">
+					<div class="wst-flex-row wst-center item" onclick="WST.dialogShare();">
+						<i class="icon-qrcode"></i>
+						<div>
+							<p class="title">{:lang('addon_member_user_qr_code_sharing')}</p>
+							<p class="desc">{:lang('addon_member_user_qr_code_invite_friends')}</p>
+						</div>
+					</div>
+					<?php if(!(Request()->isSsl())){?>
+					<div class="wst-flex-row wst-center item" onclick="javascript:shareShow();">
+						<i class="icon-money"></i>
+						<div>
+							<p class="title">{:lang('addon_member_user_benefits_immediately')}</p>
+							<p class="desc">{:lang('addon_member_user_invite_friends_to_earn_benefits')}</p>
+						</div>
+					</div>
+					<?php } ?>
+				</div>
+			</div>
+			<div class="wst-sha_icon2">
+				<a href="{:url('addon/member-member-mobilememberawards')}">
+					<ul class="ui-list wst-users_list ui-list-active wst-flex-row wst-jsb wst-ac">
+						<li>
+							<div class="wst-list-thumb-sus">
+								<span class="wst-sha_chart1"></span>
+							</div>
+							<div class="ui-list-info">
+								<h5 class="ui-nowrap">{:lang('addon_member_user_my_reward')}</h5>
+							</div>
+						</li>
+						<li><i class="icon-right-arrow"></i></li>
+					</ul>
+				</a>
+				<a href="{:url('addon/member-member-mobilememberusers')}">
+					<ul class="ui-list wst-users_list ui-list-active wst-flex-row wst-jsb wst-ac">
+						<li>
+							<div class="wst-list-thumb-sus">
+								<span class="wst-sha_chart2"></span>
+							</div>
+							<div class="ui-list-info">
+								<h5 class="ui-nowrap">{:lang('addon_member_user_invitation_list')}</h5>
+							</div>
+						</li>
+						<li><i class="icon-right-arrow"></i></li>
+					</ul>
+				</a>
+			</div>
+        </section>
+	{/*分享 */}
+	<div class="wst-cart-box" id="frame-share" style="padding-top:10px;" >
+		<div class="content" id="nativeShare" style="padding-bottom:20px;">
+			<!-- ShareThis BEGIN -->
+            <div class="sharethis-inline-share-buttons" style="float: right;"></div>
+            <div style="float: right;font-weight: bold;margin-right: 10px;">立即<br/>分享</div>
+            <!-- ShareThis END -->
+		</div>
+		<button class="button" onclick="javascript:shareHide();" style="display: block;margin: 0 auto;margin-bottom: 0.05rem;">{:lang('addon_member_user_cancel')}</button>
+	</div>
+
+
+        <!--二维码对话框-->
+		<div class="ui-dialog" id="wst-di-qrcod" >
+		    <div class="ui-dialog-cnt wst-dialog-cnt5" style="width:auto;height:auto;background: none;">
+		        <div class="wst-dialog-bd">
+		            <div id="qrcodes" style="width: 3.2rem;height: 4.96rem;">
+						<div class="reload-btn-box" onclick="reloadPoster(1)">
+							<img src="__ROOT__/addons/member/view/images/reload.png" class="reload-icon">
+						</div>
+		            	<div id="shareImg"></div>
+		            	<div data-role="button" class="close-dialog">
+							<img src="__ROOT__/addons/member/view/images/icon-close.png" alt="">
+						</div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+
+		{/* 遮盖层  */}
+		<div class="wst-cover" id="cover" style="z-index:0"></div>
+{/block}
+{block name="footer"}
+	{include file="$LAYOUT_MOBILE_DIALOG" /}<!-- 对话框模板 -->
+	{include file="$LAYOUT_MOBILE_FOOTER" /}
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__MOBILE__/users/user.js?v={$v}'></script>
+<script>
+jQuery.noConflict();
+//弹框
+function shareShow(){
+	jQuery('#cover').attr("onclick","javascript:shareHide();").show();
+	jQuery('#frame-share').animate({"bottom": 0}, 500);
+}
+function shareHide(){
+	var cartHeight = '345px';
+	jQuery('#frame-share').animate({'bottom': '-'+cartHeight}, 500);
+	jQuery('#cover').hide();
+}
+$(function(){
+	shareHide();
+});
+
+WST.dialogShare = function(){
+	reloadPoster(0);
+}
+function reloadPoster(isNew){
+	$('#Load').show();
+	$.post(WST.U('addon/member-member-mocreatePoster'), {isNew:isNew},function(data){
+ 		$('#Load').hide();
+        var json = WST.toJson(data);
+        if(json.status==1){
+        	$("#shareImg").html("<img src='__RESOURCE_PATH__/"+json.data.shareImg+"?v="+Math.random()+"' style='width:3.2rem;border-radius: 6px;'/>");
+        	$("#wst-di-qrcod").dialog("show");
+        }
+    });
+}
+</script>
+
+
+{/block}
+{/block}

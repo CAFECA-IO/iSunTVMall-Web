@@ -1,0 +1,90 @@
+{extend name="default/base" /}
+{block name="js"}
+<script src="__STORE__/storeusers/notify.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<style>
+td.head-ititle{padding-left:30px;}
+.staffName {min-width:120px;padding-right:10px;display:inline-block;}
+.layui-form-checkbox {
+    height: 20px;
+    line-height: 18px;
+    padding-right: 20px;
+}
+.layui-form-checkbox i {
+    width: 20px;
+    left: -5px;
+    top: 1px;
+}
+</style>
+<form class="layui-form" action="" lay-filter="example">
+     <table class='wst-form wst-box-top layui-form'>
+      <tr>
+      	<td colspan='2'>
+      		   <div id='alertTips' class='alert alert-success alert-tips fade in' style='margin:0px 0px'>
+				  <div id='headTip' class='head'><i class='fa fa-lightbulb-o'></i>{:lang("menu_tips")}</div>
+				  <ul class='body'>
+				    <li>{:lang("sms_tips")}</li>
+				  </ul>
+				</div>
+      	</td>
+      </tr>
+      </table>
+      <fieldset class="layui-elem-field layui-field-title">
+	  <legend>{:lang("notify_tips")}</legend>
+	  <table class='wst-form wst-box-top layui-form'>
+	  <tr>
+	     <th>{:lang("notify_type")}：</th>
+	     <td>
+	     	<input class='ipt' type="hidden" id="id" value="{$object['id']}">
+	     	<span class='staffName'>
+	     		<input type='checkbox' name='privilegeMsgTypes' class='ipt' value="1" {if in_array(1,$object['privilegeMsgTypes'])}checked{/if}/>{:lang("notify_sys")}
+	     	</span>
+	     	<span class='staffName'>
+	     		<input type='checkbox' name='privilegeMsgTypes' class='ipt' value="4" {if in_array(4,$object['privilegeMsgTypes'])}checked{/if}/>{:lang("notify_wechat")}
+	     	</span>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th valign="top">{:lang("notify_opas")}：</th>
+	     <td>
+	     	{volist name=":WSTDatas('SHOP_MESSAGE')" id="vo"}
+	           	<span class='staffName'>
+	            <input type="checkbox" name="privilegeMsgs" class="ipt" value="{$vo['dataVal']}" {if $object['privilegeMsgs']}{:in_array($vo['dataVal'],$object['privilegeMsgs'])?"checked":""}{/if}/> {$vo["dataName"]}
+	           	</span>
+           	{/volist}
+	     </td>
+	  </tr>
+	  </table>
+	  </fieldset>
+      <fieldset class="layui-elem-field layui-field-title">
+	  <legend>{:lang("notify_sms_config")}</legend>
+	  <table class='wst-form wst-box-top layui-form'>
+	  <tr>
+	     <th>{:lang("notify_type")}：</th>
+	     <td>
+	     	<span class='staffName'>
+	     		<input type='checkbox' name='privilegeMsgTypes' class='ipt' value="2" {if in_array(2,$object['privilegeMsgTypes'])}checked{/if}/>{:lang("notify_sms")}
+	     	</span>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th valign="top">{:lang("notify_opas")}：</th>
+	     <td>
+	     	{volist name=":WSTSubDatas('SHOP_MESSAGE')" id="vo"}
+	           	<span class='staffName'>
+	            <input type="checkbox" name="privilegePhoneMsgs" class="ipt" value="{$vo['subDataVal']}" {if $object['privilegePhoneMsgs']}{:in_array($vo['subDataVal'],$object['privilegePhoneMsgs'])?"checked":""}{/if}/> {$vo["dataName"]}
+	           	</span>
+           	{/volist}
+	     </td>
+	  </tr>
+	  <tr>
+	     <td colspan='2' align='center'>
+	     	<button type="button" class="btn btn-primary btn-mright" onclick='javascript:edit()'><i class="fa fa-check"></i>{:lang("save")}</button> 
+        	<button type="reset" class="btn" ><i class="fa fa-refresh"></i>{:lang("reset")}</button>
+	     </td>
+	  </tr>
+	 </table>
+	 </fieldset>
+</form>
+{/block}

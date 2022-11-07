@@ -1,0 +1,186 @@
+{extend name="$LAYOUT_SHOP_BASE" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<style>
+input[type=text]{width:150px;}
+</style>
+<div>
+    <div class='wst-tips-box'>
+        <div class='icon'></div>
+        <div class='tips'>
+            {:lang('group_goods_tips_1')}<br/>
+            {:lang('group_goods_tips_2')}<br/>
+            {:lang('group_goods_tips_3')}</div>
+        <div style="clear:both"></div>
+    </div>
+</div>
+<form id='grouponform' name='grouponform' autocomplete="off">
+    <input type='hidden' id='grouponId' class='ipt' value='{$object["grouponId"]}'/>
+    <fieldset>
+        <legend>{:lang('group_activity_info')}</legend>
+        <div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+            <ul class="layui-tab-title">
+                {volist name=":WSTSysLangs()" id='vo'}
+                <li {if $key==0}class="layui-this"{/if}>{$vo['name']}</li>
+                {/volist}
+            </ul>
+            <div class="layui-tab-content">
+                {volist name=":WSTSysLangs()" id='vo'}
+                <div class="layui-tab-item {if $key==0}layui-show{/if}">
+                    <table class='wst-form'>
+                        <tr>
+                            <th>{:lang('group_goods_name')}<font color='red'>*</font>：</th>
+                            <td>
+                                <input type="text" class='ipt ipwd' id='langParams{$vo["id"]}goodsName' maxLength='150' data-rule='{:lang("group_goods_name")}:required;' value="{$object['langParams'][$vo['id']]["goodsName"]}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>{:lang('group_seo_key_words')}：</th>
+                            <td><input type='text' class='ipt ipwd' id='langParams{$vo["id"]}goodsSeoKeywords' maxLength='100' value='{$object['langParams'][$vo['id']]["goodsSeoKeywords"]}' /></td>
+                        </tr>
+                        <tr>
+                            <th>{:lang('group_seo_desc')}：</th>
+                            <td><input type='text' class='ipt ipwd' id='langParams{$vo["id"]}goodsSeoDesc' maxLength='200' value='{$object['langParams'][$vo['id']]["goodsSeoDesc"]}' /></td>
+                        </tr>
+                        <tr>
+                            <th>{:lang('group_explain')}：</th>
+                            <td>
+                                <textarea rows="2" cols="60" id='langParams{$vo["id"]}grouponDesc' class='ipt' name='langParams{$vo["id"]}grouponDesc' >{$object['langParams'][$vo['id']]['grouponDesc']}</textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                {/volist}
+            </div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>{:lang('group_activity_setting')}</legend>
+        <table class="wst-form">
+            <tr>
+                <th width='120' align='right'>&nbsp;</th>
+                <td>
+                    <select id="shopCatId1" class='j-ipt' onchange="getShopsCats('shopCatId2',this.value,'');">
+                        <option value="">{:lang('group_please_select')}</option>
+                        {volist name=":WSTShopCats(0)" id="vo"}
+                        <option value="{$vo['catId']}">{$vo['catName']}</option>
+                        {/volist}
+                    </select>
+                    <select id='shopCatId2' class='j-ipt'>
+                        <option value=''>{:lang('group_please_select')}</option>
+                    </select>
+                    <br/>
+                    <input type='text' id='sgoodsName' style='margin-top:5px;width: 350px;' placeholder="{:lang('group_input_search_key')}" />
+                    <a type="button" class='btn btn-primary' onclick="searchGoods()"><i class="fa fa-search"></i>{:lang('group_query')}</a>
+                </td>
+            </tr>
+            {if $object['grouponStatus']==-1}
+            <tr class="wst-order-rate" >
+                <th width='120'>{:lang('group_failure_reasons')}：</th>
+                <td colspan='3' style='color:red'>
+                    {$object['illegalRemarks']}
+                </td>
+            </tr>
+            {/if}
+            <tr>
+                <th width='120' align='right'>{:lang('group_goods')}：</th>
+                <td>
+                    <select id='goodsId' class='ipt' onchange='changeGoods(this)'>
+                        <option value="{$object['goodsId']}">{:lang('group_require_goods')}</option>
+                    </select><br/>
+                </td>
+            </tr>
+            <tr>
+                <th>{:lang('group_goods_pic')}<font color='red'>*</font>：</th>
+                <td>
+                    <input type="text" id='goodsImg' readonly="readonly" value='{if $object["goodsImg"]!=''}{$object["goodsImg"]}{else}{:WSTConf('CONF.goodsLogo')}{/if}' class="ipt" style="float: left; width: 655px;" />
+                    <div id='goodsImgPicker' style="float: left;margin-top: 5px;">{:lang('group_upload')}</div><span id='uploadMsg'></span>
+                    <div id='goodsImgBox' style='margin-bottom:5px; float: left; height: 30px; margin-left: 5px;'>
+                <span class='weixin'>
+                      <img class='img' style='height:16px;width:18px;' src='__STATIC__/images/upload-common-select.png'>
+                      <img class='imged'  id='preview'  style='max-height:150px;max-width: 200px; border:1px solid #dadada; background:#fff' src="__RESOURCE_PATH__/{if $object['goodsImg']!=''}{$object['goodsImg']}{else}{:WSTConf('CONF.goodsLogo')}{/if}">
+                    </span>
+                    </div>
+                    <div class="f-clear"></div>
+                    <span class='msg-box' id='msg_goodsImg'></span>
+                </td>
+            </tr>
+            <tr>
+                <th width='120'>{:lang('group_market_price')}：</th>
+                <td colspan='3' id='marketPrice'>{:lang('currency_symbol')}{$object["marketPrice"]}</td>
+            </tr>
+            <tr class="wst-order-rate" >
+                <th width='120'>{:lang('group_buy_price')}<font color='red'>*</font>：</th>
+                <td colspan='3'>
+                    <input type='text' id='grouponPrice' name='grouponPrice'class='ipt' maxLength='10' value='{$object["grouponPrice"]}' data-rule="{:lang('group_buy_price')}:required;price" data-rule-price="[/^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/, '{:lang(\'group_price_limit_tips\')}']"/>
+                </td>
+            </tr>
+            <tr class="wst-order-rate" >
+                <th width='120'>{:lang('group_number')}<font color='red'>*</font>：</th>
+                <td colspan='3'>
+                    <input type='text' id='grouponNum' name='grouponNum' class='ipt' maxLength='8' data-rule="{:lang('group_number')}:required;integer[+]" value='{$object["grouponNum"]}'/>
+                </td>
+            </tr>
+            <tr class="wst-order-rate" >
+                <th width='120'>{:lang('group_max_buy_number')}<font color='red'>*</font>：</th>
+                <td colspan='3'>
+                    <input type='text' id='limitNum' name='limitNum' class='ipt' maxLength='8' data-rule="{:lang('group_max_buy_number')}:required;integer[+]" value='{$object["limitNum"]}'/>
+                </td>
+            </tr>
+            <tr class="wst-order-rate" >
+                <th width='120'>{:lang('group_time')}<font color='red'>*</font>：</th>
+                <td colspan='3'>
+                    <input type='text' id='startTime' name='startTime' class='ipt laydate-icon' value='{$object["startTime"]}' data-rule="{:lang('group_start_date')}: required;datetime;"/>
+                    {:lang('group_to_title')}
+                    <input type='text' id='endTime' name='endTime' class='ipt laydate-icon' value='{$object["endTime"]}' data-rule="{:lang('group_end_date')}: required;datetime;match(gt, startTime, datetime)"/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan='2' style='text-align:center;padding:20px;'>
+                    <button class='btn btn-primary' type='button' onclick="save({$p})"><i class="fa fa-check"></i>{:lang('group_save')}</button>&nbsp;&nbsp;
+                    <button class='btn' type='button' onclick="javascript:location.href = WST.AU('groupon://shops/groupon','p={$p}')"><i class="fa fa-angle-double-left"></i>{:lang('group_back')}</button>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+</form>
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script type="text/javascript" src="__ROOT__/addons/groupon/view/shop/shop.js?v={$v}"></script>
+<script>
+$(function(){
+  var laydate = layui.laydate;
+  laydate.render({
+      elem: '#startTime',
+      type: 'datetime'
+  });
+  laydate.render({
+      elem: '#endTime',
+      type: 'datetime'
+  });
+    WST.upload({
+        pick:'#goodsImgPicker',
+        formData: {dir:'groupon',isWatermark:1,isThumb:1},
+        accept: {extensions: 'gif,jpg,jpeg,png',mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif'},
+        callback:function(f){
+            var json = WST.toJson(f);
+            if(json.status==1){
+                $('#uploadMsg').empty().hide();
+                $('#preview').attr('src',WST.conf.RESOURCE_PATH+"/"+json.savePath+json.thumb);
+                $('#goodsImg').val(json.savePath+json.name);
+                $('#msg_goodsImg').hide();
+            }
+        },
+        progress:function(rate){
+            $('#uploadMsg').show().html("{:lang('group_has_upload')}"+rate+"%");
+        }
+    });
+})
+</script>
+{/block}

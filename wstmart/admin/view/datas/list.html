@@ -1,0 +1,81 @@
+{extend name="base" /}
+{block name="css"}
+<link href="__STATIC__/plugins/ztree/css/zTreeStyle/zTreeStyle.css?v={$v}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/ztree/jquery.ztree.all-3.5.js?v={$v}"></script>
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/datas/datas.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div id='alertTips' class='alert alert-success alert-tips fade in'>
+  <div id='headTip' class='head'><i class='fa fa-lightbulb-o'></i>{:lang('menu_tips')}</div>
+  <ul class='body'>
+    <li>{:lang('data_menu_tips1')}</li>
+    <li>{:lang('data_menu_tips2')}</li>
+  </ul>
+</div>
+<div class="j-layout">
+    <div class='j-layout-left'>
+        <div class='j-layout-panel layui-colla-title'>{:lang('data_cat_mgr')}</div>
+        <ul id="menuTree" class="ztree" style='overflow:auto'></ul>
+    </div>
+    <div class='j-layout-center' style='border:1px solid #f1f1f1;float:left;margin-left:5px;'>
+      <div class='j-layout-panel layui-colla-title'>{:lang('data_mgr')}</div>
+      {if WSTGrant('SJGL_01')}
+      <div class="wst-toolbar" style='display:none'>
+          <button class="btn btn-success f-right" onclick='javascript:toEdit(0)'><i class='fa fa-plus'></i>{:lang('add')}</button>
+          <div style='clear:both'></div>
+      </div>
+      {/if}
+      <div id="maingrid"  style='display:none'>
+        <div id="mmg" class="mmg"></div>
+        <div id="pg" style="text-align: right;"></div>
+      </div>
+    </div>
+</div>
+<div id='menuBox' style='display:none'>
+<form id='menuForm'>
+  <table class='wst-form wst-box-top'>
+     {volist name=':WSTSysLangs()' id='vo'}
+     <tr>
+        <th width='180'>{:lang('label_data_cat_name')}({$vo['name']})<font color='red'>*</font>：</th>
+        <td><input type='text' id='langParams{$vo['id']}catName' class='ipt2' data-rule="{:lang('label_data_cat_name')}: required;" placeholder="{:lang('ipt_lang_placeholder')}" /></td>
+     </tr>
+     {/volist}
+     <tr>
+        <th width='180'>{:lang('label_data_cat_code')}<font color='red'>*</font>：</th>
+        <td><input type='text' id='catCode' class='ipt2' data-rule="{:lang('label_data_cat_code')}: required;"  /></td>
+     </tr>
+  </table>
+</form>
+</div>
+<div id='dataBox' style='display:none'>
+  <form id='dataForm' autocomplete='off'>
+  <table class='wst-form wst-box-top'>
+     {volist name=':WSTSysLangs()' id='vo'}
+     <tr>
+        <th width='180'>{:lang('label_data_name')}({$vo['name']})<font color='red'>*</font>：</th>
+        <td><input type='text' id='langParams{$vo['id']}dataName' class='ipt' data-rule="{:lang('label_data_name')}: required;" placeholder="{:lang('ipt_lang_placeholder')}"/></td>
+     </tr>
+     {/volist}
+     <tr>
+        <th>{:lang('label_data_code')}<font color='red'>*</font>：</th>
+        <td><input type='text' id='dataVal' class='ipt' data-rule="{:lang('label_data_code')}: required;"/></td>
+     </tr>
+     <tr>
+        <th>{:lang('sort')}<font color='red'> </font>：</th>
+        <td><input onkeypress='return WST.isNumberKey(event);' onkeyup="javascript:WST.isChinese(this,1)" type='text' id='dataSort' class='ipt' /></td>
+     </tr>
+  </table>
+  </form>
+</div>
+<div id="rMenu">
+  <ul>
+    {if WSTGrant('SJFL_01')}<li id="m_add" >{:lang('add_data_cat')}</li>{/if}
+    {if WSTGrant('SJFL_02')}<li id="m_edit">{:lang('edit_data_cat')}</li>{/if}
+    {if WSTGrant('SJFL_03')}<li id="m_del" style='border-bottom:0px;'>{:lang('del_data_cat')}</li>{/if}
+  </ul>
+</div>
+{/block}

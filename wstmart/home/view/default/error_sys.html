@@ -1,0 +1,16 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('sys_err_page_title')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="css"}{/block}
+{block name="main"}
+<div class="wst-container">
+	<div class="wst-empty empty2">
+		<div class="prompt2">
+			<span>{:lang('sys_err_page')}</span>
+		</div>
+		<div class="button2">
+			<a href="javascript:history.go(-1)" class="wst-empty-btn wst-empty-btn1">{:lang('back_page')}</a>
+		   <a href="{$Request.root.true}" class="wst-empty-btn wst-empty-btn1">{:lang('back_home')}</a>
+		</div>
+	</div>
+</div>
+{/block}

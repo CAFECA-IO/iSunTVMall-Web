@@ -1,0 +1,23 @@
+{extend name="default/base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="main"}
+<div class="wst-toolbar">
+  <input type="hidden" name="goodsId" id="goodsId" value="{$goodsId}" class="s-query"/>
+  <input type="text" name="shopName" id="shopName" class="s-query" placeholder="{:lang('label_goodsrelate_shop_name')}/{:lang('label_goodsrelate_shop_sn')}"/>
+  <a class="s-btn btn btn-primary" id="store-query" onclick="shopPageLoadGrid()"><i class="fa fa-search"></i>{:lang('query')}</a>
+  <button type="button" class="btn f-right" onclick="javascript:location.href='{:url("supplier/goods/$src",['p'=>$p])}'"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+</div>
+<div class='wst-grid'>
+    <div id="mmg" class="mmg"></div>
+    <div id="pg" style="text-align: right;"></div>
+</div>
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__SUPPLIER__/goodsrelates/goodsrelates.js?v={$v}'></script>
+<script>
+$(function(){shopPageQuery({$p})})
+</script>
+{/block}

@@ -1,0 +1,179 @@
+<div class="nav-container" >
+    {php}$hideCategory=1;$navs = $vo['navs'];$showNavCategory=$vo['showNavCategory'];$backgroundColor=$vo['backgroundColor'];{/php}
+    {/* 左侧菜单栏 */}
+    <div class="wst-nav-menus" {if $showNavCategory==0}style="border-bottom:none;width:1200px;margin:0 auto;"{/if}>
+        {if $showNavCategory==1}
+        <div class="nav-w" style="position: relative;">
+            <div class="w-spacer"></div>
+            <div class="dorpdown {if isset($hideCategory)}j-index{/if}" id="custom-categorys">
+                <div class="dt j-cate-dt">
+                    <a href="javascript:void(0)">{:lang('custompage_all_goods_cat')}</a>
+                </div>
+                <div class="dd j-cate-dd" {if !isset($hideCategory)}style="display:none" {/if}>
+                <div class="dd-inner">
+                    {volist name=":WSTSideCategorys()" id="vo" key="k"}
+                    <div id="custom-cat-icon-{$k}" class="item fore1 {if ($key>=12)}over-cat{/if}">
+                        <span class="arrow"></span>
+                        <h3>
+                            <div class="{if ($key>=12)} over-cat-icon {else /} custom-cat-icon-{$k} {/if}"></div>
+                            <a href="{:Url('home/goods/lists','cat='.$vo['catId'])}" target="_blank">{$vo['catName']}</a>
+                        </h3>
+                    </div>
+                    {/volist}
+                </div>
+                <div style="display: none;" class="dorpdown-layer" id="custom_index_menus_sub">
+                    {volist name=":WSTSideCategorys()" id="vo" key="k"}
+                    <div class="item-sub" i="{$k}">
+                        <div class="item-brands">
+                            <div class="brands-inner">
+                                {wst:brand cat="$vo['catId']" id="bvo" num='6' cache='86400'}
+                                <a target="_blank" class="img-link" href="{:url('home/goods/lists',['cat'=>$bvo['catId'],'brand'=>$bvo['brandId']])}">
+                                    <img width="83" height="65" class='categeMenuImg' data-original="__RESOURCE_PATH__/{$bvo['brandImg']}">
+                                </a>
+                                {/wst:brand}
+                                <div class="wst-clear"></div>
+                            </div>
+                            <div class='shop-inner'>
+                                {wst:shop cat="$vo['catId']" id="bvo" num='4' cache='86400'}
+                                <a target="_blank" class="img-link" href="{:url('home/shops/index',['shopId'=>$bvo['shopId']])}">
+                                    <img width="83" height="65" class='categeMenuImg' data-original="__RESOURCE_PATH__/{$bvo['shopImg']}">
+                                </a>
+                                {/wst:shop}
+                                <div class="wst-clear"></div>
+                            </div>
+                        </div>
+
+                        <div class="subitems">
+                            {php}if(isset($vo['list'])){{/php}
+                            {volist name="vo['list']" id="vo2"}
+                            <dl class="fore2">
+                                <dd>
+                                    <a class="cat2_tit"
+                                        target="_blank"
+                                        href="{:Url('home/goods/lists','cat='.$vo2['catId'])}">
+                                        {$vo2['catName']}
+                                        <i>&gt;</i>
+                                    </a>
+                                    {php}if(isset($vo2['list'])){{/php}
+                                    {volist name="vo2['list']" id="vo3"}
+                                    <a target="_blank" href="{:Url('home/goods/lists','cat='.$vo3['catId'])}">{$vo3['catName']}</a>
+                                    {/volist}
+                                    {php}}{/php}
+                                    <div class="wst-clear"></div>
+                                </dd>
+                            </dl>
+                            {/volist}
+                            {php}}{/php}
+                        </div>
+                    </div>
+                    {/volist}
+                </div>
+            </div>
+        </div>
+        {/if}
+        {/* 横栏菜单 */}
+        <div id="wst-nav-items" style="background:{$backgroundColor};{if $showNavCategory==0}width:100%;{/if}" >
+            <ul>
+                {volist name="$navs" id='voo'}
+                <li class="fore1">
+                    <a href="{$voo['link']}" style="color:{$voo['color']}">{$voo['text']}</a>
+                </li>
+                {/volist}
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="wst-clear"></div>
+<script>
+    customSidebar();
+    function customSidebar(){
+        if(!$('#custom-categorys')[0])return;
+
+        if(!$('#custom-categorys').hasClass('j-index')){
+            WST.dropDownLayer("#custom-categorys",".j-cate-dd");
+        }
+        $(".dd-inner").children(".item").hover(function() { //一级导航悬浮
+            $('.categeMenuImg').lazyload({ effect: "fadeIn",failurelimit : 10,skip_invisible : false,threshold: 100,placeholder:window.conf.RESOURCE_PATH+'/'+window.conf.GOODS_LOGO});//默认图片
+            $(this).parent().find('.over-cat').show();
+
+            $(this).addClass("hover").siblings(".item").removeClass("hover");
+            var index = $(this).index();
+
+            $(".dorpdown-layer").children(".item-sub").hide();
+            $(".dorpdown-layer").children(".item-sub").eq(index).show();
+
+            var start = $('.j-cate-dt').offset().top;
+            var obj = $('#custom_index_menus_sub');
+            var sh = document.documentElement.scrollTop || document.body.scrollTop; // 滚动条距离顶部高度
+            if(sh>start+36){
+                var start = sh-start;
+            }else{
+                var start = 36;
+            }
+            //obj.stop().animate({ "top": start });
+            obj.css('top',start);
+
+
+        },function(){
+            $(this).parent().find('.over-cat').hide();
+        });
+
+
+
+        $('.over-cat-icon').parent().mouseover(function(){
+            $(this).find('.over-cat-icon').addClass('over-cat-icon-hover');
+        });
+        $('.over-cat-icon').parent().mouseout(function(){
+            $(this).find('.over-cat-icon').removeClass('over-cat-icon-hover');
+        });
+
+        $(".dd-inner").children(".item").mouseover(function() {
+
+            $('.dd-inner').find('.over-cat').show();
+
+            var iCon = $(this).attr('id');
+            $('.'+iCon).addClass(iCon+'-hover');
+        });
+        $(".dd-inner").children(".item").mouseout(function() {
+            $('.dd-inner').find('.over-cat').hide();
+
+            var iCon = $(this).attr('id');
+            $('.'+iCon).removeClass(iCon+'-hover');
+        });
+
+        $("#custom_index_menus_sub").hover(function(){
+            $('.dd-inner').find('.over-cat').show();
+            $(this).show();
+        },function(){
+            $(this).hide();
+            $('.dd-inner').find('.over-cat').hide();
+        });
+        $(".dd-inner").hover(function() { //整个导航菜单悬浮，是否显示二级导航到出厂
+            $("#custom_index_menus_sub").show();
+
+        }, function() {
+            $("#custom_index_menus_sub").hide();
+            $('.item').removeClass("hover");
+        })
+        $("#custom_index_menus_sub").children(".item-sub").hover(function() { //二级导航悬浮
+            var index = $(this).index();
+            $(".dd-inner").children(".item").eq(index).addClass("hover");
+            $("#custom_index_menus_sub").show();
+            var i = index+1;
+            $('.custom-cat-icon-'+i).addClass('cat-icon-'+i+'-hover');
+        }, function() {
+            $("#custom_index_menus_sub").hide();
+            $(".dd-inner").children(".item").removeClass("hover");
+            var index = $(this).index();
+            var i = index+1;
+            $('.custom-cat-icon-'+i).removeClass('cat-icon-'+i+'-hover');
+
+        });
+
+        $('.fore2').hover(function(){
+            $(this).children('dt').css('background-color','#ff6a53');
+        },function(){
+            $(this).children('dt').css('background-color','');
+        });
+    }
+</script>

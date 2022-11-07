@@ -1,0 +1,42 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/reports/ordere_sale_money.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div class="wst-toolbar">
+<input type="text" id="startDate" name="startDate" class="laydate-icon ipt" maxLength="20" value='{$startDate}' placeholder='{:lang("start_date")}'/>
+{:lang('to')}
+<input type="text" id="endDate" name="endDate" class="laydate-icon ipt" maxLength="20" value='{$endDate}' placeholder='{:lang("end_date")}'/>
+<select id='orderStatus' class='ipt' style='margin-top:2px'>
+  <option value='-1'>{:lang('label_order_status')}</option>
+  <option value='0'>{:lang('label_order_a_status1')}</option>
+  <option value='1'>{:lang('label_order_a_status4')}</option>
+  <option value='2'>{:lang('label_order_a_status5')}</option>
+</select>
+<select id='payType' class='ipt' style='margin-top:2px'>
+   <option value='-1'>{:lang('payment_method')}</option>
+   <option value='0'>{:lang('label_order_payment_type1')}</option>
+   <option value='1'>{:lang('label_order_payment_type0')}</option>
+</select>
+<button class="btn btn-primary" onclick='javascript:loadGrid(0)'><i class='fa fa-search'></i>{:lang('query')}</button>
+<button class="btn btn-primary f-right" style='margin-top:0px;' onclick='javascript:toExport(0)'><i class="fa fa-sign-in"></i>{:lang('export')}</button>  
+<span class="f-right">{:lang('total_order_sales_amount')}:<span style="color:red;font-weight:bold;" id="totalRealTotalMoney">0</span>{:lang('unit')}&nbsp;&nbsp;&nbsp;</span>
+<span class="f-right">{:lang('total_amount_of_points_deducted')}:<span style="color:red;font-weight:bold;" id="totalScoreMoney">0</span>{:lang('unit')}&nbsp;&nbsp;&nbsp;</span>
+</div>
+<div class="wst-tips-box">
+    <div class="icon"></div>
+    <div class="tips">{:lang('the_statistics_do_not_include_unpaid_orders')}</div>
+    <div style="clear:both"></div>
+</div>
+<div class='wst-grid'>
+<div id="mmg" class="mmg"></div>
+<div id="pg" style="text-align: right;"></div>
+</div>
+<script>
+$(function(){initGrid();})
+</script>
+{/block}

@@ -1,0 +1,88 @@
+{extend name="$LAYOUT_WECHAT_BASE" /}
+{block name="title"}{:lang('auction_pay_for_order')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__ROOT__/addons/auction/view/wechat/index/css/carts.css?v={$v}">
+{/block}
+{block name="header"}
+    <header style="background:#ffffff;" class="ui-header ui-header-positive ui-border-b wst-header">
+        <a class="ui-icon-return" onclick="history.back()"></a><h1>{:lang('auction_pay_for_order')}</h1>
+    </header>
+{/block}
+{block name="main"}
+   	{/* 大加载 */}
+	<div class="ui-loading-block" id="Loadl">
+	    <div class="ui-loading-cnt">
+	        <i class="ui-loading-bright"></i>
+	        <p id="j-Loadl">{:lang('auction_loading')}</p>
+	    </div>
+	</div>
+	<section class="ui-container">
+	{if(empty($message))}
+	  	<div class="order-item">
+			<div class="ui-row-flex ui-whitespace border-b">
+				<div class="">
+					<img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{:WSTImg($object['goodsImg'],3)}" title="{$object['goodsName']|WSTStripTags}" class="o-Img">
+				</div>
+				<div class="o-gInfo-container">
+					<div class="o-gInfo">
+						<p class="o-gName ui-nowrap-multi ">{$object['goodsName']}</p>
+					</div>
+					<div class="o-gInfo2 wst-flex-row wst-ac wst-jfe">
+						<p class="o-gPrice">×1</p>
+					</div>
+				</div>
+			</div>
+	      	<div class="ui-btn-wrap" style="text-align: right;padding:10px 0;">
+	        	<span class="wst-orders_pricet">{if($payObj=='bao')}{:lang('auction_caution_money')}{else}{:lang('auction_transaction_fee')}{/if}：<span class="wst-orders_prices">{:lang('currency_symbol')}<?php echo sprintf("%.2f", $object['cautionMoney']);?></span></span>     	
+	      	</div>
+	      	<div class="wst-clear"></div>
+		</div>
+	 
+		<div style="text-align: center;">
+			<button type="button" class="ui-btn-lg wst-btn-dangerlo" onclick="javascript:callpay();" style="width: 80%;  display: inline-block;">{:lang('auction_confirm_pay')}</button>
+		</div>
+	{else}
+		<ul class="ui-row-flex wst-flexslp">
+			<li class="ui-col ui-flex ui-flex-pack-center">
+			<p>{$message}</p>
+			</li>
+		</ul>
+	{/if}
+	</section>
+{/block}
+{block name="footer"}{/block}
+{block name="js"}
+<script type='text/javascript' src='__ROOT__/addons/auction/view/wechat/index/js/carts.js?v={$v}'></script>
+{if(empty($message))}
+<script type="text/javascript">
+	//调用微信JS api 支付
+    function jsApiCall(){
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',
+            <?php echo $jsApiParameters; ?>,
+            function(res){
+                if(res.err_msg=="get_brand_wcpay_request:ok"){
+                	location.href = "{$returnUrl}";
+                }
+            }
+        );
+       setTimeout(function(){
+            $('.wst-btn-dangerlo').removeAttr('disabled');
+        },2000);     
+    }
+    function callpay(){
+    	$('.wst-btn-dangerlo').attr('disabled', 'disabled');
+        if (typeof WeixinJSBridge == "undefined"){
+            if( document.addEventListener ){
+                document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+            }else if (document.attachEvent){
+                document.attachEvent('WeixinJSBridgeReady', jsApiCall); 
+                document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+            }
+        }else{
+            jsApiCall();
+        }
+    }
+	</script>
+{/if}
+{/block}

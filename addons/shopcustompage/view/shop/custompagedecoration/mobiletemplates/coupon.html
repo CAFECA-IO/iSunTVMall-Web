@@ -1,0 +1,55 @@
+{php}
+    $componentId = "componentIdPlaceholder";
+    $couponData = shop_custom_page_coupon_data($componentId);
+{/php}
+{volist name="couponData" id="vo"}
+<div class="coupon-container" style="background:{$vo['backgroundColor']}">
+    {php}$style='';{/php}
+    {if $vo['verticalPadding']}
+        {php}
+            $style.="padding-top:".intval($vo['verticalPadding'])."px;";
+            $style.="padding-bottom:".intval($vo['verticalPadding'])."px;";
+        {/php}
+    {/if}
+    {if $vo['style']==1}
+    <div class='coupons' style="{$style}">
+        {volist name="$vo['coupons']" id="voo" key="k2"}
+        <div class='coupons-item-1 wst-flex-column  wst-ac'>
+            <p class='coupon-value-content-1'>{:lang('currency_symbol')}<span class='coupon-value-1'>{$voo['couponValue']}</span></p>
+            <p class='coupon-condition-1'>{if $voo['useCondition'] == 1}{:lang('custompage_coupon_condition1',[$voo['useMoney']])}{else}{:lang('custompage_coupon_condition2')}{/if}</p>
+            <p class='coupon-get-1' onClick="getCoupon({$voo['couponId']})">{:lang('shopcustompage_get_now')}</p>
+        </div>
+        {/volist}
+    </div>
+    {else}
+    <div class='coupons' style="{$style}">
+        {volist name="$vo['coupons']" id="voo" key="k2"}
+        {if $k2==3}{php}break;{/php}{/if}
+        <div class='coupons-item-2 wst-flex-row wst-jc wst-ac'>
+            <p class='coupon-value-content-2'>{:lang('currency_symbol')}<span class='coupon-value-2'>{$voo['couponValue']}</span></p>
+            <div class='wst-flex-column wst-ac coupon-area'>
+                <p class='coupon-condition-2'>{if $voo['useCondition'] == 1}{:lang('custompage_coupon_condition1',[$voo['useMoney']])}{else}{:lang('custompage_coupon_condition2')}{/if}</p>
+                <p class='coupon-get-2' onClick="getCoupon({$voo['couponId']})">{:lang('shopcustompage_get_now')}</p>
+            </div>
+        </div>
+        {/volist}
+    </div>
+    {/if}
+</div>
+{/volist}
+<script>
+    if(couponStatus==false){
+        $('.coupon-container').remove();
+    }
+    // 领取优惠券
+    function getCoupon(couponId){
+        $.post(WST.AU('coupon://coupons/receive'), {couponId:couponId}, function(data){
+            var json = WST.toJson(data);
+            if(json.status==1){
+                WST.msg(json.msg,'success');
+            }else{
+                WST.msg(json.msg,'info');
+            }
+        });
+    }
+</script>

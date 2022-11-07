@@ -1,0 +1,103 @@
+{extend name="base" /}
+{block name="js"}
+<script src="__ADMIN__/sysconfigs/notify.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<style>
+td.head-ititle{padding-left:30px;}
+.staffName {min-width:120px;padding-right:10px;display:inline-block;}
+</style>
+<form class="layui-form" action="" lay-filter="example">
+     <table class='wst-form wst-box-top layui-form'>
+      <tr>
+      	<td colspan='2'>
+      		   <div id='alertTips' class='alert alert-success alert-tips fade in' style='margin:0px 0px'>
+				  <div id='headTip' class='head'><i class='fa fa-lightbulb-o'></i>{:lang('menu_tips')}</div>
+				  <ul class='body'>
+				    <li>{:lang('config_mall_tips1')}</li>
+				  </ul>
+				</div>
+      	</td>
+      </tr>
+      
+	  <tr>
+	     <td colspan='2' class='head-ititle'>{:lang('config_mall_refund')}：</td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_tip_type')}：</th>
+	     <td>
+	     	<span class='staffName'>
+	     		<input type='checkbox' id='wxRefundOrderTip' class='ipt' {if $object["wxRefundOrderTip"]==1}checked{/if}/>{:lang('config_mall_tip_type1')}
+	     	</span>
+	     	<span class='staffName'>
+	     		<input type='checkbox' id='smsRefundOrderTip' class='ipt' {if $object["smsRefundOrderTip"]==1}checked{/if}/>{:lang('config_mall_tip_type2')}
+	     	</span>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th valign="top">{:lang('config_mall_tip_user')}：</th>
+	     <td>
+	     	{volist name='list' id='vo'}
+	     	<span class='staffName'>
+	     		<input type='checkbox' class='ipt refundOrderTipUsers' value='{$vo['staffId']}' {if in_array($vo['staffId'],$object["refundOrderTipUsers"])}checked{/if}/>{$vo['staffName']}
+	     	</span>
+	     	{/volist}
+	     </td>
+	  </tr>
+	  <tr>
+	     <td colspan='2' class='head-ititle'>{:lang('config_mall_complain')}：</td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_tip_type')}：</th>
+	     <td>
+	     	<span class='staffName'>
+	     		<input type='checkbox' id='wxComplaintOrderTip' class='ipt' {if $object["wxComplaintOrderTip"]==1}checked{/if}/>{:lang('config_mall_tip_type1')}
+	     	</span>
+	     	<span class='staffName'>
+	     		<input type='checkbox' id='smsComplaintOrderTip' class='ipt' {if $object["smsComplaintOrderTip"]==1}checked{/if}/>{:lang('config_mall_tip_type2')}
+	     	</span>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th valign="top">{:lang('config_mall_tip_user')}：</th>
+	     <td>
+	     	{volist name='list' id='vo'}
+	     	<span class='staffName'>
+	     		<input type='checkbox' class='ipt complaintOrderTipUsers' value='{$vo['staffId']}' {if in_array($vo['staffId'],$object["complaintOrderTipUsers"])}checked{/if}/>{$vo['staffName']}
+	     	</span>
+	     	{/volist}
+	     </td>
+	  </tr>
+	  <tr>
+	     <td colspan='2' class='head-ititle'>{:lang('config_mall_draw')}：</td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_tip_type')}：</th>
+	     <td>
+	     	<span class='staffName'>
+	     		<input type='checkbox' id='wxCashDrawsTip' class='ipt' {if $object["wxCashDrawsTip"]==1}checked{/if}/>{:lang('config_mall_tip_type1')}
+	     	</span>
+	     	<span class='staffName'>
+	     		<input type='checkbox' id='smsCashDrawsTip' class='ipt' {if $object["smsCashDrawsTip"]==1}checked{/if}/>{:lang('config_mall_tip_type2')}
+	     	</span>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th valign="top">{:lang('config_mall_tip_user')}：</th>
+	     <td>
+	     	{volist name='list' id='vo'}
+	     	<span class='staffName'><input type='checkbox' class='ipt cashDrawsTipUsers' value='{$vo['staffId']}' {if in_array($vo['staffId'],$object["cashDrawsTipUsers"])}checked{/if}/>{$vo['staffName']}</span>
+	     	{/volist}
+	     </td>
+	  </tr>
+	  <tr>
+	  	{if WSTGrant('TZSZ_02')}
+	     <td colspan='2' align='center'>
+	     	<button type="button" class="btn btn-primary btn-mright" onclick='javascript:edit()'><i class="fa fa-check"></i>{:lang('submit')}</button> 
+        	<button type="reset" class="btn" ><i class="fa fa-refresh"></i>{:lang('reset')}</button>
+	     </td>
+	     {/if}
+	  </tr>
+	 </table>
+</form>
+{/block}

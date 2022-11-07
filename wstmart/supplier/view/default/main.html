@@ -1,0 +1,303 @@
+{extend name="default/base" /}
+{block name="js"}
+<script src="__STATIC__/plugins/echarts/echarts.min.js?v={$v}" type="text/javascript"></script>
+<script>
+// 销售统计
+function saleCount(){
+	$.post(WST.U('supplier/reports/getStatSales'),WST.getParams('.ipt'),function(data,textStatus){
+	    var json = WST.toJson(data);
+	    var myChart = echarts.init(document.getElementById('saleMain'));
+	    myChart.clear();
+	    $('#mainTable').hide();
+	    if(json.status=='1' && json.data){
+			var option = {
+			    tooltip : {
+			        trigger: 'axis'
+			    },
+			    calculable : true,
+			    xAxis : [
+			        {
+			            type : 'category',
+			            data : json.data.days
+			        }
+			    ],
+			    yAxis : [
+			        {
+			            type : 'value'
+			        }
+			    ],
+			    series : [
+			        {
+			            name:"lang('label_sale')",
+			            type:'line',
+			            data:json.data.dayVals
+			        }
+			    ]
+			};
+			myChart.setOption(option);
+	    }
+	}); 
+}
+</script>
+{/block}
+{block name="css"}
+<link href="__SUPPLIER__/css/main.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<!---->
+<div class="wst-supplier-info">
+	<div class="wst-supplier-na">
+		<div class='wst-supplier-name'><a target='_blank' href='{:Url("home/suppliers/index","supplierId=".$data["supplier"]["supplierId"])}'>{$data['supplier']['supplierName']}</a></div>
+		<span class="wst-supplier-img">
+	        <img src="__RESOURCE_PATH__/{:WSTImg($data['supplier']['supplierImg'])}" title="{$data['supplier']['supplierName']|WSTStripTags}" alt="{$data['supplier']['supplierName']|WSTStripTags}">
+	    </span>
+		<div class="wst-supplier-na2">
+        {php}$isExpire = ((strtotime($data['supplier']['expireDate'])-strtotime(date('Y-m-d')))<2592000)?true:false;{/php}
+		<div class="wst-supplier-na3">{:lang("label_supp_users_name")}：{$Think.session.WST_SUPPLIER.loginName}</div>
+		<div class="wst-supplier-na3">{:lang("last_login")}：{:session('WST_SUPPLIER.lastTime')}</div>
+		<div class="wst-supplier-na3">{:lang("supplier_address")}：{:WSTMSubstr($data['supplier']['supplierAddress'],0,10)}</div>
+			<span class="wst-shop-na3">{:lang("supplier_expiration_date")}：<span style="float:none;{if $isExpire}color:red;{/if}">{$data['supplier']['expireDate']}</span> <a href="{:url('supplier/logmoneys/torenew')}">{:lang("renew")}</a></span>
+		</div>
+		
+	</div>
+	<div style="width: 30%;float: left;">
+    <div class='wst-supplier-name' style="margin-left: 20px;"><a>{:lang("supplier_rating")}</a></div>
+	<div class="wst-supplier-eva" style="margin-left: 8%">
+		<p>{:lang("product_rating")}</p>
+		<div class="wst-supplier-evai">
+		{for start="0" end="$data['supplier']['scores']['goodsScore']"}
+			<img src="__STATIC__/plugins/raty/img/star-on.png">
+		{/for}
+		{for start="1" end="6-$data['supplier']['scores']['goodsScore']"}
+			<img src="__STATIC__/plugins/raty/img/star-off.png">
+		{/for}
+		</div>
+	</div>
+	<div class="wst-supplier-eva">
+		<p>{:lang("label_goodsappraise_time_score")}</p>
+		<div class="wst-supplier-evai">
+		{for start="0" end="$data['supplier']['scores']['timeScore']"}
+			<img src="__STATIC__/plugins/raty/img/star-on.png">
+		{/for}
+		{for start="1" end="6-$data['supplier']['scores']['timeScore']"}
+			<img src="__STATIC__/plugins/raty/img/star-off.png">
+		{/for}
+		</div>
+	</div>
+	<div class="wst-supplier-eva">
+		<p>{:lang("label_goodsappraise_service_score")}</p>
+		<div class="wst-supplier-evai">
+		{for start="0" end="$data['supplier']['scores']['serviceScore']"}
+			<img src="__STATIC__/plugins/raty/img/star-on.png">
+		{/for}
+		{for start="1" end="6-$data['supplier']['scores']['serviceScore']"}
+			<img src="__STATIC__/plugins/raty/img/star-off.png">
+		{/for}
+		</div>
+	</div>
+    </div>
+	<div class="wst-supplier-con">
+		<div class='wst-supplier-name' style="margin-left: 20px;"><a>{:lang("platform_contact_information")}</a></div>
+		<p style="margin-left: 8%;"><span>{:lang("telephone")}：{$data['supplier']['supplierTel']}</span><span>{:lang("label_user_qq")}：{$data['supplier']['supplierQQ']}</span></p>
+		<p style="margin-left: 8%;"><span>{:lang("mailbox")}：{:WSTConf('CONF.serviceEmail')}</span><span>{:lang("service_time")}：{php}echo date("H:i",strtotime($data['supplier']['serviceStartTime']));{/php}-{php}echo date("H:i",strtotime($data['supplier']['serviceEndTime']));{/php}</span></p>
+		<p></p>
+	</div>
+	<div class="f-clear"></div>
+</div>
+
+
+<div class="main">
+	<div class="main_middle">
+		<ul class="main_mid_box">
+			<li class="mid_l">
+				<div class="mid_l_item">
+					<div class="main_title">
+						<div class="wst-lfloat">
+							
+							<span class="c16_555">{:lang("order_prompt")}</span>
+						</div>
+						<div class="f-clear"></div>
+					</div>
+					<div class="mid_main">
+						<ul class="order_info">
+							{if WSTSupplierGrant('supplier/ordercomplains/suppliercomplain')}
+							<li><a id="menuItem25" href="{:Url('supplier/ordercomplains/suppliercomplain')}" dataid="25">
+								<div class="complain_num">{$data['stat']['complainNum']}</div>
+								<div class="complain_title">{:lang("pending_complaint")}</div>
+							</a></li>
+							{/if}
+							{if WSTSupplierGrant('supplier/orders/delivered')}
+							<li><a id="menuItem53" href="{:Url('supplier/orders/delivered')}" dataid="53">
+								<div class="complain_num">{$data['stat']['waitReceiveCnt']}</div>
+								<div class="complain_title">{:lang("received")}</div>
+							</a></li>
+							{/if}
+							{if WSTSupplierGrant('supplier/orders/waitdelivery')}
+							<li><a id="menuItem24" href="{:Url('supplier/orders/waitdelivery')}" dataid="24">
+								<div class="complain_num">{$data['stat']['waitDeliveryCnt']}</div>
+								<div class="complain_title">{:lang("s_orders_wait_delivery")}</div>
+							</a></li>
+							{/if}
+							{if WSTSupplierGrant('supplier/orders/waituserpay')}
+							<li><a id="menuItem55" href="{:Url('supplier/orders/waituserpay')}" dataid="55">
+								<div class="complain_num">{$data['stat']['orderNeedpayCnt']}</div>
+								<div class="complain_title">{:lang("s_orders_wait_pay")}</div>
+							</a></li>
+							{/if}
+							{if WSTSupplierGrant('supplier/orders/failure')}
+							<li><a id="menuItem45" href="{:Url('supplier/orders/failure')}" dataid="45">
+								<div class="complain_num">{$data['stat']['cancel']}</div>
+								<div class="complain_title">{:lang("cancellation/rejection")}</div>
+							</a></li>
+							{/if}
+							{if WSTSupplierGrant('supplier/orders/failure')}
+							<li><a id="menuItem45" href="{:Url('supplier/orders/refund')}" dataid="45">
+								<div class="complain_num">{$data['stat']['orderRefundCnt']}</div>
+								<div class="complain_title">{:lang("refunded")}</div>
+							</a></li>
+							{/if}
+						</ul>
+					</div>
+				</div>
+                
+				<div class="mid_l_item" style="margin-top:10px;">
+					<div class="main_title">
+						<div class="wst-lfloat">
+							<span class="c16_555">{:lang("label_goods_info")}</span>
+						</div>
+					</div>
+					<div class="f-clear"></div>
+					<div class="mid_main">
+						<ul class="order_info">
+							{if WSTSupplierGrant('supplier/goods/store')}
+							<li><a id="menuItem34" href="{:Url('supplier/goods/store')}" dataid="34">
+								<div class="complain_num">{$data['stat']['unSaleCnt']}</div>
+								<div class="complain_title">{:lang("warehouse")}</div>
+							</a></li>
+							{/if}
+							{if WSTSupplierGrant('supplier/goods/stockwarnbypage')}
+							<li><a id="menuItem54" href="{:Url('supplier/goods/stockwarnbypage')}" dataid="54">
+								<div class="complain_num">{$data['stat']['stockWarnCnt']}</div>
+							    <div class="complain_title">{:lang("label_warn_stock")}</div>
+							</a></li>
+							{/if}
+							{if WSTSupplierGrant('supplier/goods/sale')}
+							<li><a id="menuItem32" href="{:Url('supplier/goods/sale')}" dataid="32">
+								<div class="complain_num">{$data['stat']['onSaleCnt']}</div>
+								<div class="complain_title">{:lang("sale")}</div>
+							</a></li>
+							{/if}
+							{if WSTSupplierGrant('supplier/goods/audit')}
+							<li><a id="menuItem33" href="{:Url('supplier/goods/audit')}" dataid="33">
+								<div class="complain_num">{$data['stat']['waitAuditCnt']}</div>
+								<div class="complain_title">{:lang("reviewed")}</div>
+							</a></li>
+							{/if}
+							{if WSTSupplierGrant('supplier/goods/illegal')}
+							<li><a id="menuItem56" href="{:Url('supplier/goods/illegal')}" dataid="56">
+								<div class="complain_num">{$data['stat']['illegalCnt']}</div>
+							    <div class="complain_title">{:lang("illegal_goods")}</div>
+							</a></li>
+							{/if}
+							{if WSTSupplierGrant('supplier/goodsconsult/supplierReplyConsult')}
+							<li><a id="menuItem102" href="{:Url('supplier/goodsconsult/supplierReplyConsult')}" dataid="102">
+								<div class="complain_num">{$data['stat']['consult']}</div>
+							    <div class="complain_title">{:lang("consultation_to_be_answered")}</div>
+							</a></li>
+							{/if}
+						</ul>
+					</div>
+				</div>
+			</li>
+			
+			<li class="mid_r">
+				
+				<div class='mid_r_rbottom' style="margin-bottom: 10px;">
+					<div class="main_title">
+						<div class="wst-lfloat">
+							
+							<span class="c16_555">{:lang("business_help")}</span>
+						</div>
+						<div class="f-clear"></div>
+					</div>
+					<div class="rbottom_main">
+						<ul class="supplier_tips">
+							{wst:article cat="300" id="vo" num="8"}
+							<li class="wst-textover"><a href="{:url('home/news/view',['id'=>$vo['articleId']])}" target="_blank" title="{$vo.articleTitle}"><i></i>{$key+1}、{$vo.articleTitle}</a><span>{:date('Y-m-d',strtotime($vo['createTime']))}</span></li>
+							{/wst:article}
+						</ul>
+					</div>
+				</div>
+				<div class='mid_r_rbottom'>
+					<div class="main_title">
+						<div class="wst-lfloat">
+							
+							<span class="c16_555">{:lang("business_announcement")}</span>
+						</div>
+						<div class="f-clear"></div>
+					</div>
+					<div class="rbottom_main">
+						<ul class="supplier_tips2">
+							{wst:article cat="51" id="vo" num="5"}
+							<li class="wst-textover"><a href="{:url('home/news/view',['id'=>$vo['articleId']])}" target="_blank" title="{$vo.articleTitle}">{$key+1}、{$vo.articleTitle}</a><i>NEWS</i>&nbsp;&nbsp;&nbsp;&nbsp;<span>{:date('Y-m-d',strtotime($vo['createTime']))}</span></li>
+							{/wst:article}
+						</ul>
+					</div>
+				</div>
+			</li>
+			{if WSTSupplierGrant('supplier/reports/topSaleGoods')}
+			<li class="mid_c">
+				<div class="index-right">
+					<div class="index-right-item">
+						<div class="main_title" style="padding-left:10px;">
+							<div class="wst-lfloat">
+								
+								<span class="c16_555">{:lang("sales_ranking_in_recent_30_days")}</span>
+							</div>
+							<div class="f-clear"></div>
+						</div>
+						<ul class="right-list-tit">
+							<li class="c12_555">{:lang("serial_number")}</li>
+							<li class="c12_555">{:lang("label_goods")}</li>
+							<li class="c12_555">{:lang("num")}</li>
+						</ul>
+						{volist name="$data['stat']['goodsTop']" id="glist" key="gkey" length="10"}
+						<ul class="right-list-tit right-list">
+							<li class="c14_ff66">
+								<div class="gTop{$gkey} top-num">{$gkey}</div>
+							</li>
+							<li class="wst-textover"><a class="c14_ff90 atop{$gkey}" target="_blank" href="{:url('supplier/goods/detail',['goodsId'=>$glist.goodsId])}">{$glist.goodsName}</a></li>
+							<li class="c14_ff66 gTop{$gkey}">{$glist.goodsNum?:0}</li>
+						</ul>
+						{/volist}
+
+					</div>
+				</div>
+			</li>
+			{/if}
+			{if WSTSupplierGrant('supplier/reports/statSales')}
+			<li class="mid_r">
+				<div class="sale_info">
+					<div class="main_title">
+						<div class="wst-lfloat">
+							
+							<span class="c16_555">{:lang("sales_in_recent_30_days")}</span>
+						</div>
+						<div class="f-clear"></div>
+					</div>
+					<div id="saleMain" style="width:100%;height:335px;"></div>
+				</div>
+			</li>
+			<script>$(function(){saleCount()});</script>
+			{/if}
+		</ul>
+	</div>
+<div class="f-clear"></div>
+	
+</div>
+
+
+{/* 近30天 */}
+<input type="hidden"  id="startDate"  class="ipt" value='{:date("Y-m-d",strtotime("-30 day"))}'/>
+<input type="hidden" id="endDate" class="ipt" value='{:date("Y-m-d")}'/>
+{/block}

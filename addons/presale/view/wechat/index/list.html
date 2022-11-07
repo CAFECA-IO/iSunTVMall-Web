@@ -1,0 +1,159 @@
+{extend name="$LAYOUT_WECHAT_BASE" /}
+{block name="title"}预售活动 - {__block__}{/block}
+{block name="meta"}
+<meta name="description" content="预售活动">
+{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__STATIC__/plugins/swiper/swiper.min.css"/>
+<link rel="stylesheet"  href="__ROOT__/addons/presale/view/wechat/index/css/list.css?v={$v}">
+{/block}
+{block name="header"}
+    <header class="ui-header ui-header-positive wst-se-header2" style="border-bottom: 1px solid #f6f6f8;">
+        <a href="{:url('wechat/index/index')}"><i class="ui-icon-return"></i></a>
+        <div class="wst-se-search">
+            <i class="wst-icon-search" onclick="javascript:searchGoods(2);" ></i>
+            <form action＝"" class="input-form">
+            <input type="search" value="{$keyword}" placeholder="按关键字搜索商品" onsearch="searchGoods(2)" autocomplete="off" id="wst-search">
+            </form>
+        </div>
+        <span class="wst-se-icon" onclick="javascript:dataShow();"></span>
+    </header>
+{/block}
+{block name="footer"}
+	{include file="$LAYOUT_WECHAT_FOOTER" /}
+{/block}
+{block name="main"}
+	 <input type="hidden" name="" value="{$keyword}" id="keyword" autocomplete="off">
+	 <input type="hidden" name="" value="{$goodsCatId}" id="goodsCatId" autocomplete="off">
+	 <input type="hidden" name="" value="" id="currPage" autocomplete="off">
+     <input type="hidden" name="" value="" id="totalPage" autocomplete="off">
+
+    <section class="ui-container" style="border-top: 0.54rem solid transparent;">
+        <ul class="ui-tab-content" id="presale-container" sc="{:date('Y-m-d H:i:s')}">
+            <li id="goods-list"></li>
+        </ul>
+    </section>
+<script id="list" type="text/html">
+{{# if(d.data && d.data.length>0){ }}
+{{# for(var i=0,goods=d.data; i<goods.length; i++){ }}
+    <div class="ui-row-flex wst-shl-list goods_{{ d.current_page }}" onclick="goGoods({{ goods[i].id }})" st="{{ goods[i].status }}">
+        <div class="ui-col">
+            <div class="img"><a href="javascript:void(0);" onclick="goGoods({{ goods[i].id }})">
+                <img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{{ goods[i].goodsImg }}" title="{{ goods[i].goodsName }}"></a>
+            </div>
+        </div>
+        <div class="ui-col ui-col-2 info">
+            <div class="title ui-nowrap-multi">{{ goods[i].goodsName }}</div>
+            <p class="price2">
+                预售价 <span class="prices">{:lang('currency_symbol')}{{ goods[i].presalePrice }}</span>
+                <span style="float: right;">已预定 <span>{{ goods[i].orderNum }}</span>{{ goods[i].goodsUnit }}</span>
+            </p>
+            <div class="ptime">
+                预售时间：{{ goods[i].startTime }} 至 {{ goods[i].endTime }}
+            </div>
+        </div>
+    </div>
+{{# } }}
+{{# }else{ }}
+<div class="wst-prompt-icon" style="width:1.395rem;"><img src="__WECHAT__/img/no_data.png"></div>
+<div class="wst-prompt-info">
+    <p>暂无数据</p>
+</div>
+{{# } }}
+</script>
+{/block}
+{block name="include"}
+{/* 遮盖层  */}
+<div class="wst-cover" id="cover"></div>
+{/* 分类层  */}
+<div class="wst-fr-box" id="frame">
+    <div class="title"><span>商品分类</span><i onclick="javascript:dataHide();"></i><div class="wst-clear"></div></div>
+    <div class="content" style="background: #fff;">
+        <div class="ui-scrollerl">
+            <ul>
+                {volist name="$data['goodscats']" key="k" id="gc"}
+                <div style="position: relative;">
+                    <li id="goodscate" class="wst-goodscate {if($k==1)}wst-goodscate_selected{/if}" onclick="javascript:showRight(this,{$k-1});">{php}echo str_replace('、', '<br/>', $gc['catName']);{/php}</li>
+                </div>
+                {/volist}
+            </ul>
+        </div>
+        {volist name="$data['goodscats']" key="k" id="gc"}
+        <div class="wst-scrollerr goodscate1" {if($k!=1)}style="display:none;"{/if}>
+            {if(isset($gc['childList']))}
+            {volist name="gc['childList']" key="k" id="gc1"}
+            <ul>
+                <li class="wst-goodsca">
+                    <a href="javascript:void(0);" onclick="javascript:goodsCat({$gc1['catId']});"><span>&nbsp;{$gc1.catName}</span></a>
+                    <a href="javascript:void(0);" onclick="javascript:goodsCat({$gc1['catId']});"><i class="ui-icon-arrow"></i></a>
+                </li>
+                <li>
+                    <div class="wst-goodscat">
+                        {volist name="$gc1['childList']" id="gc2"}
+                        <span><a href="javascript:void(0);" onclick="javascript:goodsCat({$gc2['catId']});">{$gc2.catName}</a></span>
+                        {/volist}
+                    </div>
+                </li>
+            </ul>
+            {/volist}
+            {/if}
+        </div>
+        {/volist}
+        <div class="wst-clear"></div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__WECHAT__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__STATIC__/plugins/swiper/swiper.min.js'></script>
+<script type='text/javascript' src='__ROOT__/addons/presale/view/wechat/index/js/list.js?v={$v}'></script>
+{if(!empty($datawx))}
+<script src="{:request()->scheme()}://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+    $(function(){
+        //广告
+        new Swiper('.banner', {
+            autoplay: true,
+            autoHeight: true, //高度随内容变化
+            on: {
+                resize: function(){
+                    this.update();
+                },
+            } ,
+            pagination: {
+                el: '.swiper-pagination',
+                type: 'bullets',
+            },
+        });
+    });
+    wx.config({
+        debug: false,
+        appId: '<?php echo WSTConf('CONF.wxAppId'); ?>', //公众号的唯一标识
+        timestamp: '<?php echo $datawx['timestamp'];?>', //生成签名的时间戳
+        nonceStr: '<?php echo $datawx['noncestr'];?>', //生成签名的随机串
+        signature: '<?php echo $datawx['signature'];?>',//签名
+        jsApiList: [ //需要使用的JS接口
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'onMenuShareQZone'
+        ]
+    });
+
+    wx.ready(function(){
+        var shareData = {
+            title: "预售活动",
+            desc: "{:WSTConf('CONF.mallName')}",
+            link: "{:addon_url('presale://goods/wxlists','',true,true)}",
+            imgUrl: "{:WSTConf('CONF.resourceDomain')}/{:WSTConf('CONF.mallLogo')}"
+        };
+        wx.onMenuShareAppMessage(shareData);
+        wx.onMenuShareTimeline(shareData);
+        wx.onMenuShareQQ(shareData);
+        wx.onMenuShareWeibo(shareData);
+        wx.onMenuShareQZone(shareData);
+    });
+</script>
+{/if}
+{/block}

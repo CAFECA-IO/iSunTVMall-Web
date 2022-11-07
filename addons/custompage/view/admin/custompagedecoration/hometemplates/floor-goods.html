@@ -1,0 +1,92 @@
+{php}$floorKey=$key;{/php}
+<div class="floor-goods-container">
+    <div class="floor-box">
+        <div class="floor-header c{$floorKey}" id="c{$floorKey}">
+            <div class="floor-header-f{$floorKey}">
+                <p class="floor-right-title">{$vo['title']}</p>
+            </div>
+
+            <ul class="tab">
+                {for start="0" end="count($vo['columnsTitle'])"  }
+                <li class="tab-item{$floorKey} {if $i==0} j-tab-selected{$floorKey}{/if}" id="floor_{$floorKey}_{$i}" onmouseover="changeFloorData(this);" c={$floorKey}>
+                    {if $vo['catIds'][$i]!=''}
+                    <a href="{:Url('home/goods/lists','cat='.$vo['catIds'][$i])}">{$vo['columnsTitle'][$i]}</a>
+                    {else}
+                    <a href="javascript:;">{$vo['columnsTitle'][$i]}</a>
+                    {/if}
+                </li>
+                {/for}
+
+            </ul>
+        </div>
+        {/* 含右侧广告 */}
+        {for start="0" end="count($vo['columnsTitle'])"  }
+        {if $i==0}
+        <div class="floor-right" id="floor_{$floorKey}_0_pl">
+            <div class="floor-right-ads">
+                {/* 楼层左侧上方轮播广告 */}
+                <div class="wst-floor-slide-{$floorKey}" id="wst-floor-slide-{$floorKey}">
+                    <ul class="wst-floor-slide-items">
+                        <li style="z-index: 1;">
+                            <a href="{$vo['link']}"><img class='goodsImg' data-original="__RESOURCE_PATH__/{$vo['img']}"></a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+
+            <div class="goods-list">
+                {/* 楼层分类下的商品 */}
+                {volist name="$vo['goods'][$i]" id='cs' key="key2"}
+                <div class="goods goods-f{$floorKey}">
+                    <div class="img"><a target='_blank' href="{:Url('home/goods/detail','goodsId='.$cs['goodsId'])}" title="{$cs['goodsName']|WSTStripTags}"><img title="{$cs['goodsName']|WSTStripTags}" class='goodsImg' data-original="__RESOURCE_PATH__/{:WSTImg($cs['goodsImg'])}" src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}"/></a></div>
+                    <div class="p-name"><a target='_blank' href="{:Url('home/goods/detail','goodsId='.$cs['goodsId'])}" class="wst-redlink" title="{$cs['goodsName']|WSTStripTags}">{:WSTMSubstr($cs['goodsName'],0,33)}</a></div>
+                    <div class="info wst-flex-row wst-jsb wst-ac">
+                        <div class="p-price">{:lang('currency_symbol')}{$cs['shopPrice']}</div>
+                        <div class="cart" onclick="javascript:WST.addCart({$cs['goodsId']});"></div>
+                    </div>
+                </div>
+                {/volist}
+                <div class='wst-clear'></div>
+            </div>
+            <div class="wst-clear"></div>
+        </div>
+        {/if}
+        {/for}
+
+        {/* 不含右侧广告  */}
+        {for start="1" end="count($vo['columnsTitle'])"  }
+        <div class="floor-right" id="floor_{$floorKey}_{$i}_pl" style="display: none;">
+            <div class="goods-list">
+                {/* 楼层分类下的商品 */}
+                {volist name="$vo['goods'][$i]" id='vo2' key="key3"}
+                <div class="goods goods-f{$floorKey}">
+                    <div class="img"><a target='_blank' href="{:Url('home/goods/detail','goodsId='.$vo2['goodsId'])}" title="{$vo2['goodsName']|WSTStripTags}"><img title="{$vo2['goodsName']|WSTStripTags}" class='goodsImg' data-original="__RESOURCE_PATH__/{:WSTImg($vo2['goodsImg'])}" src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}"/></a></div>
+                    <div class="p-name"><a target='_blank' href="{:Url('home/goods/detail','goodsId='.$vo2['goodsId'])}" class="wst-redlink" title="{$vo2['goodsName']|WSTStripTags}">{:WSTMSubstr($vo2['goodsName'],0,33)}</a></div>
+                    <div class="info wst-flex-row wst-jsb wst-ac">
+                        <div class="p-price"><span class="f12">{:lang('currency_symbol')}</span>{$vo2['shopPrice']}</div>
+                        <div class="cart" onclick="javascript:WST.addCart({$vo2['goodsId']});"></div>
+                    </div>
+                </div>
+                {/volist}
+                <div class='wst-clear'></div>
+            </div>
+        </div>
+        {/for}
+        <div class="wst-clear"></div>
+    </div>
+</div>
+<script>
+    /*楼层*/
+    function changeFloorData(obj){
+        var sid = $(obj).attr("id");
+        var index = $(obj).attr('c');
+        var ids = sid.split("_");
+        var preid = ids[0]+"_"+ids[1];
+        $("li[id^="+preid+"_]").removeClass("j-tab-selected"+index);
+        $("#"+sid).addClass("j-tab-selected"+index);
+        $("div[id^="+preid+"_]").hide();
+        $("#"+sid+"_pl").show();
+    }
+</script>
+

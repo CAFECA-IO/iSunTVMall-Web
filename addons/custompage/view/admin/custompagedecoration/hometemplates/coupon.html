@@ -1,0 +1,42 @@
+{php}
+    $componentId = "componentIdPlaceholder";
+    $couponData = custom_page_coupon_data($componentId);
+{/php}
+{volist name="couponData" id="vo"}
+<div class="coupon-container" >
+    <div class="coupon_out" style="background:url('__RESOURCE_PATH__/{$vo['img']}') no-repeat;background-size: 100%;">
+        <a href="{:addon_url('coupon://coupons/index')}" class="fl coupon_bg" >
+            <p class="coupon_tit" style="color:{$vo['titleColor']};">{$vo['title']}</p>
+            <p class="coupon_desc" style="color:{$vo['descColor']};">{$vo['desc']}</p>
+        </a>
+        {if(WSTConf('WST_ADDONS.coupon')!='') && count(custom_page_coupon_list($vo['couponIds']))>0}
+        {php}$coupon=custom_page_coupon_list($vo['couponIds']);{/php}
+        <div class="coupon_box">
+            {volist name="$coupon" id="cn" length="4"}
+            <a href="{:addon_url('coupon://coupons/index')}" class="fl coupon_item" {if $key==3}style='border-right:0px'{/if}>
+                <div class="coupon_tit" style="color:{$vo['textColor']};"><span class='unit'>{:lang('currency_symbol')}</span>{$cn['couponValue']}</div>
+                <div class="coupon_desc">
+                    <div style="color:{$vo['textColor']};">{:lang('custompage_coupon')}</div>
+                    <div style="color:{$vo['textColor']};">
+                        {if $cn['useCondition']==1}
+                        {:lang('custompage_coupon_condition4',[$cn['useMoney'],$cn['couponValue']])}
+                        {else /}
+                        {:lang('custompage_coupon_condition3')}
+                        {/if}
+                    </div>
+                </div>
+                <div class="r_btn" style="background:{$vo['btnColor']};color:{$vo['btnTextColor']};">{:lang('custompage_get_now')}</div>
+            </a>
+            {/volist}
+        </div>
+        <div class="wst-clear"></div>
+        {/if}
+    </div>
+</div>
+{/volist}
+<script>
+    if(couponStatus==false){
+        $('.coupon-container').remove();
+    }
+</script>
+

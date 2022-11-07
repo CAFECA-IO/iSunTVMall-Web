@@ -1,0 +1,106 @@
+{extend name="base" /}
+{block name="css"}
+<link href="__STATIC__/plugins/ztree/css/zTreeStyle/zTreeStyle.css?v={$v}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/ztree/jquery.ztree.all-3.5.js?v={$v}"></script>
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/menus/menu.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div id='alertTips' class='alert alert-success alert-tips fade in'>
+  <div id='headTip' class='head'><i class='fa fa-lightbulb-o'></i>{:lang('menu_tips')}</div>
+  <ul class='body'>
+    <li>{:lang('sys_menu_tips1')}<a href='http://fontawesome.dashgame.com/' target='_blank'>Fontawesome</a>{:lang('sys_menu_tips1')}</li>
+    <li>{:lang('sys_menu_tips3')}</li>
+    <li>{:lang('sys_menu_tips4')}</li>
+  </ul>
+</div>
+<div class="j-layout">
+    <div class='j-layout-left'>
+        <div class='j-layout-panel layui-colla-title'>{:lang('title_menu')}</div>
+        <ul id="menuTree" class="ztree" style='overflow:auto'></ul>
+    </div>
+    <div class='j-layout-center' style='border:1px solid #f1f1f1;float:left;margin-left:5px;'>
+      <div class='j-layout-panel layui-colla-title'>{:lang('title_privilege')}</div>
+      {if WSTGrant('QXGL_01')}
+      <div class="wst-toolbar" style='display:none'>
+          <button class="btn btn-success btn-sm f-right" onclick='javascript:toEdit(0)'><i class='fa fa-plus'></i>{:lang('add')}</button>
+          <div style='clear:both'></div>
+      </div>
+      {/if}
+      <div id="maingrid"  style='display:none'>
+        <div id="mmg" class="mmg"></div>
+      </div>
+    </div>
+    <div style='clear:both;'></div>
+</div>
+<div id='menuBox' style='display:none'>
+<form id='menuForm'>
+  <input type='hidden' id='parentId' class='ipt2' maxLength='20'/>
+  <table class='wst-form wst-box-top'>
+     {volist name=':WSTSysLangs()' id='vo'}
+     <tr>
+        <th width='150'>{:lang('label_sys_menu_name')}({$vo['name']})<font color='red'>*</font>：</th>
+        <td><input type='text' id='langParams{$vo['id']}menuName' class='ipt2' maxLength='50' data-rule="{:lang('label_sys_menu_name')}: required;" placeholder="{:lang('ipt_lang_placeholder')}" /></td>
+     </tr>
+     {/volist}
+     <tr>
+        <th>{:lang('upload_img')}<font color='red'>*</font>：</th>
+        <td><input type='text' id='menuIcon' class='ipt2' maxLength='20'/></td>
+     </tr>
+     <tr>
+        <th>{:lang('sort')}<font color='red'>*</font>：</th>
+        <td><input type='text' id='menuSort' class='ipt2' maxLength='5'/></td>
+     </tr>
+  </table>
+</form>
+</div>
+<div id='privilegeBox' style='display:none'>
+  <form id='privilegeForm' autocomplete='off'>
+  <table class='wst-form wst-box-top'>
+     {volist name=':WSTSysLangs()' id='vo'}
+     <tr>
+        <th width='150'>{:lang('label_sys_privelege_name')}({$vo['name']})<font color='red'>*</font>：</th>
+        <td><input type='text' id='langParams{$vo['id']}privilegeName' class='ipt' maxLength='50' data-rule="{:lang('label_sys_privelege_name')}: required;" placeholder="{:lang('ipt_lang_placeholder')}" /></td>
+     </tr>
+     {/volist}
+     <tr>
+        <th>{:lang('label_sys_privelege_code')}<font color='red'>*</font>：</th>
+        <td>
+        <input type='hidden' id='privilegeId' value="0" />
+        <input type='text' id='privilegeCode' class='ipt' maxLength='30' onblur='javascript:checkPrivilegeCode(this)' data-rule="{:lang('label_sys_privelege_code')}: required;"/></td>
+     </tr>
+     <tr>
+        <th>{:lang('label_sys_privelege_is_menu')}<font color='red'>*</font>：</th>
+        <td height='24'>
+           <label>
+              <input type="radio" id="isMenuPrivilege1" name="isMenuPrivilege" class="ipt" value="1">{:lang('yes')}
+           </label>
+           <label>
+              <input type="radio" id="isMenuPrivilege1" name="isMenuPrivilege" class="ipt" value="0" checked>{:lang('no')}
+           </label>
+        </td>
+     </tr>
+     <tr>
+        <th>{:lang('label_sys_privelege_res')}：</th>
+        <td><input type='text' id='privilegeUrl' class='ipt' maxLength='100'/></td>
+     </tr>
+     <tr>
+        <th>{:lang('label_sys_privelege_other_res')}：<br/>{:lang('label_sys_privelege_other_res_split')}&nbsp;&nbsp;&nbsp;</th>
+        <td>
+        <textarea id='otherPrivilegeUrl' class='ipt' style='width:400px;height:60px;'></textarea>
+        </td>
+     </tr>
+  </table>
+  </form>
+</div>
+<div id="rMenu">
+  <ul>
+    {if WSTGrant('CDGL_01')}<li id="m_add" >{:lang('add_menu')}</li>{/if}
+    {if WSTGrant('CDGL_02')}<li id="m_edit">{:lang('edit_menu')}</li>{/if}
+    {if WSTGrant('CDGL_03')}<li id="m_del" style='border-bottom:0px;'>{:lang('del_menu')}</li>{/if}
+  </ul>
+</div>
+{/block}

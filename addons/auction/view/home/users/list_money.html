@@ -1,0 +1,73 @@
+{extend name="$LAYOUT_HOME_USER_BASE" /}
+{block name="title"}{:lang('auction_activity_title')} - {:lang('auction_buyer_center')}{/block}
+{block name="top"}
+  {include file="$LAYOUT_HOME_TOP" /}
+{/block}
+{block name="content"}
+<style>#list td{text-align: center;}</style>
+<div class="wst-user-head"><span>{:lang('auction_my_caution_money')}</span></div>
+<div class="wst-user-content">
+   <table class='wst-order-list'>
+   <thead>
+        <tr class='head'>
+        <th>{:lang('auction_goods_name')}</th>
+        <th>{:lang('auction_curr_price')}</th>
+        <th>{:lang('auction_status')}</th>
+        <th>{:lang('auction_my_caution_money')}</th>
+        <th>{:lang('auction_caution_money_status')}</th>
+   </tr>
+   </thead>
+   <tbody id='list'></tbody>
+   <tfoot>
+     <tr align="center"><td colspan='10' id='pager'></td></tr>
+   </tfoot>
+   <script id="tblist" type="text/html">
+   {{# for(var i = 0; i < d.length; i++){ }}
+   <tr>
+      <td>
+          <div class="goods-img">
+          <a href='{{WST.AU("auction://goods/detail","id="+d[i]["auctionId"])}}' target='_blank'>
+            <img class='j-lazyGoodsImg'  data-original='__RESOURCE_PATH__/{{d[i].goodsImg}}'/>
+          </a>
+        </div>
+        <p class="goodsName">
+          {{WST.cutStr(d[i]['goodsName'],43)}}
+        </p>
+      </td>
+      <td>{:lang('currency_symbol')}{{d[i]['currPrice']}}</td>
+      <td>
+        {{#if(d[i]['status']==1){}}
+        {:lang('auction_label_status_1')}
+        {{#}else{}}
+        {:lang('auction_label_status_5')}
+        {{#}}}
+      </td>
+      <td>{:lang('currency_symbol')}{{d[i]['cautionMoney']}}</td>
+      <td>
+         {{#if(d[i]['cautionStatus']==2){}}
+         <span class='lbel lbel-success'>{:lang('auction_caution_status_1')}</span>
+         {{# }else if(d[i]['cautionStatus']==-1){}}
+         <span class='lbel lbel-danger'>{:lang('auction_caution_status_2')}</span>
+         {{#}else{}}
+         <span class='lbel lbel-gray'>{:lang('auction_caution_status_3')}</span>
+         {{#}}}
+      </td>
+   </tr>
+   {{# } }}
+   </script>
+  </table>
+  <div id='pager'></div>
+</div>
+{/block}
+{block name="footer"}
+  {include file="$LAYOUT_HOME_FOOTER" /}
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type="text/javascript" src="__ROOT__/addons/auction/view/home/users/js/users.js?v={$v}"></script>
+<script type="text/javascript">
+$(function(){
+  queryMoneyByPage(0);
+});
+</script>
+{/block}

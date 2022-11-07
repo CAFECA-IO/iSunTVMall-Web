@@ -1,0 +1,263 @@
+{extend name="default/base" /}
+{block name="main"}
+<style>
+    .shop-form{
+        padding-left: 15px;
+    }
+    #j-agree-box{
+        display: none;
+        margin-bottom:15px
+    }
+    #j-disagree-box{
+        display: none;
+        margin-bottom:15px
+    }
+</style>
+<div class='wst-grid'>
+    <!-- 申请信息 -->
+    <div class='order-box'>
+        <div class='box-head'>{:lang('application_information')}</div>
+        <table class='wst-form'>
+            <tr>
+                <th width='100'>{:lang('current_state')}：</th>
+                <td style="color:red">{$object['statusText']}</td>
+            </tr>
+            <tr>
+                <th width='100'>{:lang("order_number")}：</th>
+                <td>{$object['orderNo']}</td>
+            </tr>
+            <tr>
+                <th>{:lang('after_sales_type')}：</th>
+                <td>{$object['goodsServiceTypeText']}</td>
+            </tr>
+            {if($object['goodsServiceType']!=2)}
+            <tr>
+                <th>{:lang('refund_amount')}：</th>
+                <td>{:floatval($object['refundMoney'])}</td>
+            </tr>
+            {/if}
+
+            <tr>
+                <th>{:lang('reasons_for_application')}：</th>
+                <td>{$object['serviceTypeText']}</td>
+            </tr>
+            <tr>
+                <th>{:lang('problem_description')}：</th>
+                <td>{$object['serviceRemark']}</td>
+            </tr>
+            {if(!empty($object['serviceAnnex']))}
+            <tr>
+                <td align='right' height='25'>{:lang('enclosure')}：</td>
+                <td>
+                    {php}
+                     $serviceAnnex = explode(',',$object['serviceAnnex']);
+                    {/php}
+                    <div id="photos-service">
+                        {volist name="$serviceAnnex" id="annex"}
+                        <img class='lazyImg' layer-src="__RESOURCE_PATH__/{$annex}" data-original="__RESOURCE_PATH__/{$annex}"
+                            style='cursor: pointer;' src="__RESOURCE_PATH__/{:str_replace('.','_thumb.',$annex)}" height="100"
+                            width="100" />
+                        {/volist}
+                    </div>
+                </td>
+            </tr>
+            {/if}
+        </table>
+    </div>
+    <!-- 商品信息 -->
+    <div class='order-box'>
+        <div class='box-head'>{:lang('commodity_list')}</div>
+        <div class='goods-head'>
+            <div class='goods'>{:lang('goods')}</div>
+            <div class='price'>{:lang('unit_Price')}</div>
+            <div class='num'>{:lang('number')}</div>
+            <div class='t-price'>{:lang('total_price')}</div>
+        </div>
+        <div class='goods-item'>
+            <div class='goods-list'>
+                {volist name='$object["glists"]' id='vo2'}
+                <div class='item j-g{$vo2['goodsId']}'>
+                    <div class='goods'>
+                        <div class='img'>
+                            <a href='{:Url("home/goods/detail","goodsId=".$vo2["goodsId"])}' target='_blank'>
+                                <img src='__RESOURCE_PATH__/{$vo2["goodsImg"]}' width='80' height='80' title='{$vo2["goodsName"]|WSTStripTags}' />
+                            </a>
+                        </div>
+                        <div class='name'>{if $vo2['goodsCode']=='gift'}{:lang('gift')}{/if}{$vo2["goodsName"]}</div>
+                        <div class='spec'>{:str_replace('@@_@@','<br />',$vo2["goodsSpecNames"])}</div>
+                    </div>
+                    <div class='price' style="color: red">{:lang('currency_symbol')}{$vo2['goodsPrice']}</div>
+                    <div class='num'>{$vo2['goodsNum']}</div>
+                    <div class='t-price' style="color: red">{:lang('currency_symbol')}{$vo2['goodsPrice']*$vo2['goodsNum']}</div>
+                    <div class='f-clear'></div>
+                </div>
+                {/volist}
+            </div>
+        </div>
+    </div>
+    {/* 展示用户物流信息 */}
+    {if($object['isUserSendGoods']==1 && $object['isUserSendGoods']!=-1)}
+    <div class='order-box'>
+        <div class='box-head'>{:lang('customer_logistics_information')}</div>
+        <table class='wst-form'>
+            {if($object['expressType']==1)}
+            <tr>
+                <th width='100'>{:lang('courier_services_company')}：</th>
+                <td>{$object['expressName']}</td>
+            </tr>
+            <tr>
+                <th>{:lang('logistics_order_no')}：</th>
+                <td>{$object['expressNo']}</td>
+            </tr>
+            {else /}
+            <tr>
+                <th>{:lang('logistics_order_no')}：</th>
+                <td>{:lang('no_logistics_required')}：</td>
+            </tr>
+            {/if}
+            {/* 等待商家收货时显示 */}
+            {if($object['isClose']==0 && $object['serviceStatus']==2)}
+            <tr>
+                <th>{:lang('receiving_or_not')}：</th>
+                <td>
+                    <label for="">
+                        <input type="radio" checked onchange="isShopAccept(this.value)" name="isShopAccept" id="" value="1" />
+                        {:lang('confirm_receipt')}
+                    </label>
+                    <label for="">
+                        <input type="radio" onchange="isShopAccept(this.value)" name="isShopAccept" id="" value="-1" />
+                        {:lang('rejection')}
+                    </label>
+                </td>
+            </tr>
+            <tr id="j-receive-box" style="display: none">
+                <th>{:lang('rejection_type')}：</th>
+                <td>
+                    <select id='shopRejectType' onchange='javascript:changeRejectType(this.value)'>
+                        {volist name=":WSTDatas('ORDER_SERVICES_SHOP_REJECT')" id="vo"}
+                        <option value='{$vo["dataVal"]}'>{$vo["dataName"]}</option>
+                        {/volist}
+                    </select>
+                </td>
+            </tr>
+            <tr id="j-receive-input-box" style="display: none">
+                <th>{:lang('reasons_for_rejection')}：</th>
+                <td><input type="text" id="shopRejectOther"></td>
+            </tr>
+            <tr>
+                <th> </th>
+                <td><button type="button" class="btn" onclick="receive({$p})">{:lang('submit')}</button></td>
+            </tr>
+            {/if}
+
+            {/* 等待商家发货时显示 */}
+            {if($object['serviceStatus']==3)}
+            <tr>
+                <th>{:lang('type_of_shipping')}：</th>
+                <td>
+                    <label for="">
+                        <input type="radio" checked onchange="shopExpressType(this.value)" name="shopExpressType" id="" value="0" />
+                        {:lang('no_logistics_required')}
+                    </label>
+                    <label for="">
+                        <input type="radio" onchange="shopExpressType(this.value)" name="shopExpressType" id="" value="1" />
+                        {:lang('express')}
+                    </label>
+                </td>
+            </tr>
+            <tr class="j-express-box" style="display: none">
+                <th>{:lang('logistics_company')}<font color='red'>* </font>：</th>
+                <td>
+                    <select id='shopExpressId' class="ex-ipt">
+                        <option value=''>{:lang('select')}</option>
+                        {volist name="$express" id='vo'}
+                            <option value='{$vo["expressId"]}'>{$vo["expressName"]}</option>
+                        {/volist}
+                    </select>
+                </td>
+            </tr>
+            <tr class="j-express-box" style="display: none">
+                <th>{:lang('logistics_order_no')}<font color='red'>* </font>：</th>
+                <td><input type="text" id="shopExpressNo" class="ex-ipt" placeholder="{:lang('please_fill_in_the_logistics_number')}" /></td>
+            </tr>
+            <tr>
+                <th> </th>
+                <td><button type="button" class="btn" onclick="send({$p})">{:lang('submit')}</button></td>
+            </tr>
+            {/if}
+            
+        </table>        
+    </div>
+    {/if}
+    {if($object['isShopSend']==1)}
+    <div class='order-box'>
+        <div class='box-head'>{:lang('business_logistics_information')}</div>
+        <table class='wst-form'>
+            {if($object['shopExpressType']==1)}
+            <tr>
+                <th width='100'>{:lang('courier_services_company')}：</th>
+                <td>{$object['shopExpressName']}</td>
+            </tr>
+            <tr>
+                <th>{:lang('logistics_order_no')}：</th>
+                <td>{$object['shopExpressNo']}</td>
+            </tr>
+            {else /}
+            <tr>
+                <th>{:lang('logistics_order_no')}：</th>
+                <td>{:lang('no_logistics_required')}：</td>
+            </tr>
+            {/if}
+        </table>
+    </div>
+    {/if}
+    <div class="shop-form">
+        {if($object['serviceStatus']==0)}
+        <div style='margin-bottom:15px'>
+            {:lang('is_the_application_accepted')}：
+            <label for="">
+                <input type="radio" onchange="isArgee(this.value)" name="isShopAgree" id="" value="1" />
+                {:lang('yes')}
+            </label>
+            <label for="">
+                <input type="radio" onchange="isArgee(this.value)" name="isShopAgree" id="" value="0" />
+                {:lang('no')}
+            </label>
+        </div>
+        {if(in_array($object['goodsServiceType'], [0,2]))}
+        <div id="j-agree-box">
+            <div>
+                {:lang('merchant_confirms_receiving_address')}：<input id="shopAddress" value="{$object.lastShopAddress}" type="text" />
+            </div>
+            <div>
+                {:lang('merchant_consignee')}：<input id="shopName" value="{$object.lastShopName}" type="text">
+            </div>
+            <div>
+                {:lang('contact_number')}：<input id="shopPhone" value="{$object.lastShopPhone}" type="text">
+            </div>
+        </div>
+        {/if}
+        <div id="j-disagree-box">
+            <div>
+               {:lang('reasons_for_rejection')} ：<input id="disagreeRemark" type="text" />
+            </div>
+        </div>
+        <button type="button" class="btn" onclick="beforeCommit({$p})">{:lang('submit')}</button>
+        {/if}
+
+    </div>
+    <input type="hidden" id='goodsServiceType' value="{$object['goodsServiceType']}"  />
+    <input type="hidden" id='serviceStatus' value="{$object['serviceStatus']}"  />
+    <input type="hidden" id='id' value="{$id}"  />
+    <input type="hidden" id='isShopAgree'  />
+    <input type="hidden" id='isShopAccept' value="1"  />
+    <input type="hidden" id='shopExpressType' class="ex-ipt" value="0"  />
+    <div style="text-align: center;margin: 20px 0;">
+        <button type="button" class="btn" onclick="goBack({$p})"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+    </div>
+</div>
+
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__SHOP__/orderservices/orderservices.js?v={$v}'></script>
+{/block}

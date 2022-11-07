@@ -1,0 +1,76 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/speccats/speccats.js?v={$v}" type="text/javascript"></script>
+<script>
+	$(function(){
+	   initGrid({$p});
+	});
+</script>
+{/block}
+{block name="main"}
+<div class="wst-toolbar">
+	<div class="f-left">
+		<div id="pcat_0_box" class="f-left">
+		 <select id="cat_0" class='ipt pgoodsCats' level="0" onchange="WST.ITGoodsCats({id:'cat_0',val:this.value,isRequire:false,className:'pgoodsCats'});">
+	      	<option value="">-{:lang('label_attr_cat')}-</option>
+	      	{volist name=":WSTGoodsCats(0)" id="vo"}
+	        <option value="{$vo['catId']}">{$vo['catName']}</option>
+	        {/volist}
+	     </select>
+	     </div>
+	     <input type="text" id="keyName" placeholder="{:lang('require_catName')}"/>
+	     <button class="btn btn-primary" onclick="loadGrid(0)"><i class='fa fa-search'></i>{:lang('query')}</button>
+     </div>
+   {if WSTGrant('SPGG_01')}
+   <button class="btn btn-success f-right" onclick="javascript:toEditCat(0);"><i class='fa fa-plus'></i>{:lang('add')}</button>
+   {/if}
+   <div style="clear:both"></div>
+</div>
+<div class='wst-grid'>
+ <div id="mmg" class="mmg layui-form"></div>
+</div>
+<div id="pg" style="text-align: right;"></div>
+<div id='specCatsBox' style='display:none'>
+	<form id="specCatsForm">
+	    <input type='hidden' id='catId' class='ipt'/>
+		<table class='wst-form wst-box-top'>
+		  <tr>
+		      <th width='150'>
+		    	 {:lang('label_attr_cat')}<font color='red'>*</font>：</th>
+		     	<td id="bcat_0_box">
+		            <select id="bcat_0" class='ipt goodsCats' level="0" onchange="WST.ITGoodsCats({id:'bcat_0',val:this.value,isRequire:false,className:'goodsCats'});" data-rule='{:lang("label_attr_cat")}:required;' data-target="#msg_bcat_0">
+		                <option value="">-{:lang('select')}-</option>
+		                {volist name=":WSTGoodsCats(0)" id="vo"}
+				        <option value="{$vo['catId']}">{$vo['catName']}</option>
+				        {/volist}
+		           	</select>
+		           	<span class='msg-box' id='msg_bcat_0' style='color:red;'>({:lang('require_recommends_goods_cat')})</span>
+		          </td>
+		       </tr>
+				{volist name=':WSTSysLangs()' id='vo'}
+				<tr>
+					<th>{:lang('form_name')}({$vo['name']})<font color='red'>*</font>：</th>
+					<td><input type="text" id='langParams{$vo["id"]}catName' name='langParams{$vo["id"]}catName' class="ipt" maxLength='20'/></td>
+				</tr>
+				{/volist}
+		       <tr>
+		          <th>{:lang('is_it_allowed_to_upload_pictures')}<font color='red'>  </font>：</th>
+		          <td class='layui-form'>
+		            <input type="checkbox" id="isAllowImg" name="isAllowImg" value="1" class="ipt" lay-skin="switch" lay-filter="isAllowImg" lay-text="{:lang('config_mall_goods_verify_val')}">
+		            <span style='color:red;margin-left:20px;'>({:lang('specats_tips1')})</span>
+		          </td>
+		       </tr>
+		       <tr>
+		          <th>{:lang('is_show')}<font color='red'>  </font>：</th>
+		          <td class='layui-form'>
+		            <input type="checkbox" id="isShow" name="isShow" value="1" class="ipt" lay-skin="switch" lay-filter="isShow" lay-text="{:lang('is_show_val')}">
+		          </td>
+		       </tr>
+		</table>
+	</form>
+</div>
+{/block}

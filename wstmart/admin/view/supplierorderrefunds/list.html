@@ -1,0 +1,49 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/supplierorderrefunds/orderrefunds.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div id='alertTips' class='alert alert-success alert-tips fade in'>
+  <div id='headTip' class='head'><i class='fa fa-lightbulb-o'></i>{:lang('menu_tips')}</div>
+  <ul class='body'>
+    <li>{:lang('label_orderrefunds_menu_tips')}</li>
+  </ul>
+</div>
+<div class="wst-toolbar">
+<select id="areaId1" class='ipt j-ipt hide' level="0" onchange="WST.ITAreas({id:'areaId1',val:this.value,className:'j-ipt'});">
+  <option value="-1">-{:lang('goods_shop_area_select')}-</option>
+  {volist name="areaList" id="vo"}
+  <option value="{$vo['areaId']}">{$vo['areaName']}</option>
+  {/volist}
+</select>
+<input type="text" name="orderNo"  placeholder={:lang('label_orderrefunds_order_no')}' id="orderNo" class='j-ipt'/>
+<input type="text" name="shopName"  placeholder='{:lang("suppliergoods_tips5")}' id="shopName" class='j-ipt'/>
+<select id='deliverType' class='j-ipt'>
+  <option value='-1'>{:lang('label_orderrefunds_delevery')}</option>
+  <option value='1'>{:lang('label_orderrefunds_delevery1')}</option>
+  <option value='0'>{:lang('label_orderrefunds_delevery0')}</option>
+       </select>
+<select id='isRefund' class='j-ipt'>
+  <option value='-1'>{:lang('label_orderrefunds_refund_type')}</option>
+  <option value='1'>{:lang('label_orderrefunds_refund_type1')}</option>
+  <option value='0'>{:lang('label_orderrefunds_refund_type0')}</option>
+</select>
+<input type="text" id="startDate" name="startDate" class="laydate-icon j-ipt" maxLength="20" value='' placeholder='{:lang("start_date")}'/>
+{:lang('to')}
+<input type="text" id="endDate" name="endDate" class="laydate-icon j-ipt" maxLength="20" value='' placeholder='{:lang("end_date")}'/>
+   <button class="btn btn-primary" onclick='javascript:loadRefundGrid(0)'><i class="fa fa-search"></i>{:lang('query')}</button>
+   <button class="btn btn-primary f-right" style='margin-top:0px' onclick='javascript:toExport(0)'><i class="fa fa-sign-in"></i>{:lang('export')}</button>
+   <div style='clear:both'></div>
+</div>
+<div class='wst-grid'>
+ <div id="mmg" class="mmg"></div>
+ <div id="pg" style="text-align: right;"></div>
+</div>
+<script>
+$(function(){initRefundGrid({$p});})
+</script>
+{/block}

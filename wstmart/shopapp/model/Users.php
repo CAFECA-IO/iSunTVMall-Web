@@ -1,0 +1,431 @@
+<?php
+namespace wstmart\shopapp\model;
+use think\Db;
+/**
+ * ============================================================================
+ * WSTMart多用户商城
+ * 版权所有 2016-2066 广州商淘信息科技有限公司，并保留所有权利。
+ * 官网地址:http://www.wstmart.net
+ * 交流社区:http://bbs.shangtao.net
+ * 联系QQ:153289970
+ * ----------------------------------------------------------------------------
+ * 这不是一个自由软件！未经本公司授权您只能在不用于商业目的的前提下对程序代码进行修改和使用；
+ * 不允许对程序代码以任何形式任何目的的再发布。
+ * ============================================================================
+ * 用户类
+ */
+class Users extends Base{
+    protected $pk = 'userId';
+    /**
+     * 登录验证
+     * loginKey 64位加密传过来，密匙->例如:base64(base64(账号)._.base64(密码))
+     * loginRemark:标记是android还是ios
+     *
+     * status:-1:账号不存在!  -2:账号已被停用! -3:账号或密码不正确! 1:登录成功~
+     * msg:登录信息
+     * user:{userId,loginName,userName,userPhoto}
+     */
+    public function login(){
+        $rv = array('status'=>-1,'msg'=>lang("no_find_user"));
+        $loginKey = input('loginKey');
+        $code = input("verifyCode");
+        // 是否为商家登录
+        $loginType = (int)input("post.loginType");
+
+        if(!WSTVerifyCheck($code) && strpos(WSTConf("CONF.captcha_model"),"4")>=0){
+            return WSTReturn(lang("verify_code_error"),-1);
+        }
+
+
+        $loginKey = base64_decode($loginKey);
+        $loginKey = explode('_',$loginKey);
+
+        // WSTAddslashes 处理转义字符 $loginName = WSTAddslashes(base64_decode($loginKey[0]));
+
+        $loginName = base64_decode($loginKey[0]);
+        $loginPwd = base64_decode($loginKey[1]);
+
+        if($loginName=='' || $loginPwd=='')return $rv;
+        $m = model('users');
+
+        $urs = $this->field('userId,loginName,loginSecret,loginPwd,userName,userSex,userPhoto,userStatus,userScore,userType')
+                    ->where("loginName='{$loginName}' or userPhone='{$loginName}' or userEmail='{$loginName}'")
+                    ->where('dataFlag=1')
+                    ->find();
+
+        if(empty($urs))return $rv;//账号不存在!
+
+
+
+
+        if($urs['userStatus']==0)return array('status'=>-2,'msg'=>lang("no_find_user"));//账号已被停用!
+
+        if(md5($loginPwd.$urs['loginSecret'])!=$urs['loginPwd'])return array('status'=>-3,'msg'=>lang("auth_error"));//账号或密码不正确!
+
+
+        if($loginType==1){
+            $shoprs=$this->where(["dataFlag"=>1, "userStatus"=>1,"userType"=>1,"userId"=>$urs['userId']])->find();
+            if(empty($shoprs)){
+                return WSTReturn(lang("is_not_shop"));
+            }
+        }
+
+        //如果是店铺则加载店铺信息
+        if($loginType==1 && $urs['userType']>=1){
+            $shop = Db::name("shops s")
+                    ->join("__SHOP_USERS__ su","s.shopId=su.shopId")
+                    ->field("s.*,su.roleId")
+                    ->where(["su.userId"=>$urs['userId'],"s.dataFlag" =>1,"s.shopStatus" =>1])->find();
+            if(empty($shop)){
+                return WSTReturn(lang("shop_disable"),-1);
+            }else{
+                $urs = array_merge($shop,$urs->toArray());
+            }
+        }
+
+        unset($urs['loginSecret'],$urs['loginPwd'],$urs['userStatus']);
+        $rv['status'] = 1;
+        $rv['msg'] = lang("login_success");
+        $rv['data'] = $urs;
+        //记录登录信息
+        $data = array();
+        $data["userId"] = $urs['userId'];
+        $data["loginTime"] = date('Y-m-d H:i:s');
+
+        // 用户登录地址 $data["loginIp"] = get_client_ip();
+        $data["loginIp"] = request()->ip();
+
+
+        //登录来源、登录设备
+
+        $data["loginSrc"] = 2;
+        $data["loginRemark"] = input('loginRemark','android');
+
+        /**************** 记录登录日志  **************/
+        Db::name('log_user_logins')->insert($data);
+        //记录tokenId
+        $m = Db::name('app_session');
+
+        /*************************   制作key  **********************/
+        $key = sprintf('%011d',$urs['userId']);
+
+        $tokenId = $this->to_guid_string($key.time());
+
+
+        $data = array();
+        // 记录登录来源 3:android  4:ios
+        $data['platform'] = (int)input('platform');
+        $data['userId'] = $urs['userId'];
+        $data['tokenId'] = $tokenId;
+        $data['startTime'] = date('Y-m-d H:i:s');
+        $data['deviceId'] = input('deviceId');
+        $m->insert($data);
+        $rv['data']['tokenId'] = $tokenId;
+
+        // 判断是否为客服账号
+        hook('afterUserLogin',['user'=>&$urs,'isApp'=>1]);
+        $rv['data']['txIMUserSig'] = isset($urs['txIMUserSig'])?$urs['txIMUserSig']:"";
+        //删除上一条登录记录
+        $m->where('tokenId!="'.$tokenId.'" and userId='.$urs['userId'])->delete();
+        return $rv;
+    }
+
+    /**
+     * 根据PHP各种类型变量生成唯一标识号
+     * @param mixed $mix 变量
+     * @return string
+     */
+    private function to_guid_string($mix) {
+        if (is_object($mix)) {
+            return spl_object_hash($mix);
+        } elseif (is_resource($mix)) {
+            $mix = get_resource_type($mix) . strval($mix);
+        } else {
+            $mix = serialize($mix);
+        }
+        return md5($mix);
+    }
+
+    /**
+     * 用户注册
+     * registerKey 64位加密传过来，密匙->例如:base64(base64(账号)._.base64(密码))
+     * loginRemark:标记是android还是ios
+     * deviceId:设备Id
+     *
+     */
+    public function register(){
+        $rv = array('status'=>-1,'msg'=>lang("user_accnout_exists"));
+        $registerKey = input('registerKey');
+        $registerKey = base64_decode($registerKey);
+        $registerKey = explode('_',$registerKey);
+        $loginName = base64_decode($registerKey[0]);
+        $loginPwd = base64_decode($registerKey[1]);
+
+        $startTime = (int)session('VerifyCode_userPhone_Time');
+        if((time()-$startTime)>120){
+        	return WSTReturn(lang("verify_code_expired"));
+        }
+        $loginName2 = session('VerifyCode_userPhone');
+        if($loginName!=$loginName2){
+        	return WSTReturn(lang("regist_phone_no_match"));
+        }
+        // 检测手机号
+        if(!WSTIsPhone($loginName))return WSTReturn(lang("valid_user_phone"));
+        //检测账号是否存在
+        $rs = WSTCheckLoginKey($loginName);
+
+        $data = array();
+        $nameType = (int)input("post.nameType");
+        $mobileCode = input("post.mobileCode");
+
+        //只允许手机号码注册
+        $data['userPhone'] = $loginName;
+        $verify = session('VerifyCode_userPhone_Verify');
+        if($mobileCode=="" || $verify != $mobileCode){
+            return WSTReturn(lang("verify_code_error"));
+        }
+        $loginName = WSTRandomLoginName($loginName);
+
+        if($rs['status']==1){
+            $data['loginName'] = $loginName;
+            $data['userName'] = lang("phone_account").substr($data['userPhone'],-4);
+            $data["loginSecret"] = rand(1000,9999);
+            $data['loginPwd'] = md5($loginPwd.$data['loginSecret']);
+            $data['userType'] = 0;
+            $data['createTime'] = date('Y-m-d H:i:s');
+            $data['dataFlag'] = 1;
+            $userId = $this->data($data)->save();
+            if(false !== $userId){
+                // 执行【QQ绑定】
+                if($qqOpenId!=''){
+                    $tuModel = Db::name('third_users');
+                    $bindQqData = [];
+                    $bindQqData['userId'] = $this->userId;
+                    $bindQqData['thirdCode'] = 'qq';
+                    $bindQqData['thirdOpenId'] = $qqOpenId;
+                    $bindQqData['createTime'] = date('Y-m-d H:i:s');
+                    // 绑定qqOpenId
+                    $bindRs = $tuModel->insert($bindQqData);
+                }
+                // 执行【支付宝账号绑定】
+                if($alipayId!=''){
+                    $tuModel = Db::name('third_users');
+                    $bindAlipayData = [];
+                    $bindAlipayData['userId'] = $this->userId;
+                    $bindAlipayData['thirdCode'] = 'alipay';
+                    $bindAlipayData['thirdOpenId'] = $alipayId;
+                    $bindAlipayData['createTime'] = date('Y-m-d H:i:s');
+                    // 绑定alipayId
+                    $bindRs = $tuModel->insert($bindAlipayData);
+                }
+                $data = array();
+                $userId = $this->userId;
+                $data["userId"] = $userId;
+                $data["loginTime"] = date('Y-m-d H:i:s');
+                $data["loginIp"] = request()->ip();
+                $data["loginSrc"] = 2;
+                $data["loginRemark"] = input('loginRemark');
+                Db::name('log_user_logins')->insert($data);
+                //记录tokenId
+                $data = array();
+                $key = sprintf('%011d',$userId);
+                $tokenId = $this->to_guid_string($key.time());
+                $rv['status']= 1;
+                $rv['msg']= lang("regist_success");
+                $data['userId'] = $userId;
+                $data['tokenId'] = $tokenId;
+                $data['startTime'] = date('Y-m-d H:i:s');
+                $data['deviceId'] = input('deviceId');
+                Db::name('app_session')->insert($data);
+                $user = $this->where("userId=".$userId)->field("userId,loginName,userName,userSex,userType,userPhoto,userScore")->find();
+                $rv['data'] = $user;
+                $rv['data']['tokenId'] = $tokenId;
+            }
+        }
+        return $rv;
+    }
+
+
+    /***********************************************************  ***************************************************************/
+
+    /**
+     * 修改用户密码
+     */
+    public function editPass($id){
+        $data = array();
+        $data["loginPwd"] = input("post.newPass");
+        if(!$data["loginPwd"]){
+            return WSTReturn(lang("require_pwd"),-1);
+        }
+        // 检测密码长度
+        $len = strlen($data["loginPwd"]);
+        if($len<6 || $len>20){
+            return WSTReturn(lang("login_pwd_rule"),-1);
+        }
+        $rs = $this->where('userId='.$id)->find();
+        //核对密码
+        if($rs['loginPwd']){
+            if($rs['loginPwd']==md5(input("post.oldPass").$rs['loginSecret'])){
+                $data["loginPwd"] = md5(input("post.newPass").$rs['loginSecret']);
+                $rs = $this->update($data,['userId'=>$id]);
+                if(false !== $rs){
+                    return WSTReturn(lang("login_pwd_edit_success"), 1);
+                }else{
+                    return WSTReturn($this->getError(),-1);
+                }
+            }else{
+                return WSTReturn(lang("old_login_pwd_error"),-1);
+            }
+        }else{
+            $data["loginPwd"] = md5(input("post.newPass").$rs['loginSecret']);
+            $rs = $this->update($data,['userId'=>$id]);
+            if(false !== $rs){
+                return WSTReturn(lang("login_pwd_edit_success"), 1);
+            }else{
+                return WSTReturn($this->getError(),-1);
+            }
+        }
+    }
+    /**
+     * 修改用户支付密码
+     */
+    public function editPayPass(){
+        $id = $this->getUserId();
+        $data = array();
+        $data["payPwd"] = input("post.newPass");
+        if(!$data["payPwd"]){
+            return WSTReturn(lang("require_pay_pwd"),-1);
+        }
+        $rs = $this->where('userId='.$id)->find();
+        //核对密码
+        if($rs['payPwd']){
+            if($rs['payPwd']==md5(input("post.oldPass").$rs['loginSecret'])){
+                $data["payPwd"] = md5($data["payPwd"].$rs['loginSecret']);
+                $rs = $this->update($data,['userId'=>$id]);
+                if(false !== $rs){
+                    return WSTReturn(lang("pay_pwd_edit_success"), 1);
+                }else{
+                    return WSTReturn(lang("pay_pwd_edit_fail"),-1);
+                }
+            }else{
+                return WSTReturn(lang("old_pay_pwd_error"),-1);
+            }
+        }else{
+            $data["payPwd"] = md5($data["payPwd"].$rs['loginSecret']);
+            $rs = $this->update($data,['userId'=>$id]);
+            if(false !== $rs){
+                return WSTReturn(lang("set_pay_pwd_success"), 1);
+            }else{
+                return WSTReturn(lang("set_pay_pwd_fail"),-1);
+            }
+        }
+    }
+   /**
+    *  获取用户信息
+    */
+    public function getById(){
+        $id = $this->getUserId();
+        $rs = $this->field('loginSecret,loginPwd,userQQ,userEmail,trueName,lastIP,lastTime,dataFlag,userStatus,createTime,wxOpenId,wxUnionId,distributMoney,isBuyer,brithday',true)
+                   ->where(['userId'=>(int)$id])
+                   ->find();
+        $rs['ranks'] = WSTUserRank($rs['userTotalScore']);
+        return $rs;
+    }
+    /**
+     * 编辑资料
+    */
+    public function edit(){
+        $Id = $this->getUserId();
+        $data = input('post.');
+        if(isset($data['brithday']))$data['brithday'] = ($data['brithday']=='')?date('Y-m-d'):$data['brithday'];
+        WSTAllow($data,'brithday,trueName,userName,userId,userPhoto,userQQ,userSex');
+        Db::startTrans();
+        try{
+            if(isset($data['userPhoto']) && $data['userPhoto']!='')
+                 WSTUseResource(0, $Id, $data['userPhoto'],'users','userPhoto');
+
+            $result = $this->allowField(true)->save($data,['userId'=>$Id]);
+            if(false !== $result){
+                Db::commit();
+                return WSTReturn(lang("op_ok"), 1);
+            }
+        }catch (\Exception $e) {
+            Db::rollback();
+            return WSTReturn(lang("op_err"),-1);
+        }
+    }
+
+    /**
+     * 绑定手机
+     */
+    public function editPhone($userPhone){
+        $userId = $this->getUserId();
+        $data = array();
+        $data["userPhone"] = $userPhone;
+        $rs = $this->update($data,['userId'=>$userId]);
+        if(false !== $rs){
+            return WSTReturn(lang("bind_ok"), 1);
+        }else{
+            return WSTReturn($this->getError(),-1);
+        }
+    }
+    /**
+     * 重置用户密码
+     */
+    public function resetPass(){
+        if(time()>floatval(session('REST_Time'))+30*60){
+            return WSTReturn(lang("link_expired"), -1);
+        }
+        $reset_userId = (int)session('REST_userId');
+        if($reset_userId==0){
+            return WSTReturn(lang("invalid_user"), -1);
+        }
+        $user = $this->where(["dataFlag"=>1,"userStatus"=>1,"userId"=>$reset_userId])->find();
+        if(empty($user)){
+            return WSTReturn(lang("invalid_user"), -1);
+        }
+        $loginPwd = input("post.loginPwd");
+        if(trim($loginPwd)==''){
+            return WSTReturn(lang("invalid_pwd"), -1);
+        }
+        $data['loginPwd'] = md5($loginPwd.$user["loginSecret"]);
+        $rc = $this->update($data,['userId'=>$reset_userId]);
+        if(false !== $rc){
+            session('REST_userId',null);
+            session('REST_Time',null);
+            session('REST_success',null);
+            session('findPass',null);
+            return WSTReturn(lang("edit_ok"), 1);
+        }
+        return $rs;
+    }
+
+    /**
+     * 获取用户可用积分
+     */
+    public function getFieldsById($userId,$fields){
+        return $this->where(['userId'=>$userId,'dataFlag'=>1])->field($fields)->find();
+    }
+    /**
+     * 验证用户支付密码
+     */
+    function checkPayPwd(){
+        $userId = $this->getUserId();
+        $rs = $this->field('payPwd,loginSecret')->find($userId);
+        $payPwd = input('payPwd');
+        if($rs['payPwd']==md5($payPwd.$rs['loginSecret'])){
+            return WSTReturn('',1);
+        }
+        return WSTReturn(lang("pay_pwd_error"),-1);
+    }
+    /**
+    * 用户注销
+    *
+    */
+    public function logout(){
+        $tokenId = input('tokenId');
+        $rs = Db::name('app_session')->where("tokenId='{$tokenId}'")->delete();
+        if($rs!==false)return WSTReturn(lang("logout_ok"),1);
+        return WSTReturn(lang("exception_msg"),-1);
+    }
+}

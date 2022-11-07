@@ -1,0 +1,82 @@
+<ul class="ui-list ui-list-text  ui-list-active wst-se-mode">
+	<li class="mode" onclick="javascript:_dataShow('coupon_{$shopId}');">
+		<div class="wst-flex-row wst-jsb" style="width:100%;">
+			<h4 class="ui-nowrap">{:lang('coupon_shop_coupon')}</h4>
+			<div class="wst-flex-row wst-jfe wst-ac mode-content" >
+				<div class="ui-txt-info" id="coupon_{$shopId}t">{:lang('coupon_not_use_tips')}</div>
+				<i class="icon-right-arrow"></i>
+			</div>
+		</div>
+	</li>
+
+</ul>
+
+{/* 优惠券 */}
+<input type="hidden" id="couponId_{$shopId}" value="0" />
+<div class="wst-fr-box" id="coupon_{$shopId}" style="z-index: 10000;">
+	<div class="title"><span>{:lang('coupon_title')}</span><div class="wst-clear"></div></div>
+	<div class="content" id="content">
+		<div class="fr-list wst-flex-row wst-jsb wst-ac" onclick="javascript:onSwitch(this);">
+			<div class="wst-list-infose1 wst-flex-row wst-ac"><span>{:lang('coupon_not_use_tips')}</span></div>
+			<i class="ui-icon-push ui-icon-checked-s wst-active" mode="0" word="{:lang('coupon_not_use_tips')}"></i>
+		</div>
+		{volist name="$coupons" id="cs"}
+			<div class="fr-list wst-flex-row wst-jsb wst-ac" onclick="javascript:onSwitch(this);">
+				<div class="wst-list-infose1 wst-flex-row wst-ac"><span>{:lang('coupon_money_tips2',[$cs.couponValue])}</span></div>
+				<i class="ui-icon-push ui-icon-unchecked-s" mode="{$cs.couponId}" word="{:lang('coupon_money_tips2',[$cs.couponValue])}"></i>
+			</div>
+		{/volist}
+	</div>
+	<div class="bottom-two-btn-box wst-flex-row wst-center">
+		<button type="button" class="button wst-dialog-b1" onclick="javascript:_dataHide('coupon_{$shopId}');">{:lang('coupon_cancel')}</button>
+		<button type="button" class="button wst-dialog-b2" onclick="javascript:_inDetermine('coupon_{$shopId}');">{:lang('coupon_confirm')}</button>
+	</div>
+</div>
+
+<script>
+
+var coupon_{$shopId} = $("#coupon_{$shopId}").css('height');
+	coupon_{$shopId} = parseInt(coupon_{$shopId})+50+'px';
+	$("#coupon_{$shopId}").css('bottom','-'+coupon_{$shopId});
+//弹框
+function _dataShow(n){
+	jQuery('#cover').attr("onclick","javascript:_dataHide('"+n+"');").show();
+	jQuery('#'+n).animate({"bottom": 0}, 500);
+	//显示已保存的数据
+	var type = $('#'+n+'h').val();
+	if(type==0){
+		jQuery('i[class*="'+n+'"]').removeClass('ui-icon-checked-s wst-active').addClass('ui-icon-unchecked-s');
+		jQuery('.'+n+'0').removeClass('ui-icon-unchecked-s').addClass('ui-icon-checked-s wst-active');
+	}else{
+		jQuery('i[class*="'+n+'"]').removeClass('ui-icon-checked-s wst-active').addClass('ui-icon-unchecked-s');
+		jQuery('.'+n+'1').removeClass('ui-icon-unchecked-s').addClass('ui-icon-checked-s wst-active');
+	}
+}
+function _dataHide(n){
+	jQuery('#'+n).animate({'bottom': '-'+window[n]}, 500);
+	jQuery('#cover').hide();
+}
+
+function _inDetermine(n){
+	var type,word;
+	$('#'+n+' .wst-active').each(function(){
+		type = $(this).attr('mode');
+		word = $(this).attr('word');
+	});
+	var shopId = n.split('_')[1];
+	$('#couponId_'+shopId).val(type);// 设置选中的优惠券
+	$('#'+n+'t').html(word);
+	getCartMoney();
+	_dataHide(n);
+
+	$('[id^="shopcp_"').parent().remove();
+	// 显示优惠券优惠价格
+	if(type>0){
+		$('#shopF_'+shopId).parent().before('<div class="wst-flex-row wst-jsb item"><span class="title">{:lang("coupon_preferential2")}</span><span id="shopcp_'+shopId+'">-{:lang('currency_symbol')}'+parseInt(word)+'.00</span></div>')
+	}else{
+		$('#shopcp_'+shopId).parent().remove();
+	}
+
+	
+}
+</script>

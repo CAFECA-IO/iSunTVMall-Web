@@ -1,0 +1,91 @@
+
+{extend name="base" /}
+{block name="js"}
+<script src="__ADMIN__/payments/payments.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div class="l-loading" style="display: block" id="wst-loading"></div>
+
+<form id="payForm" autocomplete="off">
+<table class='wst-form wst-box-top'>
+  <tr>
+    <td colspan="2">
+      <div style="font-size:15px;font-weight:bold;color:red;">
+        <div>Paypal 支付配置</div>
+        <div></div>
+      </div>
+    </td>
+  </tr>
+  <tr>
+      <th width='150'>{:lang('label_payment_name')}<font color='red'>*</font>：</th>
+          <td>
+            <input type="text" id="payName" name="payName" value="{$object['payName']}" class="ipt" maxLength='100' />
+            
+          </td>
+       </tr>
+       <tr>
+          <th>PayPal account<font color='red'>*</font>：</th>
+          <td>
+            <input type="text" id="payPalAccount" name="payPalAccount" value="{$object['payPalAccount'] ?? ''}" class="cfg" maxLength='100' />
+          </td>
+       </tr>
+       <tr>
+          <th>Client ID<font color='red'>*</font>：</th>
+          <td>
+              <input type="text" id="clientId" name="clientId" value="{$object['clientId']?? ''}" class="cfg" maxLength='100' />
+          </td>
+       </tr>
+       <tr>
+          <th>Secret<font color='red'>*</font>：</th>
+          <td>
+              <input type="text" id="secret" name="secret" value="{$object['secret']?? ''}" class="cfg" maxLength='100' />
+          </td>
+       </tr>
+       <tr>
+          <th>Checkout WebhookId <font color='red'>*</font>：</th>
+          <td>
+              <input type="text" id="webhookId" name="webhookId" value="{$object['webhookId']?? ''}" class="cfg" maxLength='100' />
+          </td>
+       </tr>
+       <tr>
+          <th>Refund WebhookId <font color='red'>*</font>：</th>
+          <td>
+              <input type="text" id="refundWebhookId" name="refundWebhookId" value="{$object['refundWebhookId']?? ''}" class="cfg" maxLength='100' />
+          </td>
+       </tr>
+       
+       <tr>
+          <th>Is Sandbox<font color='red'>*</font>：</th>
+          <td>
+              <select id="isSandbox" name="isSandbox" class="cfg">
+                <option value="1" {$object['isSandbox']==1?'selected':''}>Sandbox</option>
+                <option value="0" {$object['isSandbox']==0?'selected':''}>Live</option>
+              </select>
+          </td>
+       </tr>
+       <tr>
+          <th>{:lang('label_aplipay_txt')}<font color='red'>*</font>：</th>
+          <td> 
+              <textarea id="payDesc" name="payDesc" class="ipt" style="width:400px;height:100px;">{$object['payDesc']}</textarea>
+          </td>
+       </tr>
+       <tr>
+          <th>{:lang('sort')}<font color='red'>*</font>：</th>
+          <td> 
+              <input type="text" id="payOrder" name="payOrder" value="{$object['payOrder']}" class="ipt" maxLength='20' />
+          </td>
+       </tr>
+  
+  <tr>
+     <td colspan='2' align='center' class='wst-bottombar'>
+       <input type="hidden" id="id" value="{$object['id']}" />
+        <button type="submit" class="btn btn-primary btn-mright"><i class="fa fa-check"></i>{:lang('submit')}</button> 
+        <button type="button" class="btn" onclick="javascript:history.go(-1)"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+     </td>
+  </tr>
+</table>
+</form>
+
+
+{/block}
+

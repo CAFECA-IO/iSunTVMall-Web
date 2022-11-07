@@ -1,0 +1,184 @@
+{extend name="default/base_js" /}
+{block name="title"}{:lang('user_login')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="css"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link href="__STYLE__/css/login.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="header"}{/block}
+{block name="main"}
+	<input type="hidden" id="token" value='{:WSTConf("CONF.pwdModulusKey")}'/>
+	
+    <div class="wst-login-banner">
+      <div class="wst-icon-banner">
+      	<?php $mallName = WSTConf('CONF.mallName'); ?>
+      	
+    	<div class="img-banner" >
+    		<a href='{$Request.root.true}' title="{$mallName|WSTStripTags}" >
+    		<img src="__RESOURCE_PATH__/{:WSTConf('CONF.mallLogo')}">
+    		</a>
+    	</div>
+        <div class="wst-right-action">
+    		  {:lang('no_account')}? <a class="wst-login-but wst-location" href="{:Url('home/users/regist')}" onclick="WST.currentUrl();">{:lang('register_now')}</a>
+    	</div>
+       </div>
+    </div>
+    <?php  $adsRs = WSTAds('ads-login-user',1,31536000);?>
+	<div class="wst-login-middle" {if isset($adsRs['adFile'])}style='background: url(__RESOURCE_PATH__/{$adsRs['adFile']}) center center no-repeat;'{/if}>
+	<div class="wst-container">
+	<div class="wst-login_l">
+	 <div class="wst-login_r">
+			{php}$loginTypeArr = explode(',',WSTConf('CONF.loginType'));{/php}
+			<div id='tab1' class="wst-tab-box">
+				<ul id='goodsTabs1' class="wst-tab-nav">
+					{if in_array(3,$loginTypeArr)}<li>{:lang('scan_login')}</li>{/if}
+					{if in_array(2,$loginTypeArr)}<li>{:lang('phone_login')}</li>{/if}
+					{if in_array(1,$loginTypeArr)}<li>{:lang('account_login')}</li>{/if}
+				</ul>
+				<div class="wst-tab-content">
+					{if in_array(3,$loginTypeArr)}
+					<div class="wst-tab-item">
+						<div class="qrcode-main">
+							<div class="qrcode-img"><img src="__STYLE__/img/wst_qr_code.jpg"></div>
+							<p>{:lang('open')} <span>WSTMart App</span>  {:lang('scan_qr_code')}</p>
+							<ul class="qr-coagent">
+								<li>
+									<i></i>
+									<em>{:lang('input_free')}</em>
+								</li>
+								<li>
+									<i class="faster"></i>
+									<em>{:lang('faster')}</em>
+								</li>
+								<li>
+									<i class="more-safe"></i>
+									<em>{:lang('more_secure')}</em>
+								</li>
+							</ul>
+						</div>
+					</div>
+					{/if}
+					{if in_array(2,$loginTypeArr)}
+					<div class="wst-tab-item">
+						<form method="post" autocomplete="off" id="login_form" >
+						<input type='hidden' id='typ' value='0' class='ipt'/>
+						<div class="wst-item wst-item-box" style="margin-top: 20px;">
+							<div for="loginnamea" class="login-img"></div>
+							<select class="ipt" id="areaCode" name="areaCode" style="height: 36px;border: 0;outline: 0;">
+				                {volist name=":WSTAareCodes()" id="acode"}
+						          <option value="{$acode}">{$acode}</option>
+						        {/volist}
+				          	</select>
+							<input id="loginNamea" name="loginNamea" class="ipt wst-login-input-1" maxlength="11"  tabindex="1" autocomplete="off" type="text" data-rule="{:lang('phone_number')}: required;" data-msg-required="{:lang('phone_number_data_tips')}" data-tip="{:lang('phone_number_data_tips')}" placeholder="{:lang('phone_number')}" style="width: 215px;float: none;" />
+						</div>
+						<div class="wst-item wst-item-box">
+							<div for="loginnamea" class="yanzheng-img"></div>
+							<div id="mobileCodeDiv" class="wst-login-tr">
+								<input maxlength="6" autocomplete="off" tabindex="6" class="ipt wst-regist-codemo" name="mobileCode" style="ime-mode:disabled" id="mobileCode" type="text" data-target="#mobileCodeTips" placeholder="{:lang('sms_verification_code')}"/>
+								{if (int)WSTConf('CONF.isAddonCaptcha')!=1}
+								<button type="button" id="timeTips" onclick="getVerifyCode(2);" class="wst-regist-obtain">{:lang('get_sms_verification_code')}</button>
+                                {else}
+							    {:hook('homeDocumentLoginSmsCaptcha')}
+							    {/if}
+								<span id="mobileCodeTips"></span>
+							</div>
+						</div>
+						<div class="wst-item wst-item-box" style="border: 0;" >
+							<div style="width:100%;height:32px;line-height:32px;float:left;"><a id="reg_butt" onclick='javascript:login2(1)' class="wst-login-but">{:lang('login')}</a></div>
+						</div>
+					    </form>
+					</div>
+					{/if}
+					{if in_array(1,$loginTypeArr)}
+					<div class="wst-tab-item">
+						<form method="post" autocomplete="off">
+						<input type='hidden' id='typ' value='0' class='ipt'/>
+						<div class="wst-item wst-item-box" style="margin-top: 20px;">
+							<div for="loginname" class="login-img"></div>
+							<input id="loginName" name="loginName" class="ipt wst-login-input-1"  tabindex="1" value="{$loginName}" autocomplete="off" type="text" data-rule="{:lang('user_name')}: required;" data-msg-required="{:lang('loginname_data_tips')}" data-tip="{:lang('loginname_data_tips')}" placeholder="{:lang('loginname_placeholder')}"/>
+						</div>
+						<div class="wst-item wst-item-box">
+							<div for="loginname" class="password-img"></div>
+							<input id="loginPwd" name="loginPwd" class="ipt wst-login-input-1" tabindex="2" autocomplete="off" type="password" maxlength="20" data-rule="{:lang('loginpwd_data_rule')}: required;" data-msg-required="{:lang('loginpwd_data_tips')}" data-tip="{:lang('loginpwd_data_tips')}" placeholder="{:lang('loginpwd_data_rule')}"/>
+						</div>
+						<div class="wst-item wst-item-box">
+							<div for="loginname" class="yanzheng-img"></div>
+							<div class="wst-login-code-1">
+								<input id="verifyCode" style="ime-mode:disabled" name="verifyCode"  class="ipt wst-login-codein-1" tabindex="6" autocomplete="off" maxlength="6" type="text" data-rule="{:lang('verifycode_data_rule')}: required;" data-msg-required="{:lang('verifycode_data_tips')}" data-tip="{:lang('verifycode_data_tips')}" data-target="#verify" placeholder="{:lang('verifycode_data_rule')}"/>
+								<img id='verifyImg' class="wst-login-codeim-1" src="{:url('home/index/getVerify')}" onclick='javascript:WST.getVerify("#verifyImg","#verifyCode")' style="width:125px;height:36px;border-top-right-radius:6px;border-bottom-right-radius:6px;float: right;margin-top: 1px;"><span id="verify"></span>    	
+							</div>
+						</div>
+						<table class="wst-table">
+							<tr class="wst-login-tr">
+								<td colspan="2" style="padding-left:0px;">
+									<input id="rememberPwd" name="rememberPwd" class="ipt wst-login-ch" checked="checked" type="checkbox"/>
+									<label>{:lang('remember_password')}</label>                                      
+									<label><a style="color:#b2b1b1;float:right;" href="{:Url('home/users/regist')}">&nbsp;{:lang('free_register')}</a></label>
+									<label><a style="color:#b2b1b1;float:right;" href="javascript:;" onclick="javascript:location.href=WST.U('home/users/forgetpass','loginName='+$('#loginName').val())" >{:lang('forget_password')}? | </a></label>
+								</td>
+							</tr>
+						</table>
+						<div class="wst-item wst-item-box" style="border: 0;" >
+							<div style="width:100%;height:32px;line-height:32px;float:left;"><a class="wst-login-but" href="javascript:void(0);" onclick='javascript:login(1)'>{:lang('login')}</a></div>
+						</div>
+					    </form>
+					</div>
+					{/if}
+				</div>
+		    </div>
+		{:hook('homeDocumentLogin')}
+	 </div>
+	</div>
+	</div>
+	<div class="wst-clear"></div>
+	</div>
+	<div class="wst-footer">
+		<div class="wst-container">
+		<div class="wst-footer-hp-ck3">
+	        <div class="links">
+	           {php}$navs = WSTNavigations(1);{/php}
+	           {volist name="$navs" id='vo'}
+	           <a href="{$vo['navUrl']}" {if $vo['isOpen']==1}target="_blank"{/if}>{$vo['navTitle']}</a>
+	           {if $i< count($navs)}&nbsp;&nbsp;|&nbsp;&nbsp;{/if}
+	           {/volist}
+	        </div>
+	        <div class="copyright">
+	        {php}
+	        	if(WSTConf('CONF.mallFooter')!=''){
+	         		echo htmlspecialchars_decode(WSTConf('CONF.mallFooter'));
+	        	}
+	        {/php}
+	      	{php}
+				if(WSTConf('CONF.visitStatistics')!=''){
+					echo htmlspecialchars_decode(WSTConf('CONF.visitStatistics'))."<br/>";
+			    }
+			{/php}
+	        {if condition="WSTConf('CONF.mallLicense') eq ''"}
+	        <div>
+				Copyright©2019 Powered By <a target="_blank" href="http://www.wstmart.net">WSTMart</a>
+			</div>
+			{else/}
+				<div id="wst-mallLicense" data='1' style="display:none;">Copyright©2019 Powered By <a target="_blank" href="http://www.wstmart.net">WSTMart</a></div>
+	        {/if}
+	        </div>
+	    </div>
+	    </div>
+	  </div>
+{/block}	  
+{block name="js"}
+    <script type="text/javascript" src="__STATIC__/js/rsa.js"></script>
+	<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+	<script type='text/javascript' src='__STYLE__/js/login.js?v={$v}'></script>
+	<script>
+		$(function(){
+			$('#tab1').TabPanel({tab:0,callback:function(no){
+				if(no==1);
+				if(no==2);
+			}});
+		})
+    $(document).keypress(function(e) { 
+		if(e.which == 13) {  
+			login();  
+		} 
+	}); 
+	</script>
+{/block}

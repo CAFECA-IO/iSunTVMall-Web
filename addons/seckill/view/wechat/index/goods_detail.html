@@ -1,0 +1,361 @@
+{extend name="$LAYOUT_WECHAT_BASE" /}
+{block name="title"}{$goods['goodsName']} - 商品详情 - {__block__}{/block}
+{block name="meta"}
+<meta name="keywords" content="{$goods['goodsSeoKeywords']}">
+<meta name="description" content="{$goods['goodsSeoDesc']}">
+{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__STATIC__/plugins/swiper/swiper.min.css"/>
+<link rel="stylesheet"  href="__ROOT__/addons/seckill/view/wechat/index/css/goods_detail.css?v={$v}">
+<link rel="stylesheet" href="__STATIC__/plugins/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="__STATIC__/plugins/photoswipe/default-skin/default-skin.css">
+{/block}
+{block name="header"}
+
+{/block}
+{block name="footer"}{/block}
+{block name="main"}
+{php}$cartNum = WSTCartNum();{/php}
+<div class="ui-loading-wrap wst-Load" id="Load">
+    <i class="ui-loading"></i>
+</div>
+{/* 图片查看层 */}
+<div id="gallery" class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="pswp__bg"></div>
+    <div class="pswp__scroll-wrap">
+        <div class="pswp__container">
+        <div class="pswp__item"></div>
+        <div class="pswp__item"></div>
+        <div class="pswp__item"></div>
+        </div>
+        <div class="pswp__ui pswp__ui--hidden">
+        <div class="pswp__top-bar">
+            <div class="pswp__counter"></div>
+            <button class="pswp__button pswp__button--close" title="关闭"></button>
+            <button class="pswp__button pswp__button--fs" title="全屏"></button>
+            <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+            <div class="pswp__preloader">
+                <div class="pswp__preloader__icn">
+                    <div class="pswp__preloader__cut">
+                    <div class="pswp__preloader__donut"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+            <div class="pswp__share-tooltip">
+            </div>
+        </div>
+        <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+        <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+        <div class="pswp__caption">
+            <div class="pswp__caption__center">
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+	{/* 商品  */}
+    <section class="wst-container" id="goods1">
+    	<input type="hidden" id="goodsId" value="{$goods.goodsId}">
+    	<input type="hidden" value="0" id="currPage" autocomplete="off">
+  		<input type="hidden" value="0" id="totalPage" autocomplete="off">
+    	<input type="hidden" id="seckillStatus" value="{$goods.status}">
+	  	<a class="wst-go-headerl" href="{:addon_url('seckill://goods/wxlists')}"><i class="ui-icon-return" style="line-height: 0.28rem;"></i></a>
+		<a class="wst-go-headerr" href="javascript:void(0);" onclick="dialogShare();"><i class="ui-icon-share"></i></a>
+		<div id="tab-items">
+	    	<div id="tab1" class="tab">
+				<div class="swiper-container wst-go-img">
+				    <div class="swiper-wrapper">
+					{volist name="goods.gallery" id="vo"  key="i"}
+					{php}$_i = $i-1;{/php}
+						<div onclick="gViewImg({$_i})" class="swiper-slide">
+								<a class="ads-1"><img src="__RESOURCE_PATH__/{:WSTImg($vo,2)}"/></a>
+						</div>
+					{/volist}
+				    </div>
+				    <div class="swiper-pagination"></div>
+				</div>
+				<div class='wst-go-info'>
+				    <div class='price price{$goods.status}'>
+				      <i>{:lang('currency_symbol')} </i><span class="shop-price">{$goods.secPrice}</span>
+				      <span class='market'>{:lang('currency_symbol')}<span class="market-price">{$goods.shopPrice}</span></span>
+				    </div>
+				    <div class="timer timer{$goods.status}">
+		                <p class="status"><span >已结束</span></p>
+		                <div id="seckillTime" class="seckill-time" data-stime="{$goods.startTime}" data-etime="{$goods.endTime}" data-ntime="{$goods.nowTime}" data-status="{$goods['status']}">
+		              	<label class="lab_timer">
+		                    <span>00</span><em>:</em>
+		                    <span>00</span><em>:</em>
+		                    <span>00</span><em>:</em>
+		                    <span>0</span>
+		               	</label>
+		                </div>
+				    </div>
+				</div>
+				<div class='wst-go-title'>{if $goods['isFreeShipping']==1}<label class='lab_bgred'>包邮</label>&nbsp;{/if}{$goods.goodsName}</div>
+				{if $goods.seckillDes!=""}
+				<div class='wst-go-des'>{$goods.seckillDes}</div>
+				{/if}
+			  	{if!empty($goods['spec'])}
+			  	<div class="wst-go-term">
+			  		<a href="javascript:cartShow();" class="open-popup">
+				    <div class='term wst-flex-row wst-jsb wst-ac'>
+				      	<div class='title' >已选
+				      		<div class="spec">
+				      		<?php $choseSpec = []; ?>
+				      		{volist name="$goods['spec']" id="sp"}
+								{volist name="sp['list']" id="sp2"}
+								<?php $choseSpec[] = $sp2['itemName']; ?>
+								{if $sp2['itemImg']!=''}
+									<span class="introduce"></span><img class="j-option img" data-val="{$sp2['itemId']}" src="__RESOURCE_PATH__/{$sp2['itemImg']}" title="{$sp2['itemName']|WSTStripTags}" style="width: 0.3rem;">
+								{else}
+									<span class="introduce"></span><span class="j-option words active" data-val="{$sp2['itemId']}">{$sp2['itemName']},</span>
+								{/if}
+								{/volist}
+							{/volist}
+							<span class='buycnt'>1</span>{$goods.goodsUnit}
+							</div>
+				      	</div>
+						<span class="icon-right-arrow"></span>
+				    </div>
+				    </a>
+				</div>
+				{/if}
+				{if!empty($goods['attrs'])}
+				<div class="wst-go-term " onclick="javascript:dataShow();">
+					<div class='term wst-flex-row wst-jsb wst-ac' types="1" >
+						<div class='title'>参数</div>
+						<span class="icon-right-arrow"></span>
+					</div>
+				</div>
+				{/if}
+	    	</div>
+	    	
+	    	<div id="tab3" class="tab">
+	    		<div class="weui-loadmore none" style="text-align: center;font-size: 0.12rem;">
+				  <i class="weui-loading"></i>
+				  <span class="weui-loadmore__tips">正在加载详情</span>
+				</div>
+				<div class="wst-goods-desc"></div>
+	    	</div>
+	    	<div id="tab4" class="tab content none">
+	    		<div id="appr-list" class="appr-list appr-items"></div>
+	    	</div>	
+	    </div>
+    </section>
+    <footer class="wst-sh-footer wst-go-icon">
+		<div class="ui-col wst-go-icon">
+			<div class="ui-row-flex" style="height:0.49rem;">
+				<div class="ui-col ui-col" >
+					<div class="icon">
+						
+						<a class="J_service" href="tel:{$goods['shop']['shopTel']}">
+							<span class="img tel"></span><span class="word">客服</span>
+						</a>
+						
+						{:hook('wechatDocumentContact',['type'=>'goodsDetail','shopId'=>$goods['shop']['shopId'],'goodsId'=>$goods['goodsId']])}
+					</div>
+				</div>
+				<div class="ui-col ui-col" >
+					<div class="icon"><a href="{:url('wechat/shops/index',['shopId'=>$goods['shop']['shopId']])}"><span class="img shop"></span><span class="word">店铺</span></a></div>
+				</div>
+				<div class="ui-col ui-col" >
+					<div class="icon">
+						<a href="{:url('wechat/carts/index')}">
+							<span class="img cart" style="left:0.1rem"></span>
+							<span class="word" style="width:0.4rem">购物车</span>
+							{if($cartNum>0)}<span id="cartNum">{php} echo $cartNum;{/php}</span>{/if}
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div  class="wst-goods_buy wst-flex-row wst-ac" style="margin:0  0.12rem 0 0.46rem;">
+	  	{if ($goods.status==0)}
+	  	<button class="button tobuy{$goods.status}">秒杀即将开始</button>
+	  	{elseif($goods.status==1)}
+		  	{if ($goods.canBuyNum>0)}
+		  	<a href="javascript:cartShow();">
+		  		<button class="button tobuy{$goods.status}" >立即秒杀</button>
+		  	</a>
+		  	{else/}
+		  	<button class="button tobuy{$goods.status}">已达限购（{$goods.secLimit}{$goods.goodsUnit}）</button>
+		  	{/if}
+	  	{else/}
+	  	<button class="button tobuy{$goods.status}">秒杀已结束</button>
+	  	{/if}
+	  </div>
+	</footer>
+
+	<div class="wst-cart-box wst-check-spec" id="frame-cart">
+		<div class="title">
+			<div class="picture"><div class="img"><a href="javascript:void(0);"><img src="__RESOURCE_PATH__/{:WSTImg($goods['goodsImg'],3)}" title="{$goods['goodsName']|WSTStripTags}" id="specImage"></a></div></div>
+			<i class="icon-close" onclick="javascript:cartHide();"></i>
+			<p class="ui-nowrap-flex price"><span id="j-shop-price">{:lang('currency_symbol')}{$goods.secPrice}</span></p>
+			<p class="spec-text"><span class="title">已选 </span>{if!empty($goods['spec'])}{php}echo implode(',',$choseSpec);{/php}{/if}<span>1</span>{$goods.goodsUnit}</p>
+			<div class="wst-clear"></div>
+		</div>
+		<div class="standard spec-items" id="standard">
+			{if!empty($goods['spec'])}
+			<div class="weui-panel_access">
+				<div class="weui-panel__bd" >
+					{volist name="$goods['spec']" id="sp"}
+					{volist name="sp['list']" id="sp2"}
+					{if $sp2['itemImg']==''}
+					<div class="sku-kind">{$sp['name']}</div>
+					<div class="sku-choose">
+						<span class="j-option item active" data-val="{$sp2['itemId']}">{$sp2['itemName']}</span>
+					</div>
+					{/if}
+					{/volist}
+					{/volist}
+				</div>
+			</div>
+			{/if}
+			<div class="count-choose">
+				<div class="num_wrap_v2 wst-flex-row wst-ac">
+					<div class="wst-buy-minus" onclick='javascript:WST.changeIptNum(-1,"#buyNum")'></div><input id="buyNum" class="wst-buy_l2" data-min='1' data-max='{$goods.canBuyNum}' type="number" value="1" autocomplete="off" onkeyup='WST.changeIptNum(0,"#buyNum")'><div class="wst-buy-add"  onclick='javascript:WST.changeIptNum(1,"#buyNum")'></div>
+				</div>
+				<p class="count">数量<em class="store" style="display:none;"></em></p>
+			</div>
+		</div>
+		<div class="btn-box">
+			{if ($goods.status==1)}
+			{if ($goods.canBuyNum>0)}
+			<button class="button" onclick="addCart()">立即秒杀</button>
+			{else/}
+			<button class="button">已达限购（{$goods.secLimit}{$goods.goodsUnit}）</button>
+			{/if}
+			{else/}
+			<button class="button">确定</button>
+			{/if}
+		</div>
+	</div>
+
+
+	{if !empty($goods['attrs']) }
+	<div class="wst-fr-box" id="frame">
+		<div class="title"><span>参数</span><div class="wst-clear"></div></div>
+		<div style="overflow-y: scroll;height:3rem;">
+			{volist name="$goods['attrs']" id="at"}
+			<div class="content wst-flex-row" >
+				<div class="name">{$at['attrName']}</div><div class="val">{$at['attrVal']}</div>
+			</div>
+			{/volist}
+		</div>
+		<div class="determine"><button class="button" onclick="javascript:dataHide();">确定</button></div>
+	</div>
+	{/if}
+
+	<script id="list" type="text/html">
+	{{# for(var i=0; i< d.length; i++){ }}
+	<div class="item">
+		<div class="uinfo">
+			<div class="uphoto">
+				<img src="{{d[i].userPhoto}}"/>
+			</div>
+			<div class="uname">{{d[i].userName}}</div>
+			<div class="dtime"></div>
+		</div>
+		<div class="pcontent">{{d[i].content}}</div>
+		
+		{{# if(d[i].images && d[i].images.length>0){ }}
+		<div class="imgs">
+			{{# for(var j=0; j< d[i].images.length; j++){ }}
+				<img src="__RESOURCE_PATH__/{{d[i].images[j]}}"/>
+			{{# } }}
+		</div>
+		{{# } }}
+	</div>
+	{{# } }}
+	</script>
+
+	<!--二维码海报-->
+	<div class="ui-dialog" id="wst-di-qrcod" >
+	    <div class="ui-dialog-cnt wst-dialog-cnt5" style="width:auto;height:auto;background: none;">
+	        <div class="wst-dialog-bd">
+	            <div id="qrcodes" style="width: 3rem;height: 4.96rem;">
+	            	<div id="shareImg"></div>
+	            	<div data-role="button" class="close-dialog">
+						<img src="__MOBILE__/img/icon-close2.png">
+					</div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
+	{/* 遮盖层  */}
+	<div class="wst-cover" id="cover" style="z-index:100"></div>
+{/block}
+{block name="include"}{/block}
+
+{block name="js"}
+<script type='text/javascript' src='__WECHAT__/js/jquery.min.js'></script>
+<script>
+{php}
+	$gallery = implode(',',$goods['gallery']);
+{/php}
+var goodsInfo = {
+	id:{$goods['goodsId']},
+	seckillId:{$goods['id']},
+	isSpec:{$goods['isSpec']},
+	goodsStock:{$goods['goodsStock']},
+	marketPrice:{$goods['marketPrice']},
+	goodsPrice:{$goods['shopPrice']}
+	{if isset($goods['saleSpec'])}
+	,sku:{:json_encode($goods['saleSpec'])}
+	{/if}
+	,gallery:"{$gallery}",
+}
+$(function(){
+	if(goodsInfo.gallery!=''){
+		goodsInfo.gallery = goodsInfo.gallery.split(',').map(function(imgUrl,i){
+			imgUrl = WST.conf.RESOURCE_PATH+"/"+imgUrl;
+			var _obj = { src:imgUrl, w:WST.pageWidth(), h:100 };
+			gGetImgWH(imgUrl,i);
+			return _obj;
+		})
+	}
+})
+</script>
+<script type='text/javascript' src='__STATIC__/plugins/swiper/swiper.min.js'></script>
+<script type='text/javascript' src='__STATIC__/js/updown.js'></script>
+<script type='text/javascript' src='__ROOT__/addons/seckill/view/wechat/index/js/time.js?v={$v}'></script>
+<script type='text/javascript' src='__ROOT__/addons/seckill/view/wechat/index/js/goods_detail.js?v={$v}'></script>
+<script src="__STATIC__/plugins/photoswipe/photoswipe.min.js"></script>
+<script src="__STATIC__/plugins/photoswipe/photoswipe-ui-default.min.js"></script>
+{if(!empty($datawx))}
+<script src="{:request()->scheme()}://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+wx.config({
+    debug: false,
+    appId: '<?php echo WSTConf('CONF.wxAppId'); ?>', //公众号的唯一标识
+    timestamp: '<?php echo $datawx['timestamp'];?>', //生成签名的时间戳
+    nonceStr: '<?php echo $datawx['noncestr'];?>', //生成签名的随机串
+    signature: '<?php echo $datawx['signature'];?>',//签名
+    jsApiList: [ //需要使用的JS接口
+       	'onMenuShareTimeline',
+		'onMenuShareAppMessage',
+		'onMenuShareQQ',
+		'onMenuShareWeibo',
+		'onMenuShareQZone'
+    ]
+});
+
+wx.ready(function(){
+	var shareData = {
+			title: '{$shareInfo["title"]}',
+			desc: '{$shareInfo["desc"]}',
+			link: '{$shareInfo["link"]}',
+			imgUrl: '{$shareInfo["imgUrl"]}'
+	};
+	wx.onMenuShareAppMessage(shareData);
+	wx.onMenuShareTimeline(shareData);
+	wx.onMenuShareQQ(shareData);
+	wx.onMenuShareWeibo(shareData);
+	wx.onMenuShareQZone(shareData);
+});
+</script>
+{/if}
+{/block}

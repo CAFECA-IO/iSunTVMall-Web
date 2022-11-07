@@ -1,0 +1,134 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+<style>
+.goodsCat{display:inline-block;width:150px}
+</style>
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/webuploader/webuploader.js?v={$v}" type="text/javascript" ></script>
+<script src="__STATIC__/plugins//kindeditor/NKeditor-all.js?v={$v}" type="text/javascript" ></script>
+<script src="__ADMIN__/brands/brands.js?v={$v}" type="text/javascript"></script>
+<script>
+$(function () {
+	   {if condition="$object['brandId'] !=0"}
+		WST.setValues({$object});
+	   {/if}
+		$('#brandForm').validator({
+		    fields: {
+		    	brandName: {
+		    		tip: WST.lang('require_brand_apply_name'),
+		    		rule: WST.lang('label_brand_apply_name')+':required;length[~16];'
+		    	},
+		    	catId: {
+		    		tip: WST.lang('require_brand_apply_cat'),
+		    		rule: 'checked(1~);length[~16];'
+		    	},
+		    	brandImg:{
+	                tip:WST.lang('require_upload_img2'),
+	                rule:WST.lang('upload_img2')+":required;",
+		    	},
+		    	brandDesc: {
+		    		tip: WST.lang('require_brand_apply_desc'),
+		    		rule: WST.lang('label_brand_apply_desc')+':required;'
+		    	}
+		    },
+		    valid: function(form){
+		    	var brandId = $('#brandId').val();
+		    	toEdits(brandId,{$p});
+		    }
+		})
+});
+</script>
+{/block}
+{block name="main"}
+<input type='hidden' id='brandId' value='{$object["brandId"]}'/>
+<div class="l-loading" style="display: block" id="wst-loading"></div>
+<form id="brandForm" autocomplete="off">
+<table class='wst-form wst-box-top'>
+  <tr>
+     <th width='150'>{:lang('label_brand_apply_name')}<font color='red'>*</font>：</th>
+     <td><input type="text" id='brandName' name='brandName' maxLength='20' style='width:300px;' class='ipt' /></td>
+  </tr>
+   <tr>
+     <th width='150' align='right'>{:lang('label_brand_apply_cat')}<font color='red'>*</font>：</th>
+     <td>
+     {volist name="gcatList" id="vo"}
+	     <label class='goodsCat'>
+	     <input type='checkbox' id='catId' name='catId' class="ipt" value='{$vo["catId"]}'
+       {if condition="$object['brandId'] !=0 "}
+       {if in_array($vo["catId"],$object['catIds'])==1}checked{/if}
+       {/if}
+       >&nbsp;{$vo["catName"]}&nbsp;
+	     </label>
+	 {/volist}
+     </td>
+   </tr>
+   <tr width='150'>
+     <th align='right'>{:lang('upload_img2')}<font color='red'>*</font>：</th>
+     <td>
+     	   <input id="brandImg" name="brandImg" class="text ipt" data-target='#msg_brandImg' autocomplete="off" type="text" readonly="readonly" value="{$object.brandImg}" data-rule="{:lang('upload_img2')}: required;" style="float: left;width: 250px;"/>
+    	   <div id="filePicker">{:lang('upload')}</div>
+     	    <span style='margin-left:5px;float:left;line-height: 30px;'>{:lang('require_img_size',['400 x 200 (px)'])} </span>
+          <span class='msg-box' id='msg_brandImg'></span>
+     	    <div id="preview" style="float: left;;margin-left: 5px;">
+            {if $object['brandId']!=0}
+            <img src="__RESOURCE_PATH__/{$object['brandImg']}" class="ipt" height='30'/>
+            {/if}
+        </div>
+     </td>
+   </tr>
+   <tr>
+     <th width='150'>{:lang('sort')}<font color='red'>*</font>：</th>
+     <td><input type="text" id='sortNo' name='sortNo' maxLength='20' style='width:300px;' class='ipt' onkeypress="return WST.isNumberKey(event);" onkeyup="javascript:WST.isChinese(this,1)" maxlength="10" value="0" data-tip="{:lang('require_sort')}"/></td>
+  </tr>
+   <tr>
+       <th width='150'>{:lang('label_brand_apply_desc')}<font color='red'>*</font>：</th>
+       <td>
+       	<textarea id='brandDesc' name='brandDesc' class="form-control ipt" style='width:80%;height:400px'></textarea>
+       </td>
+    </tr>
+     <tr>
+       <td colspan='2' align='center'>
+           <button type="submit" class="btn btn-primary btn-mright"><i class="fa fa-check"></i>{:lang('submit')}</button>
+           <button type="button" class="btn" onclick="javascript:location.href='{:Url(\'admin/brands/index\',\'p=\'.$p)}'"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+       </td>
+     </tr>
+</table>
+ </form>
+ <script>
+$(function(){
+  //文件上传
+	WST.upload({
+  	  pick:'#filePicker',
+  	  formData: {dir:'brands',mWidth:500,mHeight:250},
+  	  accept: {extensions: 'gif,jpg,jpeg,png',mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif'},
+  	  callback:function(f){
+  		  var json = WST.toAdminJson(f);
+  		  if(json.status==1){
+        	$('#preview').html('<img src="'+WST.conf.RESOURCE_PATH+"/"+json.savePath+json.thumb+'" height="30" />');
+        	$('#brandImg').val(json.savePath+json.thumb);
+  		  }
+	  }
+    });
+  //编辑器
+    KindEditor.ready(function(K) {
+		editor1 = K.create('textarea[name="brandDesc"]', {
+			height:'350px',
+			uploadJson : WST.conf.ROOT+'/admin/brands/editorUpload',
+			allowFileManager : false,
+			themeType : "default",
+      items:[     'source', 'undo', 'redo',  'preview', 'print', 'template', 'code', 'cut', 'copy', 'paste',
+                'plainpaste', 'wordpaste', 'justifyleft', 'justifycenter', 'justifyright',
+                'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
+                'superscript', 'clearhtml', 'quickformat', 'selectall',  'fullscreen',
+                'formatblock', 'fontname', 'fontsize',  'forecolor', 'hilitecolor', 'bold',
+                'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', 'image','multiimage','media','table', 'hr', 'emoticons', 'baidumap', 'pagebreak',
+                'anchor', 'link', 'unlink'
+      ],
+			afterBlur: function(){ this.sync(); }
+		});
+	});
+});
+</script>
+{/block}

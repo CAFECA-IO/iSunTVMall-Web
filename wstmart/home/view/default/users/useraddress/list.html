@@ -1,0 +1,63 @@
+{extend name="default/users/base" /}
+{block name="title"}{:lang('home_page')} - {:lang('user_center')} {__block__}{/block}
+{block name="css"} 
+{/block}
+{block name="content"}
+  <div class="wst-user-head" style="margin-bottom: 10px"><span>{:lang('management_address')}</span></div>
+	<input type="button" value="{:lang('add_address')}" class="wst-sec-but u-btn addr-btn" onclick="location.href=WST.U('home/useraddress/edit')" />
+  <label>{:lang('has_create_address_number_desc')}</label>
+        <script id="address" type="text/html">
+            {{# for(var i = 0, len = d.length; i < len; i++){ }}
+            <table class='wst-addr' >
+               <tr>
+                 <td style="padding: 10px;">{{d[i].userName}}—{{d[i].areaName1}}</td>
+                 <td>
+                 &nbsp;&nbsp;&nbsp;&nbsp;
+                 {{# if(d[i].isDefault==1) { }}
+                  <p class="default">{:lang('default_address')}</p>
+                 {{# } }}
+                 </td>
+               </tr>
+               <tr><td class="addr-title">{:lang('consignee')}：</td>
+                 <td>{{d[i].userName}}</td>
+               </tr>
+               <tr><td class="addr-title">{:lang('location_area')}：</td>
+                 <td>{{d[i].areaName}}</td>
+               </tr>
+               <tr><td class="addr-title">{:lang('address')}：</td>
+                 <td>{{d[i].userAddress}}</td>
+               </tr>
+               <tr><td class="addr-title">{:lang('contact_number')}：</td>
+                 <td>+{{d[i].areaCode}} {{d[i].userPhone}}</td>
+               </tr>
+
+               <tr>
+                 <td>&nbsp;</td>
+                 <td class='edit' style="padding-bottom: 10px;">
+                   <a href="javascript:delAddress({{ d[i].addressId }},this)">{:lang('del')}</a>
+                   <a href="javascript:editAddress({{ d[i].addressId }})">{:lang('edit')}</a>
+                   {{# if(d[i].isDefault!=1) { }}
+                    <a href="javascript:setDefault({{ d[i].addressId }})">{:lang('set_default')}</a>
+                   {{# } }}
+
+                   <div class="wst-clear"></div>
+                 </td>
+               </tr>
+            </table>
+            {{# } }}
+           </script>
+           <div id="address_box" class="address_box">
+              
+           </div>
+           <input type="button" value="{:lang('add_address')}" class="wst-sec-but u-btn addr-btn" onclick="location.href=WST.U('home/useraddress/edit')" />
+          <label>{:lang('has_create_address_number_desc')}</label>
+
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__STYLE__/users/useraddress/useraddress.js?v={$v}'></script>
+<script>
+$(function(){
+  listQuery();
+});
+</script>
+{/block}

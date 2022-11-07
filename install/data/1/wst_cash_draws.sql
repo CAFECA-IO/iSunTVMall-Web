@@ -1,0 +1,35 @@
+SET FOREIGN_KEY_CHECKS=0;
+
+DROP TABLE IF EXISTS `wst_cash_draws`;
+CREATE TABLE `wst_cash_draws` (
+  `cashId` int(11) NOT NULL AUTO_INCREMENT,
+  `cashNo` varchar(50) NOT NULL,
+  `targetType` tinyint(4) NOT NULL DEFAULT '0',
+  `targetId` int(11) NOT NULL DEFAULT '0',
+  `money` decimal(11,2) NOT NULL DEFAULT '0.00',
+  `accType` tinyint(4) NOT NULL DEFAULT '0',
+  `accTargetName` varchar(100) DEFAULT NULL,
+  `accAreaName` varchar(100) DEFAULT NULL,
+  `accNo` varchar(100) NOT NULL,
+  `accUser` varchar(100) DEFAULT NULL,
+  `cashSatus` tinyint(4) NOT NULL DEFAULT '0',
+  `cashRemarks` varchar(255) DEFAULT NULL,
+  `cashConfigId` int(11) NOT NULL,
+  `createTime` datetime NOT NULL,
+  `commission` decimal(11,2) DEFAULT '0.00',
+  `actualMoney` decimal(11,2) DEFAULT '0.00',
+  `commissionRate` tinyint(4) DEFAULT '0',
+  `sendData` text COMMENT '传出内容',
+  `returnData` text COMMENT '返回内容',
+  `returnMsg` varchar(300) DEFAULT NULL COMMENT '返回提示',
+  `payTime` datetime DEFAULT NULL COMMENT '付款时间',
+  `payNo` varchar(300) DEFAULT NULL COMMENT '付款流水',
+  `accTargetId` int(11) DEFAULT '0' COMMENT '银行ID',
+  `payFee` int(11) DEFAULT '0' COMMENT '手续费（分）',
+  `incNo` int(11) DEFAULT '0' COMMENT '订单失败递增序号，重新付款的时候用到',
+  `queryData` text COMMENT '查询状态内容，付款到银行卡会用到',
+  `queryReturnData` text COMMENT '返回的查询状态内容，付款到银行卡会用到',
+  PRIMARY KEY (`cashId`),
+  KEY `targetType` (`targetType`,`targetId`),
+  KEY `cashNo` (`cashNo`)
+) ENGINE=InnoDB AUTO_INCREMENT=10000000 DEFAULT CHARSET=utf8mb4;

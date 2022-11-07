@@ -1,0 +1,51 @@
+<div class="invo-js2" hidden>
+
+    <header style="background:#ffffff;" class="ui-header ui-header-positive wst-header">
+        <i class="ui-icon-return" onclick="javascript:switchPage(0);"></i>
+        <h1 id="header-title">{:lang('edit_invoice_information')}</h1>
+    </header>
+
+    <form id="invoiceTypeForm" style="font-size:13px">
+        <div class="addData">
+            <div class="inputItem">
+            <label>{:lang('invoice_type')}：</label>
+            <label class="ui-checkbox">
+                <i id="invoiceType1" class="ui-icon-checked-s wst-active" onclick="javascript:invOnSwitch(0);" style="float: left;"></i><label style="float: left">{:lang('invoice_normal')}</label>
+                <i id="invoiceType2" class="ui-icon-unchecked-s" onclick="javascript:invOnSwitch(1);" style="float: left;"></i>
+                {:lang('invoice_special_vat')}
+                <input id="invoiceType" type="hidden" value='0' name="invoiceType">
+            </label>
+            </div>
+            <div class="inputItem">
+                <input name="invoId" value="" id="invoId" type="text" hidden>
+                <label>{:lang('invoice_head')}：</label>
+                <input id="invoiceHead" name="invoiceHead" type="text" placeholder="{:lang('require_invoice_head')}">
+            </div>
+            <div class="inputItem">
+                <label>{:lang('invoice_tax_number')}：</label>
+                <input id="invoiceCode" name="invoiceCode" type="text" placeholder="{:lang('require_invoice_tax_number')}">
+            </div>
+             <div class="inputItem interData" hidden>
+                <label>{:lang('invoice_address')}：</label>
+                <input id="invoiceAddr" name="invoiceAddr" type="text" placeholder="{:lang('require_invoice_address')}">
+            </div>
+            <div class="inputItem interData" hidden>
+                <label>{:lang('invoice_telphone')}：</label>
+                <input id="invoicePhoneNumber" name="invoicePhoneNumber" type="text" placeholder="{:lang('require_invoice_telphone')}">
+            </div>
+             <div class="inputItem interData" hidden>
+                <label>{:lang('card_open_bank')}：</label>
+                <input id="invoiceBankName" name="invoiceBankName" type="text" placeholder="{:lang('require_card_open_bank')}">
+            </div>
+             <div class="inputItem interData" hidden>
+                <label>{:lang('bank_account')}：</label>
+                <input id="invoiceBankNo" name="invoiceBankNo" type="text" placeholder="{:lang('require_bank_account')}">
+
+            </div>
+        </div>
+    </form>
+    <div class="wst-ad-footer">
+        <button class="button" id="saveInvoice">{:lang('save')}</button>
+    </div>
+
+</div>

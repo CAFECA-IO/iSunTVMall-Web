@@ -1,0 +1,151 @@
+{extend name="default/users/base" /}
+{block name="title"}{:lang('inform_detail')} - {:lang('user_center')}{__block__}{/block}
+{block name="css"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+{/block}
+{block name="content"}
+<div class='wst-inform-content'>
+<form id="informForm" method="post" >
+<div class="wst-inform-head"><span>{:lang('inform_detail')}</span></div>
+   <div class='order-box wst-inform-box'>
+   
+	<div class='log-box inform-log-box' style="height: auto;" >
+<div class="state">
+  <div class="icon" style="margin-left: 20px;">
+  	<span class="icons icon13 "></span>
+  </div>
+  <div class="arrow arrow2">························></div>
+  <div class="icon" >
+  	<span class="icons icon13 "></span>
+  </div>
+  <div class="arrow arrow2">························></div>
+  <div class="icon" >
+    
+  	{if condition="$data['informStatus'] eq 0"}
+  	<span class="icons icon12 "></span>
+  	{else}
+  	<span class="icons icon13 "></span>
+  	{/if}
+  </div>
+</div>
+   <div class="state3" >
+   <p>{:lang('inform_step_1')}</p><p>{:lang('inform_step_2')}</p><p>{:lang('inform_step_3')}</p>
+   </div>
+  
+   <div class="wst-clear"></div>
+  </div>
+  </div>
+   <div class="wst-inform-box">
+   	<div class="title">{:lang('inform_reported_shop')} ：</div><a  target='_blank' href="{:url('home/shops/index',array('shopId'=>$data['shopId']))}">{$data['shopName']}</a>
+   	<div class="wst-clear"></div>
+   </div>
+   <!-- 订单信息 -->
+   <div class='wst-inform-box'>
+   	  <div class="title">
+   	  	<span>{:lang('inform_relative_goods')} ：</span>
+   	  </div>
+      <div class="goods-img">
+      	<a href="{:Url('home/goods/detail','goodsId='.$data['goodsId'])}" target='_blank'>
+      	<div class="wst-img"><img src="__RESOURCE_PATH__/{:WSTImg($data['goodsImg'])}"></img></div>
+      	</a>
+      	<div class="wst-text">
+      		<a href='{:Url("home/goods/detail","goodsId=".$data["goodsId"])}' target='_blank'>{$data['goodsName']}</a>
+      	</div>
+      </div>
+      <div class="wst-clear"></div>
+   </div>
+   <div class='wst-inform-box'>
+   	<div class="title">{:lang('inform_type')}：</div>
+   	 <div class="goods-img">
+   	 	   {php}$reason = WSTDatas('INFORMS_TYPE',$data['informType']);{/php}
+         {$reason['dataName']}
+     </div>  
+     <div class="wst-clear"></div>
+   </div>  
+   <div class='wst-inform-box'>
+   	<div class="title">{:lang('inform_content')}：</div>
+   	<div class="goods-img">
+     {$data['informContent']}
+    </div>
+    <div class="wst-clear"></div>
+   </div>
+   <div id="photos-inform" class='wst-inform-box' style="border-bottom: 1px solid transparent;">
+   	<div class="title">{:lang('annex')}：</div>
+    <div style="display: inline-block;width: 450px;">
+     {volist name="$data['informAnnex']" id="annex"}
+       <a href="javascript:void(0)">
+          <img  layer-src="__RESOURCE_PATH__/{$annex}" width="100" height="100" src="__RESOURCE_PATH__/{$annex}" />
+       </a>
+     {/volist}
+     </div>
+   </div>
+   <div class='wst-inform-box'>
+   	<div class="title">{:lang('inform_time')}：</div>
+   	 <div class="goods-img">
+   	 	{$data['informTime']}
+     </div>  
+     <div class="wst-clear"></div>
+  </div>  
+  <div class='wst-inform-box'>
+   	<div class="title">{:lang('inform_result')}：</div>
+   	 <div class="goods-img">
+   	 	 {if condition="$data['informStatus'] eq 0"}
+                                          {:lang('inform_inform_status_0')}
+              {elseif condition="$data['informStatus'] eq 1"/}
+                                          {:lang('inform_inform_status_1')}
+              {elseif condition="$data['informStatus'] eq 2 "/}
+                                          {:lang('inform_inform_status_2')}
+              {elseif condition="$data['informStatus'] eq 3 "/}
+                                          {:lang('inform_inform_status_3')}
+       {/if}
+     </div>  
+     
+    {if condition="$data['informStatus'] eq 1 OR $data['informStatus'] eq 2 OR $data['informStatus'] eq 3"}
+     <div class="title">{:lang('inform_process_information')}：</div>
+   	 <div class="goods-img">
+   	  {$data['respondContent']}
+     </div>  
+     <div class="title">{:lang('inform_process_time')}：</div>
+   	 <div class="goods-img">
+   	  {$data['finalHandleTime']}&nbsp;
+     </div>  
+   {/if}
+     <div class="wst-clear"></div>
+  </div>  
+  <div class='wst-complain-footer'>
+     <button type='button' onclick="location.href='<?=url('home/informs/index','p='.$p);?>'" class="wst-sec-but u-btn">{:lang('back')}</button>
+  </div>
+</form>
+</div>
+<div class="wst-remind">
+	<div class="wst-inform-head" ><span>{:lang('inform_violation_notice_title')}</span></div>
+	<div class="content">
+      <div class="alert">
+        <ul>
+          <li>{:lang('inform_violation_notice_1')}</li>
+          <li>{:lang('inform_violation_notice_2')}</li>
+          <li>{:lang('inform_violation_notice_3')}</li>
+          <li>{:lang('inform_violation_notice_4')}</li>
+        </ul>
+      </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__STYLE__/users/informs/informs.js?v={$v}'></script>
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+<script>
+$(function(){
+  userComplainInit();
+  // 调用图像层
+  layer.photos({
+    photos: '#photos-inform'
+  });
+})
+</script>
+{/block}
+
+
+

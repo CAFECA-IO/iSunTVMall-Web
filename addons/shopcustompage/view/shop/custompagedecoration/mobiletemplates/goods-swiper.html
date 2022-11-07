@@ -1,0 +1,20 @@
+<div>
+    <div class="goods-swiper-container" >
+        <div class="title {if $vo['title_bg']==1}wst-goods-swiper-title-bg{else}wst-goods-swiper-title-bg2{/if}">{$vo['title']}</div>
+        <div class="wst-gol-adsb">
+            <div class="swiper-container swiper-container1">
+                <div class="swiper-wrapper">
+                    {volist name="$vo['goods']" id="voo" key="k"}
+                    <div class="swiper-slide" >
+                        <div >
+                            <div class="wst-gol-img j-goods-swiper-img"><a href="javascript:void(0)" onclick="WST.intoGoods({$voo['goodsId']})"><img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{:WSTImg($voo['goodsImg'],3)}" title="{$voo['goodsName']|WSTStripTags}"></a></div>
+                            <p>{:lang('currency_symbol')}{$voo['shopPrice']}</p>
+                            <div class="wst-clear"></div>
+                        </div>
+                    </div>
+                    {/volist}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,77 @@
+    <header style="background:#ffffff;" class="ui-header ui-header-positive wst-header js-address2">
+        <i class="ui-icon-return" onclick="javascript:switchPage(0);"></i><h1 id="header-title">{:lang('presale_update_receiving_address')}</h1>
+    </header>
+     <section class="ui-container js-address2">
+        <input type="hidden" name="" value="" id="areaId" autocomplete="off">
+	   	<div class="wst-ad-form">
+	        <div class="ui-form-itemin">
+	        	<label class="word">{:lang('presale_consignee')}：</label><input class="ui-border-binte" id="username" maxLength='15' type="text" placeholder="{:lang('presale_require_consignee')}">
+	        </div>
+	        <div class="wst-ad-line"><p></p></div>
+	        <div class="ui-form-itemin">
+	        	<label class="word">{:lang('presale_contact_number')}：</label>
+				{php}$areaCode = WSTAareCodes()[0];{/php}
+				<span id="area_code" onclick="WST.showAreacodeBox()">{$areaCode}</span>
+				<input id="areaCode" type="hidden" value="{$areaCode}">
+	        	<input class="ui-border-binte" id="cellphone" type="text" placeholder="{:lang('presale_require_contact_number')}" onkeypress='return WST.isNumberKey(event);' onkeyup="javascript:WST.isChinese(this,1)" maxlength="11" style="width: 2rem;">
+	        </div>
+	        <div class="wst-ad-line"><p></p></div>
+	        <div class="ui-form-itemin">
+	            <label class="word">{:lang('presale_receiving_address')}：</label>
+	            <div id="addresst" class="ui-nowrap-flex address" onclick="javascript:dataShow();">{:lang('presale_please_select_address')}</div>
+	        </div>
+	        <div class="wst-ad-line"><p></p></div>
+	        <div class="ui-form-itemin">
+	        	<label class="word">{:lang('presale_detail_address')}：</label><input class="ui-border-binte" id="address_detailed" maxLength='50' type="text" placeholder="{:lang('presale_require_detail_address')}">
+	        </div>
+	        <div class="wst-ad-line"><p></p></div>
+	        <div class="ui-form">
+		        <div class="ui-form-item ui-form-item-switch wst-ad-operate">
+		            <p>{:lang('presale_set_default_address')}</p>
+		            <label class="ui-switch">
+		                <input type="checkbox" id="defaults" onclick="javascript:setToDefault(this)">
+		            </label>
+		        </div>
+			</div>
+	    </div>
+		 <div class="wst-ad-footer wst-ad-submit"><button class="button" onclick="javascript:saveAddress(0);">{:lang('presale_save')}</button></div>
+		{/* 遮盖层  */}
+		<div class="wst-cover" id="cover"></div>
+		{/* 地址框  */}
+		<div class="wst-fr-box" id="frame" style="display:none;">
+			<input type="hidden" name="" value="" id="level" autocomplete="off">
+			<div class="title"><span>{:lang('presale_receiving_address')}</span><i class="ui-icon-close-page" onclick="javascript:dataHide();"></i><div class="wst-clear"></div></div>
+			<div class="content" id="content">
+				<div class="option">
+					<p class="ui-nowrap-flex term active_0 active" onclick="javascript:inOption(this,0)">{:lang('presale_please_select')}</p>
+				</div>
+				<div class="wst-clear"></div>
+				<div id="area_0" class="list j-areas area_0" areaId="0" level="0">
+					{volist name="area" id="ar"}
+					 <p onclick="javascript:inChoice(this,'area_0',{$ar['areaId']},0);">{$ar['areaName']}</p>
+					{/volist}
+				</div>
+			</div>
+		</div>
+
+		{/* 遮盖层  */}
+		<div class="wst-cover" id="cover2"></div>
+		<div class="wst-areacode-box" id="areacodeBox">
+		    <div class="title">{:lang('presale_phone_area_code')}</div>
+		    <div class="desc"></div>
+		    <div class="content">
+		        {volist name=":WSTAareCodes()" id="vo"}
+		        <label class="ui-checkbox">
+			        <div class="wst-flex-row wst-jsb wst-ac item">
+			            <div class="name">{$vo}</div>
+			          	<input class="active" type="radio" name="areacode" value='{$vo}' {$key==0?'checked':''}>
+			        </div>
+		        </label>
+		        {/volist}
+		    </div>
+		    <div class="bottom-two-btn-box wst-flex-row wst-center">
+		        <button id="wst-event1" type="button" class="wst-dialog-b1" data-role="button" onclick="javascript:WST.hideCancelBox();">{:lang('presale_cancel')}</button>
+		        <button id="wst-event0" type="button" class="wst-dialog-b2" onclick="javascript:WST.checkAreaCode();">{:lang('presale_confirm')}</button>
+		    </div>
+		</div>
+     </section>

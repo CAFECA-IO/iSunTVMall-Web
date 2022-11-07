@@ -1,0 +1,71 @@
+{extend name="$LAYOUT_WECHAT_BASE" /}
+{block name="title"}{:lang('auction_pay_for_order')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__ROOT__/addons/auction/view/wechat/index/css/carts.css?v={$v}">
+{/block}
+{block name="header"}
+    <header style="background:#ffffff;" class="ui-header ui-header-positive ui-border-b wst-header">
+        <a class="ui-icon-return" onclick="history.back()"></a><h1>{:lang('auction_pay_for_order')}</h1>
+    </header>
+{/block}
+{block name="main"}
+   	{/* 大加载 */}
+	<div class="ui-loading-block" id="Loadl">
+	    <div class="ui-loading-cnt">
+	        <i class="ui-loading-bright"></i>
+	        <p id="j-Loadl">{:lang('auction_loading')}</p>
+	    </div>
+	</div>
+	<section class="ui-container">
+	{if(empty($message))}
+		<input type="hidden" id="key" value='{:WSTConf("CONF.pwdModulusKey")}'/>
+		<input type="hidden" name="" value="{$payObj}" id="payObj" autocomplete="off">
+		<input type="hidden" name="" value="{$auctionId}" id="auctionId" autocomplete="off">
+		<input type="hidden" name="" value="{$pkey}" id="pkey" autocomplete="off">
+		<div class="order-item">
+			<div class="ui-row-flex ui-whitespace border-b">
+				<div class="">
+					<img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{:WSTImg($object['goodsImg'],3)}" title="{$object['goodsName']|WSTStripTags}" class="o-Img">
+				</div>
+				<div class="o-gInfo-container">
+					<div class="o-gInfo">
+						<p class="o-gName ui-nowrap-multi ">{$object['goodsName']}</p>
+					</div>
+					<div class="o-gInfo2 wst-flex-row wst-ac wst-jfe">
+						<p class="o-gPrice">×1</p>
+					</div>
+				</div>
+			</div>
+			<div class="ui-btn-wrap" style="text-align: right;padding:10px 0;">
+				<span class="wst-orders_pricet">{if($payObj=='bao')}{:lang('auction_caution_money')}{else}{:lang('auction_transaction_fee')}{/if}：<span class="wst-orders_prices">{:lang('currency_symbol')}{$needPay}</span></span>
+			</div>
+			<div class="wst-clear"></div>
+		</div>
+		<div class="wst-wa-info">
+			<p class="info">{:lang('auction_wallet_balance')}：<span>{:lang('currency_symbol')} {$userMoney}</span>，{:lang('auction_wait_pay_order_total_money')}：<span>{:lang('currency_symbol')} {$needPay}</span></p>
+			{if($payPwd==0)}
+			<p class="pay-info">{:lang('auction_please_set_pay_password')}</p>
+			<div class="pay">{:lang('auction_set_password')}：<input type="password" id="payPwd" maxlength="6" autocomplete="off"></div>
+			<div class="pay">{:lang('auction_set_password2')}：<input type="password" id="payPwd2" maxlength="6" autocomplete="off"></div>
+			{else}
+			<div class="pay">{:lang('auction_pay_password')}：<input type="password" id="payPwd" maxlength="6" autocomplete="off"></div>
+			{/if}
+		</div>
+		{if($payPwd==1)}<div class="wst-wa-forget ui-whitespace"><a href="{:url('wechat/users/backPayPass')}">{:lang('auction_forget_password')}</a></div>{/if}
+		<div style="text-align: center;padding:0 0.12rem;">
+			<button type="button" class="wst-btn-dangerlo" onclick="javascript:walletPay({$payPwd});" style="width: 100%;  display: inline-block;">{:lang('auction_confirm_pay')}</button>
+		</div>
+	{else}
+		<ul class="ui-row-flex wst-flexslp">
+			<li class="ui-col ui-flex ui-flex-pack-center">
+			<p>{$message}</p>
+			</li>
+		</ul>
+	{/if}
+	</section>
+{/block}
+{block name="footer"}{/block}
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/js/rsa.js"></script>
+<script type='text/javascript' src='__ROOT__/addons/auction/view/wechat/index/js/carts.js?v={$v}'></script>
+{/block}

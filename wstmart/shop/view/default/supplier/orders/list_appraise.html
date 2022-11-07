@@ -1,0 +1,119 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('supplier-order_to_be_evaluated')}{/block}
+{block name="css"}
+<link href="__SHOP__/supplier/css/user.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+
+  <div class='wst-toolbar'>
+     <input type='text'  class="s-query" id='orderNo' placeholder="{:lang('order_number')}"/>
+     <input type='text' class="s-query" id='supplierName' placeholder="{:lang('supplier_name')}"/>
+     <button class="btn btn-primary" onclick="waitAppraiseByPage()"><i class="fa fa-search"></i>{:lang('query')}</button>
+  </div>
+  <div class='wst-user-content'>
+    <table class='wst-order-list'>
+       <thead>
+	      <tr class='head'>
+	         <th class="th-padding">{:lang("order_details")}</th>
+           <th width="205" style="text-align: center;">{:lang("payment_method/delivery_information")}</th>
+           <th style="text-align: center;">{:lang("money")}</th>
+           <th width="150" style="text-align: center;">{:lang("op")}</th>
+	      </tr>
+	   </thead>
+	   <tbody id='loadingBdy'>
+	       <tr id='loading' class='empty-row' style='display:none'>
+	            <td colspan='4'><img src="__SHOP__/supplier/img/loading.gif">{:lang("loading")}</td>
+	       </tr>
+       </tbody>
+       <script id="tblist" type="text/html">
+       {{# for(var i = 0; i < d.length; i++){ }}
+       <tbody class="j-order-row">
+         <tr class='empty-row'>
+            <td colspan='4'>&nbsp;</td>
+         </tr>
+         <tr class='order-head'>
+            <td colspan='4' align='right'>
+              <div class='time'>{{d[i].createTime}}</div>
+              <div class='orderno'>{:lang('order_number')}：{{d[i].orderNo}}
+      			 </div>
+              <div class='supplier'>{{d[i].supplierName}}</div>
+              <div class='link'></div>
+              <div>
+               {{d[i].status}}
+               {{#if(d[i].orderStatus==0){}}&nbsp;|&nbsp;<a href='#none' onclick='javascript:cancel(d[i].orderId)'>{:lang("cancellation_of_order")}</a>{{# } }}
+              </div>
+            </td>
+         </tr>
+         {{#
+            var tmp = null,rows = d[i]['list'].length;
+            for(var j = 0; j < d[i]['list'].length; j++){
+            tmp = d[i]['list'][j];
+         }}
+         <tr class='goods-box'>
+            <td>
+               <div class='goods-img'>
+                <a href="{{WST.U('shop/suppliergoods/detail','goodsId='+tmp.goodsId)}}" target='_blank'>
+                <img data-original='__RESOURCE_PATH__/{{tmp.goodsImg}}'  title='{{tmp.goodsName}}' class="gImg">
+                </a>
+               </div>
+               <div class='goods-name'>
+                 <div>{{tmp.goodsName}}</div>
+                 <div>{{tmp.goodsSpecNames}}</div>
+               </div>
+               <div class='goods-extra'>{{tmp.goodsPrice}} x {{tmp.goodsNum}}</div>
+            </td>
+            {{#if(j==0){}}
+            <td rowspan="{{rows}}">
+                <div>{{d[i].payTypeName}}</div>
+                <div>{{d[i].deliverTypeName}}</div>
+            </td>
+            <td rowspan="{{rows}}">
+                <div>{:lang('commodity_amount')}：{:lang('currency_symbol')}{{d[i].goodsMoney}}</div>
+                <div class='line'>{:lang('freight')}：{:lang('currency_symbol')}{{d[i].deliverMoney}}</div>
+                <div>{:lang('amount_actually_paid')}：{:lang('currency_symbol')}{{d[i].realTotalMoney}}</div>
+            </td>
+            <td rowspan="{{rows}}">
+                {{#if(d[i].isAppraise==0){}}
+                <div>
+                <a href='javascript:;' onclick='javascript:toAppraise({{d[i].orderId}})'>【{:lang('evaluation_order')}】</a>
+                </div>
+                {{# } }}
+                <div><a href='#none' onclick="view({{d[i].orderId}},'waitAppraise')">【{:lang('order_details')}】</a></div>
+                {{# if(d[i].isComplain==''){ }}
+                <div><a href='#none' onclick='complain({{d[i].orderId}},"waitAppraise")'>【{:lang('order_complaints')}】</a></div>
+                {{# } }}
+                {{# if(d[i].canAfterSale){ }}
+                <div><a href='javascript:void(0)' onclick='afterSale({{d[i].orderId}},"abnormal")'>【{:lang('apply_for_after_sales')}】</a></div>
+                {{# } }}
+            </td>
+            {{#}}}
+         </tr>
+         {{# } }}
+         <tr>
+          <td colspan="4">
+            {{# if(WST.blank(d[i].orderRemarks)!=''){  }}
+               <div class="order_remaker">【{:lang('my_message')}】{{d[i].orderRemarks}}</div>
+             {{# }  }}
+          </td>
+         </tr>
+       </tbody>
+       {{# } }}
+       </script>
+       <tr class='empty-row'>
+            <td colspan='4' id='pager' align="center" style='padding:5px 0px 5px 0px'>&nbsp;</td>
+       </tr>
+    </table>
+  </div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/js/jquery.min.js?v={$v}"></script>
+<script type="text/javascript" src="__STATIC__/plugins/layer/layer.js?v={$v}"></script>
+<script type="text/javascript" src="__STATIC__/plugins/lazyload/jquery.lazyload.min.js?v={$v}"></script>
+<script type='text/javascript' src='__SHOP__/supplier/js/common.js?v={$v}'></script>
+<script type='text/javascript' src='__SHOP__/supplier/orders/orders.js?v={$v}'></script>
+<script>
+$(function(){
+	waitAppraiseByPage({$p});
+})
+</script>
+{/block}

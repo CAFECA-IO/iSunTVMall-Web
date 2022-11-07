@@ -1,0 +1,156 @@
+{extend name="$LAYOUT_HOME_BASE" /}
+{block name="title"}{:lang('auction_pay')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="meta"}
+<meta name="description" content="{$seoAuctionDesc}">
+<meta name="Keywords" content="{$seoAuctionKeywords}">
+{/block}
+{block name="css"}
+<link href="__ROOT__/addons/auction/view/home/index/css/carts-{$lang}.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="top"}
+	{include file="$LAYOUT_HOME_TOP" /}
+{/block}
+{block name="header"}
+	{include file="$LAYOUT_HOME_HEADER" /}
+{/block}
+{block name="main"}
+<div class="wst-container">
+    <div class="pay-sbox-head">
+    	<a href='{$Request.root.true}'>{:lang('auction_home_page')}</a>&nbsp;&gt;&nbsp;{:lang('auction_pay')}
+    </div>
+    <div>
+    	<div class="pay-tip1"></div>
+    </div>
+    <div class='pay-sbox'>
+    	<div>
+	    <div class="tips-box">
+	    	{:lang('auction_remind_pay_desc')}<span class="wst-fred">&nbsp;{:lang('currency_symbol')}{$object['auction']['cautionMoney']}&nbsp;</span><span id="wst-check-orders" class="wst-check-orders">{:lang('auction_check_order_detail')}</span>
+	    </div>
+	    <div>
+		    <div id="wst-orders-box" style="display:none;">
+			    <table class='wst-order-list'>
+				 	
+				 	<thead>
+					 	<tr class='head'>
+					         <td colspan="2" class="wst-left-noborder">{:lang('auction_goods_2')}</th>
+					         <th width="150">{:lang('auction_number')}</th>
+					         <th width="150" class="wst-right-noborder">{$payObj=='bao'?lang('auction_caution_money'):lang('auction_transaction_fee')}}</th>
+					   	</tr>
+				   </thead>
+				   <tbody class="otbody">
+				 	<tr>
+				 		<td class="wst-left-noborder" width="64">
+				     		<div class="goods-img">
+					     		<a href="{:url('addon/auction-goods-detail',array('id'=>$object['auction']['auctionId']))}" target="_blank">
+					     			<img class='goodsImg' data-original="__RESOURCE_PATH__/{$object['auction']['goodsImg']}" title="{$object['auction']['goodsName']|WSTStripTags}" width='60'/>
+					     		</a>
+				     		</div>
+				     	</td>
+				     	<td class="wst-left-noborder" style="text-align: left;">
+				     		{$object['auction']['goodsName']}
+				     	</td>
+				        <td>1</td>
+				        <td>{$object['auction']['cautionMoney']}</td>
+				 	</tr>
+				 	
+			       </tbody>
+			    </table>
+		    </div>
+		    <div class="pay-type">{:lang('auction_select_pay_type')}</div>
+		    <div class="pay-list">
+		    	<input type="hidden" id="payObj" name="payObj" value="{$payObj}"/>
+		    	<input type="hidden" id="auctionId" name="auctionId" value="{$object['auction']['auctionId']}"/>
+		    	<input type="hidden" id="payCode" name="payCode" />
+		    	{volist name="$object['payments']" id="payment"}
+                 	{if condition="$payment['isOnline'] eq 1"}
+                    	<div class="wst-payCode-{$payment['payCode']}" data="{$payment['payCode']}"></div>
+                 	{/if}
+                 {/volist}
+		         <div class="wst-clear"></div>
+		    </div>
+		    <div class="bnt-box">
+		    	<div onclick='javascript:getPayUrl();' class="wst-pay-bnt"></div>
+		    	<div id='paypalBox'  style="width: 200px;margin: 0 auto;display: none;"></div>
+		    </div>
+	    </div>
+        </div>
+    </div>
+</div>
+<div id="alipayform" style="display:none;"></div>
+{/block}
+{block name="footer"}
+	{include file="$LAYOUT_HOME_RIGHT_CART" /}
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__ROOT__/addons/auction/view/home/index/js/carts.js?v={$v}'></script>
+{php}$paypalClientId = WSTGetPaypalClientId();{/php}
+{if $paypalClientId!=""}
+<script src="https://www.paypal.com/sdk/js?client-id={$paypalClientId}&debug=true&currency=HKD"></script>
+<script>
+
+	paypal.Buttons({
+		createOrder: function() {
+		  return fetch(WST.AU('auction://paypals/getpaypalinfo'), {
+		    method: 'post',
+		    headers: {
+		      'content-type': 'application/json'
+		    },
+		　　body:JSON.stringify({
+		 　　'payObj' : "{$payObj}",
+			 'auctionId' : "{$object['auction']['auctionId']}"
+		　　})
+		  }).then(function(res) {
+		  	console.log("res______________",res);
+		    return res.json();
+		  }).then(function(data) {
+		  	console.log("data______________",data);
+		    return data.id; // Use the key sent by your server's response, ex. 'id' or 'token'
+		  });
+		},
+		onApprove: function(data, actions) {
+			console.log("onApprove______________",data);
+	        return actions.order.capture().then(function(details) {
+	        	console.log("details——————————————————————————————————————————",details);
+	        	if(details['purchase_units'][0]['payments']['captures'][0]['status']=='COMPLETED'){
+	        		setTimeout(function(){
+	        			{if $payObj=='bao'}
+		        		location.href = '{:addon_url("auction://goods/modetail",array("id"=>$object["auction"]["auctionId"]),true,true)}';
+		        		{else}
+		        		location.href = '{:addon_url("auction://users/mocheckPayStatus",array("id"=>$object["auction"]["auctionId"]),true,true)}';
+	        			{/if}
+		        	},3000);
+	        	}
+	        });
+	    }
+	}).render('#paypalBox');
+
+</script>
+{/if}
+<script>
+$(function(){
+	$("#wst-check-orders").click(function(){
+		$("#wst-orders-box").slideToggle(600);
+	});
+	$("div[class^=wst-payCode]").click(function(){
+		var payCode = $(this).attr("data");
+		$("div[class^=wst-payCode]").each(function(){
+			$(this).removeClass().addClass("wst-payCode-"+$(this).attr("data"));
+		});
+		$(this).removeClass().addClass("wst-payCode-"+payCode+"-curr");
+		$("#payCode").val(payCode);
+		if(payCode=="paypals"){
+			$(".wst-pay-bnt").hide();
+			$("#paypalBox").show();
+		}else{
+			$(".wst-pay-bnt").show();
+			$("#paypalBox").hide();
+		}
+	});
+	if($("div[class^=wst-payCode]").length>0){
+		$("div[class^=wst-payCode]")[0].click();
+	}
+});
+
+</script>
+{/block}

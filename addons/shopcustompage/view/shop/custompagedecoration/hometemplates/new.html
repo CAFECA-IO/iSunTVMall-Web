@@ -1,0 +1,100 @@
+<div class="new-container">
+    <div class='new-title'>
+        <div class='new-title-text'>{$vo['title']}</div>
+        <div class='new-more' onclick="location.href='{:url('home/news/view')}'">更多</div>
+    </div>
+    <section class="ui-container" >
+        {volist name="$vo['news']" id="voo"}
+        {if $voo['TypeStatus'] == 1}
+        <div class="news-item wst-model" onclick="news({$voo['articleId']})">
+            <div class="wst-flex-row">
+                <div class="wst-flex-row">
+                    <div class="img j-imgAdapt wst-bor-mix-img">
+                        <a href="javascript:void(0);" >
+                            {if $voo['coverImg']}
+                            <img class="coverImg" src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-original="__RESOURCE_PATH__/{$voo['coverImg']}">
+                            {else}
+                            <img class="coverImg" src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" >
+                            {/if}
+                        </a>
+                    </div>
+                </div>
+                <div class="wst-flex-column wst-info" >
+                    <div class="new-article-title new-article-title-overflow">{$voo['articleTitle']}</div>
+                    <div class="new-article-content new-article-content-overflow">{$voo['articleContent']}</div>
+                </div>
+            </div>
+            <div class="wst-flex-row wst-jsb wst-mix-info">
+                <div class="new-visitor">• {:lang('shopcustompage_visitor_num',[$voo['visitorNum']])}</div>
+                <div class="new-create-time wst-right-align">• {$voo['createTime']}</div>
+            </div>
+        </div>
+        {elseif $voo['TypeStatus'] == 2}
+        <div class="news-item wst-model" onclick="news({$voo['articleId']})">
+            <div class="wst-flex-row">
+                <div class="wst-flex-column wst-info" >
+                    <div class="new-article-title new-article-title-overflow">{$voo['articleTitle']}</div>
+                    <div class="new-article-content new-article-content-overflow">{$voo['articleContent']}</div>
+                </div>
+                <div class="wst-flex-row">
+                    <div class="img j-imgAdapt wst-bor-mix-img">
+                        <a href="javascript:void(0);" >
+                            {if $voo['coverImg']}
+                            <img class="coverImg" src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-original="__RESOURCE_PATH__/{$voo['coverImg']}">
+                            {else}
+                            <img class="coverImg" src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" >
+                            {/if}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="wst-flex-row wst-jsb wst-mix-info">
+                <div class="new-visitor">• {:lang('shopcustompage_visitor_num',[$voo['visitorNum']])}</div>
+                <div class="new-create-time wst-right-align">• {$voo['createTime']}</div>
+            </div>
+        </div>
+        {elseif $voo['TypeStatus'] == 3}
+        <div class="wst-model"  style="height:auto;overflow:hidden;" onclick="news({$voo['articleId']})">
+            <div class="wst-max-info">
+                <div class="new-article-title new-article-title-overflow" >{$voo['articleTitle']}</div>
+            </div>
+            <div class="wst-max-info">
+                <div class="new-article-content wst-mix-cont new-article-content-overflow" >{$voo['articleContent']}</div>
+            </div>
+            <div class="max-img">
+                <a href="javascript:void(0);">
+                    {if $voo['coverImg']}
+                    <img class="coverImg" src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-original="__RESOURCE_PATH__/{$voo['coverImg']}">
+                    {else}
+                    <img class="coverImg" src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" >
+                    {/if}
+                </a>
+            </div>
+            <div class="wst-flex-row wst-jsb wst-mix-info max-remind">
+                <div class="new-visitor">• {:lang('shopcustompage_visitor_num',[$voo['visitorNum']])}</div>
+                <div class="new-create-time wst-right-align">• {$voo['createTime']}</div>
+            </div>
+        </div>
+        {elseif $voo['TypeStatus'] == 4}
+        <div class="news-item wst-model" onclick="news({$voo['articleId']})">
+            <div class="wst-flex-row" style="height:100px;">
+                <div class="wst-flex-column wst-info" >
+                    <div class="new-article-title new-article-title-overflow">{$voo['articleTitle']}</div>
+                    <div class="new-article-content new-article-content-overflow">{$voo['articleContent']}</div>
+                </div>
+            </div>
+            <div class="wst-flex-row wst-jsb wst-mix-info">
+                <div class="new-visitor">• {:lang('shopcustompage_visitor_num',[$voo['visitorNum']])}</div>
+                <div class="new-create-time wst-right-align">• {$voo['createTime']}</div>
+            </div>
+        </div>
+        {/if}
+        {/volist}
+    </section>
+    <script>
+        $('.coverImg').lazyload({ effect: "fadeIn",failurelimit : 10,skip_invisible : false,threshold: 100,placeholder:window.conf.RESOURCE_PATH+'/'+window.conf.GOODS_LOGO});//新闻封面图片
+        function news(id){
+            location.href=WST.U('home/news/view','id='+id);
+        }
+    </script>
+</div>

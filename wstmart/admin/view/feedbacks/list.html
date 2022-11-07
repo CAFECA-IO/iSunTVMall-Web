@@ -1,0 +1,31 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/feedbacks/feedbacks.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div class="wst-toolbar">
+   <select id="feedbackType" class="ipt">
+        <option value="-1">{:lang('select')}</option>
+        {volist name=":WSTDatas('FEEDBACK_TYPE')" id='vo'}
+        <option value="{$vo['dataVal']}">{$vo['dataName']}</option>
+        {/volist}
+    </select>
+    <input type='text' id='feedbackContent' placeholder='{:lang('label_feedback_content')}'/>
+    <input type="text" id="startDate" style='width:120px' name="startDate" class="laydate-icon j-ipt" maxLength="20" value='' placeholder='{:lang('start_date')}'/>
+    {:lang('to')}
+    <input type="text" id="endDate" name="endDate" style='width:120px' class="laydate-icon j-ipt" maxLength="20" value='' placeholder='{:lang('end_date')}'/>
+   <button class="btn btn-primary" onclick='javascript:loadGrid(0)'><i class='fa fa-search'></i>{:lang('query')}</button>
+   <div style='clear:both'></div>
+</div>
+<div class='wst-grid'>
+<div id="mmg" class="mmg"></div>
+<div id="pg" style="text-align: right;"></div>
+</div>
+<script>
+    $(function(){initGrid({$p});})
+</script>
+{/block}

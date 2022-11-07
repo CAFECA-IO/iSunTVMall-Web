@@ -1,0 +1,31 @@
+<table class='wst-form' style='margin-top:10px;width:90%'>
+   <tr>
+     <td colspan='2' style='padding-left:70px;'>{:lang('order_refund_reason_desc')}</td>
+   </tr>
+   <tr>
+     <th width='120'>{:lang('reason')}：</th>
+     <td>
+        <select id='reason' onchange='javascript:changeRejectType(this.value)'>
+           {volist name=":WSTDatas('REFUND_TYPE')" id="vo"}
+           <option value='{$vo["dataVal"]}'>{$vo["dataName"]}</option>
+           {/volist}
+        </select>
+     </td>
+   </tr>
+   <tr id='rejectTr' style='display:none'>
+     <th width='120'>{:lang('reason')}<font color='red'>*</font>：</th>
+     <td>
+       <textarea id='content' style='width:99%;height:50px;' maxLength='200'></textarea>
+     </td>
+   </tr>
+   <tr>
+     <th width='120'>{:lang('refund_money')}<font color='red'>*</font>：</th>
+     <td>
+       <input type='text' id='money' maxLength='10' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event,true)" onblur='javascript:WST.limitDecimal(this,2)'>({:lang('refund_money_tip')}<font color='red'>{:lang('currency_symbol')}{$object['realTotalMoney']}</font>)
+     </td>
+   </tr>
+   <tr>
+     <th width='120'>{:lang('refund_back_integral')}：</th>
+     <td>{$object['useScore']}个（{:lang('integral_deduction')}<font color='red'>{:lang('currency_symbol')}{$object['scoreMoney']}</font>）</td>
+   </tr>
+</table>

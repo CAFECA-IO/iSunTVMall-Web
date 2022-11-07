@@ -1,0 +1,124 @@
+<?php
+// +----------------------------------------------- -----------------------
+// | ThinkPHP [WE CAN DO IT JUST THINK]
+// +----------------------------------------------- -----------------------
+// | Copyright (c) 2006~2016 http://thinkphp.cn All rights reserved.
+// +----------------------------------------------- -----------------------
+// | Licensed (http://www.apache.org/licenses/LICENSE-2.0)
+// +----------------------------------------------- -----------------------
+// | Author: liu21st <liu21st@gmail.com>
+// +----------------------------------------------- -----------------------
+
+return [
+    //Page general
+    'reward_title'=>'reward when it is full'
+    'reward_description' =>'Marketing plug-in-send when full, decrease when full, free shipping when full',
+
+    'reward_full_delivery'=>'full delivery',
+    'reward_full_reduction_title'=>'full reduction',
+    'reward_full_reduction_preferential'=>'full reduction discount',
+
+    //Menu, permissions [Multi-language division with {L}, for example: Traditional content {L} English content {L} Simplified content]
+   'reward_menu_name' =>'Send event if full {L} Get event if full {L} Give event if full',
+
+    'reward_no_login'=>'You have not logged in yet, please log in first',
+    'reward_operation' =>'operation',
+    'reward_operation_success' =>'operation success',
+    'reward_operation_fail' =>'operation failed',
+    'reward_query' =>'query',
+    'reward_check'=>'View',
+    'reward_search'=>'search',
+    'reward_del'=>'delete',
+    'reward_edit'=>'Edit',
+    'reward_save'=>'save',
+    'reward_add'=>'add new',
+    'reward_update'=>'modify',
+    'reward_reset'=>'Reset',
+    'reward_back'=>'return',
+    'reward_confirm'=>'OK',
+    'reward_cancel'=>'cancel',
+    'reward_submit'=>'Submit',
+    'reward_close'=>'close',
+    'reward_full_screen'=>'full screen',
+    'reward_upload'=>'Upload',
+    'reward_has_upload'=>'Uploaded',
+    'reward_please_select'=>'please select',
+    'reward_back_page'=>'return to the previous page',
+    'reward_loading'=>'Loading...',
+    'reward_loading_data'=>'Loading data, please wait...',
+    'reward_submitting' =>'Submitting data, please wait...',
+    'reward_searching' =>'Searching for data, please wait...',
+    'reward_confirm_del' =>'Are you sure to delete? ',
+    'reward_no_data'=>'No data yet',
+
+   To
+   'reward_start_time_limit'=>'start time must be less than end time',
+    'reward_has_same_time_exist'=>'Same time period already exists for the whole store to give away when it is full',
+    'reward_has_same_time_exist2'=>'There is already a free-for-all event for the same time period',
+   'reward_require_select_goods'=>'Please select goods applicable to the activity',
+   'reward_goos_exist_same_time'=>'commodity [%s] already exists for the same period of time to give away activities'
+   'reward_reduce_money'=>'reduction of ¥%s',
+
+    'reward_reduce_cash'=>'reduced cash',
+    'reward_giving_gift_title'=>'reward gift',
+    'reward_giving_gift'=>'reward gift [%s]',
+   'reward_free_shipping'=>'Free shipping',
+    'reward_send_coupons_title'=>'send coupons',
+   'reward_send_coupons'=>'send %s coupons',
+   'reward_get_coupons_tips'=>'Congratulations on getting a %s coupon from the order [%s]',
+   'reward_full_reduction'=>'full ¥%s minus ¥%s',
+   'reward_full_consume'=>'Consumption over HK$%s',
+    'reward_not_meet_conditions'=>', the conditions are not met yet',
+    'reward_has_meet_conditions'=>', promotion conditions have been met',
+    'reward_reduced_tips'=>', %s has been reduced',
+    'reward_differ_title'=>', still bad %s',
+    'reward_activity_name'=>'activity name',
+    'reward_activity_time'=>'activity time',
+    'reward_status'=>'status',
+    'reward_status_1'=>'not started',
+    'reward_status_2'=>'in progress',
+    'reward_status_3'=>'rewarded',
+
+    'reward_start_date'=>'start date',
+    'reward_end_date'=>'end date',
+    'reward_start_time' =>'start time',
+    'reward_end_time' =>'end time',
+    'reward_to_title' =>'to',
+    
+    'reward_goods_information'=>'product information',
+    'reward_preferential_type'=>'Reward method',
+    'reward_preferential_type_1'=>'General Offer',
+    'reward_preferential_type_2'=>'Multi-level discount',
+    'reward_preferential_content'=>'reward content',
+    'reward_level'=>'level',
+    'reward_preferential_terms'=>'Preferential terms',
+    'reward_add_level_preference'=>'Add level preference',
+    'reward_add_max_level_tips'=>'(Add up to five levels)',
+    'reward_suit_range'=>'applicable range',
+    'reward_all_shop_can_use'=>'all shop can be used',
+    'reward_appoint_goods'=>'specified goods',
+    'reward_select_goods'=>'select goods',
+    'reward_goods_name_id' =>'product name/product number',
+    'reward_goods_cat'=>'product category',
+    'reward_alter_tips'=>'1. Virtual goods will be given away if they are not participating in the event. <br/>2. If the gift is a multi-specification product, it means that the gift is a default product. ',
+    'reward_add_level_limit_tips'=>'The discount level can only be established up to five levels',
+    'reward_full_consume_coupon' =>'%s discount coupon for full %s',
+    'reward_money_coupon'=>'HK$%s coupons',
+    'reward_min_one_tips'=>'At least one offer must be kept',
+    'reward_consume_money'=>'consumption amount',
+    'reward_consume_limit'=>'The consumption amount must be greater than 0',
+    'reward_preferential_limit_tips'=>'The discount amount must be greater than 0',
+    'reward_require_preferential_content'=>'Please select preferential content',
+    'reward_has_select_goods'=>'selected goods',
+
+    'reward_lable_money_unit'=>'yuan',
+    'reward_lable_reduce'=>'reduction',
+    'reward_lable_full_consume'=>'consumption full',
+    'reward_amount_reduced'=>'amount reduced',
+    'reward_give_goods'=>'give goods',
+    'reward_lable_give'=>'send',
+    'reward_coupon'=>'coupon',
+    'reward_coupon_allow_over'=>'(Allow coupons to be over issued)',
+    
+
+];

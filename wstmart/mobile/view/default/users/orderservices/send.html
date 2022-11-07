@@ -1,0 +1,61 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('fill_logistics_information')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/orders.css?v={$v}">
+{/block}
+{block name="header"}
+	<div id="info_list">
+    <header style="background:#ffffff;position: relative;" class="ui-header ui-header-positive wst-header wst-headero">
+        <i class="ui-icon-return" onclick="goBack()"></i><h1>{:lang('fill_logistics_information')}</h1>
+    </header>
+{/block}
+{block name="main"}
+<style>
+.item{ box-sizing: border-box; padding: 10px; background: #fff; display: flex;}
+.item .radio{ display: flex; justify-content: center; align-items: center; margin-right: 9%;}
+.commit-btn{ padding: 10px; margin: 10px; text-align: center; background: #d82a2e; color: #fff; border-radius: 6px; margin-top: 25px;}
+</style>
+
+<div class="item">
+    {:lang('transport_type')}：
+    <div class="radio">
+        <input type="radio" checked onchange="deliverType(this.value)" name="expressType" value='0'>
+        {:lang('not_need_logistics')}
+    </div>
+    <div class="radio">
+        <input type="radio" onchange="deliverType(this.value)" name="expressType" value='1'>
+        {:lang('express_delivery')}
+    </div>
+</div>
+<div id="j-express" style="display: none">
+    <div class="item">
+        {:lang('logistics_company')}：
+        <select id='expressId' class="ex-ipt">
+            <option value=''>{:lang('please_select')}</option>
+            {volist name="$express" id='vo'}
+                <option value='{$vo["expressId"]}'>{$vo["expressName"]}</option>
+            {/volist}
+        </select>
+    </div>
+    <div class="item">
+        {:lang('logistics_order_no')}：
+        <input type="text" id="expressNo" class="ex-ipt" placeholder="{:lang('please_input_logistics_order_no')}" />
+    </div>
+</div>
+<div class="commit-btn" onclick="userExpress()">
+    {:lang('submit')}
+</div>
+
+<input type="hidden" name="" id="id" value="{$id}">
+{/block}
+{block name="footer"}
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__MOBILE__/users/orderservices/send.js?v={$v}'></script>
+<script>
+$(document).ready(function(){
+
+});
+</script>
+{/block}

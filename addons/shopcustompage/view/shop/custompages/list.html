@@ -1,0 +1,138 @@
+{extend name="$LAYOUT_SHOP_BASE" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+<style>
+    .none{display: none;}
+    .page-poster-bg{margin:20px;position:relative;width:241px;height:505px;background:url('__ROOT__/addons/shopcustompage/view/shop/img/page/phone.png') no-repeat;background-size:100%;}
+    .page-poster{position:absolute;top:74px;left:20px;width:204px;height:362px;}
+    .page-poster-hover{opacity: 1;background: rgba(0,0,0,.66);width:204px;height:362px;position: absolute;top:74px;left:20px;}
+    .custom-page-add{position:absolute;top:50%;left:37%;}
+    .page-detail{height:100%;padding:20px 0;}
+    .page-name{color:#fff;text-align: center;}
+    .page-btn{width:100%;padding:0 20px;}
+    .page-btn img{width:40px;height:40px;cursor: pointer;}
+    .pc-page-poster-bg{margin:20px;position:relative;width:601px;height:505px;background:url('__ROOT__/addons/shopcustompage/view/shop/img/page/pc.png') no-repeat;background-size:100%;}
+    .pc-page-poster{position:absolute;top:73px;left:48px;width:508px;height:297px;}
+    .pc-page-poster-hover{opacity: 1;background: rgba(0,0,0,.66);width:508px;height:297px;position: absolute;top:73px;left:48px;}
+    .pc-custom-page-add{position:absolute;top:42%;left:45%;}
+    .pc-page-detail{height:100%;padding:20px 100px;}
+</style>
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ROOT__/addons/shopcustompage/view/shop/custompages/custompages.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div>
+    <div class='wst-tips-box'>
+        <div class='icon'></div>
+        <div class='tips'>
+            <ul class='body'>
+                <li>{:lang('shopcustompage_operation_explain')}：</li>
+                <li>{:lang('shopcustompage_tips1')}</li>
+                <li>{:lang('shopcustompage_tips2')}</li>
+                <li>{:lang('shopcustompage_tips3')}</li>
+                <li>{:lang('shopcustompage_tips4')}</li>
+                <li>{:lang('shopcustompage_tips5')}</li>
+                <li>{:lang('shopcustompage_tips6')}</li>
+            </ul>
+        </div>
+        <div style="clear:both"></div>
+    </div>
+</div>
+<div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+   <ul class="layui-tab-title">
+      <li class="{if $type==1}layui-this{/if}" onclick="javascript:changeCustomPageType(1)">{:lang('shopcustompage_mobile')}</li>
+       {if (WSTDatas('ADS_TYPE',2)!='')}
+      <li class="{if $type==2}layui-this{/if}" onclick="javascript:changeCustomPageType(2)">{:lang('shopcustompage_wechat')}</li>
+       {/if}
+       {if (WSTDatas('ADS_TYPE',5)!='')}
+      <li class="{if $type==3}layui-this{/if}" onclick="javascript:changeCustomPageType(3)">{:lang('shopcustompage_weapp')}</li>
+       {/if}
+       <li class="{if $type==4}layui-this{/if}" onclick="javascript:changeCustomPageType(4)">{:lang('shopcustompage_pc')}</li>
+   </ul>
+   <div class="layui-tab-content" style="padding: 10px 0;">
+      <div class="layui-tab-item {if $type==1}layui-show{/if} layui-form" >
+         <div class="wst-flex-row wst-fw">
+            <div id="page_type_1"></div>
+            <div class="page-poster-bg" >
+                <button class="btn btn-success custom-page-add" onclick='javascript:toEdit(0,1)'><i class='fa fa-plus'></i>{:lang('shopcustompage_add')}</button>
+            </div>
+         </div>
+      </div>
+       {if (WSTDatas('ADS_TYPE',2)!='')}
+      <div class="layui-tab-item layui-form {if $type==2}layui-show{/if}">
+         <div class="wst-flex-row wst-fw">
+            <div id="page_type_2"></div>
+            <div class="page-poster-bg" >
+               <button class="btn btn-success custom-page-add" onclick='javascript:toEdit(0,2)'><i class='fa fa-plus'></i>{:lang('shopcustompage_add')}</button>
+            </div>
+         </div>
+      </div>
+       {/if}
+       {if (WSTDatas('ADS_TYPE',5)!='')}
+      <div class="layui-tab-item layui-form {if $type==3}layui-show{/if}">
+         <div class="wst-flex-row wst-fw">
+            <div id="page_type_3"></div>
+            <div class="page-poster-bg" >
+               <button class="btn btn-success custom-page-add" onclick='javascript:toEdit(0,3)'><i class='fa fa-plus'></i>{:lang('shopcustompage_add')}</button>
+            </div>
+         </div>
+      </div>
+       {/if}
+       <div class="layui-tab-item layui-form {if $type==4}layui-show{/if}">
+           <div class="wst-flex-row wst-fw">
+               <div id="page_type_4"></div>
+               <div class="pc-page-poster-bg" >
+                   <button class="btn btn-success pc-custom-page-add" onclick='javascript:toEdit(0,4)'><i class='fa fa-plus'></i>{:lang('shopcustompage_add')}</button>
+               </div>
+           </div>
+       </div>
+   </div>
+</div>
+<script id="tblist" type="text/html">
+    <div class="wst-flex-row wst-fw">
+        {{# var dl = d['list'];for(var i = 0; i < dl.length; i++){ }}
+        <div class="{{# if(dl[i]['pageType']!=4){}}page-poster-bg{{# }else{ }}pc-page-poster-bg{{# } }}" style="{{# if(dl[i]['isIndex']==1){}} {{# if(dl[i]['pageType']!=4){}}background:url('__ROOT__/addons/shopcustompage/view/shop/img/page/phone_use.png') no-repeat;{{# }else{ }}background:url('__ROOT__/addons/shopcustompage/view/shop/img/page/pc_use.png') no-repeat;{{# } }}{{# } }}" onmouseover="showCustomPageDetail(this,{{dl[i]['pageType']}})" onmouseout="hideCustomPageDetail(this,{{dl[i]['pageType']}})">
+            {{# if(dl[i]['pageType']!=4){}}
+            {{# if(dl[i]['pagePoster']){ }}
+            <img class="page-poster" src="__RESOURCE_PATH__/{{dl[i]['pagePoster']}}" />
+            {{# }else{ }}
+            <img class="page-poster" src="__ROOT__/addons/shopcustompage/view/shop/img/page/default_poster.png" />
+            {{# } }}
+            {{# }else{ }}
+            {{# if(dl[i]['pagePoster']){ }}
+            <img class="pc-page-poster" src="__RESOURCE_PATH__/{{dl[i]['pagePoster']}}" />
+            {{# }else{ }}
+            <img class="pc-page-poster" src="__ROOT__/addons/shopcustompage/view/shop/img/page/pc_default_poster.png" />
+            {{# } }}
+            {{# } }}
+            <div class="{{# if(dl[i]['pageType']!=4){}}page-poster-hover{{# }else{ }}pc-page-poster-hover{{# } }} none">
+                <div class="{{# if(dl[i]['pageType']!=4){}}page-detail{{# }else{ }}pc-page-detail{{# } }} wst-flex-column wst-jsb wst-ac">
+                    <div class="page-name">{{dl[i]['pageName']}}</div>
+                    <div class="page-btn wst-flex-row wst-jsb">
+                        <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/edit.png" onclick="javascript:toEdit({{dl[i]['id']}},{{dl[i]['pageType']}})">
+                        <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/del.png" onclick="javascript:toDel({{dl[i]['id']}},{{dl[i]['pageType']}},{{dl[i]['isIndex']}})">
+                    </div>
+                    <div class="page-btn wst-flex-row wst-jsb">
+                        {{# if(dl[i]['isIndex']==1){}}
+                        <button class="btn btn-disabled" onclick="javascript:isIndexToggle({{dl[i]['id']}},0,{{dl[i]['pageType']}})"><i class='fa'></i>{{ WST.lang('shopcustompage_cancel_use') }}</button>
+                        {{# }else{ }}
+                        <button class="btn btn-success" onclick="javascript:isIndexToggle({{dl[i]['id']}},1,{{dl[i]['pageType']}})"><i class='fa'></i>{{ WST.lang('shopcustompage_set_index') }}</button>
+                        {{# } }}
+                        <button class="btn btn-success" onclick="javascript:copy({{dl[i]['id']}},{{dl[i]['pageType']}})"><i class='fa'></i>{{ WST.lang('shopcustompage_copy') }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{#}}}
+    </div>
+</script>
+<script>
+   $(function (){
+      listQuery({$type});
+   });
+</script>
+{/block}

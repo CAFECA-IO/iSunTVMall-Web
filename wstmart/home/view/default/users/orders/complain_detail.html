@@ -1,0 +1,120 @@
+{extend name="default/users/base" /}
+{block name="title"}{:lang('complain_detail')} - {:lang('user_center')}{__block__}{/block}
+{block name="css"}
+{/block}
+{block name="content"}
+  <div class="wst-user-head"><span>{:lang('complain_detail')}</span><a href="{:url('home/ordercomplains/index',['p'=>$p])}">返回</a></div>
+
+  <div class='wst-user-content'>
+    <table border='0' class='wst-complain-detail'>
+           <tr>
+              <td colspan='2' class='head'>{:lang('complain_information')}</td>
+           </tr>
+           <tr>
+              <th width='80'>{:lang('order_no')}：</th>
+              <td>{$data['orderNo']}</td>
+           </tr>
+           <tr>
+              <th>{:lang('complain_type')}：</th>
+              <td>
+               {php}$reason = WSTDatas('ORDER_COMPLAINT',$data['complainType']);{/php}
+               {$reason['dataName']}
+              </td>
+           </tr>
+           <tr>
+              <th>{:lang('complain_content')}：</th>
+              <td class='line-break'>{$data['complainContent']}</td>
+           </tr>
+           <tr>
+              <th valign='top'>{:lang('annex')}：</th>
+
+              <td id="photos-complain">
+               {volist name="$data['complainAnnex']" id="annex"}
+                <a href="javascript:void(0)">
+                <img  layer-src="__RESOURCE_PATH__/{$annex}" width="100" height="100" src="__RESOURCE_PATH__/{:str_replace('.','_thumb.',$annex)}" />
+                </a>
+               {/volist}
+              </td>
+
+           </tr>
+           <tr>
+              <th>{:lang('complain_time')}：</th>
+              <td>{$data['complainTime']}</td>
+           </tr>
+        </table>
+
+        {if condition="$data['needRespond'] eq 1 AND $data['respondContent'] neq ''"}
+        <table border='0' class='wst-complain-detail'>
+           <tr>
+              <td colspan='2' class='head'>{:lang('complain_pleading_information')}</td>
+           </tr>
+           <tr>
+              <th width='80'>{:lang('complain_pleading_content')}：</th>
+              <td class='line-break'>{$data['respondContent']}</td>
+           </tr>
+           <tr>
+              <th valign='top'>{:lang('annex')}：</th>
+              <td>
+               <div id="respondAnnex">
+                 {volist name="$data['respondAnnex']" id="annex2"}
+                  <a href="javascript:void(0)"><img class='lazyImg' src="__RESOURCE_PATH__/{:str_replace('.','_thumb.',$annex2)}" layer-src="__RESOURCE_PATH__/{$annex2}" height="100" width="100"/></a>
+                 {/volist}
+                </div>
+              </td>
+           </tr>
+           <tr>
+              <th>{:lang('complain_pleading_time')}：</th>
+              <td>{$data['respondTime']}</td>
+           </tr>
+        </table>
+        {/if}
+        <table border='0' class='wst-complain-detail' style='margin-top:15px;'>
+           <tr>
+              <td colspan='2' class='head'>{:lang('complain_arbitration_result')}</td>
+           </tr>
+           <tr>
+              <th width='80'>{:lang('complain_arbitration_result')}：</th>
+              <td>
+              {if condition="$data['complainStatus'] eq 0"}
+                                          {:lang('complain_status_0')}
+              {elseif condition="$data['complainStatus'] eq 1"/}
+                                          {:lang('complain_status_1')}
+              {elseif condition="$data['complainStatus'] eq 2 OR $data['complainStatus'] eq 3"/}
+                                          {:lang('complain_status_2')}
+              {elseif condition="$data['complainStatus'] eq 4"/}
+                                          {:lang('complain_status_4')}                        
+              {/if}
+              </td>
+           </tr>
+           {if condition="$data['complainStatus'] eq 4"}
+           <tr>
+              <th valign='top'>{:lang('complain_arbitration_result')}：</th>
+              <td class='line-break'>
+               {$data['finalResult']}
+              </td>
+           </tr>
+           {/if}
+           {if condition="$data['complainStatus'] eq 4"}
+           <tr>
+              <th>{:lang('complain_arbitration_time')}：</th>
+              <td>{$data['finalResultTime']}&nbsp;</td>
+           </tr>
+           {/if}
+        </table>
+
+  </div>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__STYLE__/users/orders/orders.js?v={$v}'></script>
+<script>
+$(function(){
+  // 调用图像层
+  layer.photos({
+    photos: '#photos-complain'
+  });
+  layer.photos({
+    photos: '#respondAnnex'
+  });
+})
+</script>
+{/block}

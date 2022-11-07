@@ -1,0 +1,29 @@
+<link rel="stylesheet"  href='__ROOT__/addons/combination/view/wechat/css/goods.css'/>
+<div class="wst-combine-box" {if count($combineGoods)==0}style='display:none'{/if}>
+    <div class="title">试试这样搭配?</div>
+    <div class="wst-combine-adsb">
+        <div class="swiper-container combine-goods-container">
+            <div class="swiper-wrapper">
+                {volist name='combineGoods' id='vo'}
+                <div class="swiper-slide" style='background:#f5f5f5;'>
+                    <a href="javascript:void(0)" onclick="toCombineGoods({$vo['combineId']})">
+                        <div class="combine-img">
+                            <img src="__RESOURCE_PATH__/{$vo['combineImg']}" title="{$vo['combineName']}">
+                        </div>
+                        <div class='combine-name'>
+                        {$vo['combineName']}
+                        <div class='price'>搭配价:{:lang('currency_symbol')}{$vo['minMoney']}~{:lang('currency_symbol')}{$vo['maxMoney']}</div>
+                        </div>
+                        <div style='clear:both;'></div>
+                    </a>
+                </div>
+                {/volist}
+            </div>
+        </div>
+        <div style='clear:both;'></div>
+    </div>
+</div>
+<script type='text/javascript' src='__STATIC__/js/base64.js'></script>
+<script type='text/javascript' src='__STATIC__/plugins/swiper/swiper.min.js'></script>
+<script type='text/javascript' src='__ROOT__/addons/combination/view/wechat/js/goods.js'></script>
+<script>initGoodsDetail();</script>

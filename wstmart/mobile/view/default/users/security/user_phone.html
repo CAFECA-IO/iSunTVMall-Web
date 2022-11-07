@@ -1,0 +1,83 @@
+{extend name="default/base" /}
+{block name="title"}{if($user['phoneType']==1)}{:lang('update_phone_number')}{else}{:lang('bind_phone_number')}{/if}  - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/security.css?v={$v}">
+{/block}
+{block name="header"}
+	{php}$user['phoneType']==1?$Title = lang('update_phone_number'):$Title = lang('bind_phone_number'){/php}
+	{include file="default/header" /}
+{/block}
+{block name="footer"}
+		{/* 大加载 */}
+		<div class="ui-loading-block" id="Loadl">
+		    <div class="ui-loading-cnt">
+		        <i class="ui-loading-bright"></i>
+		        <p id="j-Loadl">{:lang('loading')}</p>
+		    </div>
+		</div>
+		<div class="wst-se-footer">
+			<button id="modifyPhone" class="ui-btn-lg button" onclick="javascript:editPhone({$user['phoneType']});">{if($user['phoneType']==1)}{:lang('next_step')}{else}{:lang('confirm')}{/if}</button>
+		</div>
+{/block}
+{block name="main"}
+    <section class="ui-container">
+    	<div class="wst-se-phone">
+    		{if($user['phoneType']==1)}
+    		<div class="phone">{:lang('you_bind_phone_number')}：+{$user['areaCode']} {$user['userPhone']}</div>
+    		{else}
+			<div class="pay">{:lang('bind_phone_number')}：<br/>
+			{php}$areaCode = WSTAareCodes()[0];{/php}
+			<span id="area_code" onclick="WST.showAreacodeBox()">{$areaCode}</span>
+			<input id="areaCode" type="hidden" value="{$areaCode}">
+			<input id="userPhone" type="tel" placeholder="{:lang('phone_number')}" style='width:80%'></div>
+			{/if}
+			{if(WSTConf('CONF.smsVerfy')==1)}
+			{if (int)WSTConf('CONF.isAddonCaptcha')!=1}
+			<div class="pay" style='border:0px;'>{:lang('graphic_verifycode')}：</div>
+			<div class="pay">
+				<input id="smsVerfy" type="text" placeholder="{:lang('verify_require')}" maxlength="10" style='width:60%'>
+				<img id='verifyImg' src="{:url('mobile/users/getVerify')}" onclick='javascript:WST.getVerify("#verifyImg")'>
+			</div>
+			{/if}
+			{/if}
+			<div class="pay" style='border:0px;'>{:lang('verifycode')}：</div>
+            <div class="pay">
+				<input id="phoneCode" type="text" placeholder="{:lang('require_mobile_verifycode')}" maxlength="8" style='width:60%'>
+				{if (int)WSTConf('CONF.isAddonCaptcha')!=1}
+				<a class="send" href="javascript:obtainCode({$user['phoneType']})">{:lang('press_get_check_code')}</a>
+				{else}
+				{if($user['phoneType']==1)}
+				{:hook('mobileDocumentUnBindSmsCaptcha')}
+				{else}
+				{:hook('mobileDocumentBindSmsCaptcha')}
+				{/if}
+				{/if}
+			</div>
+    	</div>
+    </section>
+    {/* 遮盖层  */}
+	<div class="wst-cover" id="cover2"></div>
+	<div class="wst-areacode-box" id="areacodeBox">
+	    <input type="hidden" id="reason">
+	    <div class="title">{:lang('phone_area_code')}</div>
+	    <div class="desc"></div>
+	    <div class="content">
+	        {volist name=":WSTAareCodes()" id="vo"}
+	        <label class="ui-checkbox">
+		        <div class="wst-flex-row wst-jsb wst-ac item">
+		            <div class="name">{$vo}</div>
+		          	<input class="active" type="radio" name="data" value='{$vo}' {$key==0?'checked':''}>
+		        </div>
+	        </label>
+	        {/volist}
+	    </div>
+	    <div class="bottom-two-btn-box wst-flex-row wst-center">
+	        <button id="wst-event1" type="button" class="wst-dialog-b1" data-role="button" onclick="javascript:WST.hideCancelBox();">{:lang('cancel')}</button>
+	        <button id="wst-event0" type="button" class="wst-dialog-b2" onclick="javascript:WST.checkAreaCode();">{:lang('confirm')}</button>
+	    </div>
+	</div>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__MOBILE__/users/security/security.js?v={$v}'></script>
+{/block}

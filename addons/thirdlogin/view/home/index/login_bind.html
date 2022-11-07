@@ -1,0 +1,210 @@
+{extend name="$LAYOUT_HOME_BASE" /}
+{block name="title"}关联账号 -{:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="meta"}
+<meta name="description" content="{:WSTConf('CONF.seoMallDesc')}">
+<meta name="Keywords" content="{:WSTConf('CONF.seoMallKeywords')}">
+{/block}
+{block name="css"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link href="__STYLE__/css/login.css?v={$v}" rel="stylesheet">
+<link href="__ROOT__/addons/thirdlogin/view/home/index/index.css?v={$v}" rel="stylesheet">
+<style type="text/css">
+.wst-login-tr .wst-login-input{width: 400px!important;}
+.wst-regist-obtain{position: absolute;left:295px;top:5px;}
+#entry .form2{right: auto!important;width: 100%!important;}
+.wst-login-code, .wst-regist-code{border: 0!important;position: relative;}
+</style>
+{/block}
+{block name="top"}
+	{include file="$LAYOUT_HOME_TOP" /}
+{/block}
+
+{block name="header"}
+	
+{/block}
+{block name="main"}
+{php}$registerTypeArr = explode(',',WSTConf('CONF.registerType'));{/php}
+	<input type="hidden" id="token" value='{:WSTConf("CONF.pwdModulusKey")}'/>
+	<div class="wst-container">
+		<div class='wst-login'>
+		    	<div class="w1" id="entry">
+		    		<?php if($info){ ?>
+		        		<div class="wst-wx-info">
+		        			&nbsp; <img src="{$info['userPhoto']}">
+		        			&nbsp;Hi, {$info['userName']} {:lang('thirdlogin_tips7')}{:WSTConf('CONF.mallName')}
+		        		</div>
+		        	<?php } ?>
+		        	<div class="mc " id="bgDiv" style="position:relative; height:600px;">
+		        	<div class="wst-wx-bin">
+		        		<div class="bin selected" onclick="toChoice(this,1);">{:lang('thirdlogin_tips8')}</div>
+		        		<div class="bin" onclick="toChoice(this,0);">{:lang('thirdlogin_tips9')}</div>
+		        	</div>
+		            <div class="form form2" id="binding">
+		                <form id="login_form"  method="post" autocomplete="off">
+						<table class="wst-table">
+							<tr class="wst-login-tr">
+								<td class="wst-regist-td"><font color='red'>*</font>{:lang('thirdlogin_tips10')}</td>
+								<td>
+								<input id="loginName1" name="loginName1" class="ipt wst-login-input"  tabindex="1" value="" autocomplete="off" type="text" data-rule="{:lang('thirdlogin_tips10')}: required;" placeholder="{:lang('thirdlogin_tips10')}" onkeyup="javascript:WST.isChinese(this,1)"/>
+								</td>
+							</tr>
+							<tr class="wst-login-tr">
+								<td class="wst-regist-td"><font color='red'>*</font>{:lang('thirdlogin_password')}</td>
+								<td>
+								<input id="loginPwd1" name="loginPwd1" class="ipt wst-login-input" tabindex="2" autocomplete="off" type="password" data-rule="{:lang('thirdlogin_password')}: required;" data-msg-required="{:lang('thirdlogin_tips11')}" placeholder="{:lang('thirdlogin_password')}"/>
+								</td>
+							</tr>
+							
+							<tr class="wst-login-tr">
+								<td class="wst-regist-td"><font color='red'>*</font>{:lang('thirdlogin_verification_Code')}</td>
+								<td>
+									<div class="wst-regist-code">
+									<input id="verifyCode1" style="ime-mode:disabled" name="verifyCode1"  class="ipt wst-login-input " tabindex="6" autocomplete="off" maxlength="6" type="text" data-rule="{:lang('thirdlogin_verification_Code')}: required;" data-msg-required="{:lang('thirdlogin_please_enter_the_verification_code')}" data-tip="{:lang('thirdlogin_please_enter_the_verification_code')}" data-target="#verifyCodeTips1" placeholder="{:lang('thirdlogin_verification_Code')}"/>
+									<img id='verifyImg1' class="wst-regist-codeim" src="{:url('home/users/getVerify')}" onclick='javascript:WST.getVerify("#verifyImg1","#verifyCode1")' style="position: absolute; width:116px;border-top-right-radius:6px;border-bottom-right-radius:6px;  left: 22px;"><span id="verifyCodeTips1"></span>    	
+								   	</div>
+								</td>
+							</tr>
+							<tr class="wst-login-tr">
+								<td colspan="2" style="padding-left:180px;">
+								<label>
+									<input id="rememberPwd1" name="rememberPwd1" class="ipt wst-login-ch" checked="checked" type="checkbox"/>{:lang('thirdlogin_remember_the_password')}
+			     				</label>                                      
+					                       
+									<label style="float:right;margin-top:3px;">{:lang('thirdlogin_invisibility')}<a style="color:#69b7b5;" href="javascript:WST.getVerify('#verifyImg1','#verifyCode1')">{:lang('thirdlogin_change_one')}</a></label>
+								</td>
+							</tr>
+						
+							<tr style="height:80px;">
+								<td colspan="2" style="padding-left:218px;">
+									<input id="login_butt" class="wst-regist-but" type="button" value="{:lang('thirdlogin_bind_now')}" style="width: 180px;height:30px;" onclick="login(1);"/>
+								</td>
+							</tr>
+						</table>
+						</form>
+		            </div>
+		           <div class="form form2 hide wst-register_r" id="register">
+		           <div id='tab1' class="wst-tab-box">
+		           	<ul id='goodsTabs1' class="wst-tab-nav">
+						{if in_array(2,$registerTypeArr)}<li>{:lang('thirdlogin_mobile_registration')}</li>{/if}
+						{if in_array(1,$registerTypeArr)}<li>{:lang('thirdlogin_account_registration')}</li>{/if}
+					</ul>
+					<div class="wst-tab-content">
+					{if in_array(2,$registerTypeArr)}
+					<div class="wst-tab-item">
+					<form id="reg_form"  method="post" autocomplete="off">
+						<table class="wst-table">
+							<tr class="wst-login-tr">
+								<td class="wst-regist-td"><font color='red'>*</font>{:lang('thirdlogin_phone')}</td>
+								<td><select class="wst_ipt" id="areaCode" name="areaCode" style="margin-left: 20px;height: 35px;">
+					                {volist name=":WSTAareCodes()" id="acode"}
+							          <option value="{$acode}">{$acode}</option>
+							        {/volist}
+					          	</select>
+								<input id="loginName" name="loginName" class="wst_ipt wst-regist-input" tabindex="1" maxlength="30" autocomplete="off" onpaste="return false;" style="ime-mode:disabled;width:340px;float: none;margin-left: 6px;" placeholder="{:lang('thirdlogin_phone')}"  type="text" onkeyup="javascript:WST.isChinese(this,1)"/></td>
+							</tr>
+							<tr class="wst-login-tr">
+								<td class="wst-regist-td"><font color='red'>*</font>{:lang('thirdlogin_password')}</td>
+								<td><input id="loginPwd" name="loginPwd" class="wst_ipt wst-regist-input" tabindex="2" style="ime-mode:disabled;" autocomplete="off" type="password" placeholder="{:lang('thirdlogin_tips12')}"/></td>
+							</tr>
+							<tr class="wst-login-tr">
+								<td class="wst-regist-td"><font color='red'>*</font>{:lang('thirdlogin_confirm_password')}</td>
+								<td><input id="reUserPwd" name="reUserPwd" class="wst_ipt wst-regist-input" tabindex="3" autocomplete="off" type="password" placeholder="{:lang('thirdlogin_tips12')}"/></td>
+							</tr>
+							<tr id="mobileCodeDiv" class="wst-login-tr">
+								<td class="wst-regist-td"><font color='red'>*</font>{:lang('thirdlogin_SMS_verification_code')}</td>
+								<td style="position: relative;">
+									<input maxlength="6" autocomplete="off" tabindex="6" class="wst_ipt wst-regist-input" name="mobileCode" style="ime-mode:disabled" id="mobileCode" type="text" data-target="#mobileCodeTips" placeholder="{:lang('thirdlogin_SMS_verification_code')}"/>
+									{if (int)WSTConf('CONF.isAddonCaptcha')!=1}
+									<button id="timeTips" onclick="getVerifyCode();" class="wst-regist-obtain">{:lang('thirdlogin_tips13')}</button>
+									{else}
+									{:hook('homeDocumentRegistSmsCaptcha')}
+									{/if}
+									
+									<span id="mobileCodeTips"></span>
+								</td>
+							</tr>
+							<tr class="wst-login-tr">
+								<td colspan="2" style="padding-left:180px;">
+									<label>
+										<input id="protocol" name="protocol" type="checkbox" class="wst_ipt" value="1" data-rule="checked"/>{:lang('thirdlogin_tips14')}
+						           		<a href="javascript:;" style="color:#69b7b5;" id="protocolInfo" onclick="showProtocol();">{:lang('thirdlogin_tips15')}</a>
+						           	</label>
+								</td>
+							</tr>
+							<tr style="height:80px;">
+								<td colspan="2" style="padding-left:260px;">
+									<input id="reg_butt" class="wst-regist-but" type="submit" value="{:lang('thirdlogin_register_now')}" style="width: 180px;height:30px;"/>
+								</td>
+							</tr>
+						</table>
+						</form>
+					</div>
+					{/if}
+
+					{if in_array(1,$registerTypeArr)}
+					<div class="wst-tab-item">
+						<form id="reg_form2"  method="post" autocomplete="off" onsubmit="return false;">
+							<table class="wst-table">
+								<tr class="wst-login-tr">
+									<td class="wst-regist-td" style="width: 200px;line-height: 45px"><font color='red'>*</font>{:lang('thirdlogin_tips10')}</td>
+									<td><input id="loginName2" name="loginName" class="wst_ipt2 wst-regist-input" tabindex="1" maxlength="30" autocomplete="off" onpaste="return false;" style="ime-mode:disabled;" placeholder="{:lang('thirdlogin_tips16')}"  type="text" onkeyup="javascript:WST.isChinese(this,1)" data-rule="{:lang('thirdlogin_tips10')}: required;" data-msg-required="{:lang('thirdlogin_please_fill_in_the_user_name')}" data-tip="{:lang('thirdlogin_enter_one_user_name')}"/></td>
+								</tr>
+								<tr class="wst-login-tr">
+									<td class="wst-regist-td"><font color='red'>*</font>{:lang('thirdlogin_password')}</td>
+									<td><input id="loginPwd2" name="loginPwd" class="wst_ipt2 wst-regist-input" tabindex="2" style="ime-mode:disabled;" autocomplete="off" type="password" placeholder="{:lang('thirdlogin_tips12')}" data-rule="{:lang('thirdlogin_password')}: required;" data-msg-required="{:lang('thirdlogin_tips11')}" data-tip="{:lang('thirdlogin_tips17')}"/></td>
+								</tr>
+								<tr class="wst-login-tr">
+									<td class="wst-regist-td"><font color='red'>*</font>{:lang('thirdlogin_confirm_password')}</td>
+									<td><input id="reUserPwd2" name="reUserPwd" class="wst_ipt2 wst-regist-input" tabindex="3" autocomplete="off" type="password" placeholder="{:lang('thirdlogin_tips12')}" data-rule="{:lang('thirdlogin_confirm_password')}: required;" data-msg-required="{:lang('thirdlogin_please_fill_in_the_confirmation_password')}" data-tip="{:lang('thirdlogin_please_enter_the_confirmation_password')}"/></td>
+								</tr>
+								<tr class="wst-login-tr">
+									<td class="wst-regist-td"><font color='red'>*</font>{:lang('thirdlogin_graphic_verification_code')}</td>
+									<td><input id="verifyCode" style="ime-mode:disabled;margin-left: 0; width: 266px;border: 1px solid #eee;" name="verifyCode"  class="wst_ipt2 wst-regist-codemo" tabindex="6" autocomplete="off" maxlength="6" type="text" data-rule="{:lang('thirdlogin_verification_Code')}: required;" data-msg-required="{:lang('thirdlogin_please_enter_the_verification_code')}" data-tip="{:lang('thirdlogin_please_enter_the_verification_code')}" data-target="#verify" placeholder="{:lang('thirdlogin_verification_Code')}" />
+										<img id='verifyImg' class="wst-login-codeim-1" src="{:url('home/index/getVerify')}" onclick='javascript:WST.getVerify("#verifyImg","#verifyCode")' style="width:125px;height:36px;border-top-right-radius:6px;border-bottom-right-radius:6px;float: right;margin-top: 1px;">
+										<span id="verify"></span>
+									</td>
+								</tr>
+								<tr class="wst-login-tr">
+									<td class="wst-regist-td"></td>
+									<td>
+										<label style="margin-left: 20px;padding-right: 120px;">
+											<input id="protocol2" name="protocol" type="checkbox" class="wst_ipt2" value="1" data-rule="checked" data-msg="{:lang('thirdlogin_please_agree_to_register')}"/>{:lang('thirdlogin_tips14')}
+											<a href="javascript:;" style="color:#69b7b5;" id="protocolInfo2" onclick="showProtocol();">{:lang('thirdlogin_tips15')}</a>
+										</label>
+									</td>
+								</tr>
+								<tr style="height:80px;">
+									<td colspan="2" style="padding-left:260px;">
+										<input id="reg_butt2" class="wst-regist-but" type='submit' onclick='javascript:register()' value="{:lang('thirdlogin_register')}" style="width: 180px;height:30px;"/>
+									</td>
+								</tr>
+							</table>
+						</form>
+					</div>
+					{/if}
+		           	</div>
+		            </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+	</div>
+{/block}
+{block name="footer"}
+	{include file="$LAYOUT_HOME_FOOTER" /}
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script type="text/javascript" src="__STATIC__/js/rsa.js"></script>
+<script type='text/javascript' src='__STYLE__/js/login.js?v={$v}'></script>
+<script type='text/javascript' src='__ROOT__/addons/thirdlogin/view/home/index/index.js?v={$v}'></script>
+<script type='text/javascript'>
+$(function(){
+	initRegist();
+	$('#tab1').TabPanel({tab:0,callback:function(no){
+		if(no==1);
+		if(no==2);
+	}});
+})
+</script>
+{/block}

@@ -1,0 +1,38 @@
+{extend name="default/base" /}
+{block name="main"}
+  <div class='wst-grid' style='margin-top:10px;'>
+    <table class='wst-form'>
+      <tr>
+        <td style="padding-right:5px;">{:lang('label_supp_notice')}：</td>
+      </tr>
+      <tr>
+        <td>
+          <textarea style="width:100%;height:200px;resize:none;padding:10px;" placeholder="{:lang('label_supp_notice_plo')}" class="ipt" id="supplierNotice" maxlength='150'>{$notice}</textarea>
+      </td>
+      </tr>
+    </table>
+    <button onclick="toEdits()" class="btn btn-primary" style="margin-left: 45%;margin-top: 20px;"><i class="fa fa-check"></i>{:lang('save')}</button>
+  </div>
+{/block}
+{block name="js"}
+
+<script>
+function toEdits(id){
+  var params = WST.getParams('.ipt');
+  if(params.supplierNotice.length>150){
+    WST.msg(WST.lang('require_supp_notice'),{icon:2});
+    return;
+  }
+  var loading = WST.msg(WST.lang('submitting_data'), {icon: 16,time:60000});
+  $.post(WST.U('supplier/suppliers/editNotice'),params,function(data,textStatus){
+      layer.close(loading);
+      var json = WST.toJson(data);
+      if(json.status=='1'){
+          WST.msg(json.msg,{icon:1});
+      }else{
+            WST.msg(json.msg,{icon:2});
+      }
+  });
+}
+</script>
+{/block}

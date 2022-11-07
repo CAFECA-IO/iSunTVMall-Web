@@ -1,0 +1,58 @@
+{extend name="default/base" /}
+{block name="css"}
+<link href="__SUPPLIER__/css/security.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+	<div class="wst-sec-info">
+	<img class="wst-lfloat usersImg" data-original='{:WSTUserPhoto($data['userPhoto'])}' width='100' height='100' title="{$data['loginName']|WSTStripTags}"/>
+	<div class="wst-sec-infor">
+	<span class="wst-sec-na wst-lfloat">{$data['loginName']}</span>
+	{if($data['ranks'])}
+	<span class="wst-sec-grade"><img class="wst-lfloat" src="__RESOURCE_PATH__/{$data['ranks']['userrankImg']}"/><span class="wst-lfloat">{$data['ranks']['rankName']}</span></span>
+	{/if}
+	<div style='clear:both;'></div>
+	<div style="margin-top:6px;">
+	<span class="wst-sec-infoi" id="level"></span>
+	<div class="wst-sec-infoi" style="margin-top:5px;">
+		<span class="wst-sec-strip wst-lfloat">{if ($data['loginPwd'])}<span class="wst-sec-strip2 wst-lfloat"></span>{/if}{if ($data['userEmail'])}<span class="wst-sec-strip2 wst-lfloat"></span>{/if}{if ($data['userPhone'])}<span class="wst-sec-strip2 wst-lfloat"></span>{/if}</span>
+	</div>
+	<div class="wst-sec-infoi" style="margin-top:5px;">
+		<span>{:lang('last_login_time')}：{php}echo date("Y-m-d H:i:s",strtotime($data['lastTime']));{/php}</span><br/>
+		<span>{:lang('last_login_ip')}：{$data['lastIP']}</span>
+	</div>
+	</div>
+	</div>
+	<div style='clear:both;'></div>
+	</div>
+	<div class="wst-sec-s">
+		<div class="wst-sec-lists">{if ($data['loginPwd'])}<span class="wst-sec-green"><img src="__SUPPLIER__/img/user_icon_yyz.png"/>{:lang('have_set')}</span>{else}<span class="wst-sec-ash"><img src="__SUPPLIER__/img/icon_wyz.png"/>{:lang('no_set')}</span>{/if}
+		<span class="wst-sec-w">&nbsp;{:lang('label_security_login_pwd')}</span>&nbsp;&nbsp;{:lang('label_security_login_pwd_tips1')}，{if ($data['loginPwd'])}{:lang('label_security_login_pwd_tips2')}{else}{:lang('label_security_login_pwd_tips3')}{/if}
+			<a class="wst-user-buta wst-rfloat btn btn-blue" style="margin-top: 16px;" onclick="location.href=WST.U('supplier/users/editPass')"><i class="fa fa-pencil"></i>{if ($data['loginPwd'])}{:lang('edit_password')}{else}{:lang('set_now')}{/if}</a></div>
+		<div class="wst-sec-lists">{if ($data['payPwd'])}<span class="wst-sec-green"><img src="__SUPPLIER__/img/user_icon_yyz.png"/>{:lang('have_set')}</span>{else}<span class="wst-sec-ash"><img src="__SUPPLIER__/img/icon_wyz.png"/>{:lang('no_set')}</span>{/if}
+		<span class="wst-sec-w">&nbsp;{:lang('pay_pwd')}</span>&nbsp;&nbsp;{:lang('label_security_pay_pwd_tips1')}，{if ($data['payPwd'])}{:lang('label_security_pay_pwd_tips2')}{else}{:lang('label_security_pay_pwd_tips3')}{/if}
+		<a class="wst-user-buta wst-rfloat btn btn-blue" style="margin-top: 16px;" onclick="location.href=WST.U('supplier/users/editPayPass')"><i class="fa fa-pencil"></i>{if ($data['payPwd'])}{:lang('edit_password')}{else}{:lang('set_now')}{/if}</a></div>
+		<div class="wst-sec-lists">{if ($data['userEmail'])}<span class="wst-sec-green"><img src="__SUPPLIER__/img/user_icon_yyz.png"/>{:lang('have_verify')}</span>{else}<span class="wst-sec-ash"><img src="__SUPPLIER__/img/icon_wyz.png"/>{:lang('no_verify')}</span>{/if}
+		<span class="wst-sec-w">&nbsp;{:lang('label_security_email_verify')}</span>&nbsp;&nbsp;{:lang('label_security_email_verify_tips1')}。{if ($data['userEmail'])}{:lang('label_security_email_verify_tips2')}：{$data['userEmail']}{else}{:lang('label_security_email_verify_tips3')}{/if}
+		<a class="wst-user-buta wst-rfloat btn btn-blue" style="margin-top: 16px;" onclick="location.href=WST.U('supplier/users/editEmail')"><i class="fa fa-pencil"></i>{if ($data['userEmail'])}{:lang('edit_email')}{else}{:lang('verify_now')}{/if}</a></div>
+		<div class="wst-sec-lists">{if ($data['userPhone'])}<span class="wst-sec-green"><img src="__SUPPLIER__/img/user_icon_yyz.png"/>{:lang('have_verify')}</span>{else}<span class="wst-sec-ash"><img src="__SUPPLIER__/img/icon_wyz.png"/>{:lang('no_verify')}</span>{/if}
+		<span class="wst-sec-w">&nbsp;{:lang('label_security_phone_verify')}</span>&nbsp;&nbsp;{:lang('label_security_phone_verify_tips1')}。{if ($data['userPhone'])}{:lang('label_security_phone_verify_tips2')}：{$data['userPhone']}{else}{:lang('label_security_phone_verify_tips3')}{/if}
+		<a class="wst-user-buta wst-rfloat btn btn-blue" style="margin-top: 16px;" onclick="location.href=WST.U('supplier/users/editPhone')"><i class="fa fa-pencil"></i>{if ($data['userPhone'])}{:lang('edit_phone')}{else}{:lang('verify_now')}{/if}</a></div>
+		<div style='clear:both;'></div>
+	</div>
+{/block}
+{block name="js"}
+<script>
+$(function(){
+	var securityCount = $('.wst-sec-strip2').length;
+	if(securityCount==1){
+		$('#level').html(WST.lang('security_level_lower')+'&nbsp; &nbsp; &nbsp;<span class="wst-sec-infoin">'+WST.lang('suggest_improve_security')+'</span>');
+	}else if(securityCount==2){
+		$('#level').html(WST.lang('security_level_middle')+'&nbsp; &nbsp; &nbsp;<span class="wst-sec-infoin">'+WST.lang('suggest_improve_security')+'</span>');
+	}else if(securityCount==3){
+		$('#level').html(WST.lang('security_level_high')+'&nbsp; &nbsp; &nbsp;<span class="wst-sec-infoin">'+WST.lang('suggest_edit_password')+'</span>');
+	}else{
+		$('#level').html(WST.lang('security_level_low')+'&nbsp; &nbsp; &nbsp;<span class="wst-sec-infoin">'+WST.lang('account_is_danger')+'</span>');
+	}
+});
+</script>
+{/block}

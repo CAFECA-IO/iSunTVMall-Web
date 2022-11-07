@@ -1,0 +1,70 @@
+{extend name="default/base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+{/block}
+{block name="main"}
+<div class="wst-body">
+    <table class="wst-form">
+        <tr>
+            <td colspan='2'>
+                <div class='wst-tips-box' style='margin-top:10px;'>
+                    <div class='icon'></div>
+                    <div class='tips'>
+                        {:lang('import_tips1')}<br />
+                        {:lang('import_tips2')}<br />
+                        {:lang('import_tips3')}<br />
+                        {:lang('import_tips4')}<br />
+                        {:lang('import_tips5')}<br />
+                        {:lang('import_tips6')}<a href='__STATIC__/template/goods.xls' style='color:blue;'
+                            target='_blank'>{:lang('download_template')}</a>。<br />
+                        {:lang('import_tips7')}<br />
+                    </div>
+                    <div style="clear:both"></div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th align='right' width='90'>{:lang('commodity_data')}</th>
+            <td>
+                <div id="filePicker" style='margin-left:0px;'>{:lang('import_product_data')}</div>
+            </td>
+        </tr>
+        <tr style="display: none;">
+            <th align='top' style="color: red;font-weight: bold;vertical-align: text-top;" width='90'>
+                {:lang('error_message')}</th>
+            <td id="errMsgBox"></td>
+        </tr>
+    </table>
+</div>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+<script>
+    var uploading = null;
+    $(function () {
+        var uploader = WST.upload({
+            server: "{:url('shop/imports/importGoods')}", pick: '#filePicker',
+            formData: { dir: 'temp' },
+            callback: function (f, file) {
+                layer.close(uploading);
+                uploader.removeFile(file);
+                var json = WST.toJson(f);
+                $('#errMsgBox').parent().hide();
+                if (json.status == 1) { 
+                    uploader.refresh();
+                    WST.msg(WST.lang('import_ok', [json.importNum]), { icon: 1 });
+                    if (json.specErrMsg && json.specErrMsg.length > 0) {
+                        var _msg = json.specErrMsg.map(function (x) { return "<div style='color: red;font-weight: bold;'>" + x.msg + "</div>" });
+                        $('#errMsgBox').html(_msg.join('')).parent().show();
+                    }
+                } else {
+                    WST.msg(WST.lang('import_err', json.msg), { icon: 5 });
+                }
+            },
+            progress: function (rate) {
+                uploading = WST.msg(WST.lang('loading'));
+            }
+        });
+    });
+</script>
+{/block}

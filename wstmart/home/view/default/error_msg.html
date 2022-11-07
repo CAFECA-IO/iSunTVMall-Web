@@ -1,0 +1,15 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('system_prompt')}  - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="css"}{/block}
+{block name="main"}
+<div class="wst-container">
+	<div class="wst-empty empty1">
+		<div class="prompt">
+			<p>{$message}</p>
+		</div>
+		<div class="button">
+		   <a href="{$Request.root.true}" class="wst-empty-btn wst-empty-btn1">{:lang('back_home')}</a>
+		</div>
+	</div>
+</div>
+{/block}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+	<meta name="format-detection" content="telephone=no">
+	<title>{:lang('msg_title')}</title>
+</head>
+<body>
+	<style>
+	html {font-size: 100px; }
+	.wst-go-details {
+		text-align: left;
+	    padding: 15px 12px;
+		font-size: 0.13rem;
+		color:#666;
+	}
+	.createtime{
+		text-align: center;
+	}
+	.createtime span{
+		text-align:center;
+		padding:2px 5px;
+		background: #ccc;
+		border-radius: 12px;
+		display: inline-block;
+		font-size: 0.11rem;
+		line-height: 0.19rem;
+		color:#fff;
+	}
+	.wst-go-details img{
+		width: 100%;
+	}
+	</style>
+	<div class="wst-go-details ui-container">
+		<div class="createtime">
+			<span>{$data['createTime']}</span>
+		</div>
+		<div class="wst-go-details">{$data['msgContent']}</div>
+	</div>
+</body>
+</html>

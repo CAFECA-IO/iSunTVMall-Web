@@ -1,0 +1,113 @@
+{extend name="default/base" /}
+{block name="main"}
+  <div style='margin:10px'>
+    <table border='0' class='wst-form'>
+           <tr>
+              <td colspan='2' class='head'>{:lang('complaint_information')}</td>
+           </tr>
+           <tr>
+              <th width='80'>{:lang('order_number')}：</th>
+              <td>{$data['orderNo']}</td>
+           </tr>
+           <tr>
+              <th>{:lang('type_of_complaint')}：</th>
+              <td>
+              {php}$reason = WSTDatas('ORDER_COMPLAINT',$data['complainType']);{/php}
+              {$reason['dataName']}
+              </td>
+           </tr>
+           <tr>
+              <th>{:lang('complaint_content')}：</th>
+              <td class='line-break'>{$data['complainContent']}</td>
+           </tr>
+           <tr>
+              <th valign='top'>{:lang('enclosure')}：</th>
+
+              <td id="photos-complain">
+               {volist name="$data['complainAnnex']" id="annex"}
+                <a href="javascript:void(0)">
+                <img  layer-src="__RESOURCE_PATH__/{$annex}" width="100" height="100" src="__RESOURCE_PATH__/{:str_replace('.','_thumb.',$annex)}" />
+                </a>
+               {/volist}
+              </td>
+
+           </tr>
+           <tr>
+              <th>{:lang('complaint_time')}：</th>
+              <td>{$data['complainTime']}</td>
+           </tr>
+        </table>
+
+
+        {if condition="$data['needRespond'] eq 1 AND $data['respondContent'] neq ''"}
+        <table border='0' class='wst-form'>
+           <tr>
+              <td colspan='2' class='head'>{:lang('responding_information')}</td>
+           </tr>
+           <tr>
+              <th width='80'>{:lang('content_of_pleading')}：</th>
+              <td class='line-break'>{$data['respondContent']}</td>
+           </tr>
+           <tr>
+              <th valign='top'>{:lang('enclosure')}：</th>
+              <td>
+               <div id="respondAnnex">
+                 {volist name="$data['respondAnnex']" id="annex2"}
+                  <a href="javascript:void(0)"><img class='lazyImg' src="__RESOURCE_PATH__/{:str_replace('.','_thumb.',$annex2)}" layer-src="__RESOURCE_PATH__/{$annex2}" height="100" width="100"/></a>
+                 {/volist}
+                </div>
+              </td>
+           </tr>
+           <tr>
+              <th>{:lang('response_time')}：</th>
+              <td>{$data['respondTime']}</td>
+           </tr>
+        </table>
+        {/if}
+        <table border='0' class='wst-form' style='margin-top:15px;'>
+           <tr>
+              <td colspan='2' class='head'>{:lang('arbitration_result')}</td>
+           </tr>
+           <tr>
+              <th width='80'>{:lang('arbitration_result')}：</th>
+              <td>
+              {if condition="$data['complainStatus'] eq 0"}
+                                          {:lang('waiting_for_processing')}
+              {elseif condition="$data['complainStatus'] eq 1"/}
+                                          {:lang('waiting_for_respondent_response')}
+              {elseif condition="$data['complainStatus'] eq 2 OR $data['complainStatus'] eq 3"/}
+                                          {:lang('pending_arbitration')}
+              {elseif condition="$data['complainStatus'] eq 4"/}
+                                          {:lang('arbitrated')}                        
+              {/if}
+              </td>
+           </tr>
+           {if condition="$data['complainStatus'] eq 4"}
+           <tr>
+              <th valign='top'>{:lang('arbitration_result')}：</th>
+              <td class='line-break'>
+               {$data['finalResult']}
+              </td>
+           </tr>
+           {/if}
+           {if condition="$data['complainStatus'] eq 4"}
+           <tr>
+              <th>{:lang('arbitration_time')}：</th>
+              <td>{$data['finalResultTime']}&nbsp;</td>
+           </tr>
+           {/if}
+           <tr>
+              <td colspan='2' style='text-align:center;'><button type="button" class="btn" onclick="toBack({$p})"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button></td>
+           </tr>
+        </table>
+  </div>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__SHOP__/orders/orders.js?v={$v}'></script>
+<script>
+$(function(){
+  parent.showImg({photos: $('#photos-complain')});
+  parent.showImg({photos: $('#respondAnnex')});
+})
+</script>
+{/block}

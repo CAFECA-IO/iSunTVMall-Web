@@ -1,0 +1,66 @@
+{extend name="default/users/base" /}
+{block name="title"}{:lang('security_setting')} - {:lang('user_center')}{__block__}{/block}
+{block name="css"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link href="__STYLE__/css/security.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="content"}
+<div class="wst-user-head"><span>{:lang('bind_email')}</span><a href="{:url('home/users/security')}">{:lang('back')}</a></div>
+<div class="wst-clear"></div>
+{if ($process=='One')}
+	<form method="post" id="emailForm" autocomplete="off">
+        <table class='wst-form'>
+           <tr>
+             <th align='right'><font color='red'>*</font>{:lang('bind_email_address')}：</th>
+             <td>
+             <input type='text' class="ipt" id='userEmail' name='userEmail' style='width:250px;' maxLength='30'/>
+             </td>
+           </tr>
+       <tr>
+	        <th align='right'><font color='red'>*</font>{:lang('verifycode')}：</th>
+			<td>
+				<input id="verifyCode" data-rule="{:lang('verifycode')}:required" data-target="#verify" style="ime-mode:disabled;width:250px;" name="verifyCode"  class="ipt wst-lfloat" tabindex="6" autocomplete="off" maxlength="6" type="text"/>
+				<label class="wst-sec-img">
+					<img id='verifyImg' src="{:url('home/users/getVerify')}" onclick='javascript:WST.getVerify("#verifyImg","#verifyCode")' style="width:110px;"> 
+				</label>      	
+			   	<label>&nbsp;{:lang('verifycode_invisibility')}<a href="javascript:WST.getVerify('#verifyImg','#verifyCode')" style="color:#69b7b5;">{:lang('change_one')}</a></label><span id="verify"></span>
+			</td>
+		</tr>
+           <tr>
+           	<th align='right'><font color='red'>*</font>{:lang('verifycode')}：</th>
+             <td style='height:60px;'>
+             	<input id="secretCode" style="ime-mode:disabled;width:250px;" name="secretCode"  class="ipt wst-lfloat" tabindex="6" autocomplete="off" maxlength="6" type="text"/>
+                 <button id="timeSend" class="wst-sec-but" type="button" onclick="sendEmail()">{:lang('security_send_verify_email')}</button><span id="secretErr"></span>
+             </td>
+           </tr>
+           <tr>
+           	<td colspan="2">
+           		<button id="next" class="wst-sec-but" type="submit" style="width:120px;height: 30px;margin-left:180px">{:lang('next_step')}</button>
+           	</td>
+           </tr>
+        </table>
+      </form>
+<div id="prompt" class="wst-sec-prompt hide">
+	<div class="wst-lfloat">
+	<p><span>{:lang('has_send_verify_email_title')}：</span><span id="inemail" style=" font-weight: bold;"></span></p>
+	<p class="wst-sec-p1">{:lang('has_send_verify_tip_1')}</p>
+	<p style="color:#f10b0b;">({:lang('has_send_verify_tip_2')})</p>
+	<p class="wst-sec-p1" style="font-weight: bold;">{:lang('no_mail')}</p>
+	<p class="wst-sec-p2">{:lang('has_send_verify_tip_3')}<a style="color:#006898;" onclick="location.href=WST.U('home/users/editEmail')">{:lang('resend')}</a></p>
+	</div>
+</div>
+{/if}
+{if ($process=='Three')}
+<div class="wst-sec-su">
+	<span class="wst-sec-sut"><img src="__STYLE__/img/icon_success.png"/></span>
+	<span class="wst-sec-sub">{:lang('bind_email_success')}</span>
+</div>
+{/if}
+{/block}
+{block name="js"}
+	<script type='text/javascript' src='__STYLE__/users/security/security.js?v={$v}'></script>
+	<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+	<script>
+	$(function(){veemailForm();})
+	</script>
+{/block}

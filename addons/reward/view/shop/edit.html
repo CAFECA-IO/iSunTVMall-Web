@@ -1,0 +1,200 @@
+{extend name="$LAYOUT_SHOP_BASE" /}
+{block name="css"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link href="__ROOT__/addons/reward/view/shop/shops.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<style>
+input[type=text]{width:150px;}
+label{display: inline-block}
+</style>
+<form id='rewardform' name='rewardform' autocomplete="off">
+        <input type='hidden' id='rewardId' class='ipt' value='{$object["rewardId"]}'/>
+        <table class="wst-form">  
+           <tr>
+             <td colspan="2">
+               <div class='wst-tips-box'>
+               <div class='icon'></div>
+               <div class='tips'>
+               {:lang('reward_alter_tips')}</div>
+               <div style="clear:both"></div>
+               </div>
+             </td>
+           </tr>       
+           <tr>
+             <th width='120' align='right'>{:lang('reward_activity_name')}<font color='red'>*</font>：</th>
+             <td>
+             	<input type='text' id='rewardTitle' name='rewardTitle'class='ipt' maxLength='100' value='{$object["rewardTitle"]}' data-rule="{:lang('reward_activity_name')}:required;" style='width:350px;'/>
+             </td>
+           </tr>
+           <tr>
+               <th width='120'>{:lang('reward_activity_time')}<font color='red'>*</font>：</th>
+             <td colspan='3'>
+                 <input type='text' id='startDate' name='startDate' class='ipt laydate-icon' value='{$object["startDate"]}' data-rule="{:lang('reward_start_date')}: required;date;" data-target="#msg_endDate"/>
+                 {:lang('reward_to_title')}
+                   <input type='text' id='endDate' name='endDate' class='ipt laydate-icon' value='{$object["endDate"]}' data-rule="{:lang('reward_end_date')}: required;date;match(gt, startDate, date)" data-target="#msg_endDate"/>
+                   <span class='msg-box' id='msg_endDate'></span>
+             </td>
+           </tr>
+           <tr>
+               <th width='120'>{:lang('reward_preferential_type')}<font color='red'>*</font>：</th>
+	             <td colspan='3' class='layui-form'>
+	                 <label>
+                     <input type='radio' name='rewardType' class='ipt' value='0' {if $object['rewardType']==0}checked{/if} onclick='WST.showHide(0,"#addLayerBox");initRewardLayer()' title="{:lang('reward_preferential_type_1')}">
+                   </label>
+                   <label>
+                     <input type='radio' name='rewardType' class='ipt' value='1' {if $object['rewardType']==1}checked{/if} onclick='WST.showHide(1,"#addLayerBox")' title="{:lang('reward_preferential_type_2')}">
+                   </label>
+	             </td>
+           </tr>
+           <tr>
+             <th valign="top">{:lang('reward_preferential_content')}<font color='red'>*</font>：</th>
+             <td>
+               <table class='rewardTbl'>
+                  <tr><th width='80'>{:lang('reward_level')}</th><th width='200'>{:lang('reward_preferential_terms')}</th><th>{:lang('reward_preferential_content')}</th><th width='50'>{:lang('reward_operation')}</th></tr>
+                  <tbody id='rewardBox'></tbody>
+               </table>
+               <div id='addLayerBox' {if $object['rewardType']==0}style='display:none'{/if}>
+               <a href='javascript:addRewardLayer()' style='color:blue'>{:lang('reward_add_level_preference')}</a>{:lang('reward_add_max_level_tips')}
+               </div>
+             </td>
+           </tr>
+           <tr>
+               <th width='120'>{:lang('reward_suit_range')}<font color='red'>*</font>：</th>
+	           <td colspan='3' class='layui-form'>
+	               <label>
+                     <input type='radio' name='useObjects' class='ipt' value='0' {if $object['useObjects']==0}checked{/if} onclick='javascript:WST.showHide(0,"#goodsBox")' title="{:lang('reward_all_shop_can_use')}">
+                 </label>
+                 <label>
+                     <input type='radio' name='useObjects' class='ipt' value='1' {if $object['useObjects']==1}checked{/if} onclick='javascript:WST.showHide(1,"#goodsBox")' title="{:lang('reward_appoint_goods')}">
+                 </label>
+	           </td>
+           </tr>
+           <tr id='goodsBox'  {if $object['useObjects']==0}style='display:none'{/if}>
+             <th>{:lang('reward_select_goods')}<font color='red'>*</font>：</th>
+             <td>
+               <table>
+                 <tr>
+                   <td colspan="3">
+                     {:lang('reward_goods_cat')}：<select id="shopCatId1" class='s-ipt' onchange="WST.shopsCats('shopCatId2',this.value,'');">
+                       <option value="">{:lang('reward_please_select')}</option>
+                       {volist name=":WSTShopCats(0)" id="vo"}
+                       <option value="{$vo['catId']}">{$vo['catName']}</option>
+                       {/volist}
+                    </select>
+                    <select id='shopCatId2' class='s-ipt'>
+                       <option value=''>{:lang('reward_please_select')}</option>
+                    </select>
+                    <input type='text' id='goodsName' class='s-ipt' placeholder="{:lang('reward_goods_name_id')}"/>
+                    <a class='btn btn-primary' onclick="searchGoods()"><i class="fa fa-search"></i>{:lang('reward_query')}</a>
+                   </td>
+                 </tr>
+                 <tr>
+                   <td>
+                     <div class='goods-seach-tr'>
+                         <div class='head'>
+                             <div class='h-chk'><input type='checkbox' onclick='WST.checkChks(this,".lchk")'></div>
+                             <div class='h-name'>{:lang('reward_goods_information')}</div>
+                         </div>
+                         <div id='goodsSearchBox' class='body-tr'></div>
+                         <script id="tblist" type="text/html">
+                         {{#
+                          var ids = document.getElementById('useObjectIds').value;
+                          ids = (ids.length>0)?ids.split(','):[];
+                          for(var i = 0; i < d.length; i++){
+                              if($.inArray(String(d[i].goodsId),ids)>-1)continue;
+                          }}
+                         <div class='body'>
+                             <div class='b-chk'><input type='checkbox' class='lchk' value='{{d[i].goodsId}}'></div>
+                             <div class='b-img'><img width='30' src='{{WST.conf.RESOURCE_PATH+"/"+WST.replaceImg(d[i].goodsImg,"_thumb")}}'></div>
+                             <div class='b-name'>{{d[i].goodsName}}</div>
+                         </div>
+                         {{# } }}
+                         </script>
+                     </div>
+                   </td>
+                   <td>
+                       <a href='javascript:moveRight()' class='btn btn-primary' style='margin-right:0px'>》》</a><br/><br/>
+                       <a href='javascript:moveLeft()' class='btn btn-primary' style='margin-right:0px'>《《</a>
+                       <input type='hidden' id='useObjectIds' class='ipt' value='{$object["useObjectIds"]}'>
+                   </td>
+                   <td>
+                     <div class='goods-result-tr'>
+                       <div class='head'>
+                          <div class='h-chk'><input type='checkbox' onclick='WST.checkChks(this,".rchk")'></div>
+                          <div class='h-name'>{:lang('reward_has_select_goods')}</div>
+                      </div>
+                      <div id='goodsResultBox' class='body-tr'>
+                        {volist name="object['goods']" id='vo'}
+                        <div class='body'>
+                             <div class='b-chk'><input type='checkbox' class='rchk' value='{$vo.goodsId}'></div>
+                             <div class='b-img'><img width='30' src='__RESOURCE_PATH__/{:WSTImg($vo.goodsImg,"_thumb")}'></div>
+                             <div class='b-name'>{$vo.goodsName}</div>
+                         </div>
+                        {/volist}
+                      </div>
+                     </div>
+                   </td>
+                 </tr>
+               </table>
+             </td>
+           </tr>
+           <tr>
+             <td colspan='2'  align='center'>
+                 <button class='btn btn-primary' type='button' onclick="save({$p})"><i class="fa fa-check"></i>{:lang('reward_save')}</button>&nbsp;&nbsp;
+                 <button class='btn' type='button' onclick="javaScript:location.href = WST.AU('reward://shops/index','p={$p}')"><i class="fa fa-angle-double-left"></i>{:lang('reward_back')}</button>
+             </td>
+           </tr>
+        </table>
+        </form>
+   <table style='display:none'>
+     <tbody id='rewardTPLBox'>
+     <tr id='rewardContentTr_{NO}'>
+        <td>{C}</td>
+        <td>{:lang('reward_lable_full_consume')}<input type="text" id="money-{NO}" class='j-reward-money' dataval="{NO}" data-rule="{:lang('reward_consume_money')}:required;integer[+]" style='width:50px;' data-target="#msg_money_{NO}"/>{:lang('reward_lable_money_unit')}
+        <br/><div class='msg-box' id='msg_money_{NO}'></div>
+        </td>
+        <td>
+          <label style='display:block'>
+            <input type='checkbox' id="j-chk-0-{NO}" class='ipt' value='0' dataval='0' onclick='javascript:checkReward(this,{NO},0)'>
+            <span id='reward-0-0-{NO}'>{:lang('reward_reduce_cash')}</span>
+            <span id='reward-0-1-{NO}' style='display:none'>
+              {:lang('reward_lable_reduce')}<input type='text' id='j-reward-c-0-{NO}' style='width:50px;' data-target="#msg_reward-c-0-{NO}" data-rule="{:lang('reward_amount_reduced')}:required(#j-chk-0-{NO}:checked);integer[+]"/>{:lang('reward_lable_money_unit')}
+            </span>
+            <div class='msg-box' id='msg_reward-c-0-{NO}'></div>
+          </label>
+          <label style='display:block'>
+            <input type='checkbox' id="j-chk-1-{NO}" class='ipt' value='1' dataval='0' onclick='javascript:checkReward(this,{NO},1)'>
+            <span id='reward-1-0-{NO}'>{:lang('reward_giving_gift_title')}</span>
+            <span id='reward-1-1-{NO}' style='display:none'>
+               {:lang('reward_lable_give')}<select id='j-reward-c-1-{NO}' data-target="#msg_reward-c-1-{NO}" data-rule="{:lang('reward_give_goods')}:required(#j-chk-1-{NO}:checked);"></select>
+            </span>
+            <div class='msg-box' id='msg_reward-c-1-{NO}'></div>
+          </label>
+          <label style='display:block'>
+            <input type='checkbox' id="j-chk-2-{NO}" class='ipt' value='2' dataval='0' onclick='javascript:checkReward(this,{NO},2)'><span id='reward-2-0-{NO}'>{:lang('reward_free_shipping')}</span>
+          </label>
+          <label {if WSTConf('WST_ADDONS.coupon')}style='display:block'{else}style='display:none'{/if}>
+            <input type='checkbox' id="j-chk-3-{NO}" class='ipt' value='3' dataval='0' onclick='javascript:checkReward(this,{NO},3)'>
+            <span id='reward-3-0-{NO}'>{:lang('reward_send_coupons_title')}</span>
+            <span id='reward-3-1-{NO}' style='display:none'>
+               {:lang('reward_lable_give')}<select id='j-reward-c-3-{NO}' data-target="#msg_reward-c-3-{NO}" data-rule="{:lang('reward_coupon')}:required(#j-chk-3-{NO}:checked);"></select>{:lang('reward_coupon_allow_over')}
+            </span>
+            <div class='msg-box' id='msg_reward-c-3-{NO}'></div>
+          </label>
+        </td>
+        <td>
+            <a href='javascript:delRewardContent({NO})'>{:lang('reward_del')}</a>
+        </td>
+     </tr>
+     </tbody>
+   </table>
+{/block}  
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script type="text/javascript" src="__ROOT__/addons/reward/view/shop/shop.js?v={$v}"></script>
+<script>
+var rewardObj = {:json_encode($object)};
+$(function(){initReward();})
+</script>
+{/block}

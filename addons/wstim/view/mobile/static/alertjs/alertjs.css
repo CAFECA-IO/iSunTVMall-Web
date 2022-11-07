@@ -1,0 +1,11 @@
+.jsalert-container {visibility: visible; font-family: 'Open Sans', sans-serif; color: #fff; position: fixed; z-index: 999999; left: 0px; width: calc(100%); top: 0px; text-align: center; padding-top: 17px; padding-bottom: 17px; } 
+.jsalert-container p { margin: 0px; padding: 0px; } 
+.jsalert-alert { visibility: visible !important; background-color: #b8b8b8b3; border-bottom: 1px solid #bcbcbc; } 
+.jsalert-success { visibility: visible !important; background-color: #85C389B3; border-bottom: 1px solid #a2caa5; } 
+.jsalert-warning { visibility: visible !important; background-color: #efd793b3; border-bottom: 1px solid #dfd6b7; } 
+.jsalert-error { visibility: visible !important; background-color: #c38585b3; border-bottom: 1px solid #caa2a2; }
+.jsalert-dismiss {position: absolute; right: 20px; top: 12px; width: 12px; height: 12px; opacity: 0.3;}
+.jsalert-dismiss:hover {opacity: .6;}
+.jsalert-dismiss:before, .jsalert-dismiss:after { position: absolute; content: ' '; height: 12px; width: 2px; top: 5px; background-color: #333;}
+.jsalert-dismiss:before {transform: rotate(45deg);}
+.jsalert-dismiss:after {transform: rotate(-45deg);}

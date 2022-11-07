@@ -1,0 +1,188 @@
+{extend name="$LAYOUT_HOME_BASE" /}
+{block name="title"}{:lang('seckill_title')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="meta"}
+<meta name="description" content="{$seoSeckillDesc}">
+<meta name="keywords" content="{$seoSeckillKeywords}">
+{/block}
+{block name="css"}
+<link href="__STATIC__/plugins/swiper/css/swiper.min.css" rel="stylesheet">
+<link href="__ROOT__/addons/seckill/view/home/index/css/goods_list.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="top"}
+  {include file="$LAYOUT_HOME_TOP" /}
+{/block}
+{block name="header"}
+
+
+<div style="background:#fff;box-shadow: 0 2px 27px 0 rgba(0,0,0,.1);">
+<div style="background:#fff;">
+  <div class='wst-search-container' style="border:1px solid #fff;">
+     <div class='wst-logo'>
+      <?php $mallName = WSTConf('CONF.mallName'); ?>     
+     <a href='{$Request.root.true}' title="{$mallName|WSTStripTags}" >
+        <img src="__RESOURCE_PATH__/{:WSTConf('CONF.mallLogo')}" height="100" style="max-width:215px" title="{$mallName|WSTStripTags}" alt="{$mallName|WSTStripTags}">
+     </a>
+     </div>
+     <div class="wst-search-box" style="margin: 0 auto;">
+        <div class='wst-search'>
+          <input type="hidden" id="search-type" value="1"/>
+          <input type="text" id='search-ipt' class='search-ipt' style="padding-left: 15px;" placeholder="{:lang('seckill_search_goods')}" value='{:isset($keyword)?$keyword:""}'/>
+          <div id='search-btn' class="search-btn" onclick='searchSeckill();'>{:lang('seckill_search')}</div>
+        </div>
+     </div>
+  </div>
+  <div class="wst-clear"></div>
+</div>
+{/* 左侧菜单栏 */}
+<div class="wst-nav-menus">
+   <div class="nav-w" style="position: relative;">
+      <div class="w-spacer"></div>
+      <div class="dorpdown {if isset($hideCategory)}j-index{/if}" id="wst-categorys">
+         <div class="dt j-cate-dt">
+             <a href="{:addon_url('seckill://goods/lists')}">{:lang('seckill_home_page2')}</a>
+         </div>
+      </div>
+      {/* 横栏菜单 */}
+      <div id="wst-nav-items">
+           <ul>
+               {volist name="goodsCat" id="vo" key="k"}
+               <li class="fore1">
+                    <a class="{$vo['catId']==$catId?'active':''}" href="{:addon_url('seckill://goods/lists',array('catId'=>$vo['catId']))}" >{$vo['simpleName']}</a>
+               </li>
+               {/volist}
+           </ul>
+      </div>
+      <script>
+        $(document).keypress(function(e) { 
+          if(layerMapIndex == 0 && e.which == 13) {  
+            $('#search-btn').click();  
+          }
+        }); 
+      </script>
+</div>
+<div class="wst-clear"></div>
+</div>
+</div>
+{/block}
+{block name="main"}
+
+{/* 已筛选的条件 */}
+<input type="hidden" value="{$catId}" id="catId" autocomplete="off">
+<input type="hidden" value="0" id="timeId" autocomplete="off">
+<input type="hidden" value="0" id="currPage" autocomplete="off">
+<input type="hidden" value="0" id="totalPage" autocomplete="off">
+<input type="hidden" id="currStatus" value="0">
+<input type="hidden" id="nowTime" value="">
+<input type="hidden" value="{$shopId}" id="shopId" autocomplete="off">
+<div class="seckill_title" style=" ">
+  <i class="fa fa-clock-o"></i>&nbsp;{:lang('seckill_time_limit_seckill')}
+</div>
+<div class="timeline " id="wst-timeline"  style="">   
+    <div class="grid_c1 swiper-container">       
+      <ul class="timeline_list swiper-wrapper">
+        {volist name="times" id="vo"}
+        <li class="swiper-slide timeline_item times {$vo['status']==1?'timeline_item_selected':''}" data-timeid="{$vo['id']}" data-key="{$key}" data-status="{$vo['status']}" data-stime="{$vo['startTime']}" data-etime="{$vo['endTime']}">
+          <a class="timeline_item_link" href="javascript:void(0)">  
+            <div class="timeline_item_link_skew">    
+              <div class="timeline_item_link_skew_timewrap">
+                <i class="timeline_item_link_skew_time">{$vo['title']}</i>
+              </div>
+              <div class="timeline_item_link_skew_processwrap">
+                <i class="timeline_item_link_skew_processtips">{$vo['status']==1?lang('seckill_status_1'):($vo['status']==2?lang('seckill_status_2'):lang('seckill_status_3'))}</i>
+              </div>
+              <div class="timeline_timecount">
+                <b class="timeline_timecount_txt">{$vo['status']==1?lang('seckill_status_1'):($vo['status']==2?lang('seckill_status_2'):lang('seckill_status_3'))}</b>
+                  <b class="J-timeline_timecount_wrap timeline_timecount_time seckill_items_timer_{$vo['id']} "><span class="status_tip">{:lang('seckill_to_end')}</span>
+                  <label class="lab_timer_{$vo['id']}">
+                    <i>00</i>:
+                    <i>00</i>:
+                    <i>00</i>
+                  </label>
+                </b>
+              </div>
+            </div>
+          </a>
+        </li>
+        {/volist} 
+      </ul>   
+    </div>     
+  </div>
+
+{/* 商品展示  */}
+<div class="wst-container">
+	<div class='goods-main content'>
+      <ul id="goods-list" class="goods-list"></ul>
+	</div>
+	<div class='wst-clear'></div>
+	<div style="height: 50px;"></div>
+</div>
+<script id="list" type="text/html">
+  {{# if(d && d.length>0){ }}
+    {{# for(var i=0; i< d.length; i++){ }}
+    {{# var gstock = d[i].secNum - d[i].hasBuyNum;
+        var percent = (d[i].secNum>0)?(Number(d[i].hasBuyNum/d[i].secNum*100).toFixed(1)):100;
+        var status = $("#currStatus").val();
+    }}
+
+    <li class="seckill_mod_goods {{status!=1?'seckill_mod_goodspre':''}}" style="{{ gstock>0?'':'opacity: 0.5' }}">
+      <a target="_blank" class="seckill_mod_goods_link" href="{{WST.AU('seckill://goods/detail','id='+d[i].id)}}">
+          <div class="seckill_mod_goods_link_img">
+              <img class="j-lazyImg" src="__RESOURCE_PATH__/{{d[i]['goodsImg']}}">
+              <div class="gtips {{ gstock>0?'wst-hide':'wst-show' }}">{:lang('seckill_loot_all')}</div>
+          </div>
+        <h4 class="seckill_mod_goods_title">{{d[i]['goodsName']}}</h4>
+      </a>
+       <div class="seckill_mod_goods_info">
+        <span class="seckill_mod_goods_info_txt">  
+          <span class="seckill_mod_goods_price">   
+          <i class="seckill_mod_goods_price_now">
+            <em>{:lang('currency_symbol')}</em>{{d[i]['secPrice']}}
+          </i>               
+          <span class="seckill_mod_goods_price_pre">{:lang('currency_symbol')}<del>{{d[i]['shopPrice']}}</del></span>
+        </span>      
+        <span class="seckill_mod_goods_progress">       
+          <i class="seckill_mod_goods_progress_txt">{:lang('seckill_sold')}{{percent}}%</i>       
+          <i class="seckill_mod_goods_progress_inner">
+            <b class="seckill_mod_goods_progress_completed" style="width:{{percent}}%"></b>
+          </i>
+        </span>  
+      </span>
+        <a href="{{WST.AU('seckill://goods/detail','id='+d[i].id)}}" target="_blank" class="seckill_mod_goods_info_i">
+        {{#if (status==1){ }}
+            {:lang('seckill_buy_immediately')}
+        {{# }else if (status==0){ }}
+            {:lang('seckill_will_start_title')}
+        {{# } }}
+      </a>
+      </div>
+    </li>
+
+    {{# } }}
+  {{# }else{ }}
+    <div class="nodata">
+      {:lang('seckill_no_data')}
+    </div>
+  {{# } }}
+</script>
+{/block}
+{block name="footer"}
+	{include file="$LAYOUT_HOME_FOOTER" /}
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type="text/javascript" src="__STATIC__/plugins/swiper/js/swiper.min.js"></script>
+<script type='text/javascript' src='__STATIC__/js/updown.js'></script>
+<script type='text/javascript' src='__ROOT__/addons/seckill/view/home/index/js/time.js?v={$v}'></script>
+<script type='text/javascript' src='__ROOT__/addons/seckill/view/home/index/js/goods_list.js?v={$v}'></script>
+<script type='text/javascript'>
+var swiper = new Swiper('.swiper-container', {
+  autoplayDisableOnInteraction : false,
+  slidesPerView: 5,
+  loop: false,
+  pagination: {
+    el: '.swiper-pagination',
+    clickable: true,
+  },
+  });
+</script>
+{/block}

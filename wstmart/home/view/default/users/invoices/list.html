@@ -1,0 +1,64 @@
+{extend name="default/users/base" /}
+{block name="title"}{:lang('home_page')}-{:lang('user_center')}{__block__}{/block}
+{block name="css"}
+{/block}
+{block name="content"}
+<style>
+.wst-addr tbody tr td{padding: 5px;}
+.tips{margin-left:20px;}
+</style>
+  <div class="wst-user-head" style="margin-bottom: 10px"><span>{:lang('invoice_manage')}</span></div>
+	<input type="button" value="{:lang('invoice_add')}" class="wst-sec-but u-btn addr-btn" onclick="javascript:toAdd()" /><span class='tips'>{:lang('invoice_add_limit_desc')}</span>
+        <script id="invoices" type="text/html">
+            {{# for(var i = 0, len = d.length; i < len; i++){ }}
+            <table class='wst-addr' >
+               <tr>
+                   <td class="addr-title">{:lang('invoice_type')}：</td>
+                <td><p class="default" style="margin-left:0">{{d[i].invoiceType==0?"{:lang('invoice_type_0')}":"{:lang('invoice_type_1')}"}}</p></td>
+              </tr>
+
+               <tr><td class="addr-title">{:lang('invoice_head')}：</td>
+                 <td>{{d[i].invoiceHead}}</td>
+               </tr>
+               <tr><td class="addr-title">{:lang('invoice_company_tax_number')}：</td>
+                 <td>{{d[i].invoiceCode}}</td>
+               </tr>
+               {{#  if(d[i].invoiceType==1) { }}
+               <tr><td class="addr-title">{:lang('invoice_address')}：</td>
+                 <td>{{d[i].invoiceAddr}}</td>
+               </tr>
+               <tr><td class="addr-title">{:lang('invoice_telphone')}：</td>
+                 <td>{{d[i].invoicePhoneNumber}}</td>
+               </tr>
+               <tr><td class="addr-title">{:lang('card_open_bank')}：</td>
+                 <td>{{d[i].invoiceBankName}}</td>
+               </tr>
+               <tr><td class="addr-title">{:lang('bank_account')}：</td>
+                 <td>{{d[i].invoiceBankNo}}</td>
+               </tr>
+               {{# }  }}
+
+               <tr>
+                 <td>&nbsp;</td>
+                 <td class='edit' style="padding-bottom: 10px;">
+                   <a href="javascript:delInvoice({{ d[i].id }},this)">{:lang('del')}</a>
+                   <a href="javascript:editInvoice({{ d[i].id }})">{:lang('edit')}</a>
+                   <div class="wst-clear"></div>
+                 </td>
+               </tr>
+            </table>
+            {{# } }}
+           </script>
+           <div id="invoices_box" class="invoices_box">
+              
+           </div>
+
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__STYLE__/users/invoices/invoices.js?v={$v}'></script>
+<script>
+$(function(){
+  listQuery();
+});
+</script>
+{/block}

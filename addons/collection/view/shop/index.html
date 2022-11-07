@@ -1,0 +1,180 @@
+{extend name="$LAYOUT_SHOP_BASE" /}
+{block name="css"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+{/block}
+{block name="main"}
+<style>
+#orderNum,#firstNum,#secondNum{margin:0;}
+.buy-btn{color:#666;background:#eeeeee;cursor: pointer;float:left;;display:block;height:30px;line-height:30px;padding:0px 10px;border:1px solid #ddd;}
+input[type="text"].buy-num{text-align:center;width:50px;float:left;border-left:0px;border-right:0px;border-top:1px solid #ddd;border-bottom:1px solid #ddd;border-radius: 0px}      
+.wst-form td{height:35px;word-break: break-all;}
+#gbox table{border: 2px solid #f2f2f2!important;}
+#gbox table tr td{border: 1px solid #f2f2f2!important;line-height: 20px!important;}
+#gbox table tr th{text-align: left!important; border: 1px solid #f2f2f2!important;font-weight: bold!important;padding: 0px 5px!important;}
+.webuploader-container div{width: 100px!important;height: 30px!important;}
+</style>
+<div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+    <ul class="layui-tab-title">
+      <li class="layui-this">{:lang("collection_single_goods")}</li>
+      <li>{:lang("collection_batch")}</li>
+  </ul>
+  <div class="layui-tab-content" style="padding:0px 0;">
+    <div class="layui-tab-item layui-show" style='margin-top:10px'>
+        <table class="wst-form">
+           	<tr>
+             	<th width='120' align='right'>{:lang("collection_goods_cat")}<font color='red'>*</font>：</th>
+             	<td>
+                  <select id="cat_0" class='ipt j-goodsCats' level="0" onchange="WST.ITGoodsCats({id:'cat_0',val:this.value,isRequire:true,className:'j-goodsCats'});" style="min-width: 200px">
+                    <option value="">{:lang("collection_please_select")}</option>
+                    {volist name=":WSTShopApplyGoodsCats(0)" id="vo"}
+                    <option value="{$vo['catId']}">{$vo['catName']}</option>
+                    {/volist}
+                 </select>
+             	</td>
+           	</tr>
+           	<tr>
+             	<th width='120' align='right'>{:lang("collection_goods_link")}<font color='red'>*</font>：</th>
+             	<td>
+             		<input type="text" id="goodsUrl" name="goodsUrl" class="j-ipt" placeholder="https://detail.tmall.com/item.htm">
+             	</td>
+           	</tr>
+           	<tr>
+           		<th width='120' align='right'></th>
+             	<td >
+             		{:lang("collection_tips_1")}<br/>
+             		{:lang("collection_tips_2")}
+             	</td>
+           	</tr>
+         	<tr>
+             	<td colspan='2' style='padding:20px;padding-left:70px'>
+                 	<button class='btn btn-primary btn-mright' onclick="save()"><i class="fa fa-check"></i>{:lang("collection_and_save")}</button>&nbsp;&nbsp;
+                 	<button class='btn' onclick='javascript:location.reload();'><i class="fa fa-refresh"></i>{:lang("collection_reset")}</button>
+             	</td>
+           </tr>
+        </table>
+    </div>
+    <div class="layui-tab-item">
+      <div class="wst-body">
+        <table class="wst-form">
+            <tr>
+                <td colspan='2' >
+                    <div class='wst-tips-box' style='margin-top:10px;'>
+                        <div class='icon'></div>
+                        <div class='tips' >
+                            {:lang("collection_batch_tips_1")}<br/>
+                            {:lang("collection_batch_tips_2")}<br/>
+                            {:lang("collection_batch_tips_3")}<br/>
+                            {:lang("collection_batch_tips_4")}<br/>
+                            {:lang("collection_batch_tips_5")}<a href='__ROOT__/addons/collection/view/template/goods.xls' style='color:blue;' target='_blank'>{:lang("collection_batch_tips_6")}</a>。<br/>
+                            {:lang("collection_batch_tips_7")}<br/>
+                            {:lang("collection_batch_tips_8")}
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th align='right' width='90'>{:lang("collection_data")}：</th>
+                <td>
+                    <div id="filePicker" style='margin-left:0px;'>{:lang("collection_import_data")}</div>
+                </td>
+            </tr>
+            <tr style="display: none;">
+                <td id="gbox" colspan="2"></td>
+            </tr>
+        </table>
+    </div>
+    </div>
+  </div>
+</div>   
+{/block}  
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script type='text/javascript' src='__ROOT__/addons/collection/view/shop/index.js?v={$v}'></script>
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+<script>
+    var uploading = null;
+    var goodsList = [],num=0;
+    $(function(){
+        var uploader = WST.upload({
+            server:WST.U('addon/collection-collection-importGoods'),
+            pick:'#filePicker',
+            formData: {dir:'temp'},
+            callback:function(f,file){
+                layer.close(uploading);
+                uploader.removeFile(file);
+                var json = WST.toJson(f);
+                $('#errMsgBox').parent().hide();
+                goodsList = [];
+                num = 0;
+                if(json.status==1){
+                    uploader.refresh();
+                    //WST.msg('导入数据成功!已导入数据'+json.importNum+"条", {icon: 1});
+                    if(json.goodsList && json.goodsList.length>0){
+                        var html = [];
+                        html.push("<table style='margin:50px;' border='0' cellspacing='1' cellpadding='0'>");
+                        html.push("<tr>");
+                        html.push("<th style='width:50px!important;'>{:lang('collection_sort_no')}</th>");
+                        html.push("<th >{:lang('collection_link')}</th>");
+                        html.push("<th width='200'>{:lang('collection_explain')}</th>");
+                        html.push("<th width='100'>{:lang('collection_state')}</th>");
+                        html.push("</tr>");
+                        for(var i in json.goodsList){
+                            var row = json.goodsList[i];
+                            html.push("<tr>");
+                            html.push("<td width='50'>"+(Number(i)+1)+"</td>");
+                            html.push("<td >"+(row['goodsUrl'])+"</td>");
+                            html.push("<td width='200' id='growmsg"+i+"'>"+(row['status']==1?row['statusMsg']:"<span style='color:red;'>"+row['statusMsg']+"</span>")+"</td>");
+                            html.push("<td width='100' id='grow"+i+"'>"+(row['status']==1?'<i class="fa fa-clock-o"><i>{:lang("collection_state_0")}':'<span style="color:red;"><i class="fa fa-close"><i>{:lang('collection_state_2')}<span>')+"</td>");
+                            html.push("</tr>");
+                        }
+                        html.push("</table>");
+                        $('#gbox').html(html.join('')).parent().show();
+                        goodsList = json.goodsList;
+                        collectionGoods();
+                    }
+                }else{
+                    WST.msg('{:lang("collection_import_fail_reasons")}：'+json.msg, {icon: 5});
+                }
+            },
+            progress:function(rate){
+                uploading = WST.msg('{:lang("collection_importing")}');
+            }
+        });
+    });
+
+function collectionGoods(){
+    var obj = goodsList[num];
+    
+    if(obj['status']==1){
+        WST.msg(WST.lang('collection_importing',[(num+1),(num+"/"+goodsList.length)]),{icon:16});
+        $("#grow"+num).html("<span><i class='fa fa-spinner'><i>{:lang('collection_state_3')}</span>");
+        $.post(WST.U('addon/collection-collection-save'),{goodsUrl:obj['goodsUrl'],goodsCatId:obj['goodsCatId']},function(data,textStatus){
+            var json = WST.toJson(data);
+            if(json.status==1){
+                $("#grow"+num).html("<span style='color:green;'><i class='fa fa-check'><i>{:lang('collection_state_1')}</span>");
+            }else{
+                $("#grow"+num).html("<span style='color:red;'><i class='fa fa-close'><i>{:lang('collection_state_2')}</span>");
+                if(json.msg!="{:lang('collection_state_2')}")$("#growmsg"+num).html("<span style='color:red;'>"+json.msg+"</span>");
+            }
+            layer.closeAll();
+            if(num < goodsList.length-1){
+                num++
+                collectionGoods();
+                return;
+            }
+            
+        });
+    }else{
+      if(num < goodsList.length-1){
+          num++
+          collectionGoods();
+          return;
+      }
+    }
+    
+}
+</script>
+{/block}

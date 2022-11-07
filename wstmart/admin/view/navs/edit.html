@@ -1,0 +1,93 @@
+{extend name="base" /}
+{block name="js"}
+<script src="__ADMIN__/navs/navs.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<form id="navForm">
+<table class='wst-form wst-box-top'>
+       <tr>
+          <th width='150'>{:lang('label_nav_posi')}<font color='red'>  </font>：</th>
+          <td>
+            <select id="navType" class='ipt' maxLength='20'>
+              <option value="0">{:lang('nav_posi_0')}</option>
+              <option value="1">{:lang('nav_posi_1')}</option>
+            </select>
+          </td>
+       </tr>
+    {volist name=':WSTSysLangs()' id='vo'}
+    <tr>
+        <th>{:lang('label_nav_name')}({$vo['name']})<font color='red'>*</font>：</th>
+        <td>
+            <input type="text" id='langParams{$vo["id"]}navTitle' name='langParams{$vo["id"]}navTitle' class="ipt" maxLength='50'  value="{$data['langs'][$vo['id']]['navTitle']}" />
+        </td>
+    </tr>
+    {/volist}
+       <tr>
+          <th>{:lang('label_nav_url')}<font color='red'>*</font>：</th>
+          <td>
+            <input type='text' id='navUrl' name="navUrl"  class='ipt'/>
+          </td>
+       </tr>
+       <tr>
+          <th>{:lang('label_nav_is_show')}<font color='red'>  </font>：</th>
+          <td class='layui-form'>
+           <input type="checkbox" {if $data['isShow']==1}checked{/if} class="ipt" id="isShow" name="isShow" lay-skin="switch" lay-filter="isShow" value='1' lay-text="{:lang('nav_is_show')}">
+          </td>
+       </tr>
+       <tr>
+          <th>{:lang('label_nav_open')}<font color='red'>*</font>：</th>
+          <td class='layui-form'>
+
+            <lable>
+              <input type="radio" name="isOpen" value="1" id="isOpen" class="ipt" <?=($data['isOpen']!==0)?'checked="checked"':'';?> title='{:lang('nav_open_0')}'/>
+            </lable>
+            <lable>
+              <input type="radio" name="isOpen" value="0" id="isOpen" class="ipt" <?=($data['isOpen']===0)?'checked="checked"':'';?> title='{:lang('nav_open_1')}'/>
+            </lable>
+          </td>
+       </tr>
+       <tr>
+          <th>{:lang('sort')}<font color='red'>*</font>：</th>
+          <td>
+            <input type="text" id="navSort" class="ipt" maxLength="20"  />
+          </td>
+       </tr>
+
+    <tr>
+     <td colspan='2' align='center' class='wst-bottombar' style="padding-left: 125px;">
+       <input type="hidden" id="id" value="{$data['id']+0}" />
+       <button type="submit" class="btn btn-primary btn-mright"><i class="fa fa-check"></i>{:lang('submit')}</button>
+        <button type="button" class="btn" onclick="javascript:location.href='{:Url(\'admin/navs/index\',\'p=\'.$p)}'"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+     </td>
+  </tr>
+</table>
+</form>
+
+<script>
+$(function(){
+    WST.setValues(<?=json_encode($data)?>);
+
+    var fields = {};
+    var n = 0;
+    for(var i in WST.conf.sysLangs){
+        n = WST.conf.sysLangs[i]['id'];
+        fields['langParams'+n+'navTitle'] = {
+            tip: WST.lang('require_nav_name'),
+            rule: WST.lang('label_nav_name')+':required;'
+        }
+    }
+    fields['navUrl'] = {
+        tip: WST.lang('require_nav_url'),
+        rule: WST.lang('label_nav_url')+':required;'
+    };
+    /*表单验证*/
+    $('#navForm').validator({
+        fields:fields,
+        valid:function(form){
+            edit($('#id').val(),{$p});
+        }
+    });
+});
+</script>
+{/block}
+

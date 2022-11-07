@@ -1,0 +1,95 @@
+<input type="hidden" value="{$vo['searchRadius']}" class="search-radius">
+{if WSTConf('CONF.mapKey')!=''}
+<script type="text/javascript" src="{:WSTProtocol()}3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
+{/if}
+<script>
+    var latitude = '';
+    var longitude = '';
+    var locationObject = {};
+    $(function(){
+        getLocation();
+    });
+    function getLocation(){
+        if(WST.conf.MAP_KEY!=''){
+            if(WST.getCookie('locationObject')!=undefined){
+                var obj = JSON.parse(WST.getCookie('locationObject'));
+                latitude = obj.latitude;
+                longitude = obj.longitude;
+                shopsList();
+            }else{
+                WST.location(function(position){
+                    latitude = position.latitude;
+                    longitude = position.longitude;
+                    locationObject.latitude = latitude;
+                    locationObject.longitude = longitude;
+                    WST.setCookie("locationObject",JSON.stringify(locationObject),1800);
+                    shopsList();
+                });
+            }
+        }else{
+            shopsList();
+        }
+    }
+    function shopsList(){
+        params = {};
+        params.radius = $('.search-radius').val();
+        params.latitude = latitude;
+        params.longitude = longitude;
+        $.post(WST.AU('custompage://index/customPageShopsList'), params,function(data) {
+            var json = WST.toJson(data);
+            if(json){
+                if(json.location){
+                    $(".location-text").html(json.location);
+                }else{
+                    $(".location-text").html(WST.lang("custompage_unknown"));
+                }
+                var gettpl = document.getElementById('shop-list').innerHTML;
+                laytpl(gettpl).render(json, function(html){
+                    $('#shops-list').append(html);
+                });
+            }
+        });
+    }
+</script>
+<div class="shop-container">
+    <div class='shop-title'>—— <span class='shop-title-text'>{$vo['title']}</span> ——</div>
+    <div class='current-location'>
+        <div class='location-icon'></div>
+        <div>{:lang('custompage_current')}：<span class='location-text'></span></div>
+    </div>
+    <div id="shops-list"></div>
+</div>
+<script id="shop-list" type="text/html">
+    {{# if(d.shops.length>0){ }}
+    {{# for(var i=0; i<d.shops.length; i++){ }}
+    <div class='shop-item' onclick="javascript:location.href=WST.U('mobile/shops/index','shopId='+{{d.shops[i].shopId}})">
+        <div class='shop-left'>
+            <img src="__RESOURCE_PATH__/{{ d.shops[i].shopImg }}" alt="">
+        </div>
+        <div class='shop-right'>
+            <div>
+                <p class='shop-name'>{{ d.shops[i].shopName }}</p>
+                <p class='shop-desc'>{{ WST.lang('custompage_major') }}：{{ d.shops[i].catshops }}</p>
+                <div class='shop-score'>
+                    <p>{{ WST.lang('custompage_shop_score') }}：</p>
+                    {{# for(var j=0; j<parseInt(d.shops[i].totalScore); j++){ }}
+                    <div class='star-icon'></div>
+                    {{# } }}
+                    {{# for(var k=0; k<(5-parseInt(d.shops[i].totalScore)); k++){ }}
+                    <div class='none-star-icon'></div>
+                    {{# } }}
+                </div>
+            </div>
+            <div class='wst-flex-row wst-jsb'>
+                <div class='shop-location'>
+                    <div class='location-icon'></div>
+                    <p class='shop-address'>{{ d.shops[i].shopAddress }}</p>
+                </div>
+                <p class='distince'>{{ d.shops[i].distince }}km</p>
+            </div>
+        </div>
+    </div>
+    {{# } }}
+    {{# } }}
+    <div class="wst-clear"></div>
+</script>

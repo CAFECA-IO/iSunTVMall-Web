@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{:lang('order_pay_title')}</title>
+</head>
+<body>
+    <script>
+        function _send(){
+            // 支付成功，发送通知给RN
+            var status = {$status};
+            var _obj = JSON.stringify({
+                status:(status==1)?"paySuccess":"payFail"
+            });
+            window.ReactNativeWebView.postMessage(_obj);
+        }
+        window.onload = function(){
+            _send();
+        }
+    </script>
+</body>
+</html>

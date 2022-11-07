@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>{:lang('order_printing')} - {:WSTConf('CONF.mallName')}</title>
+</head>
+<style>
+body{font-size:13px;}
+td,th{padding:2px;}
+</style>
+<body>
+<table width='100%' border='0'>
+  <tr>
+    <td colspan='8' style='text-align:center;font-weight:bold;font-size:26px'>{:lang('order_information')}</td>
+  </tr>
+  <tr>
+    <td width='100' align="right">{:lang('order_time')}：</td>
+    <td width='250'>{$object['createTime']}</td>
+    <td width='100' align="right">{:lang('payment_method')}：</td>
+    <td width='250'>{:WSTLangPayType($object['payType'])}</td>
+    <td width='100' align="right">{:lang('order_number')}：</td>
+    <td width='250'>{$object['orderNo']}</td>
+  </tr>
+  <tr>
+    <td width='100' align="right">{:lang('delivery_time')}：</td>
+    <td>{$object['deliveryTime']}</td>
+    <td width='100' align="right">{:lang('delivery_mode')}：</td>
+    <td>{:WSTLangDeliverType($object['deliverType'])}</td>
+    <td width='100' align="right">{:lang("courier_number")}：</td>
+    <td>{$object['expressNo']}</td>
+  </tr>
+  {if $object['invoiceJson'] !=''}
+  <tr>
+    <td width='100' align="right">{:lang('invoice_title')}：</td>
+    <td colspan="6">{$object['invoice']['invoiceHead']}{if isset($object['invoice']['invoiceCode'])}【{$object['invoice']['invoiceCode']}】{/if}</td>
+  </tr>
+  {/if}
+  {if ($object['orderType']==0)}
+    {if $object['deliverType']==0}
+    <tr>
+      <td width='100' align="right">{:lang('receiving_address')}：</td>
+      <td colspan="6">{$object['userName']}&nbsp;|&nbsp;{$object['userPhone']}&nbsp;|&nbsp;{$object['userAddress']}</td>
+    </tr>
+    {else}
+      {if (isset($object['store']))}
+         <tr>
+           <td width='100' align="right">{:lang('receiving_address')}：</th>
+           <td >{$object['store']['areaNames']}{$object['store']['storeAddress']}</td>
+           <td width='100' align="right">{:lang('pick_up_shop')}：</td>
+            <td>{$object['store']['storeName']}</td>
+            <td width='100' align="right">{:lang('store_phone')}：</td>
+            <td>{$object['store']['storeTel']}</td>
+         </tr>
+        {else}
+        <tr>
+          <td width='100' align="right">{:lang('receiving_address')}：</td>
+          <td colspan="3">{$object['shopAddress']}</td>
+        </tr>
+        {/if}
+    
+    {/if}
+  {/if}
+  {if $object['orderRemarks']!=''}
+  <tr>
+    <td width='100' align="right">{:lang('order_notes')}：</td>
+    <td colspan="6">{$object['orderRemarks']}</td>
+  </tr>
+  {/if}
+</table>
+<table width='100%' border='1' style='border-collapse:collapse;border-color:#000;'>
+  <tr style='background:#f1f1f1;'>
+    <th align="left">{:lang('trade_name')}</th>
+    <th align="left">{:lang('goods_number')}</th>
+    <th align="left">{:lang('product_specifications')}</th>
+    <th align="left" align="left">{:lang('commodity_price')}</th>
+    <th align="left">{:lang('quantity_of_goods')}</th>
+    <th align="left">{:lang('subtotal')}</th>
+  </tr>
+  {volist name='$object["goods"]' id='vo2'}
+  <tr>
+    <td>{$vo2["goodsName"]}</td>
+    <td>{$vo2["goodsSn"]}</td>
+    <td>
+    {if $vo2['goodsType']==1 && $object['orderStatus']==2}
+      <table width='100%'>
+      {volist name='$vo2["extraJson"]' id='vgcard'}
+         <tr>
+            <td>{:lang('card_number')}：{$vgcard['cardNo']}</td>
+            <td>{:lang('card_and_coupon_password')}：{$vgcard['cardPwd']}</td>
+         </tr>
+      {/volist}
+      </table>
+    {else}
+    {:str_replace('@@_@@',';',$vo2["goodsSpecNames"])}&nbsp;
+    {/if}
+    </td>
+    <td>{:lang('currency_symbol')}{$vo2['goodsPrice']}</td>
+    <td>{$vo2['goodsNum']}</td>
+    <td>{:lang('currency_symbol')}{$vo2['goodsPrice']*$vo2['goodsNum']}</td>
+  </tr>
+  {/volist}
+  </table>
+  <table width='100%' border='0'>
+  <tr>
+    <td colspan='6' align="right">{:lang('total_amount_of_goods')}：{:lang('currency_symbol')}{$object['goodsMoney']}</td>
+  </tr>
+  <tr>
+    <td colspan='6' align="right">{:lang('freight')}：{:lang('currency_symbol')}{$object['deliverMoney']}</td>
+  </tr>
+  <tr>
+    <td colspan='6' align="right">{:lang('amount_payable')}：{:lang('currency_symbol')}{$object['totalMoney']}</td>
+  </tr>
+  <tr>
+    <td colspan='6' align="right">{:lang('credit_amount')}：{:lang('currency_symbol')}-{$object['scoreMoney']}</td>
+  </tr>
+  <tr>
+    <td colspan='6' align="right">{:lang('amount_actually_paid')}：{:lang('currency_symbol')}{$object['realTotalMoney']}</td>
+  </tr>
+</table>
+<br/>
+<table width='100%'>
+
+   <tr>
+     <td>{:lang('business')}：{$object['shopName']}&nbsp;&nbsp;&nbsp;{:lang('telephone')}：{$object['shopTel']}</td>
+     <td align="right">{:lang('printing_time')}：{:date('Y-m-d H:i:s')}</td>
+   </tr>
+</table>
+</body>
+<script>
+window.print();
+</script>
+</html>

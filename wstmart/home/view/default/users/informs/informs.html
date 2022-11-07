@@ -1,0 +1,113 @@
+{extend name="default/users/base" /}
+{block name="title"}{:lang('inform_goods')} - {:lang('user_center')}{__block__}{/block}
+{block name="css"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+{/block}
+{block name="content"}
+<div class='wst-inform-content'>
+<form id="informForm" method="post" >
+ <input type='hidden' id='goodsId' class='ipt' value="{$data['data']['goodsId']}"/>
+  <input type='hidden' id='shopsId' class='ipt' value="{$data['data']['shopId']}"/>
+<div class="wst-inform-head"><span>{:lang('inform_goods')}</span></div>
+   <div class='order-box wst-inform-box'>
+   
+	<div class='log-box inform-log-box' style="height: auto;" >
+<div class="state">
+  <div class="icon">
+  	<span class="icons icon13 "></span>
+  </div>
+  <div class="arrow arrow2">························></div>
+  <div class="icon">
+  	<span class="icons icon12 "></span>
+  </div>
+  <div class="arrow arrow2">························></div>
+  <div class="icon">
+  	<span class="icons icon12 "></span>
+  </div>
+</div>
+   <div class="state3" >
+   <p>{:lang('inform_step_1')}</p><p>{:lang('inform_step_2')}</p><p>{:lang('inform_step_3')}</p>
+   </div>
+  
+   <div class="wst-clear"></div>
+  </div>
+  </div>
+   <div class="wst-inform-box">
+   	<div class="title">{:lang('inform_reported_shop')} ：</div><a  target='_blank' href="{:url('home/shops/index',array('shopId'=>$data['data']['shopId']))}">{$data['data']['shopName']}</a>
+   	<div class="wst-clear"></div>
+   </div>
+   <!-- 订单信息 -->
+   <div class='wst-inform-box'>
+   	  <div class="title">
+   	  	<span>{:lang('inform_relative_goods')} ：</span>
+   	  </div>
+      <div class="goods-img">
+      	<a href="{:Url('home/goods/detail','goodsId='.$data['data']['goodsId'])}" target='_blank'>
+      	<div class="wst-img"><img src="__RESOURCE_PATH__/{:WSTImg($data['data']['goodsImg'])}"></img></div>
+      	</a>
+      	<div class="wst-text">
+      		<a href='{:Url("home/goods/detail","goodsId=".$data["data"]["goodsId"])}' target='_blank'>{$data['data']['goodsName']}</a>
+      	</div>
+      </div>
+      <div class="wst-clear"></div>
+   </div>
+   <div class='wst-inform-box'>
+   	<div class="title"><font color='red'>*</font>{:lang('inform_type')}：</div>
+   	 <div class="goods-img">
+        {php}$reason = WSTDatas('INFORMS_TYPE');{/php}
+        {volist name='reason' id='vo'}
+        <label><input type='radio' name='informType' class='ipt' autocomplete="off" value='{$vo['dataVal']}' {if $key==1}checked{/if}>{$vo['dataName']}</label>
+        {/volist}
+     </div>  
+     <div class="wst-clear"></div>
+   </div>  
+   <div class='wst-inform-box'>
+   	<div class="title"><font color='red'>*</font>{:lang('inform_content')}：</div>
+   	<div class="goods-img">
+      <textarea id='informContent' maxlength="200" onchange="this.value=this.value.substring(0, 200)" onkeydown="this.value=this.value.substring(0, 200)" onkeyup="this.value=this.value.substring(0, 200)" name="informContent" class='ipt' autocomplete="off" style='width:100%;height:155px;' placeholder='{:lang('inform_input_content_tip')}'></textarea>
+    </div>
+    <div class="wst-clear"></div>
+   </div>
+   <div class='wst-inform-box' style="border-bottom: 1px solid transparent;">
+       <div id="filePicker" style='margin-left:0px;width:250px;overflow:hidden;height:25px;'>{:lang('upload_annex_desc',[5])}</div>
+   </div>
+   <div class='wst-inform-box'>
+   <table>
+     <tr>
+       <td colspan='2'>
+           <div id='picBox' style='height:120px;width:612px;padding:5px;'></div>
+       </td>
+     </tr>
+  </table>
+  </div>
+  <div class='wst-complain-footer'>
+     <button onclick="javascript:saveInforms()" class="wst-sec-but u-btn">{:lang('submit')}</button>
+     <button onclick="javascript:history.go(-1)" class="wst-sec-but u-btn">{:lang('back')}</button>
+  </div>
+</form>
+</div>
+<div class="wst-remind">
+	<div class="wst-inform-head" ><span>{:lang('inform_violation_notice_title')}</span></div>
+	<div class="content">
+      <div class="alert">
+        <ul>
+          <li>{:lang('inform_violation_notice_1')}</li>
+          <li>{:lang('inform_violation_notice_2')}</li>
+          <li>{:lang('inform_violation_notice_3')}</li>
+          <li>{:lang('inform_violation_notice_4')}</li>
+        </ul>
+      </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__STYLE__/users/informs/informs.js?v={$v}'></script>
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+<script>
+$(function(){
+  userComplainInit();
+})
+</script>
+{/block}

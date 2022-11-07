@@ -1,0 +1,110 @@
+{php}$indicatorColor = $vo['indicatorColor'];$swiperKey=$key;{/php}
+{php}
+    $indicatorType = $vo['indicatorType'];
+    switch($indicatorType){
+    case 1:
+        $indicatorWidth = "48px";
+        $indicatorHeight = "24px";
+        $indicatorBorderRadius = "0";
+        break;
+    case 2:
+        $indicatorWidth = "24px";
+        $indicatorHeight = "24px";
+        $indicatorBorderRadius = "0";
+        break;
+    case 3:
+        $indicatorWidth = "24px";
+        $indicatorHeight = "24px";
+        $indicatorBorderRadius = "100%";
+        break;
+    }
+{/php}
+<style>
+    #custom-slide-controls{$swiperKey} .curr{background-color:{$indicatorColor};border-radius:{$indicatorBorderRadius};}
+    #custom-slide-controls{$swiperKey} span{width: {$indicatorWidth};height: {$indicatorHeight};border-radius:{$indicatorBorderRadius};}
+</style>
+{php}$interval = $vo['interval'] * 1000;{/php}
+{php}$style="";{/php}
+{if $vo['paddingTop']}
+    {php}$style.="margin-top:".intval($vo['paddingTop'])."px;";{/php}
+{/if}
+{if $vo['paddingBottom']}
+    {php}$style.="margin-bottom:".intval($vo['paddingBottom'])."px;";{/php}
+{/if}
+{if $vo['paddingLeft']}
+    {php}$style.="margin-left:".intval($vo['paddingLeft'])."px;";{/php}
+{/if}
+{if $vo['paddingRight']}
+    {php}$style.="margin-right:".intval($vo['paddingRight'])."px;";{/php}
+{/if}
+<div class="custom-slide" id="custom-slide{$swiperKey}" style="{$style}">
+    <ul class="custom-slide-items">
+        {volist name="$vo['swipers']" id="voo"}
+        <a href="{$voo['link']}" ><li style="background: url(__RESOURCE_PATH__/{$voo['img']}) no-repeat  scroll center top;background-size:cover;" ></li></a>
+        {/volist}
+    </ul>
+    <div class="custom-slide-numbox">
+        <div class="custom-slide-controls" id="custom-slide-controls{$swiperKey}">
+            {volist name="$vo['swipers']" id="voo"}
+            {if condition="$key+1 eq 1"}
+            <span class="curr">{$key+1}</span>
+            {else/}
+            <span class="">{$key+1}</span>
+            {/if}
+            {/volist}
+        </div>
+    </div>
+</div>
+<script>
+    customSlides('#custom-slide{$swiperKey}',{$interval},'#custom-slide-controls{$swiperKey}');
+    function customSlides (objId,interval,objControls){
+        var slide = $(objId), li = slide.find("li");
+        var slidecontrols = $(objControls).eq(0),
+                span = slidecontrols.find("span");
+        var index = 1, _self = null;
+        span.bind("mouseover", function() {
+            _self = $(this);
+            index = span.index(_self);
+            span.removeClass("curr");
+            span.eq(index).addClass("curr");
+            li.addClass("hide");
+            li.css("z-index", -1);
+            li.css("display", "none");
+            li.eq(index).css("display", "");
+            li.eq(index).css("z-index", 1);
+            li.eq(index).removeClass("hide");
+            clearInterval(timer);
+        });
+        var timer = setInterval(function() {
+            span.removeClass("curr");
+            span.eq(index).addClass("curr");
+            li.addClass("hide");
+            li.css("z-index", -1);
+            li.css("display", "none");
+            li.eq(index).fadeToggle(500);
+            li.eq(index).css("z-index", 1);
+            li.eq(index).removeClass("hide");
+            index++;
+            if (index >= span.length)
+                index = 0;
+        }, interval);
+        span.bind("mouseout", function() {
+            index++;
+            if (index >= span.length)
+                index = 0;
+            timer = setInterval(function() {
+                span.removeClass("curr");
+                span.eq(index).addClass("curr");
+                li.addClass("hide");
+                li.css("z-index", -1);
+                li.css("display", "none");
+                li.eq(index).fadeToggle(500);
+                li.eq(index).css("z-index", 1);
+                li.eq(index).removeClass("hide");
+                index++;
+                if (index >= span.length)
+                    index = 0;
+            }, interval);
+        });
+    }
+</script>

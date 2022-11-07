@@ -1,0 +1,25 @@
+{php}$style="background:".$vo['backgroundColor'].";";{/php}
+{if $vo['verticalPadding']}
+    {php}
+        $style.="padding-top:".intval($vo['verticalPadding'])."px;";
+        $style.="padding-bottom:".intval($vo['verticalPadding'])."px;";
+    {/php}
+{/if}
+{if $vo['horizontalPadding']}
+    {php}
+        $style.="padding-left:".intval($vo['horizontalPadding'])."px;";
+        $style.="padding-right:".intval($vo['horizontalPadding'])."px;";
+    {/php}
+{/if}
+{if intval($vo['alignment'])==1 }
+    {php}$class =" txt-alignment-left";{/php}
+{elseif intval($vo['alignment'])==2 }
+    {php}$class =" txt-alignment-center";{/php}
+{else}
+    {php}$class =" txt-alignment-right";{/php}
+{/if}
+<div class="txt-container">
+    <a href="{$vo['link']}">
+        <div class='txt-info {$class}'  style="{$style}"><p style="color:{$vo['textColor']}">{$vo['text']}</p></div>
+    </a>
+</div>

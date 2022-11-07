@@ -1,0 +1,208 @@
+{extend name="$LAYOUT_WECHAT_BASE" /}
+{block name="title"}{$goods['combineName']} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet" href="__STATIC__/plugins/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="__STATIC__/plugins/photoswipe/default-skin/default-skin.css">
+<link rel="stylesheet"  href="__ROOT__/addons/combination/view/wechat/css/index.css?v={$v}">
+{/block}
+{block name="footer"}
+    <div class="ui-loading-wrap wst-Load" id="Load">
+	    <i class="ui-loading"></i>
+	</div>
+	<input type="hidden" name="" value="{$goods['goodsId']}" id="goodsId" autocomplete="off">
+    <footer class="ui-footer wst-footer-btns" style="height:0.49rem;" id="footer">
+        <div class="wst-toTop" id="toTop">
+	  	<i class="wst-toTopimg"><span></span></i>
+		</div>
+		<div class="ui-row-flex">
+			<div class="ui-col wst-go-icon">
+				<div class="ui-row-flex" style="height:0.49rem;">
+					<div class="ui-col wst-combine-price" >
+						搭配价：
+						<span id='j-totalMoney'>
+                        {if $goods['combineType']==1}
+                        {:lang('currency_symbol')}{$goods['maxMoney']}
+                        {else}
+						{:lang('currency_symbol')}{$goods['minMoney']}~{:lang('currency_symbol')}{$goods['maxMoney']}
+						{/if}
+					    </span>
+					</div>
+				</div>
+			</div>
+			<div  class="wst-goods_buy wst-flex-row wst-ac">
+				<button id="buyBtn" class="wst-goods_buym {if !$goods['isRead']}active{/if}" type="button" {if !$goods['isRead']} onclick="javascript:toSettlement({$goods['combineId']});" {else}disabled{/if}>立即购买</button>
+			</div>
+	    </div>
+    </footer>
+{/block}
+{block name="main"}
+{/* 图片查看层 */}
+<div id="gallery" class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="pswp__bg"></div>
+    <div class="pswp__scroll-wrap">
+        <div class="pswp__container">
+        <div class="pswp__item"></div>
+        <div class="pswp__item"></div>
+        <div class="pswp__item"></div>
+        </div>
+        <div class="pswp__ui pswp__ui--hidden">
+        <div class="pswp__top-bar">
+            <div class="pswp__counter"></div>
+            <button class="pswp__button pswp__button--close" title="关闭"></button>
+            <button class="pswp__button pswp__button--fs" title="全屏"></button>
+            <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+            <div class="pswp__preloader">
+                <div class="pswp__preloader__icn">
+                    <div class="pswp__preloader__cut">
+                    <div class="pswp__preloader__donut"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+            <div class="pswp__share-tooltip">
+            </div>
+        </div>
+        <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+        <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+        <div class="pswp__caption">
+            <div class="pswp__caption__center">
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+{/* 商品  */}
+<div class="wst-go-more" id="arrow" style="display: none;"><i class="arrow"></i>
+		<ul class="ui-row ui-list-active more">
+			<li class="ui-col"><div class="column line"><a href="{:url('wechat/index/index')}"><i class="home"></i><p>首页</p></a></div></li>
+			<li class="ui-col"><div class="column line"><a href="{:url('wechat/goodscats/index')}"><i class="category"></i><p>分类</p></a></div></li>
+			<li class="ui-col"><div class="column line"><a href="{:url('wechat/carts/index')}"><i class="cart"></i><p>购物车</p></a></div></li>
+			<li class="ui-col"><div class="column line"><a href="{:url('wechat/favorites/goods')}"><i class="follow"></i><p>关注</p></a></div></li>
+			<li class="ui-col"><div class="column"><a href="{:url('wechat/users/index')}"><i class="user"></i><p>我的</p></a></div></li>
+		</ul>
+	</div>
+<div class="wst-ca-layer" id="layer" onclick="javascript:inMore();"></div>
+     <section class="ui-container" id="goods1" style="border-top: 0px solid transparent;">
+        <div>
+        	<div class="swiper-container">
+	          <div class="swiper-wrapper" data-gallery="{$goods['combineImg']}">
+					<div onclick="gViewImg(0,this)" class="swiper-slide" style="width:100%;">
+	                	<div class="wst-go-img"><a><img src="__RESOURCE_PATH__/{:WSTImg($goods['combineImg'],2)}"></a></div>
+	                </div>
+	          </div>
+			  <div class="wst-go-return" onclick="history.back()"><i class="ui-icon-prev"></i></div>
+			  <div class="wst-go-mores" onclick="javascript:inMore()"><i></i></div>
+	        </div>
+		</div>
+		<div class="ui-nowrap-multi ui-whitespace wst-go-name">{if $goods['isFreeShipping']==1}<span class='wst-red'>【包邮】</span>{/if}{$goods['combineName']}</div>
+		<div class="ui-row-flex wst-go-price" >
+		    <div class="ui-col ui-col-2">
+		    	<p>{$goods['combineDesc']}</p>
+		    	<p class='p-price'>搭配价：<span class="price">{:lang('currency_symbol')}{$goods['minMoney']}~{:lang('currency_symbol')}{$goods['maxMoney']}</span></p>
+		    	{if $goods['isRead']}
+		    	<p>活动期间：{:date('Y-m-d H:i:s',strtotime($goods['startTime']))} 至 {:date('Y-m-d H:i:s',strtotime($goods['endTime']))}</p>
+		    	{/if}
+		    </div>
+		</div>
+		<div class='combine-box'>
+			<div class='title'>搭配商品</div>
+			<ul class="ui-list ui-list-text wst-go-ul ui-list-active">
+				{volist name="goods['list']" id="vo"}
+				<li>
+					<div class='list-info'>
+						<div class='wst-check'><i id="gchk_{$vo['id']}" class="ui-icon-choose {if $vo['goodsType']==1 || $goods['combineType']==1}ui-icon-success-block{else}ui-icon-unchecked-s{/if}" goodstype='{$vo['goodsType']}' dataval='{$vo['id']}'></i>
+						</div>
+						<div class='wst-goods'>
+							<div class='goods-img'>
+								<img id='j-combineGoodsImg{$vo['id']}' src='__RESOURCE_PATH__/{$vo['goodsImg']}'>
+							</div>
+							<div class='goods-box'>
+								<div class='goods-name'>
+									<div class='name'>{$vo['goodsName']}</div>
+								    <div class='num'>x1</div>
+							    </div>
+							    <div class='goods-price j-price{$vo['id']}'>{:lang('currency_symbol')}{$vo['shopPrice']}</div>
+								{if $vo['isSpec']==1}
+								<div class="goods-specs" onclick="dataShow({$vo['id']})">
+									<p class="spec j-spec{$vo['id']}" combineId='{$goods['combineId']}' combineGoodsId='{$vo['id']}' combineGoodsSpecId='{$vo['goodsSpecId']}'>已选：{volist name="vo['specNames']" id='specs'}{$specs['itemName']}&nbsp;{/volist}</p>
+									<i class="icon-right-arrow"></i>
+									<span style='clear:both;'></span>
+							    </div>
+							    {/if}
+							</div>
+							<span style='clear:both;'></span>
+					    </div>
+						<span style='clear:both;'></span>
+					</div>
+				</li>
+			    {/volist}
+			</ul>
+	    </div>
+     </section>
+{/block}
+{block name="include"}
+{/* 遮盖层  */}
+<div class="wst-cover" id="cover"></div>
+{/*加入购物车框  */}
+<div class="wst-cart-box wst-flex-column wst-jsb" id="frame">
+	<div class="title">
+		<div class="picture"><div class="img"><a href="javascript:void(0);"><img src="__RESOURCE_PATH__/{:WSTImg($goods['goodsImg'],3)}" id="specImage"></a></div></div>
+		<i class="icon-close" onclick="javascript:dataHide();"></i>
+		<p class="ui-nowrap-flex price"><span id="j-shop-price">{:lang('currency_symbol')}{$goods['shopPrice']}</span><span id="j-market-price" class="price2">{:lang('currency_symbol')}{$goods['shopPrice']}</span></p>
+		<div class="wst-clear"></div>
+	</div>
+	<div class="standard" id="standard"></div>
+	<script id="list" type="text/html">
+	{{#
+		var ids = d['ids'];
+		var goodsUnit = d['goodsUnit'];
+		var goodsStock = d['goodsStock'];
+		var d = d['specs'];
+		for(var i in d){
+	}}
+		<div class="spec">
+			<p3>{{d[i]['name']}}</p>
+			{{# for(var j=0;j<d[i]['list'].length;j++){ }}
+				{{# if(d[i]['list'][j]['isAllowImg']==1){ }}
+				<span style="line-height: 44px;" class="j-option {{# if(ids.indexOf(':'+d[i]['list'][j]['itemId']+':')!=-1){ }}active{{# } }}" data-val="{{d[i]['list'][j]['itemId']}}" data-name="{{d[i]['list'][j]['itemName']}}" {{# if(d[i]['list'][j]['itemImg']!=''){ }}data-image="__RESOURCE_PATH__/{{d[i]['list'][j]['itemImg']}}" {{#}}}>
+					{{# if(d[i]['list'][j]['itemImg']!=''){ }}
+					<img class="img" data-image="__RESOURCE_PATH__/{{d[i]['list'][j]['itemImg']}}" src="__RESOURCE_PATH__/{{d[i]['list'][j]['itemImg']}}">
+					{{#}else{}}
+					<span style='width:40px;height:40px;padding:0px;margin: 5px 6px 0 0'></span>
+					{{#}}}
+				{{d[i]['list'][j]['itemName']}}</span>
+				{{# }else{ }}
+				<span class="j-option {{# if(ids.indexOf(':'+d[i]['list'][j]['itemId']+':')!=-1){ }}active{{# } }}" data-val="{{d[i]['list'][j]['itemId']}}" data-name="{{d[i]['list'][j]['itemName']}}">{{d[i]['list'][j]['itemName']}}</span>
+				{{# } }}
+			{{# } }}
+			<div class="wst-clear"></div>
+		</div>
+	{{# } }}
+	<div class="number wst-flex-row">
+        <div class="wst-flex-row">
+            <p class="stock-title">库存</p>
+            <div class="stock"><span id="j-goods-stock">0</span>&nbsp;{{goodsUnit}}</div>
+        </div>
+	</div>
+	</script>
+	<button class="button" id='j-specBtn' onclick="javascript:selectSpec({$goods['id']});">确定</button>
+</div>
+{/block}
+{block name="js"}
+<script>
+var goodsInfo = {
+	id:{$goods['goodsId']},
+	combineId:{$goods['combineId']},
+	isSpec:{$goods['isSpec']},
+	combineType:{$goods['combineType']},
+	list:{:json_encode($goods['list'])}
+}
+</script>
+<script type='text/javascript' src='__WECHAT__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__STATIC__/js/base64.js'></script>
+<script src="__STATIC__/plugins/photoswipe/photoswipe.min.js"></script>
+<script src="__STATIC__/plugins/photoswipe/photoswipe-ui-default.min.js"></script>
+<script type='text/javascript' src='__ROOT__/addons/combination/view/wechat/js/goods.js?v={$v}'></script>
+<script>initIndex();</script>
+{/block}

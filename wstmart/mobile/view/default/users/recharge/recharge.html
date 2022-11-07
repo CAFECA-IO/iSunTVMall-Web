@@ -1,0 +1,85 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('my_money')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/recharge.css?v={$v}">
+{/block}
+{block name="header"}
+    <header style="background:#ffffff;" class="ui-header ui-header-positive wst-header">
+        <i class="ui-icon-return" onclick="history.back()"></i><h1>{:lang('recharge')}</h1>
+    </header>
+{/block}
+{block name="main"}
+<section class="ui-container">
+    <input type="hidden" id="trade_no" value="{:WSTOrderNo()}" />
+    <div class="data-item" style="margin:0.05rem 0 0.1rem 0">
+        <label>{:lang('current_balance')}</label>
+        <div style="float: right;margin-right: 0.07rem"><label class="money-fuhao">{:lang('currency_symbol')} </label><label class="money">{$rs['userMoney']}</label></div>
+    </div>
+    <div class="data-item" style="text-align: center">
+        <label>—— {:lang('recharge')} ——</label>
+        <br>
+        <div class="money-warn">{:lang('money_management_tip1')}</div>
+        <div class="money-item" style="text-align: left">
+            {volist name="chargeItems" id="item"}
+            <div class="money-box" onclick="javascript:changeSelected({$item['id']},'itemId',this,{$item['chargeMoney']})">
+                <div class="money-title">{:lang('some_money',[$item['chargeMoney']])}</div>
+            {if condition="$item.giveMoney eq 0"}
+                <div class="money-title-down">
+                {:lang('recharge_givemoney_desc',[0])}
+                </div>
+            {else/}
+                <div class="money-title-down">
+                {:lang('recharge_givemoney_desc',[$item['giveMoney']])}</div>
+            {/if}
+            </div>
+            {/volist}
+        </div>
+    </div>
+
+    <input type="hidden" value="" id='itemId' class='j-ipt' />
+
+    <div class="data-item">
+        <label>{:lang('currency_symbol')}</label>
+        <input placeholder="{:lang('require_recharge_amount')}" class="data-input" type="text" id="needPay" value="" maxlength="10" data-rule="{:lang('recharge_amount')}:required;" onkeypress="return WST.isNumberKey(event)" onkeyup="javascript:WST.isChinese(this,1)" maxlength="8" />
+    </div>
+
+    <div class="data-item" style="margin-top:0.1rem">
+        <label>{:lang('select_pay_type')}</label>
+    </div>
+    <div class="content" id="content" style="margin-bottom: 0.8rem">
+        {volist name="payments" id="payment" }
+        <ul class="ui-row feedback-item">
+            <li class="ui-col ui-col-80">
+                <i style="float: left" class="{$payment['payCode']}"></i>
+                <div style="float: left;margin-left: 0.1rem;line-height: 0.4rem;">{$payment['payName']}</div>
+            </li>
+            <li class="ui-col ui-col-20 chk-box">
+                <label class="ui-checkbox">
+                    <input type="radio" {if condition="$key eq 0"}checked{/if} name="payCode" value="{$payment['payCode']}">
+                </label>
+            </li>
+        </ul>
+        {/volist}
+
+    </div>
+
+    <div style="padding-top:0.1rem;padding-bottom: 0.1rem;position: fixed;bottom:0;width: 100%;background: #FFFFFF">
+        <button class="button" onclick="toPay()">{:lang('confirm_pay')}</button>
+    </div>
+
+
+</section>
+    {php}
+        $sum = 0;
+        if(isset($chargeItems[0])){
+            $sum = $chargeItems[0]['chargeMoney'];
+        }
+    {/php}
+{/block}
+
+{block name="footer"}
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__MOBILE__/users/recharge/recharge.js?v={$v}'></script>
+{/block}

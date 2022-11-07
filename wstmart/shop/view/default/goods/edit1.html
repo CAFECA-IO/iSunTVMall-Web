@@ -1,0 +1,43 @@
+<div id="selMouldBox" style='display:none'>
+{:lang("template")}：
+<div id="mouldCol1" style="display: inline-block;">
+	<input id="mouldId" type="hidden" name="mouldId"/>
+	<div id="mouldBox">
+		<div id="mouldTitleBox" style=""><span id="mouldTitle">{:lang("please_select_a_specification_property_template")}</span> <i class="fa fa-angle-left jright" style=""></i></div>
+		<div id="mouldItemBox">
+			
+		</div>
+	</div>
+</div>
+<button id="updateMould" type="button" class="btn" onclick="toUpdateMould()" style="margin-left: 10px;">{:lang("update_template")}</button>
+<button id="addMould" type="button" class="btn" onclick="toSaveMould(0)" style="margin-left: 10px;">{:lang('save_as_new_template')}</button>
+</div>
+<div id='specsAttrBox'></div>
+<div id='specTips' style='display:none'>
+<div class='wst-tips-box' style='margin-left:0px;'>{:lang('goods_tips5')}</div>
+</div>
+<div id='specMouldBox' style='display:none'>
+	<div id="specMouldForm">
+	    <input type='hidden' id='catId' class='ipt'/>
+		<table class='wst-form wst-box-top'>
+		  <tr>
+		       <tr>
+		          <th>{:lang('template_name')}<font color='red'>*</font>：</th>
+		          <td>
+		              <input type="text" id="mouldName" name="mouldName" class="ipt" maxLength='20' />
+		          </td>
+		       </tr>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#mouldTitleBox").on({
+		click : function(){
+			$("#mouldItemBox").toggle();
+		}
+	});
+	
+});
+
+</script>

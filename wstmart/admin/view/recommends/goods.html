@@ -1,0 +1,97 @@
+{extend name="base" /}
+{block name="js"}
+<script src="__ADMIN__/recommends/recommends.js?v=1{$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<style>
+input[type=text]{padding: 6px 5px;}
+</style>
+<form autocomplete='off'>
+<div id='alertTips' class='alert alert-success alert-tips fade in'>
+  <div id='headTip' class='head'><i class='fa fa-lightbulb-o'></i>{:lang('menu_tips')}</div>
+  <ul class='body'>
+      <li>{:lang('label_recommends_menu_tips2')}</li>
+      <li>{:lang('label_recommends_menu_tips3')}</li>
+      <li>{:lang('label_recommends_menu_tips4')}</li>
+  </ul>
+</div>
+<table class='wst-form wst-box-top'>
+	  <tr>
+	     <th width='150'>{:lang('label_recommends_goods_cat')}<font color='red'>*</font>：</th>
+	     <td colspan='2'>
+	        <select id="cat12_0" class='ipt pgoodsCats1_2' level="0" onchange="WST.ITGoodsCats({id:'cat12_0',val:this.value,isRequire:false,className:'pgoodsCats1_2'});">
+	          <option value=''>{:lang('select')}</option>
+	          {volist name=":WSTGoodsCats(0)" id="vo"}
+	          <option value="{$vo['catId']}">{$vo['catName']}</option>
+	          {/volist}
+	        </select>
+	     </td>
+	     <td>
+	        {:lang('label_recommends_goods_cat')}<font color='red'>*</font>：
+	        <select id="cat22_0" class='ipt pgoodsCats2_2' level="0" onchange="WST.ITGoodsCats({id:'cat22_0',val:this.value,isRequire:false,className:'pgoodsCats2_2',afterFunc:'listQueryByGoods'});">
+	          <option value=''>{:lang('label_recommends_all_goods_cat')}</option>
+	          {volist name=":WSTGoodsCats(0)" id="vo"}
+	          <option value="{$vo['catId']}">{$vo['catName']}</option>
+	          {/volist}
+	        </select>
+	     </td>
+	  <tr>
+	     <th width='150'>{:lang('query')}：</th>
+	     <td colspan='2'>
+	        <input type='text' id='key_2' style='width:250px' class='ipt_2' placeholder='{:lang('label_recommends_shop_plo')}'/>
+	        <button type="button" class="btn btn-primary" onclick='javascript:loadGoods("_2")'><i class="fa fa-search"></i>{:lang('query')}</button>
+	     </td>
+	     <td style='padding-left:30px;'>
+	       {:lang('type')}<font color='red'>*</font>：
+	       <select id='dataType_2' onchange='listQueryByGoods("_2")'>
+	          <option value='0'>{:lang('label_recommends_type1')}</option>
+	          <option value='1'>{:lang('label_recommends_type2')}</option>
+	          <option value='2'>{:lang('label_recommends_type3')}</option>
+	          <option value='3'>{:lang('label_recommends_type4')}</option>
+	        </select>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('select')}<font color='red'>*</font>：</th>
+	     <td width='320'>
+	       <div class="recom-lbox">
+	            <div class="trow head">
+	              <div class="tck"><input onclick="WST.checkChks(this,'.lchk_2')" type="checkbox"></div>
+	              <div class="ttxt">{:lang('label_recommends_goods')}</div>
+	            </div>
+	            <div id="llist_2" style="width:350px;"></div>
+	       </div>
+	     </td>
+	     <td align='center'>
+	       <input type='button' value='》》' class='btn btn-primary' onclick='javascript:moveRight("_2")'/>
+	       <br/><br/>
+	       <input type='button' value='《《' class='btn btn-primary' onclick='javascript:moveLeft("_2")'/>
+	       <input type='hidden' id='ids_2'/>
+	     </td>
+	     <td>
+	       <div class="recom-rbox">
+	            <div class="trow head">
+		            <div class="tck"><input onclick="WST.checkChks(this,'.rchk_2')" type="checkbox"></div>
+		            <div class="ttxt">{:lang('label_recommends_goods')}</div>
+		            <div class="top">{:lang('label_recommends_sort')}</div>
+		        </div>
+	            <div id="rlist_2"></div>
+	       </div>
+	     </td>
+	  </tr>
+	  {if WSTGrant('SPTJ_04')}
+	  <tr>
+	     <td colspan='4' align='center' style='padding-top:10px;'>
+	     	<button type="button" class="btn btn-primary" onclick='javascript:editGoods("_2")'><i class="fa fa-check"></i>{:lang('submit')}</button>
+	     </td>
+	  </tr>
+	  {/if}
+</table>
+</form>
+<script>
+$(function(){
+	listQueryByGoods('_2');
+	$('#headTip').WSTTips({width:200,height:35,callback:function(v){}});
+});
+</script>
+{/block}

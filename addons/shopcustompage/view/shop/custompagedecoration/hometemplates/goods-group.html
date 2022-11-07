@@ -1,0 +1,25 @@
+
+<div class='goods-group-container'>
+    <div class="like_goods_list">
+        {if $vo['showGoodsGroupTitle']==1}
+            <div class="lg_tit">{$vo['goodsGroupTitle']}</div>
+        {/if}
+        <div class="lg_glist">
+            {volist name="$vo['goods'][0]" id='cs'}
+            <div class="fmr_gitem fl" title="{$cs['goodsName']|WSTStripTags}">
+                <div class="fmr_img">
+                    <a target='_blank'  href="{:Url('home/goods/detail','goodsId='.$cs['goodsId'])}">
+                    <img title="{$cs['goodsName']|WSTStripTags}" class='goodsImg' data-original="__RESOURCE_PATH__/{:WSTImg($cs['goodsImg'])}" src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}"/>
+                    </a>
+                </div>
+                <p class="fmr_gname"><a target='_blank'  href="{:Url('home/goods/detail','goodsId='.$cs['goodsId'])}">{:WSTMSubstr($cs['goodsName'],0,33)}</a></p>
+                <div class="info wst-flex-row wst-jsb wst-ac">
+                    <div class="fmr_gprice"><span class="f12">{:lang('currency_symbol')}</span>{$cs['shopPrice']}</div>
+                    <div class="cart" onclick="javascript:WST.addCart({$cs['goodsId']});"></div>
+                </div>
+            </div>
+            {/volist}
+            <div class="wst-clear"></div>
+        </div>
+    </div>
+</div>

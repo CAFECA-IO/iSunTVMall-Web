@@ -1,0 +1,303 @@
+{extend name="default/base" /}
+{block name="css"}
+<style>
+.notice{padding: 3px 6px;color: #e55454}
+.notice_icon{vertical-align: text-bottom;}
+#deliverForm{margin:1rem;}
+.delivery_good img{width:50px;height:50px;margin:10px;}
+.goods_info{border: 1px solid #f1f1f1;}
+.goods_info tr:nth-child(1){background: #F3F7FD;}
+.goods_info tr td{text-align: center;}
+label{font-weight: normal;;margin-right:15px;}
+input[type=text], input[type=password] {
+    border: 1px solid #f1f1f1 !important;
+    height: 30px !important;
+    line-height: 17px !important;
+    padding: 2px !important;
+    width:175px !important;
+}
+select{
+    width:auto !important;
+}
+/**修改用户地址**/
+.add-addr{font-weight: normal;color:#005ea7;display: block;float:right;margin-right: 5px;}
+.add-addr:hover{color:red;}
+.address-box{border-top:2px solid #FC7A64;border-left:1px solid #eeeeee;border-right:1px solid #eeeeee;padding:5px 0px 10px 10px;}
+.j-show-box,.j-edit-box,.j-list-box,.wst-list-box,.invoic-box{padding:5px 0px 20px 15px;}
+.j-list-box li{height:40px;line-height:40px;}
+.j-edit-box .rows{width:auto;height:auto;}
+.j-edit-box .label{float:left;width:120px;text-align:right;padding:2px 0px 2px 0px;color:#333 !important;line-height: 38px !important;;}
+.j-edit-box .field{float:left;padding:2px 0px 2px 0px;}
+.field label{margin-right:20px;}
+#saveAddressBtn{margin-left:120px;}
+.j-show-box .address{line-height:36px;}
+.j-show-box .address a{color: #1c9eff;}
+.j-show-box .address a:hover{text-decoration:underline;}
+.wst-frame1.j-selected i,.wst-frame2.j-selected i{font-size: 0;line-height: 0;background: url(../img/img_gd_sel.png) no-repeat 0 0;display: block; width: 11px;height: 11px;position: absolute;z-index: 1;right: -1px;bottom: -1px;}
+.wst-cart-reda{font-size: 14px;color:#ffffff;background: #df2003;text-align:center;border-radius:3px;font-family:"microsoft yahei";box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);}
+.wst-cart-reda:hover{color:#ffffff;background:#ea3232;box-shadow: 0 0px 0px rgba(0, 0, 0, 0.3);}
+</style>
+{/block}
+{block name="main"}
+  <div class='wst-toolbar'>
+     <input type='text' class="s-ipt" id='orderNo' placeholder='{:lang("order_number")}'/>
+     <select name="payType" id="payType" class="s-ipt">
+                <option value="-1">{:lang("payment_method")}</option>
+                <option value="0">{:lang("cash_on_Delivery")}</option>
+                <option value="1">{:lang("online_payment")}</option>
+               </select>
+
+     <select name="deliverType" id="deliverType" class="s-ipt">
+                <option value="-1">{:lang("delivery_mode")}</option>
+                <option value="0">{:lang("provide_home_delivery_service")}</option>
+                <option value="1">{:lang("self_Extraction")}</option>
+               </select>
+
+      <a class="btn btn-primary" onclick="waitDivleryByPage()"><i class="fa fa-search"></i>{:lang("query")}</a>
+      <a class="btn btn-primary" style="float:right;" onclick="javascript:toExportDeliver()"><i class="fa fa-sign-out"></i>{:lang('import_shipping_order')}</a>
+      <a class="btn btn-primary" style="float:right;margin-right:10px" onclick="javascript:toDeliverTemplate()"><i class="fa fa-sign-out"></i>{:lang('export_shipment_template')}</a>
+      <a class="btn btn-primary" style="float:right;margin-right:10px" onclick="javascript:toExport(2,0,'')"><i class="fa fa-sign-out"></i>{:lang('export_order')}</a>
+  </div>
+  <div class='wst-grid'>
+    <table class='wst-order-list'>
+       <thead>
+	      <tr class='head'>
+	         <th class="th-padding">{:lang("order_details")}</th>
+	         <th width="205" style="text-align: center;">{:lang("payment_method/delivery_information")}</th>
+	         <th style="text-align: center;">{:lang("money")}</th>
+	         <th width="150" style="text-align: center;">{:lang("op")}</th>
+	      </tr>
+	   </thead>
+	   <tbody id='loadingBdy'>
+	       <tr id='loading' class='empty-row' style='display:none'>
+	            <td colspan='4'><img src="__SHOP__/img/loading.gif">{:lang("loading")}</td>
+	       </tr>
+       </tbody>
+       <script id="tblist" type="text/html">
+       {{# for(var i = 0; i < d.length; i++){ }}
+       <tbody class="j-order-row">
+        <tr>
+           <td class='order-head'>
+                  <div class='time'>{{d[i].createTime}}</div>
+                  <div class='orderno'>{:lang('order_number')}：{{d[i].orderNo}}
+                    {{# if(d[i].orderSrc==0){ }}<i class="order-pc"></i>
+                    {{# }else if(d[i].orderSrc==1){ }}<i class="order-wx"></i>
+                    {{# }else if(d[i].orderSrc==2){ }}<i class="order-mo"></i>
+                    {{# }else if(d[i].orderSrc==3){ }}<i class="order-app"></i>
+                    {{# }else if(d[i].orderSrc==4){ }}<i class="order-ios"></i>
+                    {{# }else if(d[i].orderSrc==5){ }}<i class="order-weapp"></i>
+                    {{# } }}
+                    {{# if(d[i].orderCodeTitle!=""){ }}
+                      <span class="order_from">{{d[i].orderCodeTitle}}</span>
+                    {{# } }}
+                    {{# if(d[i].noticeDeliver==1){ }}
+                    <span class="notice">
+                      <img class="notice_icon" src="__SHOP__/img/nocite_deliver.png" alt="{:lang('delivery_reminder')}" width="20" height="20" />
+                      {:lang('deliver_as_soon_as_possible')}
+                    </span>
+                    {{# } }}
+                  </div>
+           </td>
+           <td></td>
+           <td></td>
+           <td><div style="text-align:center;">{{d[i].status}}</div></td>
+         </tr>
+         {{#
+          var tmp = null,rows = d[i]['list'].length;
+          for(var j = 0; j < d[i]['list'].length; j++){
+             tmp = d[i]['list'][j];
+         }}
+
+         <tr class='goods-box'>
+            <td>
+
+               <div class='goods-img'>
+                <a href="{{WST.U('home/goods/detail','goodsId='+tmp.goodsId)}}" target='_blank'>
+                    <span class='weixin'><img class='img gImg' title='{{tmp.goodsName}}' style='height:40px;width:40px;' data-original='__RESOURCE_PATH__/{{tmp.goodsImg}}'><img class='imged' style='height:200px;width:200px;max-width: 200px;max-height: 200px; background: #fff;' title='{{tmp.goodsName}}' src="__RESOURCE_PATH__/{{tmp.goodsImg}}"></span>
+                </a>
+               </div>
+
+               <div class='goods-name'>
+                 <div>{{tmp.goodsName}}</div>
+                 <div>{{tmp.goodsSpecNames}}</div>
+               </div>
+               <div class='goods-extra'>{{tmp.goodsPrice}} x {{tmp.goodsNum}}</div>
+            </td>
+            {{# if(j==0){ }}
+            <td rowspan="{{rows}}">
+                <div style="text-align: center;">{{d[i].payTypeName}}</div>
+                <div style="text-align: center;">{{d[i].deliverTypeName}}</div>
+            </td>
+            <td rowspan="{{rows}}">
+                <div>{:lang('commodity_amount')}：<span style="color: red">{:lang('currency_symbol')}{{d[i].goodsMoney}}</span></div>
+                <div class='line'>{:lang('freight')}：<span style="color: red">{:lang('currency_symbol')}{{d[i].deliverMoney}}</span></div>
+                <div>{:lang('amount_actually_paid')}：<span style="color: red">{:lang('currency_symbol')}{{d[i].realTotalMoney}}</span></div>
+            </td>
+            <td rowspan="{{rows}}">
+                <div style="text-align: center;"><a href='#none' onclick='javascript:deliver({{d[i].orderId}},{{d[i].deliverType}})'>【{:lang('deliver_goods')}】</a></div>
+                {{# if(d[i].deliverType==0 && d[i].isDeliver==0){ }}
+                <div style="text-align: center;"><a href='#none' onclick='javascript:toEditOrderReceiveInfo({{d[i].orderId}})'>【{:lang('modify_shipping_address')}】</a></div>
+                {{#}}}
+                <div style="text-align: center;"><a target='blank' href='{{WST.U("shop/orders/orderPrint","id="+d[i].orderId)}}'>【{:lang('print_order')}】</a></div>
+                <div style="text-align: center;"><a href='#none' onclick="view({{d[i].orderId}},'waitDelivery')">【{:lang('order_details')}】</a></div>
+            </td>
+            {{#}}}
+         </tr>
+         {{# } }}
+         {{# if(WST.blank(d[i].orderRemarks)!=''){  }}
+         <tr>
+          <td colspan="4">
+
+               <div class="order_remaker">【{:lang('guest_book')}】{{d[i].orderRemarks}}</div>
+
+          </td>
+         </tr>
+          {{# }  }}
+         <tr class='empty-row' style="border: 0px;">
+            <td colspan='4'>&nbsp;</td>
+         </tr>
+       </tbody>
+       {{# } }}
+       </script>
+       <tr class='empty-row' style="border: 0px;">
+            <td colspan='4' id='pager' align="center" style='padding:5px 0px 5px 0px'>&nbsp;</td>
+       </tr>
+    </table>
+    <div id='deliverBox' style='display:none'>
+       <form id='deliverForm' autocomplete='off'>
+        <table class='wst-form wst-box-top goods_info' border="1" >
+           <tr>
+            <td class='delivery_select'><input type='checkbox' onclick="javascript:WST.checkChks(this,'.chk')"/></td>
+            <td>{:lang('upload_img')}</td><td width=500>{:lang('goods')}</td><td>{:lang('number')}</td><td>{:lang('status')}</td>
+          </tr>
+          <tbody id='goods_info'></tbody>
+        </table>
+       <table class='wst-form wst-box-top'>
+           <tr>
+               <th width='80'>{:lang('delivery_method')}：</th>
+               <td>
+                  <label>
+                   <input type='radio'  name='delivery_type' value='0' >{:lang('no_logistics_required')}</input>
+                   </label>
+                   <label>
+                   <input type='radio'  name='delivery_type' checked value='1' >{:lang('need_logistics')}</input>
+                  </label>
+               </td>
+           </tr>
+           <tr class="deliver_express">
+            <th width='80'>{:lang('courier_services_company')}：</th>
+                <td>
+                   <select id='expressId'>
+                      <option value=''>{:lang('select')}</option>
+                      {volist name="$express" id='vo'}
+                      <option value='{$vo["expressId"]}'>{$vo["expressName"]}</option>
+                      {/volist}
+                   </select>
+                </td>
+          </tr>
+          <tr class="deliver_express">
+                <th>{:lang('express_number')}：</th>
+                <td><input type='text' id='expressNo' maxLength='20' style='width:80%'></td>
+           </tr>
+           <tr>
+               <th>{:lang('consignee')}：</th>
+               <td class="user_name"></td>
+           </tr>
+           <tr>
+               <th>{:lang('receiving_address')}：</th>
+               <td class="user_address"></td>
+           </tr>
+           <tr>
+               <th>{:lang('contact_number')}：</th>
+               <td class="user_phone"></td>
+           </tr>
+       </table>
+       </form>
+    </div>
+    <div id='editMoneyBox' style='display:none'>
+       <form id='newOrderForm' autocomplete='off'>
+       <table class='wst-form wst-box-top'>
+          <tr>
+            <th width='120'>{:lang('order_number')}：</th>
+            <td><span id='m_orderNo'></span></td>
+          </tr>
+          <tr>
+            <th>{:lang('total_commodity_price')}：</th>
+            <td>{:lang('currency_symbol')}<span id='m_goodsMoney'></span></td>
+          </tr>
+          <tr>
+            <th>{:lang('freight')}：</th>
+            <td>{:lang('currency_symbol')}<span id='m_deliverMoney'></span></td>
+          </tr>
+          <tr>
+            <th>{:lang('total_commodity_price')}：</th>
+            <td>{:lang('currency_symbol')}<span id='m_totalMoney'></span></td>
+          </tr>
+           <tr>
+            <th>{:lang('actual_price_paid')}：</th>
+            <td>{:lang('currency_symbol')}<span id='m_realTotalMoney' class='j-warn-order-money'></span></td>
+          </tr>
+          <tr>
+            <th>{:lang('new_price')}：</th>
+            <td><input type='text' id='m_newOrderMoney' maxLength='10' style='width:150px' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event,true)" onblur='javascript:WST.limitDecimal(this,2)'></td>
+          </tr>
+       </table>
+       </form>
+    </div>
+  </div>
+<!-- 新增编辑地址 -->
+<div class='j-edit-box hide'>
+    <form id='addressForm' autocomplete='off'>
+        <input type='hidden' class='j-eipt' id='orderId' value=''/>
+        <div class='wst-flex-row'>
+            <div class='label'>{:lang('consignee')}<font color='red'>*</font>：</div>
+            <div class='field'><input type='text' class='j-eipt' id='userName' maxLength='15'/></div>
+            <div class='wst-clear'></div>
+        </div>
+        <div class='wst-flex-row'>
+            <div class='label'>{:lang('receiving_address')}<font color='red'>*</font>：</div>
+            <div class='field'>
+                <select id="area_0" class='j-areas' level="0" onchange="WST.ITAreas({id:'area_0',val:this.value,isRequire:true,className:'j-areas'});">
+                    <option value="">-{:lang('select')}-</option>
+                    {volist name="areaList" id="vo"}
+                    <option value="{$vo['areaId']}">{$vo['areaName']}</option>
+                    {/volist}
+                </select>
+
+            </div>
+            <div class='wst-clear'></div>
+        </div>
+        <div class='wst-flex-row'>
+            <div class='label'>{:lang('detailed_address')}<font color='red'>*</font>：</div>
+            <div class='field'><input type='text' class='j-eipt' id='userAddress' style='width:300px' maxLength='50'/>  </div>
+            <div class='wst-clear'></div>
+        </div>
+        <div class='wst-flex-row'>
+            <div class='label'>{:lang('contact_number')}<font color='red'>*</font>：</div>
+            <div class='field'><input type='text' id='userPhone' class='j-eipt' name="userPhone" maxLength='11'/>  </div>
+            <div class='wst-clear'></div>
+        </div>
+        <div class='rows'>
+            <a href='javascript:void(0)' class='wst-cart-reda' id='saveAddressBtn' onclick='javascript:saveAddress()' style='width:105px;line-height:33px;padding:6px 15px;color:#fff !important;text-decoration:none !important;'>{:lang('save_the_address_of_the_consignee')}</a>
+        </div>
+    </form>
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/js/jquery.min.js?v={$v}"></script>
+<script type="text/javascript" src="__STATIC__/plugins/layer/layer.js?v={$v}"></script>
+<script type='text/javascript' src='__ROOT__/static/plugins/lazyload/jquery.lazyload.min.js?v={$v}'></script>
+<script type='text/javascript' src='__SHOP__/orders/orders.js?v={$v}'></script>
+<script>
+$(function(){
+	waitDivleryByPage({$p});
+    $("input[name='delivery_type']").change(function() {
+        if (this.value == 1) {
+            $('.deliver_express').show();
+        }else{
+            $('.deliver_express').hide();
+        }
+    });
+})
+</script>
+{/block}

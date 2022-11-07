@@ -1,0 +1,244 @@
+{extend name="default/base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+<style>
+    .webuploader-pick{background:#1890ff;}
+</style>
+{/block}
+{block name="main"}
+<style>
+label{margin-right:10px;}
+th{height:25px;}
+</style>
+<div id='tab' class="layui-tab layui-tab-brief">
+    <ul class="layui-tab-title">
+        <li class="layui-this">{:lang('store_information')}</li>
+        <li>{:lang('bank_information')}</li>
+        {if(WSTDatas('ADS_TYPE',2)!='' || WSTDatas('ADS_TYPE',3)!='' || WSTDatas('ADS_TYPE',5)!='')}
+        <li>{:lang('store_qr_code')}</li>
+        {/if}
+    </ul>
+    <div class="layui-tab-content" style='width:99%;margin-bottom: 10px;'>
+        <div class="layui-tab-item layui-show wst-box-top" style="position: relative;">
+           <table id='vinfo_1' class='wst-form'> 
+			  <tr>
+			     <th width='150'>{:lang('shop_number')}：</th>
+			     <td><span style='float:left;padding: 0px 8px;'>{$object['shopSn']}</span>
+                 <a class="btn btn-blue" onclick="javascript:toEdit(1)"><i class="fa fa-pencil"></i>{:lang('edit')}</a>
+			     </td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('shop_name')}：</th>
+			     <td>{$object['shopName']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('company_emergency_contact')}：</th>
+			     <td>{$object['shopkeeper']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('company_emergency_contact_mobile_phone')}：</th>
+			     <td>+{$object['telephoneAreaCode']} {$object['telephone']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('corporate_name')}：</th>
+			     <td>{$object['shopCompany']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('shop_contact_number')}：</th>
+			     <td>{$object['shopTel']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('business_category')}：</th>
+			     <td>
+			      {volist name="$object['catshopNames']" id="vo"}
+			      <div style='width:200px;float:left;line-height: 18px;'>
+			      	{$vo}
+			      </div>
+			      {/volist}
+			     </td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('industry')}：</th>
+			     <td>
+			      {$object['tradeName']}
+			     </td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('authentication_type')}：</th>
+			     <td>
+			       {php}$accredLen = count($object['accreds']);{/php}
+			       {volist name="$object['accreds']" id="vo"}
+			       {$vo["accredName"]}{if $i < $accredLen }、{/if}
+			       {/volist}
+			     </td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('shop_icon')}：</th>
+			     <td>
+			     <img id='v_shopImg' width='150' height='150' src='__RESOURCE_PATH__/{$object["shopImg"]}'/>
+			     </td>
+			  </tr>
+			  
+			  <tr>
+			     <th>{:lang('shop_address')}：</th>
+			     <td>
+			       {$object['areaName']}
+			     </td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('shop_address2')}：</th>
+			     <td>{$object['shopAddress']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('is_invoice_provided')}：</th>
+			     <td id='v_isInvoice'>
+			        {if $object['isInvoice']==1}{:lang('provide_invoice')}{/if}
+			        {if $object['isInvoice']==0}{:lang('no_invoice')}{/if}  
+			     </td>
+			  </tr>
+			  <tr id='tr_isInvoice' {if $object['isInvoice']==0}style='display:none'{/if}>
+			     <th>{:lang('invoice_description')}：</th>
+			     <td id='v_invoiceRemarks'>{$object['invoiceRemarks']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('business_status')}：</th>
+			     <td><span id='v_shopAtive'>{if $object['shopAtive']==1}{:lang('in_business')}{else}{:lang('resting')}{/if}</span>
+			     </td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('service_time')}：</th>
+			     <td><span id='v_serviceStartTime'>{$object['serviceStartTime']}</span>{:lang('to')}<span id='v_serviceEndTime'>{$object['serviceEndTime']}</span>
+			     </td>
+			  </tr>
+           </table>
+           <form id='editFrom_1' autocomplete="off">
+           <table id='einfo_1' class='wst-form hide'>
+			  <tr>
+			     <th width='150'>{:lang('shop_icon')}<font color='red'>*</font>：</th>
+			     <td>
+			     	<input type='text' id='shopImg' class='ipt_1' value='{$object["shopImg"]}' style="width: 500px; float: left;" />
+			     	<div id='shopImgPicker' style='float: left; margin-top:5px;'>{:lang('upload')}</div><span id='uploadMsg'></span>
+			     	<div id='shopImgBox' style='margin-bottom:5px; float: left; height: 30px; margin-left: 5px;'>
+			     		<span class='weixin'>
+			     			<img class='img' style='height:16px;width:18px;' src='__STATIC__/images/upload-common-select.png'>
+			     			<img class='imged'  id='preview'  style='max-height:150px;max-width: 200px; border:1px solid #dadada; background:#fff' src="__RESOURCE_PATH__/{if $object['shopImg']!=''}{$object['shopImg']}{else}{:WSTConf('CONF.goodsLogo')}{/if}">
+			     		</span>
+			     	</div>
+			     </td>
+			  </tr>
+			  
+			  <tr>
+			     <th> </th>
+			     <td>
+			     	<span style='color:gray;'>{:lang('shop_tips2')}<a target="_blank" href="http://shang.qq.com/v3/index.html">{:lang('shop_tips3')}</a> -> {:lang('shop_tips4')}</span>
+			     </td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('ali_wangwang')}：</th>
+			     <td><input class="ipt_1" id="shopWangWang" value="{$object['shopWangWang']}" type="text"></td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('is_invoice_provided')}<font color='red'>*</font>：</th>
+			     <td class="layui-form">
+			        <label>
+			        	<input type='radio' value='1' class="ipt_1" name='isInvoice' onclick='javascript:WST.showHide(1,"#trInvoice")' {if $object['isInvoice']==1}checked{/if} title='{:lang("provide")}'/>
+			        </label>
+			        <label>
+			        	<input type='radio' value='0' class="ipt_1" name='isInvoice' onclick='javascript:WST.showHide(0,"#trInvoice")' {if $object['isInvoice']==0}checked{/if} title='{:lang("not_available")}'/>
+			        </label>
+			     </td>
+			  </tr>
+			  <tr id='trInvoice' {if $object['isInvoice']==0}style='display:none'{/if}>
+			     <th>{:lang('invoice_description')}<font color='red'>*</font>：</th>
+			     <td><input class="ipt_1" id="invoiceRemarks" value="{$object['invoiceRemarks']}" type="text" data-rule="{:lang('invoice_description')}:required(#isInvoice1:checked)"></td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('business_status')}<font color='red'>*</font>：</th>
+			     <td class="layui-form">
+			        <label>
+			        	<input type='radio' value='1' class="ipt_1" name='shopAtive' {if $object['shopAtive']==1}checked{/if} title='{:lang("in_business")}'/>
+			        </label>
+			        <label>
+			        	<input type='radio' value='0' class="ipt_1" name='shopAtive' {if $object['shopAtive']==0}checked{/if} title='{:lang("resting")}'/>
+			        </label>
+			     </td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('service_time')}<font color='red'>*</font>：</th>
+			     <td>
+			     <select class='ipt_1' id='serviceStartTime' v="{$object['serviceStartTime']}"></select>
+		         {:lang('to')}
+		         <select class='ipt_1' id='serviceEndTime' v="{$object['serviceEndTime']}"></select>
+			     </td>
+			  </tr>
+			  <tr>
+			  	<td colspan='2' style="padding-left: 155px;">
+                    <button type="submit" class="btn btn-primary btn-mright" onclick="javascript:editInfo()"><i class="fa fa-check"></i>{:lang('save')}</button>
+                    <button type="button" class="btn" onclick="javascript:toCancel(1)" style="margin-left: 10px;"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+			  	</td>
+			  </tr>
+           </table>
+           </form>
+        </div>
+
+        <div class="layui-tab-item" style="display:none;">
+           <table class='wst-form wst-box-top'>
+              <tr>
+			     <th width='150'>{:lang('card_opening_bank')}：</th>
+			     <td>{$object['bankName']}</td>
+			  </tr>
+			  <tr>
+			     <th width='150'>{:lang('kaika_district')}：</th>
+			     <td>{$object['bankAreaName']}</td>
+			  </tr>
+              <tr>
+			     <th>{:lang('card_number')}：</th>
+			     <td>{$object['bankNo']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('cardholder')}：</th>
+			     <td>{$object['bankUserName']}</td>
+			  </tr>
+			  
+           </table>
+        </div>
+        {if(WSTDatas('ADS_TYPE',2)!='' || WSTDatas('ADS_TYPE',3)!='' || WSTDatas('ADS_TYPE',5)!='')}
+        <div class="layui-tab-item" style="display:none;">
+           <table class='wst-form wst-box-top'>
+           	{if(WSTDatas('ADS_TYPE',2)!='' || WSTDatas('ADS_TYPE',3)!='')}
+    			<tr>
+			   		<th width='150'>{:lang('mobile/wechat_qr_code')}</th>
+			   		<td>
+						<div id="moQrcode" style="margin: 10px;"></div>
+			   		</td>
+			  	</tr>
+            {/if}
+            {if(WSTDatas('ADS_TYPE',5)!='')}
+    			<tr>
+			   		<th width='150'>{:lang("small_program_qr_code")}</th>
+			   		<td>
+						<div id="weQrcode" style="margin: 10px;"></div>
+			   		</td>
+			  	</tr>
+            {/if}
+           </table>
+        </div>
+        {/if}
+    </div>
+</div>
+{/block}  
+{block name="js"}
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script type='text/javascript' src='__SHOP__/shop/shops.js?v={$v}'></script>
+<script>
+$(function(){
+	{if(WSTDatas('ADS_TYPE',2)!='' || WSTDatas('ADS_TYPE',3)!='')}
+	WST.createShopQrcode(1);
+	{/if}
+	{if(WSTDatas('ADS_TYPE',5)!='')}
+	WST.createShopQrcode(2);
+	{/if}
+})
+</script>
+{/block}

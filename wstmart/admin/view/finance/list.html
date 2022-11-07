@@ -1,0 +1,328 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/finance/logmoneys.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<style type="text/css">
+  #mmg1 td:nth-child(4), #mmg2 td:nth-child(4), #mmg3 td:nth-child(4), #mmg7 td:nth-child(8), #mmg10 td:nth-child(7){color: red;}
+  #mmg1 td:nth-child(5), #mmg2 td:nth-child(5), #mmg3 td:nth-child(5){color: #31c15a;}
+  #mmg1 td:nth-child(6), #mmg2 td:nth-child(6), #mmg3 td:nth-child(6){color: #1890ff;}
+  .head1,.head2{border-bottom: 1px solid #f2f2f2;padding: 5px;}
+  .head2 .item{line-height: 30px;float: left;width: 100px;cursor: pointer;text-align: center;}
+  .head2 .item.active{font-weight: bold;}
+  .wst-total .inner{min-width: 160px;max-width: 180px;width:auto;margin-right:0;padding: 0;cursor: pointer;}
+  .wst-total .inner .inner_right{float: none;text-align: center;width: auto;background: #f2f2f2;border-radius: 10px;margin:4px;padding: 4px 10px;}
+  .wst-total .inner .inner_right span{max-width: 100%;}
+</style>
+<div>
+  <div class="wst-toolbar head1">{:lang('label_finance')}</div>
+  <div class="wst-total wst-summary layui-col-md12" style="box-shadow:none;border-bottom:1px solid #f2f2f2;padding-left: 10px;">
+    <div  id="t_totalUserMoney" class='inner'>
+        <div class="inner_right"><span>{$data['totalUserMoney']}</span><br/>
+          {:lang('label_finance_user_money')}</div>
+    </div>
+    <div id="t_totalShopMoney" class='inner'>
+      <div class="inner_right">
+        <span>{$data['totalShopMoney']}</span>&nbsp;<br/>
+        {:lang('label_finance_shop_money')}</div>
+    </div>
+    {if (WSTConf('CONF.isOpenSupplier')==1)}
+    <div id="t_totalSupplierMoney" class='inner'>
+      <div class="inner_right">
+        <span>{$data['totalSupplierMoney']}</span><br/>
+        {:lang('label_finance_supplier_money')}</div>
+    </div>
+    {/if}
+    <div id="t_totalScore" class='inner'>
+      <div class="inner_right">
+        <span>{$data['totalScore']}</span><br/>
+        {:lang('label_finance_score')}</div>
+    </div>
+    <div style="clear:both"></div>
+  </div>
+  <div style="clear:both"></div>
+</div>
+
+<div style="border-top: 10px solid #f8f8f8;border-bottom: 10px solid #f8f8f8;">
+  <div class="wst-toolbar head2" style="">
+    <div class="item active" data="1">{:lang('label_finance_today_detail')}</div>
+    <div class="item" data="2">{:lang('label_finance_7day_detail')}</div>
+    <div class="item" data="3">{:lang('label_finance_month_detail')}</div>
+    <div style="clear:both"></div>
+  </div>
+  <div class="wst-total wst-summary layui-col-md12" style="box-shadow:none;border-bottom:1px solid #f2f2f2;padding-left: 10px;">
+
+    <div id="v_rechangeMoney" class='inner'>
+      <div class="inner_right">
+        <span id="s_rechangeMoney">0</span><br/>
+        {:lang('label_finance_charge_money')}</div>
+    </div>
+    <div id="v_giveMoney" class='inner'>
+      <div class="inner_right">
+        <span id="s_giveMoney">0</span><br/>
+        {:lang('label_finance_gift_money')}</div>
+    </div>
+    <div id="v_renewMoney" class='inner'>
+      <div class="inner_right">
+        <span id="s_renewMoney">0</span><br/>
+        {:lang('label_finance_year_fee')}</div>
+    </div>
+    <div id="v_cashDraw" class='inner'>
+      <div class="inner_right">
+        <span id="s_cashDraw">0</span><br/>
+        {:lang('label_finance_draw_money')}</div>
+    </div>
+    <div id="v_refundMoney" class='inner'>
+      <div class="inner_right">
+        <span id="s_refundMoney">0</span><br/>
+        {:lang('label_finance_refund_money')}</div>
+    </div>
+    <div id="v_giveScore" class='inner'>
+        <div class="inner_right">
+          <span id="s_giveScore">0</span><br/>
+          {:lang('label_finance_gift_score')}</div>
+    </div>
+    <div id="v_exchangeScore" class='inner'>
+        <div class="inner_right">
+          <span id="s_exchangeScore">0</span>&nbsp;<br/>
+          {:lang('label_finance_dui_score')}</div>
+    </div>
+    <div id="v_commission" class='inner'>
+        <div class="inner_right">
+          <span id="s_commission">0</span>&nbsp;<br/>
+          {:lang('label_finance_order_fee')}</div>
+    </div>
+    <div style="clear:both"></div>
+  </div>
+  <div style="clear:both"></div>
+</div>
+<div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+    
+   <ul class="layui-tab-title">
+     <li id="users" class="layui-this" >{:lang('label_finance_user_money1')}</li>
+     <li id="shops">{:lang('label_finance_shop_money1')}</li>
+     {if (WSTConf('CONF.isOpenSupplier')==1)}
+     <li id="suppliers">{:lang('label_finance_supplier_money')}</li>
+     {/if}
+     <li id="rechangeMoney">{:lang('label_finance_charge_money1')}</li>
+     <li id="renewMoney">{:lang('label_finance_year_fee1')}</li>
+     <li id="cashDraw">{:lang('label_finance_draw_money1')}</li>
+     <li id="moneyList">{:lang('label_finance_money_log')}</li>
+     <li id="scoreList">{:lang('label_finance_score_log')}</li>
+     <li id="commissionList">{:lang('label_finance_order_fee1')}</li>
+   </ul>
+   <div class="layui-tab-content" style="padding: 0px 0;">
+      <!--用户资金-->
+      <div id="template_user" class="layui-tab-item layui-show">
+         <div class="wst-toolbar">
+         <input type='text' id='key1' placeholder='{:lang('label_finance_account')}'/>
+         <button class="btn btn-primary" onclick="javascript:loadUserGrid(0)"><i class="fa fa-search"></i>{:lang('query')}</button>
+         </div>
+         <div class='wst-grid'>
+            <div id="mmg1" class="mmg1"></div>
+            <div id="pg1" style="text-align: right;"></div>
+         </div>
+      </div>
+      <!--商家资金-->
+      <div id="template_shop" class="layui-tab-item ">
+         <div class="wst-toolbar">
+         <input type='text' id='key2' placeholder='{:lang('label_finance_query_plo')}'/>
+         <button class="btn btn-primary" onclick="javascript:loadShopGrid(0)"><i class="fa fa-search"></i>{:lang('query')}</button>
+         </div>
+         <div class='wst-grid'>
+            <div id="mmg2" class="mmg2"></div>
+            <div id="pg2" style="text-align: right;"></div>
+         </div>
+      </div>
+      <!--供货商资金-->
+      {if (WSTConf('CONF.isOpenSupplier')==1)}
+      <div id="template_supplier" class="layui-tab-item ">
+         <div class="wst-toolbar">
+         <input type='text' id='key3' placeholder='{:lang('label_finance_query_plo1')}'/>
+         <button class="btn btn-primary" onclick="javascript:loadSupplierGrid(0)"><i class="fa fa-search"></i>{:lang('query')}</button>
+         </div>
+         <div class='wst-grid'>
+            <div id="mmg3" class="mmg3"></div>
+            <div id="pg3" style="text-align: right;"></div>
+         </div>
+      </div>
+      {/if}
+      <!--充值记录-->
+      <div id="template_flow" class="layui-tab-item ">
+         <div class="wst-toolbar">
+         <select id='type4'>
+  		      <option value=''>{:lang('label_finance_user_type')}</option>
+  	        <option value='0'>{:lang('label_finance_user_type1')}</option>
+  	        <option value='1'>{:lang('label_finance_user_type2')}</option>
+            {if (WSTConf('CONF.isOpenSupplier')==1)}
+            <option value='3'>{:lang('label_finance_user_type3')}</option>
+            {/if}
+  	     </select>
+         <input type='text' id='key4' placeholder='{:lang('label_finance_account')}'/>
+		  <input type="text" id="startDate4" name="startDate4" class="ipt laydate-icon" maxLength="20"  />
+		 {:lang('to')}
+		  <input type="text" id="endDate4" name="endDate4" class="ipt laydate-icon" maxLength="20"  />
+         <button class="btn btn-primary" onclick="javascript:loadRechangeGrid(0)"><i class="fa fa-search"></i>{:lang('query')}</button>
+         <span class="f-right">{:lang('label_finance_charge_total_money1')}:<span style="color:red;font-weight:bold;" id="totalRechangeMoney">0</span>{:lang('unit')}&nbsp;&nbsp;&nbsp;</span>
+         </div>
+         <div class='wst-grid'>
+            <div id="mmg4" class="mmg4"></div>
+            <div id="pg4" style="text-align: right;"></div>
+         </div>
+      </div>
+      <!--年费记录-->
+      <div id="template_flow" class="layui-tab-item ">
+        <div class="wst-toolbar">
+          <select id='type5'>
+            <option value=''>{:lang('label_finance_payment_target')}</option>
+            <option value='1'>{:lang('label_finance_user_type2')}</option>
+            {if (WSTConf('CONF.isOpenSupplier')==1)}
+            <option value='3'>{:lang('label_finance_user_type3')}</option>
+            {/if}
+          </select>
+          <input type='text' id='key5' placeholder='{:lang('label_finance_query_plo2')}'/>
+          <input type="text" id="startDate5" name="startDate5" class="ipt laydate-icon" maxLength="20"  />
+          {:lang('to')}
+          <input type="text" id="endDate5" name="endDate5" class="ipt laydate-icon" maxLength="20"  />
+          <button class="btn btn-primary" onclick="javascript:loadRenewGrid(0)"><i class="fa fa-search"></i>{:lang('query')}</button>
+          <span class="f-right">{:lang('label_finance_year_total_fee')}:<span style="color:red;font-weight:bold;" id="totalRenewMoney">0</span>{:lang('unit')}&nbsp;&nbsp;&nbsp;</span>
+        </div>
+        <div class='wst-grid'>
+          <div id="mmg5" class="mmg5"></div>
+          <div id="pg5" style="text-align: right;"></div>
+        </div>
+      </div>
+      
+      <!--提现记录-->
+      <div id="template_flow" class="layui-tab-item ">
+        <div class="wst-toolbar">
+          <select id='type7'>
+            <option value='-1'>{:lang('label_finance_user_type')}</option>
+            <option value='0'>{:lang('label_finance_user_type1')}</option>
+            <option value='1'>{:lang('label_finance_user_type2')}</option>
+            {if (WSTConf('CONF.isOpenSupplier')==1)}
+            <option value='3'>{:lang('label_finance_user_type3')}</option>
+            {/if}
+          </select>
+          <input type='text' id='key7' placeholder='{:lang('label_finance_account')}'/>
+          <input type="text" id="startDate7" name="startDate7" class="ipt laydate-icon" maxLength="20"  />
+          {:lang('to')}
+          <input type="text" id="endDate7" name="endDate7" class="ipt laydate-icon" maxLength="20"  />
+          <button class="btn btn-primary" onclick="javascript:loadCashDrawGrid(0)"><i class="fa fa-search"></i>{:lang('query')}</button>
+          <span class="f-right">{:lang('label_finance_draw_total_money')}:<span style="color:red;font-weight:bold;" id="totalCashDrawMoney">0</span>{:lang('unit')}&nbsp;|&nbsp;{:lang('label_finance_total_fee')}:<span style="color:red;font-weight:bold;" id="totalCashDrawCommission">0</span>{:lang('unit')}</span>
+        </div>
+        <div class='wst-grid'>
+          <div id="mmg7" class="mmg7"></div>
+          <div id="pg7" style="text-align: right;"></div>
+        </div>
+      </div>
+      <!--资金流水-->
+      <div id="template_flow" class="layui-tab-item ">
+        <div class="wst-toolbar">
+          <select id='type8'>
+            <option value='-1'>{:lang('label_finance_user_type')}</option>
+            <option value='0'>{:lang('label_finance_user_type1')}</option>
+            <option value='1'>{:lang('label_finance_user_type2')}</option>
+            {if (WSTConf('CONF.isOpenSupplier')==1)}
+            <option value='3'>{:lang('label_finance_user_type3')}</option>
+            {/if}
+          </select>
+          <input type='text' id='key8' placeholder='{:lang('label_finance_account')}'/>
+          <input type="text" id="startDate8" name="startDate8" class="ipt laydate-icon" maxLength="20"  />
+          {:lang('to')}
+          <input type="text" id="endDate8" name="endDate8" class="ipt laydate-icon" maxLength="20"  />
+          <button class="btn btn-primary" onclick="javascript:loadMoneyGrid(0)"><i class="fa fa-search"></i>{:lang('query')}</button>
+        </div>
+        <div class='wst-grid'>
+          <div id="mmg8" class="mmg8"></div>
+          <div id="pg8" style="text-align: right;"></div>
+        </div>
+      </div>
+      <!--积分流水-->
+      <div id="template_flow" class="layui-tab-item ">
+        <div class="wst-toolbar">
+          <input type="text" id="startDate9" name="startDate9" class="ipt laydate-icon" maxLength="20"  />
+          {:lang('to')}
+          <input type="text" id="endDate9" name="endDate9" class="ipt laydate-icon" maxLength="20"  />
+          <button class="btn btn-primary" onclick="javascript:loadScoreGrid(0)"><i class="fa fa-search"></i>{:lang('query')}</button>
+          <span class="f-right">{:lang('label_finance_dui_score1')}:<span style="color:green;font-weight:bold;" id="totalOutScore">0</span>{:lang('individual')}&nbsp;&nbsp;&nbsp;</span>
+          <span class="f-right">{:lang('label_finance_add_score')}:<span style="color:red;font-weight:bold;" id="totalInScore">0</span>{:lang('individual')}&nbsp;&nbsp;&nbsp;</span>
+          
+        </div>
+        <div class='wst-grid'>
+          <div id="mmg9" class="mmg9"></div>
+          <div id="pg9" style="text-align: right;"></div>
+        </div>
+      </div>
+      <!--订单佣金-->
+      <div id="template_flow" class="layui-tab-item ">
+        <div class="wst-toolbar">
+          <select id='type10'>
+            <option value='0'>{:lang('label_finance_seltment_target')}</option>
+            <option value='1'>{:lang('label_finance_user_type2')}</option>
+            {if (WSTConf('CONF.isOpenSupplier')==1)}
+            <option value='3'>{:lang('label_finance_user_type3')}</option>
+            {/if}
+          </select>
+          <input type="text" id="startDate10" name="startDate10" class="ipt laydate-icon" maxLength="20"  />
+          {:lang('to')}
+          <input type="text" id="endDate10" name="endDate10" class="ipt laydate-icon" maxLength="20"  />
+          <button class="btn btn-primary" onclick="javascript:loadCommissionGrid(0)"><i class="fa fa-search"></i>{:lang('query')}</button>
+          <span class="f-right">{:lang('label_finance_order_total_fee')}:<span style="color:red;font-weight:bold;" id="totalCommission">0</span>{:lang('unit')}&nbsp;&nbsp;&nbsp;</span>
+          
+        </div>
+        <div class='wst-grid'>
+          <div id="mmg10" class="mmg10"></div>
+          <div id="pg10" style="text-align: right;"></div>
+        </div>
+      </div>
+
+   </div>
+</div>
+<script>
+$(function(){
+  initTab({$p});
+  userGridInit({$p});
+  phaseSummary(1,0);
+  $(".head2 .item").click(function(){
+    var type = $(this).attr("data");
+    $(".head2 .item").removeClass("active");
+    $(this).addClass("active");
+    phaseSummary(type,1);
+  });
+
+
+  $('#t_totalUserMoney').poshytip({content:'{:lang("label_finance_user_tips")}',showTimeout:0,hideTimeout:1,
+            offsetY: 25,allowTipHover: false,timeOnScreen:10000 });
+  $('#t_totalShopMoney').poshytip({content:'{:lang('label_finance_shop_tips')}',showTimeout:0,hideTimeout:1,
+            offsetY: 25,allowTipHover: false,timeOnScreen:10000 });
+  $('#t_totalSupplierMoney').poshytip({content:'{:lang('label_finance_suplier_tips')}',showTimeout:0,hideTimeout:1,
+            offsetY: 25,allowTipHover: false,timeOnScreen:10000 });
+  $('#t_totalScore').poshytip({content:'{:lang('label_finance_score_tips')}',showTimeout:0,hideTimeout:1,
+            offsetY: 25,allowTipHover: false,timeOnScreen:10000 });
+
+
+  $('#v_rechangeMoney').poshytip({content:'{:lang('label_finance_charge_tips')}',showTimeout:0,hideTimeout:1,
+            offsetY: 25,allowTipHover: false,timeOnScreen:10000 });
+  $('#v_giveMoney').poshytip({content:'{:lang('label_finance_gift_tips')}',showTimeout:0,hideTimeout:1,
+            offsetY: 25,allowTipHover: false,timeOnScreen:10000 });
+  $('#v_renewMoney').poshytip({content:'{:lang('label_finance_year_tips')}',showTimeout:0,hideTimeout:1,
+            offsetY: 25,allowTipHover: false,timeOnScreen:10000 });
+  $('#v_cashDraw').poshytip({content:'{:lang('label_finance_draw_tips')}',showTimeout:0,hideTimeout:1,
+            offsetY: 25,allowTipHover: false,timeOnScreen:10000 });
+  $('#v_refundMoney').poshytip({content:'{:lang('label_finance_refund_tips')}',showTimeout:0,hideTimeout:1,
+            offsetY: 25,allowTipHover: false,timeOnScreen:10000 });
+
+  $('#v_giveScore').poshytip({content:'{:lang('label_finance_gift_score_tips')}',showTimeout:0,hideTimeout:1,
+            offsetY: 25,allowTipHover: false,timeOnScreen:10000 });
+  $('#v_exchangeScore').poshytip({content:'{:lang('label_finance_dui_score_tips')}',showTimeout:0,hideTimeout:1,
+            offsetY: 25,allowTipHover: false,timeOnScreen:10000 });
+  $('#v_commission').poshytip({content:'{:lang('label_finance_fee_tips')}',showTimeout:0,hideTimeout:1,
+            offsetY: 25,allowTipHover: false,timeOnScreen:10000 });
+})
+</script>
+{/block}

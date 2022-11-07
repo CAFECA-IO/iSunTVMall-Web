@@ -1,0 +1,43 @@
+{extend name="default/base" /}
+{block name="title"}{if($user['loginPwd']==1)}{:lang('update_login_password')}{else}{:lang('setting_login_password')}{/if}- {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/security.css?v={$v}">
+{/block}
+{block name="header"}
+	{php}$user['loginPwd']==1?$Title = lang('update_login_password'):$Title = lang('setting_login_password'){/php}
+	{include file="default/header" /}
+{/block}
+{block name="footer"}
+		{/* 大加载 */}
+		<div class="ui-loading-block" id="Loadl">
+		    <div class="ui-loading-cnt">
+		        <i class="ui-loading-bright"></i>
+		        <p id="j-Loadl">{:lang('loading')}</p>
+		    </div>
+		</div>
+		<div class="wst-se-footer">
+			<button id="modifyPwd" type="button" class="button" onclick="javascript:editLogin({$user['loginPwd']});">{:lang('confirm')}</button>
+		</div>
+{/block}
+{block name="main"}
+	<input type="hidden" value="{:WSTConf('CONF.pwdModulusKey')}" id="key" autocomplete="off">
+    <section class="ui-container">
+    	<div class="wst-se-pay">
+    		{if($user['loginPwd']==1)}
+    		<div class="pay">{:lang('original_password')}：
+    			<input id="orloginPwd" type="password" placeholder="{:lang('original_password')}">
+    		</div>
+    		{/if}
+    		<div class="pay">{:lang('new_password')}：
+    			<input id="loginPwd" type="password" placeholder="{:lang('new_password')}">
+    		</div>
+    		<div class="pay">{:lang('confirm_password')}：
+    			<input id="cologinPwd" type="password" placeholder="{:lang('confirm_password')}" style='width:calc(100% - 0.9rem)'>
+    		</div>
+    	</div>
+    </section>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/js/rsa.js"></script>
+<script type='text/javascript' src='__MOBILE__/users/security/security.js?v={$v}'></script>
+{/block}

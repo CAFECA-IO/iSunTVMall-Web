@@ -1,0 +1,57 @@
+{extend name="$LAYOUT_HOME_SHOP_BASE" /}
+{block name="title"}{:lang('auction_activity_title')} - {:lang('auction_seller_center')}{/block}
+{block name="top"}
+	{include file="$LAYOUT_HOME_TOP" /}
+{/block}
+{block name="content"}
+<div class="wst-shop-head"><span>{:lang('auction_user_list')}</span><a href="{:addon_url('auction://shops/auction')}">{:lang('auction_back')}</a></div>
+ <input type='hidden' id='id' class='s-ipt' value='{$id}'/>
+  <div class='wst-shop-content'>
+    <table class='wst-list'>
+       <thead>
+        <tr class='head'>
+           <th>&nbsp;</th>
+           <th>{:lang('auction_label_bidders')}</th>
+           <th>{:lang('auction_bidding_price')}</th>
+           <th>{:lang('auction_bidding_time')}</th>
+           <th>{:lang('auction_order_no')}</th>
+           <th width='100'>&nbsp;</th>
+        </tr>
+     </thead>
+     <tbody id='loadingBdy'>
+         <tr id='loading' class='empty-row' style='display:none'>
+              <td colspan='4'><img src="__STYLE__/img/loading.gif">{:lang('auction_loading')}</td>
+         </tr>
+      </tbody>
+      <script id="tblist" type="text/html">
+      {{# for(var i = 0; i < d.length; i++){ }}
+      <tbody class="j-order-row">
+         <tr>
+            <td>{{i+1}}</td>
+            <td>{{d[i]['loginName']}}</td>
+            <td>{{d[i]['payPrice']}}</td>
+            <td>{{d[i]['createTime']}}</td>
+            <td><a href='#none' style='color:blue' onclick='view({{d[i]['orderId']}})'>{{d[i]['orderNo']}}</a></td>
+            <td>{{#if(d[i]['isTop']==1){}}<span class="lbel lbel-success">{:lang('auction_highest_price')}</span>{{#}}}</td>
+         </tr>
+       </tbody>
+       {{# } }}
+       </script>
+       <tr class='empty-row'>
+            <td colspan='6' id='pager' style='padding:5px 0px 5px 0px;text-align:center;'>&nbsp;</td>
+       </tr>
+    </table>
+  </div>
+{/block}
+{block name="footer"}
+  {include file="$LAYOUT_HOME_FOOTER" /}
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type="text/javascript" src="__ROOT__/addons/auction/view/home/shops/shop.js?v={$v}"></script>
+<script>
+$(function(){
+  listByPage();
+})
+</script>
+{/block}

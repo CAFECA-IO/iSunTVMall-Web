@@ -1,0 +1,119 @@
+{extend name="$LAYOUT_SHOP_BASE" /}
+{block name="css"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link href="__ROOT__/addons/coupon/view/shop/shops.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<style>
+    input[type=text]{width:150px;}
+    label{display: inline-block}
+    .r-radio .layui-form-radio{margin:0px;font-size:14px;font-weight:normal;padding-right:2px;}
+    #orderInfo{border:1px solid #eee;width:500px;height:200px;}
+    .order-item{display: flex;flex-direction: row;align-items: center;}
+    #orderInfo .label{color:#333;font-weight:normal;text-align: right;display: block;width:80px;height:40px;line-height: 40px;}
+</style>
+<form id='couponform' name='couponform' autocomplete="off">
+    <input type='hidden' id='couponId' class='ipt' value='{$couponId}'/>
+    <table class="wst-form">
+        <tr>
+            <th width='120'>{:lang('coupon_search_type')}</th>
+            <td colspan='3' class='layui-form'>
+                <label>
+                    <input type='radio' name='searchType' class='ipt' value='1' checked onclick='changeSearchType(1)' title="{:lang('coupon_search_type_1')}">
+                </label>
+                <label class='r-radio'>
+                    <input type='radio' name='searchType' class='ipt' value='2'  onclick='changeSearchType(2)' title="{:lang('coupon_search_type_2')}">
+                </label>
+            </td>
+        </tr>
+        <tr class="order">
+            <th width='120'></th>
+            <td colspan='2'>
+                <input type='text' id='key' style='width:250px' class='ipt' placeholder="{:lang('coupon_require_order_no')}"/>
+                <button type="button" class="btn btn-primary" onclick='javascript:searchOrder()'><i class="fa fa-search"></i>{:lang('coupon_search')}</button>
+            </td>
+        </tr>
+        <tr id="orderSearchBox" style="display: none;">
+            <th width='120'></th>
+            <td colspan='2'>
+                <div id="orderInfo">
+                    <input type="hidden" id="userId" value="0">
+                    <div class="order-item">
+                        <div class='label'>{:lang('coupon_order_no')}：</div>
+                        <div id="orderNo"></div>
+                    </div>
+                    <div class="order-item">
+                        <div class='label'>{:lang('coupon_order_time')}：</div>
+                        <div id="createTime"></div>
+                    </div>
+                    <div class="order-item">
+                        <div class='label'>{:lang('coupon_consignee')}：</div>
+                        <div id="userName"></div>
+                    </div>
+                    <div class="order-item">
+                        <div class='label'>{:lang('coupon_contact_number')}：</div>
+                        <div id="userPhone"></div>
+                    </div>
+                    <div class="order-item">
+                        <div class='label'>{:lang('coupon_address_detail')}：</div>
+                        <div id="userAddress"></div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr class="group" style="display: none;">
+            <th width='120'></th>
+            <td colspan='2'>
+                <select name="payType" id="userGroup" class="ipt" onchange="changeMemberGroup(this,'_2')">
+                    <option value="-1">{:lang('coupon_user_group')}</option>
+                    {volist name="$shopMemberGroups" id="vo"}
+                    <option value="{$vo['id']}" >{$vo['groupName']}</option>
+                    {/volist}
+                    <option value="0">{:lang('coupon_no_group')}</option>
+                </select>
+            </td>
+        </tr>
+        <tr class="group">
+            <th>{:lang('coupon_please_select')}：</th>
+            <td >
+                <div class="wst-flex-row">
+                    <div class="recom-lbox">
+                        <div class="trow head">
+                            <div class="tck"><input onclick="WST.checkChks(this,'.lchk_2')" type="checkbox"></div>
+                            <div class="ttxt">{:lang('coupon_user_account_tips')}</div>
+                        </div>
+                        <div id="llist_2" style="width:350px;"></div>
+                    </div>
+                    <div class="wst-flex-column wst-center" style="margin:0 5px;">
+                        <input type='button' value='》》' class='btn btn-primary' onclick='javascript:moveUserRight("_2")'/>
+                        <input type='button' value='《《' class='btn btn-primary' onclick='javascript:moveUserLeft("_2")'/>
+                        <input type='hidden' id='ids_2'/>
+                    </div>
+                    <div class="recom-rbox">
+                        <div class="trow head">
+                            <div class="tck"><input onclick="WST.checkChks(this,'.rchk_2')" type="checkbox"></div>
+                            <div class="ttxt">{:lang('coupon_user_account_tips')}</div>
+                        </div>
+                        <div id="rlist_2"></div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan='2' style='text-align:center;padding:20px;'>
+                <button class='btn btn-primary' type='button' onclick="give({$p})"><i class="fa fa-check"></i>{:lang('coupon_save')}</button>&nbsp;&nbsp;
+                <button class='btn' type='button' onclick="javascript:location.href=WST.AU('coupon://shops/index','p={$p}')"><i class="fa fa-angle-double-left"></i>{:lang('coupon_back')}</button>
+            </td>
+        </tr>
+    </table>
+</form>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script type="text/javascript" src="__ROOT__/addons/coupon/view/shop/shop.js?v={$v}"></script>
+<script>
+    $(function(){
+        $('.group').hide();
+    })
+</script>
+{/block}

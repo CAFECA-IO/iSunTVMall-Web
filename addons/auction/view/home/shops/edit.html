@@ -1,0 +1,122 @@
+{extend name="$LAYOUT_HOME_SHOP_BASE" /}
+{block name="title"}{:lang('auction_activity_title')} - {:lang('auction_seller_center')}{/block}
+{block name="top"}
+	{include file="$LAYOUT_HOME_TOP" /}
+{/block}
+{block name="content"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<style>
+input[type=text]{width:150px;}
+</style>
+<div class="wst-body"> 
+<div class="wst-shop-head"><span>{:lang('auction_activity_title')}</span></div>
+<div class="wst-clear"></div>
+   <div class="wst-shop-content">
+      <form id='editform' name='editform' autocomplete="off">
+        <input type='hidden' id='auctionId' class='ipt' value='{$object["auctionId"]}'/>
+        <table class="wst-form">
+           <tr>
+             <td colspan="2">
+               <div class='wst-tips-box'>
+               <div class='icon'></div>
+               <div class='tips'>
+               {:lang('auction_shop_goods_rule_tips_1')}<br/>
+               {:lang('auction_shop_goods_rule_tips_2')}<br/>
+               {:lang('auction_shop_goods_rule_tips_3')}<br/>
+               {:lang('auction_shop_goods_rule_tips_4')}</div>
+               <div style="clear:both"></div>
+               </div>
+             </td>
+           </tr>
+           <tr>
+             <th width='120' align='right'>&nbsp;</th>
+             <td>
+              <select id="shopCatId1" class='j-ipt' onchange="WST.shopsCats('shopCatId2',this.value,'');">
+                 <option value="">{:lang('auction_please_select')}</option>
+                 {volist name=":WSTShopCats(0)" id="vo"}
+                 <option value="{$vo['catId']}">{$vo['catName']}</option>
+                 {/volist}
+              </select>
+              <select id='shopCatId2' class='j-ipt'>
+                 <option value=''>{:lang('auction_please_select')}</option>
+              </select>
+          <br/>
+              <input type='text' id='goodsName' placeholder="{:lang('auction_input_search_key')}" />
+              <a type="button" class='s-btn' onclick="searchGoods()">查&nbsp;询</a>
+             </td>
+           </tr>
+           {if $object['auctionStatus']==-1}
+           <tr class="wst-order-rate" >
+               <th width='120'>{:lang('auction_failure_reasons')}：</th>
+             <td colspan='3' style='color:red'>
+                 {$object['illegalRemarks']}
+             </td>
+           </tr>
+           {/if}
+           <tr>
+             <th width='120' align='right'>{:lang('auction_goods')}：</th>
+             <td>
+              <select id='goodsId' class='ipt' onchange='changeGoods(this)'>
+                <option value="{$object['goodsId']}">{$object['goodsName']}</option>
+              </select><br/>
+             </td>
+           </tr>
+           <tr>
+               <th width='120'>{:lang('auction_market_price')}：</th>
+               <td colspan='3' id='marketPrice'>{:lang('currency_symbol')}{$object["marketPrice"]}</td>
+           </tr>
+           <tr class="wst-order-rate" >
+               <th width='120'>{:lang('auction_auction_price')}：</th>
+             <td colspan='3'>
+                 <input type='text' id='auctionPrice' name='auctionPrice'class='ipt' maxLength='10' value='{$object["auctionPrice"]}' data-rule="{:lang('auction_auction_price')}:required;"/>
+             </td>
+           </tr>
+           <tr class="wst-order-rate" >
+               <th width='120'>{:lang('auction_fareinc_price')}：</th>
+             <td colspan='3'>
+                 <input type='text' id='fareInc' name='fareInc' class='ipt' maxLength='8' data-rule="{:lang('auction_fareinc_price')}:required;integer[+]" value='{$object["fareInc"]}'/>
+             </td>
+           </tr>
+           <tr class="wst-order-rate" >
+               <th width='120'>{:lang('auction_caution_money')}：</th>
+             <td colspan='3'>
+                 <input type='text' id='cautionMoney' name='cautionMoney' class='ipt' maxLength='8' data-rule="{:lang('auction_caution_money')}:required;integer[+]" value='{$object["cautionMoney"]}'/>
+             </td>
+           </tr>
+           <tr class="wst-order-rate" >
+               <th width='120'>{:lang('auction_time')}：</th>
+             <td colspan='3'>
+                 <input type='text' id='startTime' name='startTime' class='ipt laydate-icon' value='{$object["startTime"]}' onclick="laydate({format: 'YYYY-MM-DD hh:mm:ss',istime:true})"  data-rule="{:lang('auction_start_date')}: required;datetime;"/>
+                 {:lang('auction_to_title')}
+                   <input type='text' id='endTime' name='endTime' class='ipt laydate-icon' value='{$object["endTime"]}' onclick="laydate({format: 'YYYY-MM-DD hh:mm:ss',istime:true})" data-rule="{:lang('auction_end_date')}: required;datetime;match(gt, startTime, datetime)"/>
+             </td>
+           </tr>
+           <tr>
+             <th>{:lang('auction_desc')}：</th>
+             <td>
+               <textarea name='auctionDesc' id='auctionDesc' class='ipt' style='width:100%'>{$object['auctionDesc']}</textarea>
+             </td>
+           </tr>
+           
+           <tr>
+             <td colspan='2' style='text-align:center;padding:20px;'>
+                 <a class='s-btn' onclick="save()">{:lang('auction_save')}</a>&nbsp;&nbsp;
+                 <a class='s-btn' onclick='javascript:location.reload();'>{:lang('auction_reset')}</a>
+             </td>
+           </tr>
+        </table>
+      </form>
+   </div>
+</div>
+{/block}  
+{block name="footer"}
+	{include file="$LAYOUT_HOME_FOOTER" /}
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script src="__STATIC__/plugins/layer/laydate.js"></script>
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script src="__STATIC__/plugins/kindeditor/NKeditor-all.js?v={$v}" type="text/javascript" ></script>
+<script type="text/javascript" src="__ROOT__/addons/auction/view/home/shops/shop.js?v={$v}"></script>
+<script>$(function(){initForm();})</script>
+{/block}

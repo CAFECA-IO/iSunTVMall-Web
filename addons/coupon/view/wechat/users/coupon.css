@@ -1,0 +1,39 @@
+.ui-tab-nav li.tab-item{color:#666666;font-size: 0.14rem;height:0.43rem;line-height: 0.43rem;min-width: 50px;padding: 0px 5px;text-align: center;}
+.ui-tab-nav li.tab-curr{position: relative;line-height: 0.45rem;height: 0.45rem;color: #333333;font-weight: bold;}
+.ui-tab-nav li.tab-curr::after{content: " ";position: absolute;bottom: 0rem;left: 35%;display: inline-block;width: 0.36rem;border-bottom: 0.03rem solid #EA4341;border-radius: 0.15rem;}
+.coupon-tab{width: 100%;height:0.44rem;line-height: 0.44rem;padding: 0px;background: #fff; overflow-x: scroll;}
+.coupon-tab::-webkit-scrollbar{width: 1px;height:1px;background-color: #ffffff;}
+.coupon-tab::-webkit-scrollbar-thumb{background-color: #ffffff;}
+.tit{text-align: center;font-size: 16px; width: 62%; position: fixed; left: 20%; top: 0.1rem; z-index: 100;}
+/*遮盖层*/
+.wst-cover{position:fixed;left:0px;top:0px;background-color:#000;width:100%;height:100%;filter:alpha(opacity=60); /*设置透明度为60%*/opacity:0.6; /*非IE浏览器下设置透明度为60%*/z-Index:9999;display:none;}
+/*分类弹框*/
+.wst-fr-box{position: fixed;z-index: 9999; right:-999px;bottom: 0px;width:100%;min-height:40%;background:#f2f2f2;font-size: 0.15rem;}
+.wst-fr-box .title,.wst-cart-box .title{position: relative;padding:6px 0px;border-bottom: 1px solid #f1f1f1;}
+.wst-fr-box .title span{float: left;width: 100%;height: 26px;line-height: 26px;text-align: center;font-size: 0.185rem;}
+.wst-fr-box .title i,.wst-cart-box .title i{position: absolute;right:5px;top:-2px;font-size: 27px;}
+.wst-fr-box .content{background:#f2f2f2;}
+.cat_item{border:1px solid #ddd;border-radius: 20px;padding:5px;color:#333;background: #ddd;font-size:0.15rem;margin-top: 10px;text-align: center;}
+.ui-row{padding:0 3%;}
+.ui-col-48{width: 48%}
+.cat_item:nth-child(even){margin-left:3%;}
+.cat_item_curr{border-color:#d82a2e;color:#d82a2e;background: #fff;}
+/* 优惠券 */
+.coupon_item{margin:0.1rem;height:1rem;}
+.coupon_item_left{width: 1.2rem;height: 100%;float:left;}
+.coupon_left_main{float: left;width: 100%;background:url(../../../../../addons/coupon/view/images/coupon.png) no-repeat; background-size: cover; background-repeat: no-repeat;height: 100%;}
+.coupon_left_main_inner{width: 100%;height: 100%;text-align: center;}
+.yan{font-weight: normal;font-size: 0.11rem!important;}
+.coupon_left_txt1{color: #fff;font-size: 0.3rem;font-weight: bold;margin-top: 0.15rem;}
+.coupon_left_txt2{font-size: 0.12rem;color:rgba(255,255,255,0.6);}
+.coupon_item_right{width: calc(100% - 1.2rem);height: 100%;float:left;background: #fff;}
+.coupon_item_right_inner{position: relative;height: 93%;padding-top: 3%;}
+.c_item_r_left{float: left;width: 79%;overflow: hidden;height:100%;}
+.c_item_txt1{font-size: 0.14rem;font-weight:bold;color:#333333;padding-top: 0.05rem;margin-bottom: 0.07rem;}
+.c_item_txt3{font-size: 0.12rem;color:#666666;margin: 1% 0;}
+.c_item_txt4{font-size: 0.1rem;color: #B3B3B3;padding-top: 0.1rem;bottom: 0.05rem;position: absolute;}
+.get_btn{font-size: 0.11rem;color:#EA4341;background: #fff;border: 1px solid #EA4341;border-radius: 0.11rem;display: block;position: absolute;top: 35%;padding: 3px 10px;right: 0.1rem;}
+.unuse_btn{color: #cccccc;background: #F2F2F2;border: 1px solid #f1f1f1;}
+.no-data-box{text-align:center;color:#CCCCCC;font-size: 0.18rem}
+.no-data{background:url(../../../../../addons/coupon/view/images/nothing-coupon.png) no-repeat center center;width: 2.25rem;height: 1.76rem;margin: 0px auto;margin-top: 25%;background-size: 85%;}
+.no-data-txt{margin-top:0.1rem;font-size:0.16rem;}

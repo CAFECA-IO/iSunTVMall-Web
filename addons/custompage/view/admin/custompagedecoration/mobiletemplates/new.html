@@ -1,0 +1,107 @@
+<div class="new-container">
+    <div class='new-title'>
+        <div class='new-title-text'>{$vo['title']}</div>
+        <div onclick="location.href='{:url('mobile/news/view')}'">{:lang('custompage_more')}</div>
+    </div>
+    <section class="ui-container" >
+        {volist name="$vo['news']" id="voo"}
+        {if $voo['TypeStatus'] == 1}
+        <div class="news-item wst-model" onclick="news({$voo['articleId']})">
+            <div class="ui-row-flex">
+                <div class="ui-col">
+                    <div class="img j-imgAdapt wst-bor-mix-img">
+                        <a href="javascript:void(0);" >
+                            {if $voo['coverImg']}
+                            <img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{$voo['coverImg']}">
+                            {else}
+                            <img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" >
+                            {/if}
+                        </a>
+                    </div>
+                </div>
+                <div class="ui-col ui-col-2" >
+                    <div class="ui-row-flex ui-row-flex-ver wst-info" >
+                        <div class="ui-nowrap-multi" style="-webkit-line-clamp: 1;">{$voo['articleTitle']}</div>
+                        <div class="ui-nowrap-multi wst-mix-cont" style="-webkit-line-clamp: 3;">{$voo['articleContent']}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-row-flex ui-whitespace wst-mix-info ">
+                <div class="ui-col ui-col ui-flex-pack-center ui-flex-align-start">• {:lang('custompage_visitor_num',[$voo['visitorNum']])}</div>
+                <div class="ui-col ui-col ui-flex-pack-center ui-flex-align-end wst-right-align">• {$voo['createTime']}</div>
+            </div>
+        </div>
+        {elseif $voo['TypeStatus'] == 2}
+        <div class="news-item wst-model" onclick="news({$voo['articleId']})">
+            <div class="ui-row-flex">
+                <div class="ui-col ui-col-2">
+                    <div class="ui-row-flex ui-row-flex-ver wst-info" >
+                        <div class="ui-nowrap-multi" style="-webkit-line-clamp: 1;">{$voo['articleTitle']}</div>
+                        <div class="ui-nowrap-multi wst-mix-cont" style="-webkit-line-clamp: 3;">{$voo['articleContent']}</div>
+                    </div>
+                </div>
+                <div class="ui-col">
+                    <div class="img j-imgAdapt wst-bor-mix-img">
+                        <a href="javascript:void(0);" >
+                            {if $voo['coverImg']}
+                            <img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{$voo['coverImg']}">
+                            {else}
+                            <img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" >
+                            {/if}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-row-flex ui-whitespace wst-mix-info ">
+                <div class="ui-col ui-col ui-flex-pack-center ui-flex-align-start">• {:lang('custompage_visitor_num',[$voo['visitorNum']])}</div>
+                <div class="ui-col ui-col ui-flex-pack-center ui-flex-align-end wst-right-align">• {$voo['createTime']}</div>
+            </div>
+        </div>
+        {elseif $voo['TypeStatus'] == 3}
+        <div class="ui-row-flex ui-whitespace ui-row-flex-ver wst-model"  style="height:auto;overflow:hidden;" onclick="news({$voo['articleId']})">
+            <div class="wst-max-info">
+                <div class="ui-nowrap-multi" style="-webkit-line-clamp: 1;" >{$voo['articleTitle']}</div>
+            </div>
+            <div class="wst-max-info">
+                <div class="ui-nowrap-multi wst-mix-cont" style="-webkit-line-clamp: 1;padding-top: 0px;" >{$voo['articleContent']}</div>
+            </div>
+            <div class="max-img">
+                <a href="javascript:void(0);">
+                    {if $voo['coverImg']}
+                    <img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{$voo['coverImg']}">
+                    {else}
+                    <img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" >
+                    {/if}
+                </a>
+            </div>
+            <div class="max-remind wst-mix-info ui-row">
+                <div class="ui-col ui-col-50 ui-flex ui-flex-ver ui-flex-pack-center ui-flex-align-start">• {:lang('custompage_visitor_num',[$voo['visitorNum']])}</div>
+                <div class="ui-col ui-col-50 ui-flex ui-flex-ver ui-flex-pack-center ui-flex-align-end">• {$voo['createTime']}</div>
+            </div>
+        </div>
+        {elseif $voo['TypeStatus'] == 4}
+        <div class="news-item wst-model" onclick="news({$voo['articleId']})">
+            <div class="ui-row-flex" style="height:100px;">
+                <div class="ui-col">
+                    <div class="ui-row-flex ui-row-flex-ver wst-info" >
+                        <div class="ui-nowrap-multi" style="-webkit-line-clamp: 1;">{$voo['articleTitle']}</div>
+                        <div class="ui-nowrap-multi wst-mix-cont" style="-webkit-line-clamp: 3;">{$voo['articleContent']}</div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="ui-row-flex ui-whitespace wst-mix-info ">
+                <div class="ui-col ui-col ui-flex-pack-center ui-flex-align-start">• {:lang('custompage_visitor_num',[$voo['visitorNum']])}</div>
+                <div class="ui-col ui-col ui-flex-pack-center ui-flex-align-end wst-right-align">• {$voo['createTime']}</div>
+            </div>
+        </div>
+        {/if}
+        {/volist}
+    </section>
+    <script>
+        WST.imgAdapt('j-imgAdapt');
+        function news(id){
+            location.href=WST.U('mobile/news/getnews','id='+id);
+        }
+    </script>
+</div>

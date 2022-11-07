@@ -1,0 +1,60 @@
+{extend name="default/users/base" /}
+{block name="title"}{:lang('logmoney')}-{:lang('user_center')}{__block__}{/block}
+{block name="content"}
+<div class='score-head'>
+  <div class='user-logo'><img height='100' width='100'src='{:WSTUserPhoto(session('WST_USER.userPhoto'))}'></div>
+  <div class='user-info'> 
+     <div class='userName'>{:session('WST_USER.loginName')}</div>
+     <div class='userScore'>{:lang('can_use_money')}：<font color='red'>{:lang('currency_symbol')}{$object['userMoney']}</font></div>
+     <div class='userScore'>{:lang('frozen_money')}：<font color='red'>{:lang('currency_symbol')}{$object['lockMoney']}</font></div>
+  </div>
+</div>
+<div class='wst-user-content'>
+   <div id='tab' class="wst-tab-box">
+    <ul class="wst-tab-nav">
+       <li>{:lang('logmoney')}</li>
+       <li>{:lang('logmoney_income')}</li>
+       <li>{:lang('logmoney_expend')}</li>
+    </ul>
+      <table class='wst-list' style="font-size:13px;">
+           <thead>
+             <tr>
+               <th width='80'>{:lang('source_use')}</th>
+               <th width='100'>{:lang('amount_of_money')}</th>
+               <th width='150'>{:lang('date')}</th>
+               <th width='150'>{:lang('logmoney_trans_number')}</th>
+               <th width='*'>{:lang('remark')}</th>
+             </tr>
+           </thead>
+           <script id="tblist" type="text/html">
+           {{# for(var i = 0; i < d.length; i++){ }}
+              <tr>
+                <td>{{d[i].dataSrc}}</td>
+                <td>
+                {{# if(d[i].moneyType==1){ }}
+                  <span class="money-add">+ {:lang('currency_symbol')}{{ d[i].money }}</span>
+                {{# }else{ }}
+                  <span class='money-reduce'> - {:lang('currency_symbol')}{{ d[i].money }}</span>
+                {{# } }}
+                </td>
+                <td>{{ d[i].createTime }}</td>
+                <td>{{ WST.blank(d[i].tradeNo,'-')}}</td>
+                <td style='line-height:23px'>{{ d[i].remark }}</td>
+              </tr>
+           {{# } }}
+           </script>
+           <tbody id="page-list"></tbody>
+           <tfoot>
+             <tr>
+                <td colspan='5' align="center" style='padding:5px 0px 5px 0px'>
+          <div id="pager"></div>
+        </td>
+             </tr>
+           </tfoot>
+        </table>
+    </div>  
+</div>
+{/block}  
+{block name="js"}
+<script type='text/javascript' src='__STYLE__/users/logmoneys/logmoneys.js?v={$v}'></script>
+{/block}

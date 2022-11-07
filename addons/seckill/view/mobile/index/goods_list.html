@@ -1,0 +1,112 @@
+{extend name="$LAYOUT_MOBILE_BASE" /}
+{block name="title"}{:lang('seckill_title')} - {__block__}{/block}
+{block name="meta"}
+<meta name="description" content="{$seoSeckillDesc}">
+<meta name="keywords" content="{$seoSeckillKeywords}">
+{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__ROOT__/addons/seckill/view/mobile/index/css/goods_list.css?v={$v}">
+{/block}
+{block name="header"}
+<header class="wst-ne-header">
+  <div class="header">
+    <div class="ui-tab">
+       <ul class="ui-tab-nav">
+          <input type="hidden" id="currStatus" value="0">
+          <input type="hidden" id="nowTime" value="">
+          {volist name="times" id="vo"}
+          <li class="tab-item times {$vo['status']==1?'curr-item':''}" data-timeid="{$vo['id']}" data-key="{$key}" data-status="{$vo['status']}" data-stime="{$vo['startTime']}" data-etime="{$vo['endTime']}">
+            <div class="title">{$vo['title']}</div>
+            <div class="status">{$vo['status']==1?lang('seckill_status_1'):($vo['status']==2?lang('seckill_status_2'):lang('seckill_status_3'))}</div>
+          </li>
+          {/volist}
+        </ul>
+    </div>
+  </div>
+</header>
+<div class="wst-mask" types=""></div>
+{/block}
+{block name="main"}
+  <input type="hidden" value="0" id="timeId" autocomplete="off">
+  <input type="hidden" value="0" id="currPage" autocomplete="off">
+  <input type="hidden" value="0" id="totalPage" autocomplete="off">
+  <input type="hidden" value="{$shopId}" id="shopId" autocomplete="off">
+  <section class="ui-container">
+    <div class="seckill_items_head"> 
+      <h3 class="seckill_items_tit">{:lang('seckill_tip_words')}</h3> 
+      <div class="seckill_items_timer">
+        <strong class="status_tip">{:lang('seckill_to_end')}</strong>
+        <label class="lab_timer">
+          <span>00</span><em>:</em>
+          <span>00</span><em>:</em>
+          <span>00</span> 
+        </label>
+      </div>
+    </div>
+  <div class="wst-fi-list wst-container content">
+    <div id="goods-list" class="goods-list"></div>
+  </div>
+  <div class='home-btn'>
+    <a href="{:url('mobile/index/index')}">
+      <img src="../addons/seckill/view/mobile/index/img/home.png"/>
+      <div>{:lang('seckill_home_page')}</div>
+    </a>
+  </div>
+  </section>
+  <script id="list" type="text/html">
+  {{# if(d && d.length>0){ }}
+    {{# for(var i=0; i< d.length; i++){ }}
+      {{# var gstock = d[i].secNum - d[i].hasBuyNum;
+          var percent = (d[i].secNum>0)?(Number(d[i].hasBuyNum/d[i].secNum*100).toFixed(1)):100;
+          var status = $("#currStatus").val();
+      }}
+      <div style="{{ gstock>0?'':'opacity: 0.5' }}" class="goods-container">
+        <a href="{{WST.AU('seckill://goods/modetail','id='+d[i].id)}}" class="weui-media-box weui-media-box_appmsg goods" style="">
+            <div class="weui-media-box__hd weui-updown img">
+                <div class="gtips {{ gstock>0?'wst-hide':'wst-show' }}">{:lang('seckill_loot_all')}</div>
+                <img class="weui-media-box__thumb" src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{{d[i].goodsImg}}" title="{{ d[i].goodsName }}" src="" alt="" style="width: 100%;height: 100%;">
+            </div>
+            
+            <div class="weui-media-box__bd wst-flex-column wst-jsb" style="position:relative;">
+              <div class="weui-media-box__title" style="">{{d[i].goodsName}}</div>
+              <div>
+                  <div class="progress-title">{:lang('seckill_progress')}</div>
+                  <div class="wst-flex-row wst-jsb wst-ac">
+                    <div class="progress-box">
+                      <div class="progress" style="width: {{percent}}%"></div>
+                    </div>
+                    <p class="percent">{:lang('seckill_robbed')}{{ percent }}%</p>
+                  </div>
+                <div class="bnt-box wst-flex-row wst-jsb wst-ac">
+                  <div class="price">
+                    <span class="price"><span class="money-icon">{:lang('currency_symbol')}</span><span>{{parseFloat(d[i].secPrice)}}</span></span>
+                    <span class="shop-price">{:lang('currency_symbol')}{{parseFloat(d[i].shopPrice)}}<span>
+                  </div>
+                  {{# if(status==0){ }}
+                  <button class="green-btn">{:lang('seckill_progress')}</button>
+                  {{# }else{ }}
+                  <button class="{{ gstock>0?'buy-btn':'gray-btn' }}">{:lang('seckill_to_rob')}</button>
+                  {{# } }}
+                </div>
+              </div>
+          </div>
+        </a>
+      </div>
+      {{# } }}
+      <div class="wst-clear"></div>
+  {{# }else{ }}
+    <div class="wst-prompt-info">
+        <div class="wst-prompt-icon" style="width:1.395rem;"><img src="__MOBILE__/img/no_data.png"></div>
+        <p>{:lang('seckill_no_data')}</p>
+    </div>
+  {{# } }}
+  </script>
+{/block}
+{block name="footer"}
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__STATIC__/js/updown.js'></script>
+<script type='text/javascript' src='__ROOT__/addons/seckill/view/mobile/index/js/time.js?v={$v}'></script>
+<script type='text/javascript' src='__ROOT__/addons/seckill/view/mobile/index/js/goods_list.js?v={$v}'></script>
+{/block}

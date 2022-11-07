@@ -1,0 +1,65 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('cart_title')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="css"}
+<link href="__STYLE__/css/carts-{$lang}.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<div class="wst-container">
+	<input type="hidden" id="token" value='{:WSTConf("CONF.pwdModulusKey")}'/>
+    <div class="pay-sbox-head">
+    	<a href='{$Request.root.true}'>{:lang('home_page')}</a>&nbsp;&gt;&nbsp;{:lang('pay_title')}
+    </div>
+    <div>
+    	<div class="pay-tip2"></div>
+    </div>
+    <div class='pay-sbox'>
+    	<div class="balance-box">
+    	    <div class='tips-box'>{:lang('wait_pay_order_total_money')}：<span class="wst-fred">{:lang('goods_price_unit')}{$needPay}</span></div>
+		    <div class='wst-wallet-box'>
+	        	<div class='wst-wallte-item'>
+	        	{:lang('wallet_balance')}：<span class="wst-fred">{:lang('goods_price_unit')}{$userMoney}</span>
+	        	</div>
+                <div style='float:right;'>{:lang('pay_title')}：<span class="wst-fred">{:lang('goods_price_unit')}{$needPay}</span></div>
+	        </div>
+	        {if ($userMoney>=$needPay)}
+	        <div class="pbox">
+	        	<input type='hidden' id='pkey' value='{$pkey}' class='j-ipt' autocomplete="off" />
+	        	{if ($hasPayPwd==1)}
+	        	{:lang('pay_password')}：<input type='password' class='u-query j-ipt' id='payPwd' autocomplete='off'>
+	        	<a class='pbox-tip' maxlength='6' target='_blank' href='{:url("home/users/editPayPass")}'>{:lang('forget_password')}</a>
+	        	{else}
+	        	{:lang('please_set_pay_password')}
+	        	<div id="paypwd-box" class="j-paypwd-box" style="display:none;padding:20px;">
+					<table class="wst-table">
+						<tr class="wst-login-tr">
+						    <td align='right'>{:lang('pay_password')}：</td>
+							<td><input type="password" class='j-ipt' id="payPwd" name="payPwd" style="width:250px;" maxlength="6" aria-required="true"></td>
+						</tr>
+						<tr class="wst-login-tr">
+						    <td align='right'>{:lang('confirm_pay_password')}：</td>
+							<td><input type="password" class="ipt n-invalid" id="reNewPass" name="reNewPass" style="width:250px;" maxlength="6" aria-required="true" aria-invalid="true"></td>
+						</tr>
+					</table>
+				</div>
+	        	{/if}
+	        </div>
+	        <div class="pbox2">
+	        {if($hasPayPwd==1)}
+	        	<button class="pay-btn" type="button" style="width:145px;height: 30px;" onclick='javascript:payByWallet()'>{:lang('confirm_pay')}</button>
+	        {else}
+	        	<button class="pay-btn" type="button" style="width:205px;height: 30px;" onclick='javascript:setPaypwd()'>{:lang('goto_set_pay_password')}</button>
+	        {/if}
+	        </div>
+	        {else}
+	        <div class="pbox">
+	         	<img src='__STYLE__/img/icon_jinggao.png'>&nbsp;{:lang('wallet_balance_less_cannot_pay')}<a class='pbox-tip' href='javascript:void(0)' onclick="javascript:history.go(-1)">{:lang('back_page')}</a>。
+	        </div>
+	        {/if}
+        </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/js/rsa.js"></script>
+<script type='text/javascript' src='__STYLE__/js/carts.js?v={$v}'></script>
+{/block}

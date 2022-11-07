@@ -1,0 +1,87 @@
+<div class="nav-container" style="background: {$vo['backgroundColor']}">
+    <div class="s-wst-nav-menus">
+        <div id="s-wst-nav-items">
+            <ul>
+                {if $vo['showNavCategory']}
+                <li class="s-nav-li s-cat-head" style="background-color:#DF2003"><a href="{:Url('home/shops/goods',['shopId'=>$shopId])}" target="_blank" ><em></em>{:lang('shopcustompage_shop_goods_cat')}</a></li>
+                {/if}
+                {volist name="$vo['navs']" id='voo'}
+                <li class="s-nav-li">
+                    <a href="{$voo['link']}" style="color:{$voo['color']}" target="_blank">{$voo['text']}</a>
+                </li>
+                {/volist}
+                {if $vo['showNavButton']}
+                <li class="s-nav-li"> <a class="homepage" href="{:url('/')}" target="_blank">{:lang('shopcustompage_return_mall_index')}</a></li>
+                {/if}
+            </ul>
+        </div>
+
+        <span class="wst-clear"></span>
+    </div>
+    {/*  本店分类  */}
+    <div class="s-cat">
+        {wst:shopcats shop="$shopId" id="cat1" num="6" key="k1"}
+        <div class="shop-cat1" cid="{$k1}" id="ct1-{$k1}">
+            <div class="shop-cat1-title">
+                <h3>
+                    <a href="{:url('home/shops/goods',['shopId'=>$shopId,'ct1'=>$cat1['catId']])}">{:WSTMSubstr($cat1['catName'],0,4)}</a>
+                </h3>
+            </div>
+            <p class="shop-ct1-ct2">
+                {wst:shopcats shop='$shopId' cat="$cat1['catId']" id="v1"}
+                <a href="{:url('home/shops/goods',['shopId'=>$shopId,'ct1'=>$cat1['catId'],'ct2'=>$v1['catId']])}">{$v1['catName']}</a>
+                {/wst:shopcats}
+            </p>
+        </div>
+
+        <ul class="shop-cat2 cid{$k1}" cid="{$k1}">
+            {wst:shopcats shop='$shopId' cat="$cat1['catId']" id="cat2" num="6" key="k1"}
+            <li><a href="{:url('home/shops/goods',['shopId'=>$shopId,'ct1'=>$cat1['catId'],'ct2'=>$cat2['catId']])}">{$cat2['catName']}</a></li>
+            {/wst:shopcats}
+        </ul>
+        {/wst:shopcats}
+    </div>
+</div>
+<div class="wst-clear"></div>
+<script>
+    $('.s-cat').hover(function(){
+        $('.s-cat-head').addClass('s-cat-head-hover');
+        $(this).show();
+    },function(){
+        $('.s-cat-head').removeClass('s-cat-head-hover');
+        $(this).hide();
+    });
+
+
+    $('.s-cat-head').hover(function(){
+        $(this).addClass('s-cat-head-hover');
+        $('.s-cat').css({left:$('.s-cat-head').offset().left}).show();
+    },function(){
+        $(this).removeClass('s-cat-head-hover');
+        $('.s-cat').hide();
+    });
+    $('.shop-cat1').hover(function(){
+        $(this).addClass('ct1-hover');
+        var cid = $(this).attr('cid');
+
+        var h = 66.3*cid+'px';
+        $('.cid'+cid).css('top',h);
+        $('.cid'+cid).show();
+    },function(){
+        $(this).removeClass('ct1-hover');
+        var cid = $(this).attr('cid');
+        $('.cid'+cid).hide();
+    });
+
+
+    $('.shop-cat2').hover(function(){
+        var cid = $(this).attr('cid');
+        $('#ct1-'+cid).addClass('ct1-hover');
+        $(this).show();
+    },function(){
+        var cid = $(this).attr('cid');
+        $('#ct1-'+cid).removeClass('ct1-hover');
+        $(this).hide();
+    });
+
+</script>

@@ -1,0 +1,33 @@
+<?php
+
+return array(
+	'seoAuctionKeywords'=>array(
+		'title'=>lang('auction_config_seo_key'),
+		'type'=>'text',
+		'value'=>'',
+		'tips'=>''
+	),
+	'seoAuctionDesc'=>array(
+		'title'=>lang('auction_config_seo_desc'),
+		'type'=>'text',
+		'value'=>'',
+		'tips'=>''
+	),
+	'endPayDate'=>array(
+        'title'=>lang('auction_config_end_pay_date'),
+        'type'=>'text',
+		'value'=>'3',
+		'tips'=>''
+	),
+	'auctionArticleId'=>array(
+		'title'=>lang('auction_config_article_id'),
+		'type'=>'text',
+		'value'=>'',
+		'tips'=>''
+	),
+	'goodsShareTitle'=>array(
+		'title'=>lang('auction_config_share_title'),
+		'type'=>'text',
+		'value'=>''
+	)
+);

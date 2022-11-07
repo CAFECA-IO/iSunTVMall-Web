@@ -1,0 +1,33 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('user_settings')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/userset.css?v={$v}">
+{/block}
+{block name="header"}
+	{php}$Title = lang('user_settings');{/php}
+	{include file="default/header" /}
+{/block}
+{block name="footer"}{/block}
+{block name="main"}
+    <section class="ui-container" >
+    	<ul class="ui-list ui-list-text ui-list-link wst-se-l" style="margin-top: 0px;">
+    	    <li class="line" onclick="location.href='{:url('mobile/users/edit')}'">
+		        <h5 class="ui-nowrap">{:lang('membership_information')}</h5></a>
+		    </li>
+		    <li class="line" onclick="location.href='{:url('mobile/users/security')}'">
+		        <h5 class="ui-nowrap">{:lang('account_security')}</h5></a>
+		    </li>
+		    <li class="line" onclick="location.href='{:url('mobile/users/aboutus')}'">
+		        <h5 class="ui-nowrap">{:lang('about_us')}</h5>
+		    </li>
+		</ul>
+		<div class="ui-btn-wrap logout">
+		    <button class="ui-btn-lg ui-btn-danger logout-btn" onclick="javascript:logout();">
+		        {:lang('logout')}
+		    </button>
+		</div>
+    </section>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__MOBILE__/users/userset/userset.js'></script>
+{/block}

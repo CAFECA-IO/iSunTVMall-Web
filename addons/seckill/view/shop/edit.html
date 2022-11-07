@@ -1,0 +1,117 @@
+{extend name="$LAYOUT_SHOP_BASE" /}
+{block name="title"}{:lang('seckill_set')} - {:lang('seckill_seller_center')}{/block}
+{block name="main"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<style>
+</style>
+<div class="wst-body">
+<div class="wst-clear"></div>
+   <div class="wst-shop-content">
+      <form id='seckillform' name='seckillform' autocomplete="off">
+        <input type='hidden' id='id' class='ipt' value='{$object["id"]}'/>
+          <table class="wst-form">
+              <tr>
+                  <td colspan="2">
+                      <div class='wst-tips-box'>
+                          <div class='icon'></div>
+                          <div class='tips'>
+                              {:lang('seckill_set_tips')}<br/>
+                          </div>
+                          <div style="clear:both"></div>
+                      </div>
+                  </td>
+              </tr>
+          </table>
+          <fieldset>
+              <legend>{:lang('seckill_activity_info')}</legend>
+              <div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+                  <ul class="layui-tab-title">
+                      {volist name=":WSTSysLangs()" id='vo'}
+                      <li {if $key==0}class="layui-this"{/if}>{$vo['name']}</li>
+                      {/volist}
+                  </ul>
+                  <div class="layui-tab-content">
+                      {volist name=":WSTSysLangs()" id='vo'}
+                      <div class="layui-tab-item {if $key==0}layui-show{/if}">
+                          <table class='wst-form'>
+                              <tr>
+                                  <th>{:lang('seckill_activity_title')}<font color='red'>*</font>：</th>
+                                  <td>
+                                      <input type="text" class='ipt ipwd' id='langParams{$vo["id"]}title' maxLength='50' data-rule='{:lang("seckill_activity_title")}:required;' value="{$object['langParams'][$vo['id']]["title"]}">
+                                  </td>
+                              </tr>
+                              <tr class="wst-order-rate layui-form" >
+                                  <th>{:lang('seckill_desc')}：</th>
+                                  <td>
+                                      <textarea id='langParams{$vo["id"]}seckillDes' name='langParams{$vo["id"]}seckillDes' class="ipt layui-textarea">{$object['langParams'][$vo['id']]['seckillDes']}</textarea>
+                                  </td>
+                              </tr>
+                          </table>
+                      </div>
+                      {/volist}
+                  </div>
+              </div>
+          </fieldset>
+          <fieldset>
+              <legend>{:lang('seckill_activity_setting')}</legend>
+              <table class="wst-form">
+                  {if $object['seckillStatus']==-1}
+                  <tr class="wst-order-rate" >
+                      <th width='120'>{:lang('seckill_not_pass_reason')}：</th>
+                      <td style='color:red'>
+                          {$object['illegalRemarks']}
+                      </td>
+                  </tr>
+                  {/if}
+                  <tr class="wst-order-rate" >
+                      <th>{:lang('seckill_start_date')}<font color="red">*</font>：</th>
+                      <td>
+                          <input type='text' id='startDate' name='startDate' class='ipt laydate-icon' data-rule="{:lang('seckill_start_date')}:required;" value='{$object["startDate"]}'/>
+                      </td>
+                  </tr>
+                  <tr class="wst-order-rate" >
+                      <th>{:lang('seckill_end_date')}<font color="red">*</font>：</th>
+                      <td>
+                          <input type='text' id='endDate' name='endDate' class='ipt laydate-icon' data-rule="{:lang('seckill_end_date')}:required;" value='{$object["endDate"]}'/>
+                      </td>
+                  </tr>
+
+                  <tr class="wst-order-rate layui-form" >
+                      <th>{:lang('seckill_onsale_or_not')}<font color="red">*</font>：</th>
+                      <td>
+                          <input type="radio" name="isSale" class="ipt" value="1" title="{:lang('seckill_onsale')}" {$object["isSale"]==1?'checked':''}>
+                          <input type="radio" name="isSale" class="ipt" value="0" title="{:lang('seckill_unsale')}" {$object["isSale"]!=1?'checked':''}>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td colspan='2' style='text-align:center;padding:20px;'>
+                          <button class='btn btn-primary' type='button' onclick="save({$p})"><i class="fa fa-check"></i>{:lang('seckill_save')}</button>&nbsp;&nbsp;
+                          <button class='btn' type='button' onclick="javascript:history.go(-1)"><i class="fa fa-angle-double-left"></i>{:lang('seckill_back')}</button>
+                      </td>
+                  </tr>
+              </table>
+          </fieldset>
+        </form>
+   </div>
+</div>
+{/block}
+
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script type="text/javascript" src="__ROOT__/addons/seckill/view/shop/seckill.js?v={$v}"></script>
+<script type="text/javascript">
+
+  $(function(){
+    var laydate = layui.laydate;
+    laydate.render({
+        elem: '#startDate',
+        type: 'date'
+    });
+    laydate.render({
+        elem: '#endDate',
+        type: 'date'
+    });
+  });
+</script>
+{/block}

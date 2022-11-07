@@ -1,0 +1,237 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__ADMIN__/js/wstgridtree.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/goodscats/goodscats.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+<script>
+$(function () {
+    initUpload();
+    $('#goodscatsForm').validator({
+        fields: {
+            {volist name=":WSTSysLangs()" id='vo'}
+            langParams{$vo["id"]}catName: {
+                tip: "{:lang('require_goods_cat_name')}",
+                rule: '{:lang('label_goods_cat_name')}:required;length[~100];'
+            },
+            langParams{$vo["id"]}simpleName: {
+                tip: "{:lang('require_goods_cat_short_name')}",
+                rule: '{:lang('label_goods_cat_short_name')}:required;length[~30];'
+            },
+            {/volist}
+            commissionRate: {
+                tip: "{:lang('require_goods_cat_fee')}",
+                rule: '{:lang('label_goods_cat_fee')}:required;'
+            },
+            catSort: {
+                tip: "{:lang('require_sort')}",
+                rule: '{:lang('sort')}:required;length[~8];'
+            }
+        },
+        valid: function(form){
+            var catId = $('#catId').val();
+            toEdits(catId);
+        }
+    });
+});
+</script>
+{/block}
+{block name="main"}
+<form id='goodscatsForm' autocomplete="off">
+<input type='hidden' id='parentId' name="parentId" class='ipt' value="{$object.parentId}"/>
+<input type="hidden" id="catId" name="catId" class="ipt" value="{$object.catId}"/>
+<div id='tab' class="layui-tab layui-tab-brief">
+    <ul class="layui-tab-title">
+        <li class="layui-this">{:lang('label_goods_cat_title1')}</li>
+        <li>{:lang('label_goods_cat_title3')}</li>
+    </ul>
+    <div class="layui-tab-content" style='width:99%;margin-bottom: 10px;'>
+        <div class="layui-tab-item layui-show wst-box-top" style="position: relative;">
+            <div class='layui-form'>
+                <fieldset>
+                  <legend>{:lang('base_info')}</legend>
+                    <div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+                      <ul class="layui-tab-title">
+                        {volist name=":WSTSysLangs()" id='vo'}
+                        <li {if $key==0}class="layui-this"{/if}>{$vo['name']}</li>
+                        {/volist}
+                      </ul>
+                      <div class="layui-tab-content">
+                        {volist name=":WSTSysLangs()" id='vo'}
+                        <div class="layui-tab-item {if $key==0}layui-show{/if}">
+                            <table class='wst-form wst-box-top'>
+                                <tr>
+                                    <th width='100'>{:lang('label_goods_cat_name')}<font color='red'>*</font>：</th>
+                                    <td><input type='text' id='langParams{$vo["id"]}catName' name="langParams{$vo["id"]}catName" class='ipt' maxLength='100' value="{$object['langParams'][$vo['id']]['catName']}" /></td>
+                                </tr>
+                                <tr>
+                                    <th width='100'>{:lang('label_goods_cat_short_name')}<font color='red'>*</font>：</th>
+                                    <td><input type='text' id='langParams{$vo["id"]}simpleName' name="langParams{$vo["id"]}simpleName" class='ipt' maxLength='30' value="{$object['langParams'][$vo['id']]['simpleName']}"/></td>
+                                </tr>
+                                <tr>
+                                    <th width='100'>{:lang('label_goods_cat_floor_name2')}<font color='red'> </font>：</th>
+                                    <td><input type='text' id='langParams{$vo["id"]}subTitle' name='langParams{$vo["id"]}subTitle' class='ipt' value="{$object['langParams'][$vo['id']]['subTitle']}"/></td>
+                                </tr>
+                                <tr>
+                                    <th width='150'>{:lang('label_goods_cat_seo_title')}：</th>
+                                    <td>
+                                        <input type="text" id='langParams{$vo["id"]}seoTitle' name='langParams{$vo["id"]}seoTitle' class='ipt' value="{$object['langParams'][$vo['id']]['seoTitle']}" maxLength='100'/>
+                                        <span >{:lang('label_goods_cat_seo_title_tips')}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{:lang('label_goods_cat_seo_keys')}：</th>
+                                    <td>
+                                        <input type="text" id='langParams{$vo["id"]}seoKeywords' name='langParams{$vo["id"]}seoKeywords' class='ipt' value="{$object['langParams'][$vo['id']]['seoKeywords']}" maxLength='100'/>
+                                        <span >{:lang('label_goods_cat_seo_keys_tips')}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{:lang('label_goods_cat_seo_desc')}：</th>
+                                    <td>
+                                        <textarea id='langParams{$vo["id"]}seoDes' name='langParams{$vo["id"]}seoDes' class=" ipt" style='width:400px;'>{$object['langParams'][$vo['id']]['seoDes']}</textarea>
+                                        <span >{:lang('label_goods_cat_seo_desc_tips')}</span>
+                                    </td>
+                                </tr>
+                            </table>
+                         </div>
+                        {/volist}
+                    </div>
+                </fieldset>
+                <table class='wst-form wst-box-top'>    
+                        <tr>
+                            <th>{:lang('label_goods_cat_wap_img')}：</th>
+                            <td>
+                                <input type="text" readonly="readonly"  id='catImg' name="catImg" class="ipt" value="{$object.catImg}" style="float: left;width: 355px;" />
+                                <div id='catFilePicker'>{:lang('upload')}</div><span id='uploadMsg'></span>
+                                <div style="min-height:30px; float: left; margin-left: 5px;" id="preview">{if $object['catImg']}<img src="__RESOURCE_PATH__/{$object['catImg']}" height="30" />{/if}</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th width='100'>{:lang('label_goods_cat_fee')}<font color='red'>*</font>：</th>
+                            <td height='24'>
+                                <input type="text" id="commissionRate" name="commissionRate" class="ipt" data-target="#msg_commissionRate" size='7' class='ipt' value="{$object.commissionRate}">%<span id='msg_commissionRate'>（{:lang('label_goods_cat_fee_tips')}）</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th width='100'>{:lang('is_show')}<font color='red'>*</font>：</th>
+                            <td height='24'>
+                                <input type="checkbox" id="isShow" {if $object['isShow']==1}checked{/if} name="isShow" value="1" class="ipt" lay-skin="switch" lay-filter="isShow1" lay-text="{:lang('is_show_val')}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th width='150'>{:lang('label_goods_cat_is_floor')}<font color='red'>*</font>：</th>
+                            <td height='24'>
+                                <input type="checkbox" id="isFloor" {if $object['isFloor']==1}checked{/if} name="isFloor" value="1" class="ipt" lay-skin="switch" lay-filter="isFloor1" lay-text="{:lang('config_mall_goods_verify_val')}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th width='100'>{:lang('label_goods_cat_show_type')}<font color='red'> </font>：</th>
+                            <td>
+                                 <input type='radio' id='showWay' name='showWay' class='ipt'  value="0"  title="{:lang('label_goods_cat_show_type1')}" {eq name="object.showWay" value="0"}checked{/eq}/>
+                                 <input type="radio" id='showWay2' name='showWay' class='ipt'  value="1" title="{:lang('label_goods_cat_show_type1')}" {eq name="object.showWay" value="1"}checked{/eq}/>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th width='100'>{:lang('sort')}<font color='red'>*</font>：</th>
+                            <td><input type='text' id='catSort' name='catSort' class='ipt' style='width:60px;' onkeypress='return WST.isNumberKey(event);' onkeyup="javascript:WST.isChinese(this,1)" maxLength='10' value='{$object.catSort}'/></td>
+                        </tr>
+                        <tr>
+                            <td colspan='2' align='center'>
+                                <button type="submit" class="btn btn-primary btn-mright" ><i class="fa fa-check"></i>{:lang('save')}</button>
+                                <button type="button" class="btn" onclick="javascript:parent.closeEditBox()"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+                            </td>
+                        </tr>
+                    </table>
+                
+            </div>
+        </div>
+        <div class="layui-tab-item" style="display:none;">
+                {php}
+                    $pcStyle = WSTConf('CONF.wsthomeStyle')?WSTConf('CONF.wsthomeStyle'):'default';
+                    $mobileStyle = WSTConf('CONF.wstmobileStyle')?WSTConf('CONF.wstmobileStyle'):'default';
+                    $wechatStyle = WSTConf('CONF.wstwechatStyle')?WSTConf('CONF.wstwechatStyle'):'default';
+                {/php}
+                <table class='wst-form wst-box-top'>
+                    <tr>
+                        <td colspan="2"><div class='wst-tips-box'>
+                               <div class='icon'></div>
+                               <div class='tips'>
+                               {:lang('label_goods_cat_template_tips1')}<br/>
+                               {:lang('label_goods_cat_template_tips2')}</div>
+                               <div style="clear:both"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th width='150' style="text-align: left;padding-left:10px;">{:lang('label_goods_cat_template_pc')}</th>
+                    </tr>
+                    <tr>
+                        <th>{:lang('label_goods_cat_template_goods_list')}<font color='red'>*</font>: </th>
+                        <td>
+                            <span>wstmart/home/{$pcStyle}/</span><input type="text" id='catListTheme' name='catListTheme' class='ipt' value="{$object['catListTheme']}" maxLength='200' data-rule='{:lang('label_goods_cat_template_goods_list')}:required;length[~2000];' data-target="#catListThemeText"/><span>.html</span><span id='catListThemeText' class="msg-box"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>{:lang('label_goods_cat_template_goods_view')}<font color='red'>*</font>: </th>
+                        <td>
+                            <span>wstmart/home/{$pcStyle}/</span><input type="text" id='detailTheme' name='detailTheme' class='ipt' value="{$object['detailTheme']}" maxLength='200' data-rule='{:lang('label_goods_cat_template_goods_view')}:required;length[~2000];' data-target="#detailThemeText"/><span>.html</span><span id='detailThemeText' class="msg-box"></span>
+                        </td>
+                    </tr>
+                    {if WSTDatas('ADS_TYPE',3)!=''}
+                    <tr>
+                        <th style="text-align: left;padding-left:10px;">{:lang('label_goods_cat_template_wap')}</th>
+                    </tr>
+                    <tr>
+                        <th>{:lang('label_goods_cat_template_goods_list')}<font color='red'>*</font>: </th>
+                        <td>
+                            <span>wstmart/mobile/{$mobileStyle}/</span><input type="text" id='mobileCatListTheme' name='mobileCatListTheme' class='ipt' value="{$object['mobileCatListTheme']}" maxLength='200' data-rule='{:lang('label_goods_cat_template_goods_list')}:required;length[~2000];' data-target="#mobileCatListThemeText"/><span>.html</span><span id='mobileCatListThemeText' class="msg-box"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>{:lang('label_goods_cat_template_goods_view')}<font color='red'>*</font>: </th>
+                        <td>
+                            <span>wstmart/mobile/{$mobileStyle}/</span><input type="text" id='mobileDetailTheme' name='mobileDetailTheme' class='ipt' value="{$object['mobileDetailTheme']}" maxLength='200' data-rule='{:lang('label_goods_cat_template_goods_view')}:required;length[~2000];' data-target="#mobileDetailThemeText"/><span>.html</span><span id='mobileDetailThemeText' class="msg-box"></span>
+                        </td>
+                    </tr>
+                    {/if}
+                    {if WSTDatas('ADS_TYPE',2)!=''}
+                    <tr>
+                        <th style="text-align: left;padding-left:10px;">{:lang('label_goods_cat_template_wap')}</th>
+                    </tr>
+                    <tr>
+                        <th>{:lang('label_goods_cat_template_goods_list')}<font color='red'>*</font>: </th>
+                        <td>
+                            <span>wstmart/wechat/{$wechatStyle}/</span><input type="text" id='wechatCatListTheme' name='wechatCatListTheme' class='ipt' value="{$object['wechatCatListTheme']}" maxLength='200' data-rule='{:lang('label_goods_cat_template_goods_list')}:required;length[~2000];' data-target="#wechatCatListThemeText"/><span>.html</span><span id='wechatCatListThemeText' class="msg-box"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>{:lang('label_goods_cat_template_goods_view')}<font color='red'>*</font>: </th>
+                        <td>
+                            <span>wstmart/wechat/{$wechatStyle}/</span><input type="text" id='wechatDetailTheme' name='wechatDetailTheme' class='ipt' value="{$object['wechatDetailTheme']}" maxLength='200' data-rule='{:lang('label_goods_cat_template_goods_view')}:required;length[~2000];' data-target="#wechatCatListThemeText"/><span>.html</span><span id='wechatCatListThemeText' class="msg-box"></span>
+                        </td>
+                    </tr>
+                    {/if}
+                    <tr>
+                        <td colspan='2' style='padding-left:100px' >
+                            <label style='font-weight:normal'>
+                            <input id="isForce" name='isForce' lay-skin="primary" class="ipt" value="1" type="checkbox" title=''/>{:lang('label_goods_cat_template_dd')}
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan='2' align='center'>
+                            <button type="submit" class="btn btn-primary btn-mright" ><i class="fa fa-check"></i>{:lang('submit')}</button>
+                            <button type="button" class="btn" onclick="javascript:parent.closeEditBox()"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+                        </td>
+                    </tr>
+                </table>
+        </div>
+    </div>
+</div>
+</form>
+{/block}

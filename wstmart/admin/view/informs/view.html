@@ -1,0 +1,97 @@
+{extend name="base" /}
+{block name="js"}
+<script src="__ADMIN__/informs/informs.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div id="wst-tabs" style="width:100%; height:99%;overflow: hidden;" class="liger-tab">
+   <div id="wst-tab-1" tabId="wst-tab-1"  title="{:lang('label_informs_title')}" class='wst-tab'  style="height: 100%"> 
+   <div style="margin:10px">
+    <!-- 投诉信息 -->
+    <div class='order-box'>
+      <table class='wst-form wst-table-1'>
+         <tr>
+           <td class='head-ititle'>{:lang('label_informs_info')}</td>
+         </tr>
+         <tr>
+           <th>{:lang('label_informs_user_name')}：</th>
+           <td>{$data['userName']}</td>
+         </tr>
+         <tr>
+            <th>{:lang('label_informs_type')}：</th>
+            <td>
+              {php}$reason = WSTDatas('INFORMS_TYPE',$data['informType']);{/php}
+              {$reason['dataName']}
+            </td>
+         </tr>
+        
+         <tr>
+            <th>{:lang('label_informs_content')}：</th>
+            <td class='line-break'>{$data['informContent']}</td>
+         </tr>
+         <tr>
+            <th>{:lang('label_informs_annex')}：</th>
+               <td id="photos-inform">
+              {if !empty($data['informAnnex'])}
+              {volist name="$data['informAnnex']" id="annex"}
+                <a href="javascript:void(0)">
+                <img  layer-src="__RESOURCE_PATH__/{$annex}" width="100" height="100" src="__RESOURCE_PATH__/{$annex}" />
+                </a>
+              {/volist}
+              {/if}
+             </td>
+         </tr>
+
+         <tr>
+            <th>{:lang('label_informs_time')}：</th>
+            <td>{$data['informTime']}</td>
+         </tr>
+      </table>
+</div>
+      <table border='0' class='wst-form wst-table-1' style='margin-top:15px;'>
+           <tr>
+              <td colspan='2' class='head'>{:lang('label_informs_result')}</td>
+           </tr>
+           <tr>
+              <th width='80'>{:lang('label_informs_result')}：</th>
+              <td>
+              {if condition="$data['informStatus'] eq 0"}
+                                          {:lang('label_informs_result1')}
+              {elseif condition="$data['informStatus'] eq 1"/}
+                                          {:lang('label_informs_result2')}
+              {elseif condition="$data['informStatus'] eq 2 "/}
+                                          {:lang('label_informs_result3')}
+              {elseif condition="$data['informStatus'] eq 3 "/}
+                                          {:lang('label_informs_result4')}
+              {/if}
+              </td>
+           </tr>
+           {if condition="$data['informStatus'] eq 1 OR $data['informStatus'] eq 2 OR $data['informStatus'] eq 3"}
+           <tr>
+              <th valign='top'>{:lang('label_informs_result_info')}：</th>
+              <td class='line-break'>
+               {$data['respondContent']}
+              </td>
+           </tr>
+           {/if}
+           {if condition="$data['informStatus'] eq 1 OR $data['informStatus'] eq 2 OR $data['informStatus'] eq 3"}
+           <tr>
+              <th>{:lang('label_informs_handle_time')}：</th>
+              <td>{$data['finalHandleTime']}&nbsp;</td>
+           </tr>
+           {/if}
+      <tr>
+         <td colspan='2' align='center'>
+          <button type="button" class="btn" onclick="javascript:location.href='{:Url(\'admin/informs/index\',\'p=\'.$p)}'"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+         </td>
+      </tr>
+       </table>
+   </div>
+</div>
+</div>
+
+<script>
+$(function(){
+  parent.showImg({photos: $('#photos-inform')});
+});
+</script>
+{/block}

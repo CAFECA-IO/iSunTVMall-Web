@@ -1,0 +1,262 @@
+{extend name="default/base" /}
+{block name="main"}
+<div class='wst-grid'>
+   <div class='order-box'>
+    <div class='box-head'>{:lang('log_information')}</div>
+    {if in_array($object['orderStatus'],[-2,0,1,2])}
+	<div class='log-box'>
+<div class="state">
+{if $object['payType']==1}
+<div class="icon">
+	<span class="icons {if condition="($object['orderStatus']==-2)OR($object['orderStatus']==0)OR($object['orderStatus']==1)OR($object['orderStatus']==2)"}icon12 {else}icon11 {/if}{if condition="($object['orderStatus']==-2)"}icon13 {/if}"></span>
+</div>
+<div class="arrow {if condition="($object['orderStatus']==0) OR ($object['orderStatus']==1) OR ($object['orderStatus']==2)"}arrow2{/if}">··························></div>
+	<div class="icon"><span class="icons {if condition="($object['orderStatus']==0)OR($object['orderStatus']==1)OR($object['orderStatus']==2)"}icon22 {else}icon21{/if}{if condition="($object['orderStatus']==0)"}icon23 {/if}"></span></div>
+	<div class="arrow {if condition="($object['orderStatus']==1) OR ($object['orderStatus']==2)"}arrow2{/if}">····························></div>
+{else}
+<div class="icon">
+	<span class="icons {if condition="($object['orderStatus']==-2)OR($object['orderStatus']==0)OR($object['orderStatus']==1)OR($object['orderStatus']==2)"}icon12 {else}icon11 {/if}{if condition="($object['orderStatus']==0)"}icon13 {/if}"></span>
+</div>
+<div class="arrow {if condition="($object['orderStatus']==1) OR ($object['orderStatus']==2)"}arrow2{/if}">··························></div>
+{/if}
+<div class="icon">
+	<span class="icons {if condition="($object['orderStatus']==1)OR($object['orderStatus']==2)OR($object['orderStatus']==1)"}icon32 {else}icon31 {/if}{if condition="($object['orderStatus']==1)"}icon33 {/if}"></span>
+</div>
+<div class="arrow {if condition="($object['orderStatus']==2)"}arrow2{/if}">····························></div>
+<div class="icon"><span class="icons  {if condition="($object['orderStatus']==2)AND($object['isAppraise']==1)"}icon42 {else}icon41 {/if}{if condition="($object['orderStatus']==2)AND($object['isAppraise']==0)"}icon43 {/if}"></span></div>
+<div class="arrow {if condition="($object['isAppraise']==1)"}arrow2{/if}">····························></div>
+<div class="icon"><span class="icons {if condition="($object['isAppraise']==1)"}icon53 {else}icon51 {/if}"></span></div>
+</div>
+   <div class="state2">
+   <div class="path">
+   {volist name="$object['log']" id="lo"}
+   	<span>{:WSTOrderLog($lo['orderStatus'])}<br/>{$lo['logTime']}</span>
+   {/volist}
+   </div>
+   <p>{:lang('place_an_order')}</p>{if $object['payType']==1}<p>{:lang('waiting_for_payment')}</p>{/if}<p>{:lang('merchant_delivery')}</p><p>{:lang('confirm_receipt')}</p><p>{:lang('end_of_order')}<br/>{:lang('mutual_evaluation')}</p>
+   </div>
+   <div class="f-clear"></div>
+   </div>
+    {else}
+        <div>
+          <table class='log'>
+            {volist name='$object["log"]' id='vo'}
+             <tr>
+               <td>{$vo['logTime']}</td>
+               <td>{:WSTOrderLog($vo['orderStatus'])}</td>
+               <td>{:WSTLogJson($vo['logJson'])}</td>
+             </tr>
+            {/volist}
+          </table>
+        </div>                 
+    {/if}
+   </div>
+   <!-- 订单信息 -->
+   <div class='order-box'>
+      <div class='box-head'>{:lang('order_information')}</div>
+      <table class='wst-form'>
+         <tr>
+           <th width='100'>{:lang("order_number")}：</th>
+           <td>{$object['orderNo']}</td>
+         </tr>
+         <tr>
+           <th>{:lang('payment_method')}</th>
+           <td>{:WSTLangPayType($object['payType'])}</td>
+         </tr>
+         {if($object['payType']==1 && $object['isPay']==1)}
+         <tr>
+           <th>{:lang('payment_time')}：</th>
+           <td>{$object['payTime']}</td>
+         </tr>
+         <tr>
+           <th>{:lang('payment_information')}：</th>
+           <td>【{:WSTLangPayFrom($object['payFrom'])}】{$object['tradeNo']}</td>
+         </tr>
+         {/if}
+         <tr>
+            <th>{:lang('delivery_mode')}：</th>
+            <td>
+            {:WSTLangDeliverType($object['deliverType'])}
+            </td>
+         </tr>
+         <tr>
+            <th>{:lang('buyer_message')}：</th>
+            <td>{$object['orderRemarks']}</td>
+         </tr>
+      </table>
+   </div>
+   {:hook('shopDocumentOrderView',['orderId'=>$object['orderId']])}
+   
+    {if $object['isRefund']==1}
+   <!-- 退款信息 -->
+   <div class='order-box'>
+      <div class='box-head'>{:lang('refund_information')}</div>
+      <table class='wst-form'>
+         <tr>
+            <th width='100'>{:lang('refund_amount')}：</th>
+            <td>{:lang('currency_symbol')}{$object['backMoney']}</td>
+         </tr>
+         <tr>
+            <th width='100'>{:lang('refund_notes')}：</th>
+            <td>{$object['refundRemark']}</td>
+         </tr>
+         <tr>
+            <th>{:lang('refund_time')}：</th>
+            <td>{$object['refundTime']}</td>
+         </tr>
+      </table>
+   </div>
+   {/if}
+   <!-- 发票信息 -->
+   <div class='order-box'>
+      <div class='box-head'>{:lang('invoice_information')}</div>
+      <table class='wst-form'>
+         <tr>
+           <th width='100'>{:lang('do_you_need_an_invoice')}：</th>
+           <td>{if $object['isInvoice']==1}{:lang('need')}{else}{:lang('no_need')}{/if}</td>
+         </tr>
+
+          <tr>
+              <th width='100'>{:lang('invoice_status')}：</th>
+              <td>{if $object['isMakeInvoice']==1}{:lang('opened')}{else}{:lang('not_yet_opened')}{/if}</td>
+          </tr>
+
+         {if $object['isInvoice']==1}
+              {php}$invoiceArr = json_decode($object['invoiceJson'],true);{/php}
+         <tr>
+           <th>{:lang('invoice_title')}：</th>
+           <td>
+            {if $object['isInvoice']==1}
+              {$invoiceArr['invoiceHead']}
+            {/if}
+          </td>
+         </tr>
+        {if isset($invoiceArr['invoiceCode'])}
+         <tr>
+           <th>{:lang('invoice_tax_number')}：</th>
+           <td>
+              {$invoiceArr['invoiceCode']}
+          </td>
+         </tr>
+         {/if}
+        {/if}
+      </table>
+   </div>
+    <!-- 收货人信息 -->
+   {if ($object['orderType']==0)}
+      
+       <div class='order-box'>
+          <div class='box-head'>{:lang('consignee_information')}</div>
+          <table class='wst-form'>
+             <tr>
+               <th width='100'>{:lang("consignee")}：</th>
+               <td>{$object['userName']}</td>
+             </tr>
+             {if ($object['deliverType']==0)}
+             <tr>
+               <th>{:lang("receiving_address")}：</th>
+               <td>{$object['userAddress']}</td>
+             </tr>
+             {/if}
+             <tr>
+                <th>{:lang("contact_information")}：</th>
+                <td>+{$object['areaCode']} {$object['userPhone']}</td>
+             </tr>
+          </table>
+       </div>
+     {if ($object['deliverType']==1)}
+       <div class='order-box'>
+          <div class='box-head'>{:lang("pick_up_information")}</div>
+          <table class='wst-form'>
+            {if (isset($object['store']))}
+            <tr>
+               <th width='100'>{:lang("pick_up_shop")}</th>
+               <td>{$object['store']['storeName']}</td>
+             </tr>
+             <tr>
+               <th width='100'>{:lang("contact_number")}：</th>
+               <td>{$object['store']['storeTel']}</td>
+             </tr>
+             <tr>
+               <th width='100'>{:lang('pick_up_address')}：</th>
+               <td>{$object['store']['areaNames']}{$object['store']['storeAddress']}</td>
+             </tr>
+            {else}
+            <tr>
+               <th width='100'>{:lang("pick_up_address")}：</th>
+               <td>{$object['shopAddress']}</td>
+            </tr>
+            {/if}
+          </table>
+       </div>
+     {/if}
+   {/if}
+   <!-- 商品信息 -->
+   <div class='order-box'>
+       <div class='box-head'>{:lang('commodity_list')}</div>
+       <div class='goods-head'>
+          <div class='goods'>{:lang('goods')}</div>
+          <div class='number'>{:lang('goods_number')}</div>
+          <div class='price'>{:lang('unit_Price')}</div>
+          <div class='num'>{:lang('number')}</div>
+          <div class='t-price'>{:lang('total_price')}</div>
+       </div>
+       <div class='goods-item'>
+          <div class='shop'>
+          {$object['shopName']}
+          
+          </div>
+          <div class='goods-list'>
+             {volist name='$object["goods"]' id='vo2'}
+             {:hook('shopDocumentOrderViewGoodsPromotion',['goods'=>$vo2])}
+             <div class='item j-g{$vo2['goodsId']}'>
+		         <div class='goods'>
+		            <div class='img'>
+		                <a href='{:Url("home/goods/detail","goodsId=".$vo2["goodsId"])}' target='_blank'>
+			            <img src='__RESOURCE_PATH__/{$vo2["goodsImg"]}' width='80' height='80' title='{$vo2["goodsName"]|WSTStripTags}'/>
+			            </a>
+		            </div>
+		            <div class='name'>{if $vo2['goodsCode']=='gift'}{:lang('gift')}{/if}{$vo2["goodsName"]}</div>
+		            <div class='spec'>{:str_replace('@@_@@','<br/>',$vo2["goodsSpecNames"])}</div>
+		         </div>
+		         <div class="number">{$vo2['goodsSn']}</div>
+		         <div class='price' style="color: red">{:lang('currency_symbol')}{$vo2['goodsPrice']}</div>
+		         <div class='num'>{$vo2['goodsNum']}</div>
+		         <div class='t-price' style="color: red">{:lang('currency_symbol')}{$vo2['goodsPrice']*$vo2['goodsNum']}</div>
+		         <div class='f-clear'></div>
+             </div>
+             {if $vo2['goodsType']==1 && $object['orderStatus']==2}
+             <table width='100%' style='margin-top:5px;'>
+             {volist name='$vo2["extraJson"]' id='vgcard'}
+               <tr>
+                 <td>{:lang('card_number')}：{$vgcard['cardNo']}</td>
+                 <td>{:lang('card_and_coupon_password')}：{$vgcard['cardPwd']}</td>
+               </tr>
+             {/volist}
+             </table>
+             {/if}
+             {/volist}
+          </div>
+       </div>
+       <div class='goods-footer'>
+          <div class='goods-summary' style='text-align:right'>
+             <div class='summary'>{:lang('total_amount_of_goods')}：{:lang('currency_symbol')}<span style="color: red">{$object['goodsMoney']}</span></div>
+             <div class='summary'>{:lang('freight')}：{:lang('currency_symbol')}<span style="color: red">{$object['deliverMoney']}</span></div>
+             <div class='summary line'>{:lang('total_amount_payable')}：{:lang('currency_symbol')}<span style="color: red">{$object['totalMoney']}</span></div>
+             {:hook('shopDocumentOrderSummaryView',['order'=>$object])}
+             {if condition="$object['useScore'] gt 0"}
+             <div class='summary '>{:lang('using_integral_numbers')}：<span style="color: red">{$object['useScore']}{:lang('individual')}</span></div>
+             <div class='summary'>{:lang('credit_amount')}：{:lang('currency_symbol')}-<span style="color: red">{$object['scoreMoney']}</span></div>
+             {/if}
+             <div class='summary'>{:lang('total_amount_paid')}：{:lang('currency_symbol')}<span style="color: red">{$object['realTotalMoney']}</span></div>
+             <div>{:lang('points_can_be_obtained')}：<span class='orderScore' style="color: red">{$object["orderScore"]}</span>{:lang('individual')}</div>
+          </div>
+       </div>
+   </div>
+<div style="text-align: center;margin: 20px 0;"><button type="button" class="btn" onclick="toBacks({$p},'{$src}')"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button></div>
+</div>
+
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__SHOP__/orders/orders.js?v={$v}'></script>
+{/block}

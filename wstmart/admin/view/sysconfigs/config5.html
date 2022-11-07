@@ -1,0 +1,24 @@
+<div class="layui-tab-item layui-form">
+     <table class='wst-form wst-box-top'>
+	  <tr>
+	     <th width='150'>{:lang('config_mall_seo_title')}：</th>
+	     <td><input type="text" id='seoMallTitle' class='ipt' value="{$object['seoMallTitle']}" maxLength='100'/></td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_seo_keys')}：</th>
+	     <td><input type="text" id='seoMallKeywords' class='ipt' style='width:70%' value="{$object['seoMallKeywords']}" maxLength='100'/></td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_seo_desc')}：</th>
+	     <td><input type="text" id='seoMallDesc' class='ipt' style='width:70%' value="{$object['seoMallDesc']}" maxLength='100'/></td>
+	  </tr>
+	  <tr>
+	  	{if ($grant)}
+	     <td colspan='2' align='center'>
+	     	<button type="button" class="btn btn-primary btn-mright" onclick='javascript:edit()'><i class="fa fa-check"></i>{:lang('submit')}</button> 
+        	<button type="reset" class="btn" onclick='javascript:resetForm()'><i class="fa fa-refresh"></i>{:lang('reset')}</button>
+	     </td>
+	     {/if}
+	  </tr>
+	 </table>
+</div>

@@ -1,0 +1,36 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('inform_violation_notice_title')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/informs.css?v={$v}">
+{/block}
+{block name="footer"}
+{/block}
+{block name="header"}
+	<div id="useri_infos">
+      <header style="background:#ffffff;" class="ui-header ui-header-positive ui-border-b wst-header">
+        <a href="javascript:history.go(-1)"><i class="ui-icon-return"></i></a><h1 class="useri_info">{:lang('inform_violation_notice_title')}</h1>
+      </header>
+{/block}
+
+{block name="main"}
+<style>
+    body{
+        background-color: #fff;    
+    }
+    .content{
+        padding:24px;
+        line-height: 24px;
+    }
+</style>
+
+<section class="ui-container" id="contrainer" >
+    <div class="content">{$tips}</div>
+</section>
+
+{/block}
+{block name="include"}
+{include file="default/dialog" /}<!-- 对话框模板 -->
+{/block}
+
+{block name="js"}
+{/block}

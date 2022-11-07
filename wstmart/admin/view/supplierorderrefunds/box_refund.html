@@ -1,0 +1,71 @@
+{if !empty($object)}
+<style>.wst-form td{padding:10px 5px;}</style>
+<form id='editFrom'>
+<table class='wst-form'>
+   <tr>
+      <td colspan='2' class='head-ititle'>{:lang('label_orderrefunds_title')}</td>
+  </tr>
+   <tr>
+      <th width='170'>{:lang('label_orderrefunds_order_no')}：</th>
+      <td>{$object['orderNo']}</td>
+   </tr>
+   {if $object['payFrom']!=''}
+   <tr>
+      <th>{:lang('label_orderrefunds_payment_type')}：</th>
+      <td>【{:WSTLangPayFrom($object['payFrom'])}】{$object['tradeNo']}</td>
+  </tr>
+  {/if}
+  {if(!isset($object['serviceId']))}
+  <tr>
+   <th>{:lang('label_orderrefunds_total_money')}：</th>
+     <td>{:lang('currency_symbol')}{$object['totalMoney']}&nbsp;&nbsp;&nbsp;&nbsp;【{:lang('label_orderrefunds_order_total_money')}：{:lang('currency_symbol')}{$object['goodsMoney']}&nbsp;&nbsp;&nbsp;&nbsp;{:lang('label_orderrefunds_order_delevery')}：{:lang('currency_symbol')}{$object['deliverMoney']}】</td>
+  </tr>
+  <tr>
+   <th>{:lang('label_orderrefunds_order_real_money')}：</th>
+     <td>{:lang('currency_symbol')}{$object['realTotalMoney']}</td>
+  </tr>
+  {else /}
+  <tr>
+   <th>{:lang('label_orderrefunds_aftersale_total_money')}：</th>
+      <td>{:lang('currency_symbol')}{$object['totalMoney']}&nbsp;&nbsp;&nbsp;&nbsp;【{:lang('label_orderrefunds_order_delevery')}：{:lang('currency_symbol')}{$object['deliverMoney']}】</td>
+  </tr>
+  <tr>
+   <th>{:lang('label_orderrefunds_order_real_money')}：</th>
+    <td>{:lang('currency_symbol')}{$object['realTotalMoney']}</td>
+  </tr>
+  {/if}
+  <tr>
+
+    <td colspan='2' class='head-ititle'>{:lang('label_orderrefunds_refund_title')}</td>
+  </tr>
+  <tr>
+   <th>{:lang('label_orderrefunds_refund_remarks')}：</th>
+     <td>
+     {php}
+     $rs = WSTDatas('REFUND_TYPE',$object['refundReson']);
+     echo $rs['dataName'].(($object['refundOtherReson']!='')?"：".$object['refundOtherReson']:"");
+     {/php}</td>
+  </tr>
+  <tr>
+   <th>{:lang('label_orderrefunds_refund_remarks')}：</th>
+     <td>{:lang('currency_symbol')}{$object['backMoney']}</td>
+  </tr>
+  <tr>
+      <th>{:lang('label_orderrefunds_hander_txt')}：</th>
+     <td>
+       <textarea id='content' style='width:90%;height:60px;' placeholder='{:lang("refund_tips1")}' maxLength='200'></textarea>
+     </td>
+  </tr>
+  <tr>
+     <td colspan='2' style='text-align:center;padding-top:30px;'>
+     	<button type="button" class="btn btn-primary btn-mright" onclick="javascript:orderRefund({$object['refundId']})"><i class="fa fa-check"></i>{:lang('submit')}</button>
+     	<button type="button" class="btn" onclick='javascript:layer.close(w)'><i class="fa fa-angle-double-left"></i>{:lang('cancel')}</button>
+     </td>
+  </tr>
+</table>
+</form>
+{else}
+<div style='color:red;margin:20px;'>
+   {:lang('label_orderrefunds_orderno_exist')}
+</div>
+{/if}

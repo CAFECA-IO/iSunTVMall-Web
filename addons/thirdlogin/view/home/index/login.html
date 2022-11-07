@@ -1,0 +1,37 @@
+<?php if(isset($thirdLogins['thirdTypes'])){ ?>
+<div >
+	 <div class="wst-stript">
+	 	<span class="stript-left"></span>
+	 	<span style="font-family: 微软雅黑;font-size: 14px;text-align: center;color: #888;padding: 0px 10px;">{:lang('thirdlogin_tips6')}</span>
+	 	<span class="stript-right"></span>
+	 </div>
+	 <div style="text-align:center;margin-top: 10px;">
+		<?php if(in_array("qq",$thirdLogins['thirdTypes']) ){ ?>
+			<a href="https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id={$thirdLogins['appId_qq']}&redirect_uri={$thirdLogins['backUrl_qq']}" class="qq">
+				<img src="__ROOT__{$thirdLogins['img_qq']}" alt="{:lang('thirdlogin_config3')}" border="0" style="width:40px;">&nbsp;&nbsp;
+			</a>
+		<?php } ?>
+		<?php if(in_array("weixin",$thirdLogins['thirdTypes'])){ ?>
+			<a href="https://open.weixin.qq.com/connect/qrconnect?appid={$thirdLogins['appId_weixin']}&redirect_uri={$thirdLogins['backUrl_weixin']}&response_type=code&scope=snsapi_login&state=<?php echo time();?>#wechat_redirect" class="qq">
+				<img src="__ROOT__{$thirdLogins['img_weixin']}" alt="{:lang('thirdlogin_config4')}" border="0" style="width:40px;">&nbsp;&nbsp;
+			</a>
+		<?php } ?>
+		<?php if(in_array("weibo",$thirdLogins['thirdTypes'])){ ?>
+			<a href="https://api.weibo.com/oauth2/authorize?client_id={$thirdLogins['appId_weibo']}&response_type=code&redirect_uri={$thirdLogins['backUrl_weibo']}" class="qq">
+				<img src="__ROOT__{$thirdLogins['img_weibo']}" alt="{:lang('thirdlogin_config5')}" border="0" style="width:40px;">&nbsp;&nbsp;
+			</a>
+		<?php } ?>
+		<?php if(in_array("facebook",$thirdLogins['thirdTypes'])){ ?>
+			<a href="{:addon_url('thirdlogin://thirdlogin/fblogin')}" class="qq">
+				<img src="__ROOT__{$thirdLogins['img_facebook']}" alt="{:lang('thirdlogin_config21')}" border="0" style="width:40px;">&nbsp;&nbsp;
+			</a>
+		<?php } ?>
+		<?php if(in_array("google",$thirdLogins['thirdTypes'])){ ?>
+			<a href="{:addon_url('thirdlogin://thirdlogin/googlelogin')}" class="qq">
+				<img src="__ROOT__{$thirdLogins['img_google']}" alt="{:lang('thirdlogin_config24')}" border="0" style="width:40px;">&nbsp;&nbsp;
+			</a>
+		<?php } ?>
+	</div>
+</div>
+<?php } ?>
+		 

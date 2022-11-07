@@ -1,0 +1,154 @@
+{if count($rs)>0}
+<style>
+    .wst-in-auction{width:100%;background: #fff;margin-top:0.1rem;}
+    .wst-in-auction .auction-header{padding:0.15rem 0.12rem 0.15rem 0.12rem;}
+    .wst-in-auction .auction-title p{font-size:0.17rem;font-weight: bold;color:#000;}
+    .wst-in-auction .auction-title .more{color:#999;font-size:0.12rem;font-weight: normal;}
+    .wst-in-auction .auction-content .goods{padding:0.1rem 0.12rem 0 0.12rem;background:#fff;border-top:1px solid #f2f2f2;}
+    .wst-in-auction .auction-content .name{color:#000;font-size:0.14rem;overflow: hidden;text-overflow: ellipsis;-webkit-box-orient:vertical;-webkit-line-clamp:2;}
+    .wst-in-auction .auction-content .desc{padding:0.1rem 0.12rem;}
+    .wst-in-auction .auction-content .flag{background: linear-gradient(to right,#FC5C24,#FC321E);width:0.54rem;height:0.19rem;color:#fff;font-size: 0.13rem;text-align: center;line-height: 0.19rem;border-radius: 0.02rem;}
+    .wst-in-auction .auction-content .gallery{padding:0 0 0.15rem 0.12rem;}
+    .wst-in-auction .auction-content .icon-auction{width:0.13rem;height:0.13rem;background: url(__ROOT__/addons/auction/view/images/icon-auction.png) center center no-repeat;background-size: 100%;margin-right:0.04rem;}
+    .wst-in-auction .auction-content .auction-num{font-size:0.12rem;color:#333;}
+    .wst-in-auction .auction-content .auction-num span{font-size:0.15rem;color:#EA4341;}
+    .wst-in-auction .auction-content .auction-price{padding:0 0.12rem 0.1rem 0.12rem;}
+    .wst-in-auction .auction-content .auction-price .price{font-size: 0.12rem;color:#666;}
+    .wst-in-auction .auction-content .auction-price .price span{font-size: 0.15rem;color:#EA4341;font-weight: 600;}
+    .wst-in-auction .auction-content .auction-price .price .symbol{font-size: 0.12rem;color:#EA4341;font-weight: 600;}
+    .wst-in-auction .auction-content .auction-price .countDown{font-size: 0.12rem;color:#333;}
+    .wst-in-auction .auction-content .auction-price .countDown .title{font-size: 0.12rem;color:#666;}
+    .wst-in-auction .auction-content .auction-price .countDown .num{font-size: 0.15rem;color:#EA4341;font-weight: 600;}
+</style>
+<div class="wst-in-auction">
+    <div class="auction-header">
+        <div class="auction-title wst-flex-row wst-jsb wst-ac">
+            <div class="wst-flex-row wst-jsb wst-ac">
+                <p>{:lang('auction_goods')}</p>
+            </div>
+            <p class="more" onclick="javascript:location.href=WST.AU('auction://goods/wxlists')">{:lang('auction_view_more')}></p>
+        </div>
+    </div>
+    <div class="auction-content" sc="{:date('Y-m-d H:i:s')}">
+        {volist name="rs" id="vo"}
+        <div class="auction-container auction_goods" onclick="location.href=WST.AU('auction://goods/wxdetail','id='+{$vo['auctionId']})"  sv="{$vo['startTime']}" ev="{$vo['endTime']}">
+            <div class="ui-row-flex goods" >
+                <div class="name">{$vo['goodsName']}</div>
+            </div>
+            <div class="wst-flex-row wst-jsb wst-ac desc">
+                <div class="flag">{:lang('auction_')}</div>
+                <div class="wst-flex-row wst-ac">
+                    <div class="icon-auction"></div>
+                    <div class="auction-num"><span>{$vo['auctionNum']}</span>{:lang('auction_bid_number_tips',[''])}</div>
+                </div>
+            </div>
+            {if $vo['gallery']!=''}
+            <div class="gallery">
+                <div class="swiper-container auction-container1">
+                    <div class="swiper-wrapper">
+                        {volist name="$vo['gallery']" id="vo2"}
+                        <div class="swiper-slide" >
+                            <div class="gallery-item">
+                                <div>
+                                    <img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{:WSTImg($vo2,3)}" title="{$vo['goodsName']}" style="width:1.15rem;height:1.15rem;border-radius:0.06rem">
+                                </div>
+                            </div>
+                        </div>
+                        {/volist}
+                    </div>
+                </div>
+            </div>
+            {/if}
+            <div class="wst-flex-row wst-jsb wst-ac auction-price">
+                <div class="price">{:lang('auction_current_price')}:<span class="symbol">{:lang('currency_symbol')}</span><span>{$vo['currPrice']}</span></div>
+                <div><p class="time countDown"></p></div>
+            </div>
+        </div>
+        {/volist}
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        new Swiper('.auction-container1', {
+            slidesPerView: 3,
+            freeMode : true,
+            spaceBetween: 10,
+            autoplay : false,
+            speed:1200,
+            loop : false,
+            autoHeight: true, //高度随内容变化
+            on: {
+                resize: function(){
+                    this.params.width = window.innerWidth;
+                    this.update();
+                },
+                slideChange(){
+                    echo.init();
+                }
+            }
+        });
+        auctionTime();
+    });
+    function auctionTime(){
+        var nowTime = new Date(Date.parse($('.auction-content').attr('sc').replace(/-/g, "/")));
+        $('.auction_goods').each(function(){
+            var g = $(this);
+            var startTime = new Date(Date.parse(g.attr('sv').replace(/-/g, "/")));
+            var endTime = new Date(Date.parse(g.attr('ev').replace(/-/g, "/")));
+
+            if(startTime.getTime()> nowTime){
+                var opts = {
+                    nowTime: nowTime,
+                    endTime: startTime,
+                    callback: function(data){
+                        if(data.last>0){
+                            var html = [];
+                            if(data.day>0)html.push("<span class='num'>"+data.day+"</span>"+WST.lang('auction_day'));
+                            html.push("<span class='num'>"+data.hour+"</span>"+WST.lang('auction_hour')+"<span class='num'>"+data.mini+"</span>"+WST.lang('auction_minute')+"<span class='num'>"+data.sec+"</span>"+WST.lang('auction_second'));
+                            g.find('.countDown').html("<span class='title'>"+WST.lang('auction_last')+":</span>"+html.join('')+"<span class='title'>"+WST.lang('auction_start')+"</span>");
+                        }else{
+                            var opts2 = {
+                                nowTime: data.nowTime,
+                                endTime: endTime,
+                                callback: function(data2){
+                                    if(data2.last>0){
+                                        var html = [];
+                                        if(data2.day>0)html.push("<span class='num'>"+data2.day+"</span>"+WST.lang('auction_day'));
+                                        html.push("<span class='num'>"+data2.hour+"</span>"+WST.lang('auction_hour')+"<span class='num'>"+data2.mini+"</span>"+WST.lang('auction_minute')+"<span class='num'>"+data2.sec+"</span>"+WST.lang('auction_second'));
+                                        g.find('.countDown').html("<span class='title'>"+WST.lang('auction_surplus')+":</span>"+html.join(''));
+                                    }else{
+                                        g.find('.countDown').html(WST.lang('auction_the_auction_is_over'));
+                                    }
+
+                                }
+                            }
+                            WST.countDown(opts2);
+                        }
+
+                    }
+                };
+                WST.countDown(opts);
+            }else if(startTime.getTime()<= nowTime && endTime.getTime() >=nowTime){
+                var opts = {
+                    nowTime: nowTime,
+                    endTime: endTime,
+                    callback: function(data){
+                        if(data.last>0){
+                            var html = [];
+                            if(data.day>0)html.push("<span class='num'>"+data.day+"</span>"+WST.lang('auction_day'));
+                            html.push("<span class='num'>"+data.hour+"</span>"+WST.lang('auction_hour')+"<span class='num'>"+data.mini+"</span>"+WST.lang('auction_minute')+"<span class='num'>"+data.sec+"</span>"+WST.lang('auction_second'));
+                            g.find('.countDown').html("<span class='title'>"+WST.lang('auction_surplus')+":</span>"+html.join(''));
+                        }else{
+                            g.find('.countDown').html(WST.lang('auction_the_auction_is_over'));
+                        }
+
+                    }
+                };
+                WST.countDown(opts);
+            }else{
+                g.find('.countDown').html(WST.lang('auction_the_auction_is_over'));
+            }
+        })
+    }
+</script>
+{/if}

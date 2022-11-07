@@ -1,0 +1,98 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('shop_enter')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="main"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link href="__STYLE__/css/shopapply-{$lang}.css?v={$v}" rel="stylesheet">
+<div class='apply-banner'>
+        <div class='wst-container'>
+            <div class='apply-msg-box'>
+                <h3>{:lang('user_greetings',[session('WST_USER.loginName')])}：</h3>
+                <div class='title'>{:lang('enter_welcome_mall',[WSTConf('CONF.mallName')])}</div>
+                <ul>
+                    <li>
+                    {:lang('apply_enter_btn_desc',['<br/>',"<span style='color:#FFB748'>".lang('apply_enter')."</span>"])}
+                    </li>
+                    <li>
+                    {:lang('apply_enter_btn_desc',['<br/>',"<span style='color:#FFB748'>".lang('enter_progress_check')."</span>"])}
+                    </li>
+                </ul>
+                <div class="bottom">
+                {if $isApply==1}
+                 <a class='btn-cancel' style='color:#ddd'>{:lang('apply_enter')}</a>
+                {else}
+                <a class='btn-submit' href='{:Url("home/shops/joinStepNext",["id"=>$flowId])}'>{:lang('apply_enter')}</a>
+                {/if}
+                <a class='btn-submit' style='margin-left:10px;padding:0px 10px' href='{:Url("home/shops/checkapplystatus")}'>{:lang('enter_progress_check')}</a>
+                </div>
+            </div>
+        </div>
+        <div class="wst-slide" id="wst-slide">
+            <ul class="wst-slide-items" style='min-width: 1200px;height: 420px;'>
+                {wst:ads code="ads-shop-apply" cache='86400'}
+                   <li style="background: url(__RESOURCE_PATH__/{$vo.adFile}) no-repeat  scroll center top;background-size:cover;height:350px;"></li>
+                {/wst:ads}
+            </ul>
+            <div class="wst-slide-numbox">
+                <div class="wst-slide-controls">
+                    {wst:ads code="ads-shop-apply" cache='86400' key='k'}
+                        {if condition="$k+1 eq 1"}
+                             <span class="curr">{$k+1}</span>
+                        {else/}
+                             <span class="">{$k+1}</span>
+                        {/if}
+                    {/wst:ads}
+                </div>
+            </div>
+        </div>
+ </div>
+ <div class="apply-tips">
+  <div class="wst-container">
+     <span class="title"><i></i>
+     <h3>{:lang('intimate_tip')}</h3>
+     </span><span class="content">{:WSTConf('CONF.mallName')}{:lang('shop_enter_intimate_tip')}</span>
+  </div>
+ </div>
+ <div class="wst-container">   
+    <div class='apply-step-head'>{:lang('enter_process')}</div>
+    <div class="apply-step">
+        <span class="step"><i class="a"></i>{:lang('sign_enter_protocol')}</span>
+        <span class="arrow"></span>
+        <span class="step"><i class="b"></i>{:lang('shop_info_submit')}</span>
+        <span class="arrow"></span>
+        <span class="step"><i class="c"></i>{:lang('platform_audit_qualification')}</span>
+        <span class="arrow"></span>
+        <span class="step"><i class="d"></i>{:lang('sign_enter_protocol')}</span>
+        <span class="arrow"></span>
+        <span class="step"><i class="e"></i>{:lang('shop_payment_open')}</span>
+    </div>
+    {php}
+    $artiles = model('tags')->listArticle(53,5,3600);
+    if(count($artiles)>1){
+    {/php}
+    <div class='apply-step-head'>{:lang('entry_guide')}</div>
+    <div id='applyTab' class="wst-tab-box">
+        <ul class="wst-tab-nav">
+           {volist name='$artiles' id='vo'}
+           {php}if($vo['articleId']==109)continue;{/php}
+           <li>{$vo['articleTitle']}</li>
+           {/volist}
+        </ul>
+        <div class="wst-tab-content" style='width:99%;margin-bottom: 10px;min-height:300px;'>
+            {volist name='$artiles' id='vo'}
+            {php}if($vo['articleId']==109)continue;{/php}
+            <div class="wst-tab-item" style="position: relative;">{$vo['articleContent']|htmlspecialchars_decode}</div>
+            {/volist}
+        </div>
+    </div> 
+    {php}}{/php} 
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script>
+$(function(){
+	WST.slides('.wst-slide');
+    $('#applyTab').TabPanel({tab:0,callback:function(no){}});
+})
+</script>
+{/block}

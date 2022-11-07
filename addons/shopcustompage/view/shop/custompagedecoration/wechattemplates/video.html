@@ -1,0 +1,10 @@
+{php}$style='';{/php}
+{if $vo['verticalPadding']}
+    {php}
+        $style.="margin-top:".intval($vo['verticalPadding'])."px;";
+        $style.="margin-bottom:".intval($vo['verticalPadding'])."px;";
+    {/php}
+{/if}
+<div class="video-container" style="{$style}">
+    <embed muted poster="__RESOURCE_PATH__/{$vo['img']}" src="{$vo['link']}" id='previewVideo' controls="controls" ></embed>
+</div>

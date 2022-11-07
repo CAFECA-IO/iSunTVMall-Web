@@ -1,0 +1,300 @@
+{extend name="$LAYOUT_HOME_BASE" /}
+{block name="title"}{$goods['goodsName']} - {:lang('auction_activity_title')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="meta"}
+<meta name="description" content="{$goods['goodsSeoDesc']},{:lang('auction_activity_title')}">
+<meta name="Keywords" content="{$goods['goodsSeoKeywords']},{$seoAuctionKeywords}">
+<meta property="og:url"           content="{$shareInfo['link']}" />
+<meta property="og:type"          content="website" />
+<meta property="og:title"         content="{$shareInfo['title']}" />
+<meta property="og:description"   content="{$goods['goodsSeoDesc']}" />
+<meta property="og:image"         content="{$shareInfo['imgUrl']}" />
+<meta property="og:site_name" content="{:WSTConf('CONF.mallName')}">
+{/block}
+{block name="css"}
+<link href="__ROOT__/addons/auction/view/home/index/css/goods.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="top"}
+	{include file="$LAYOUT_HOME_TOP" /}
+{/block}
+
+{block name="header"}
+	{include file="$LAYOUT_HOME_HEADER" /}
+{/block}
+{block name="main"}
+<div class='wst-w'>
+<div class='wst-filters'>
+   <div class='item' style="border:1px solid transparent;border-left:2px solid #1E90FF;padding-left: 8px">
+      <a class='link' href="{:url('home/index/index')}">{:lang('auction_home_page')}</a>
+      <i class="arrow"></i>
+   </div>
+   <div class='item'>
+      <a class='link' href="{:url('/addon/auction-goods-lists')}" style='line-height: 25px;'>{:lang('auction_activity_title')}</a>
+      <i class="arrow"></i>
+   </div>
+   {volist name=":WSTPathGoodsCat($goods['goodsCatId'])" id='vo' length='1'}
+   <div class='wst-lfloat'>
+   	<div class='item dorpdown'>
+     <div class='drop-down'>
+        <a class='link' href='{:Url("/addon/auction-goods-lists",["catId"=>$vo["catId"]])}'>{$vo['catName']}</a>
+     </div>
+     <div class="dorp-down-layer">
+         {volist name=":WSTGoodsCats($vo['parentId'])" id='vo2'}
+         <div class="{$vo['parentId']>0?'cat2':'cat1'}"><a href='{:Url("/addon/auction-goods-lists","catId=".$vo2["catId"])}'>{$vo2['catName']}</a></div>
+         {/volist}
+	</div>
+	</div>
+   </div>
+   {/volist}
+   <div class='wst-clear'></div>
+</div>
+</div>
+<div class='wst-w'>
+   <div class='goods-intro-container'>
+      <div class='goods-img-box'>
+          {if $goods['goodsVideo']!=""}
+            <div class="wst-video-box">
+              <video muted src="__RESOURCE_PATH__/{$goods["goodsVideo"]}" id='previewVideo' controls="controls" autoplay="autoplay" width='350' height='350'></video>
+            </div>
+          {/if}
+          <div class="goods-img spec-preview" id="preview">
+          	<img title="{$goods['goodsName']|WSTStripTags}" alt="{$goods['goodsName']|WSTStripTags}" src="__RESOURCE_PATH__/{:WSTImg($goods['goodsImg'])}" class="cloudzoom" data-cloudzoom="zoomImage:'__RESOURCE_PATH__/{$goods['goodsImg']}'" height="350" width="350">
+          </div>
+          <div class="goods-pics">
+            <a class="prev">&lt;</a>
+            <a class="next">&gt;</a>
+            <div class="items">
+               <ul>
+                {if $goods['goodsVideo']!=""}
+                 <li class="gallery-li hover">
+                  <div class="wst-video-btn"><i class="fa fa-play-circle"></i></div>
+                   <img class="gvideo gallery-img" src="__RESOURCE_PATH__/{$goods['goodsImg']}"  width="60" height="60">
+                 </li>
+                {/if}
+               {volist name="$goods['gallery']" id='vo'}
+                   <li class="gallery-li {$goods['goodsVideo']=='' && $key==1 ? 'hover': ''}"><img title="{$goods['goodsName']|WSTStripTags}" alt="{$goods['goodsName']|WSTStripTags}" class='cloudzoom-gallery gallery-img' src="__RESOURCE_PATH__/{:WSTImg($vo)}" data-cloudzoom="useZoom: '.cloudzoom', image:'__RESOURCE_PATH__/{:WSTImg($vo)}', zoomImage:'__RESOURCE_PATH__/{$vo}' " width="60" height="60"></li>
+               {/volist}
+			   </ul>	
+			</div>
+         </div>
+      </div>
+
+      <div class='intro'>
+          <div class="goods-intro">
+          		<input type="hidden" id="auctionId" value="{$goods['auctionId']}"/>
+                <h2>{$goods['goodsName']}</h2>
+                <div class='status-box'>
+                   {if $goods['status']==-1}
+                   <div class='status out'>{:lang('auction_status_tips_1')}</div>
+                   {/if} 
+                   {if $goods['status']==0}
+                   <div class='status'>{:lang('auction_status_tips_2')}</div>
+                    {/if} 
+                   {if $goods['status']==1}
+                   <div class='status'>{:lang('auction_status_tips_3')}</div>
+                   {/if}              
+                   <div class='status-txt'>
+                   <div id='auction-time' sc='{:date("Y-m-d H:i:s")}' sv='{$goods["startTime"]}' ev='{$goods["endTime"]}'>
+               {:lang('auction_distance_end_time_tips')}：<span class='countDown'>{$goods["startTime"]}</span>
+                    </div>
+                    <div><span style='margin-right:10px;'>{:lang('auction_user_bid_tips',[$goods["auctionNum"]])}</span><span style=''>{:lang('auction_look_number_tips',[$goods["visitNum"]])}</span></div>
+                   </div>
+                </div>
+                <div class='auction-item'>
+                    <div class='dt'>{:lang('auction_current_price')}：</div>
+                    <div class='dd'>{:lang('currency_symbol')}<span class='font'>{$goods['currPrice']}</span></div>
+                    <div class='wst-clear'></div>
+                </div>
+                <div class='auction-item'>
+                    <div class='dt'>{:lang('auction_bond_money')}：</div>
+                    <div class='dd'>{:lang('currency_symbol')}<span class='font-g'>{$goods['cautionMoney']}</span><span class='font-tips'>{:lang('auction_end_bond_money_tips')}</span></div>
+                    <div class='wst-clear'></div>
+                </div>
+          </div>
+          <div class='spec'>
+             {if !empty($goods['spec'])}
+             {volist name="$goods['spec']" id='vo'}
+             <div class='item'>
+               <div class='dt'>{$vo['name']}：</div>
+               <div class='dd'>
+               {volist name="$vo['list']" id='vo2'}
+                  {if $vo2['itemImg']!=''}
+                  <div class='j-option img j-selected' data-val="{$vo2['itemId']}" style='height:28px;padding:0px;'><img class="cloudzoom-gallery" width="28" height="28" src="__RESOURCE_PATH__/{:WSTImg($vo2['itemImg'])}" data-cloudzoom="useZoom: '.cloudzoom', image:'__RESOURCE_PATH__/{:WSTImg($vo2['itemImg'])}', zoomImage:'__RESOURCE_PATH__/{$vo2['itemImg']}' "  title="{$vo2['itemName']|WSTStripTags}" alt="{$vo2['itemName']|WSTStripTags}"/><i></i></div>
+                  {else}
+                  <div class='j-option j-selected' data-val="{$vo2['itemId']}">{$vo2['itemName']}<i></i></div>
+                  {/if}
+               {/volist}
+               </div>
+               <div class='wst-clear'></div>
+             </div>
+             {/volist}
+             {/if}
+          </div>
+          <div class='buy'>
+            <div id='timeOutBox' class='time-out' {if $goods['status']!=-1}style='display:none'{/if}>
+              <i></i><span class='text'>{:lang('auction_end')}</span>
+            </div>
+            {if $goods['status']!=-1}
+              {/*支付保证金才显示代码*/}
+              {if $goods['payMoney']==0}
+              <div id='payBox' class='item'>
+                <a href='javascript:payCaution({$goods['auctionId']})' class='caution {if $goods['status']!=1}out{/if}'>
+                  <span class="icon"></span>
+                  <span class='text'>{:lang('auction_deposit_registration')}</span>
+                </a>
+              </div>
+              {else}
+              <div class='item'>
+                <div class='dt'>{:lang('auction_bidding_price')}：</div>
+                <div class='dd'>
+                  <?php 
+                  $currPrice = $goods['currPrice']+$goods['fareInc'];
+                  ?>
+	                <a href='#none' class='buy-btn' id='buy-reduce' style='color:#f1f1f1;' onclick='javascript:WST.changeIptNum(-10,"#payPrice","#buy-reduce,#buy-add")'>-</a>
+	                <input type='text' data-min="{$currPrice}" data-max='100000000000' id='payPrice' class='buy-num' value='{$currPrice}' autocomplete="off" onkeyup='WST.changeIptNum({$goods['fareInc']},"#payPrice","#buy-reduce,#buy-add")' onkeypress="return WST.isNumberKey(event);" maxlength="3"/>
+	                <a href='#none' class='buy-btn' id='buy-add' onclick='javascript:WST.changeIptNum({$goods['fareInc']},"#payPrice","#buy-reduce,#buy-add")'>+</a>
+                    &nbsp; &nbsp;{:lang('auction_add_price_rate',[$goods['fareInc']])}
+                </div>
+              </div>
+              <div class='item' style='padding-left:75px;margin-top:20px;'>
+               {if $goods['read'] || $goods['status']==-1 || $goods['status']==0 }
+                 <a id='buyBtn' href='javascript:void(0);' class='buyBtn un-buy'>{:lang('auction_iwant_bid')}</a>
+               {else}
+                 <a id='buyBtn' href='javascript:addAcution()' class='buyBtn'>{:lang('auction_iwant_bid')}</a>
+               {/if}
+              </div>
+              {/if}
+              <div class='item' style='padding-top:15px;padding-left:70px;color:red'>
+              {:lang('auction_order_money_paytime_tips',[$endPayDate])}
+              </div>
+             <div style="clear: both;"></div>
+            {/if}
+          </div>
+          <div style="clear: both;"></div>
+          <!-- ShareThis BEGIN -->
+          <div style="padding: 10px 10px 10px 0;">
+            <div style="float: left;font-weight: bold;margin-right: 10px;">{:lang('share_now')}</div>
+            <div class="sharethis-inline-share-buttons" style="float: left;"></div>
+            <div class='wst-clear'></div>
+          </div>
+          <!-- ShareThis END -->
+        <div style="clear: both;"></div>
+   </div>
+   <div class='shop-intro'>
+      <div class='title'>{$shop['shopName']}</div>
+      <div class='body'>
+            <div class='totalScore'><img class="shopsImg" data-original="__RESOURCE_PATH__/{$shop['shopImg']}" title="{$shop['shopName']|WSTStripTags}" style="width:75px;height:75px;"></div>
+            <div class='itemScore'>{:lang('auction_goods_score')}：{if ($shop['scores']['goodsScore']!=0)}{$shop['scores']['goodsScore']}{else /}5{/if}</div>
+            <div class='itemScore'>{:lang('auction_service_score')}：{if ($shop['scores']['serviceScore']!=0)}{$shop['scores']['goodsScore']}{else /}5{/if}</div>
+            <div class='itemScore'>{:lang('auction_timeliness_score')}：{if ($shop['scores']['timeScore']!=0)}{$shop['scores']['goodsScore']}{else /}5{/if}</div>
+      </div>
+      <div class='footer'>
+             <a class="home" href='{:Url("home/shops/index","shopId=".$shop["shopId"])}' target='_blank'>{:lang('auction_go_shop')}</a>
+                   {if ($goods['favShop']>0)}
+             <a class="j-fav" href='javascript:void(0);' onclick='WST.cancelFavorite(this,1,{$shop["shopId"]},{$goods['favShop']})'>{:lang('auction_has_favorited')}</a>
+                   {else}
+             <a class="j-fav2" href='javascript:void(0);' onclick='WST.addFavorite(this,1,{$shop["shopId"]},{$goods['favShop']})'>{:lang('auction_favorite_shop')}</a>
+                   {/if}
+             <div class='wst-clear'></div>
+      </div>
+      <div style='width:195px;height:150px;float:right;margin-top:10px;display:none'>
+        <div id='qrcode' style='width:125px;height:125px;padding-left:30px'></div>
+        <div style='text-align: center;width:195px;'>{:lang('auction_surprise_wechat_shopping')}</div>
+      </div>
+    </div>
+    <div style="clear: both;"></div>
+</div>
+<div class='wst-w'>
+   <div class='wst-container'>
+       <div class='wst-side'>
+           
+		   <div class="goods-side">
+				<div class="guess-like">
+					<div class="title">{:lang('auction_hot')}</div>
+					{volist name='hot_auctions' id='ha'}
+					<div class="item">
+						<div class="img"><a target='_blank' href="{:addon_url('auction://goods/detail','id='.$ha['auctionId'])}"><img title="{$ha['goodsName']|WSTStripTags}" alt="{$ha['goodsName']|WSTStripTags}" src="__RESOURCE_PATH__/{:WSTImg($ha['goodsImg'])}"></a></div>
+						<div class="p-name"><a class="wst-hide wst-redlink">{$ha['goodsName']}</a></div>
+						<div class="p-price">{:lang('currency_symbol')}{$ha['currPrice']}</span></div>
+					</div>
+					{/volist}
+				</div>
+			</div>
+		</div>
+		<div class='goods-desc'>
+        <div class='auction-img'>
+        <img src='__ROOT__/addons/auction/view/home/index/img/pm-flow.png'/>
+        </div>
+		    <div id='auctionTab' class="wst-tab-box">
+				<ul class="wst-tab-nav">
+				   <li>{:lang('auction_desc')}</li>
+				   <li>{:lang('auction_bid_history')}</li>
+           <li>{:lang('auction_notice')}</li>
+				</ul>
+			    <div class="wst-tab-content" style='width:99%;margin-bottom: 10px;min-height:800px;'>
+			       <div class="wst-tab-item" style="position: relative;">
+			       {$goods['auctionDesc']}
+			       </div>
+             <script id="tblist" type="text/html">
+               {{# for(var i = 0; i < d.length; i++){ }}
+                 <tr>
+                   <td>{{i+1}}</td>
+                   <td>{{d[i]['loginName']}}</td>
+                   <td>{{d[i]['payPrice']}}</td>
+                   <td>{{d[i]['createTime']}}</td>
+                   <td>{{#if(d[i]['isTop']==1){}}<span class="lbel lbel-success">{:lang('auction_highest_price')}</span>{{#}else{}}<span class="lbel lbel-gray">{:lang('auction_label_status_4')}</span>{{#}}}</td>
+                 </tr>
+               {{# } }}
+               </script>
+			       <div class="wst-tab-item" style="position: relative;display:none;">
+               <table width='100%' class='auction-logs' cellspacing='0'>
+                 <tr>
+                   <th width='50'>&nbsp;</th><th width='250'>{:lang('auction_label_bidders')}</th><th width='250'>{:lang('auction_bidding_price')}</th><th>{:lang('auction_bidding_time')}</th><th width='150'>&nbsp;</th>
+                 </tr>
+                 <tbody id='auction-log-box'></tbody>
+                 <tr><tr><td colspan="4" align="center" style='padding-top:5px;'><div id='pager'></div></td></tr></tr>
+               </table>
+			       </div>
+             <div class="wst-tab-item" style="position: relative;display:none;">
+               {$goods['article']|htmlspecialchars_decode}
+             </div>
+		    </div>
+		</div>	
+		<div class='wst-clear'></div>
+	</div>
+	<div class='wst-clear'></div>
+</div>
+<div id="aaa" style="display: none;">
+	<a id="blank" href="#" target="_blank" style="display: none;"></a>
+	<div style="padding: 50px;">
+		<div style="float: left;width: 80px; "><img src="__ROOT__/addons/auction/view/home/index/img/payloading.gif"/></div>
+		<div style="float: left;width: 400px; line-height: 30px;">
+			<div>{:lang('auction_pay_tips_1')}</div>
+			<div>{:lang('auction_pay_tips_2')}</div>
+		</div>
+		<div class="wst-clear"></div>
+	</div>
+</div>
+{include file="$LAYOUT_HOME_RIGHT_CART"/}
+{/block}
+{block name="footer"}
+	{include file="$LAYOUT_HOME_FOOTER" /}
+{/block}
+{block name="js"}
+<script>
+var goodsInfo = {auctionId:{$goods['auctionId']},id:{$goods['goodsId']}}
+</script>
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__STYLE__/js/cloudzoom.js?v={$v}'></script>
+<script type='text/javascript' src='__ROOT__/addons/auction/view/home/index/js/time.js?v={$v}'></script>
+<script type='text/javascript' src='__ROOT__/addons/auction/view/home/index/js/goods.js?v={$v}'></script>
+<script type='text/javascript' src='__STYLE__/js/qrcode.js?v={$v}'></script>
+<script>
+$(function(){
+	var qr = qrcode(10, 'M');
+	var url = '{:addon_url("auction://goods/modetail","","html",true)}?id={$goods["auctionId"]}';
+	qr.addData(url);
+	qr.make();
+	$('#qrcode').html(qr.createImgTag());
+});
+</script>
+{/block}

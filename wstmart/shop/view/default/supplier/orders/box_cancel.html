@@ -1,0 +1,15 @@
+<table class='wst-form' style='margin-top:30px;'>
+   <tr>
+     <td colspan='2' style='padding-left:70px;'>{:lang('su_orders_tips1')}</td>
+   </tr>
+   <tr>
+     <th width='120'>{:lang('reason_for_cancellation')}：</th>
+     <td>
+        <select id='reason'>
+           {volist name=":WSTDatas('ORDER_CANCEL')" id="vo"}
+           <option value='{$vo["dataVal"]}'>{$vo["dataName"]}</option>
+           {/volist}
+        </select>
+     </td>
+   </tr>
+</table>

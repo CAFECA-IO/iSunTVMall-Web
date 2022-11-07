@@ -1,0 +1,54 @@
+{if !empty($goods['promotion']) && $goods['promotion']['type']=='reward'}
+{if isset($goods['rewardCartIds'])}
+<link href="__ROOT__/addons/reward/view/mobile/index/reward.css" rel="stylesheet">
+<div class='cart-reward-goods-box'>
+<div class='reward-txt'>
+<span class='tag'>{:lang('reward_full_reduction_title')}</span>
+{$goods['promotion']['data']['rewardTitle']}
+<span id="reward_{$goods["cartId"]}"></span>
+</div>
+<div class='wst-clear'></div>
+</div>
+<script>
+$(function(){
+	WSTHook_beforeStatCartMoney.push('rewardGoods{$goods["shopId"]}_{$goods["cartId"]}');
+});
+function rewardGoods{$goods["shopId"]}_{$goods["cartId"]}(rowNo){
+	var shopId = $('.j-shop'+rowNo).attr('shopId');
+	if(shopId!={$goods["shopId"]})return 0;
+	var cartIds = {:json_encode($goods['rewardCartIds'])};
+	var goodsReward = {:json_encode($goods['promotion']['data'])};
+	var rewardMoney = 0;
+	var goodsId = 0,money = 0,goodsNum = 0,json = null;
+	for(var i=0;i<cartIds.length;i++){
+		//设置背景颜色
+        $('.j-g'+cartIds[i]).css('background','#FFF4F4');
+	    if($('#gchk_'+cartIds[i]).hasClass('wst-active')){
+	        money = parseFloat($('#gchk_'+cartIds[i]).attr('mval'),10);
+	        goodsNum = parseInt($('#buyNum_'+cartIds[i]).val(),10);
+	        rewardMoney = rewardMoney + money*goodsNum;
+	    }
+	}
+	if(rewardMoney==0){
+		$('#reward_{$goods["cartId"]}').html("{:lang('reward_not_meet_conditions')}");
+		return 0;
+	}
+	for(var i=goodsReward.json.length-1;i>=0;i--){
+		json = goodsReward.json[i];
+		if(rewardMoney>=json.orderMoney){
+			if(json.favourableJson.chk0){
+				$('#reward_{$goods["cartId"]}').html(WST.lang('reward_reduced_tips',[json.favourableJson.chk0val]));
+				return json.favourableJson.chk0val;
+			}else{
+				$('#reward_{$goods["cartId"]}').html("{:lang('reward_has_meet_conditions')}");
+			}
+		}else{
+			var tmoney = (json.orderMoney-rewardMoney).toFixed(2);
+			$('#reward_{$goods["cartId"]}').html(WST.lang('reward_differ_title',[tmoney]));
+		}
+	}
+	return 0;
+}
+</script>
+{/if}
+{/if}

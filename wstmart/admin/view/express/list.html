@@ -1,0 +1,57 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/express/express.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+{if WSTGrant('KDGL_01')}
+<div id='alertTips' class='alert alert-success alert-tips fade in'>
+  <div id='headTip' class='head'><i class='fa fa-lightbulb-o'></i>{:lang('menu_tips')}</div>
+  <ul class='body'>
+    <li>{:lang('express_menu_tips')}</li>
+  </ul>
+</div>
+<div class="wst-toolbar">
+   <button class="btn btn-success f-right" onclick='javascript:toEdit(0)'><i class='fa fa-plus'></i>{:lang('add')}</button>
+   <div style="clear:both"></div>
+{/if}
+</div>
+<div class='wst-grid'>
+<form lay-filter='gridForm' class='layui-form wst-grid'>
+<div id="mmg" class="mmg"></div>
+</form>
+<div id="pg" style="text-align: right;"></div>
+</div>
+
+<div id='expressBox' style='display:none'>
+    <form id='expressForm' autocomplete="off">
+    <table class='wst-form wst-box-top'>
+      {volist name=':WSTSysLangs()' id='vo'}
+       <tr>
+          <th width='150'>{:lang('label_express_name')}({$vo['name']})<font color='red'>*</font>：</th>
+          <td><input type='text' id='langParams{$vo["id"]}expressName' name="langParams{$vo["id"]}expressName"  class='ipt' maxLength='20'/></td>
+       </tr>
+      {/volist}
+       <tr>
+          <th>{:lang('label_express_code')}：</th>
+          <td><input type='text' id='expressCode' name="expressCode"  class='ipt' maxLength='20'/></td>
+       </tr>
+       <tr>
+          <td colspan="2" style="padding-left: 35px;">{:lang('express_code_tips')}</td>
+       </tr>
+       <tr>
+        <th width='120'>{:lang('label_is_enable')}<font color='red'>*</font>：</th>
+        <td height='24' class='layui-form'>
+           <input type="checkbox" id='isShow' name='isShow' value="1" lay-skin="switch" lay-filter="switchTest" class="ipt" lay-text="{:lang('is_show_val')}">
+        </td>
+     </tr>
+    </table>
+    </form>
+ </div>
+<script>
+  $(function(){initGrid({$p})});
+</script>
+{/block}

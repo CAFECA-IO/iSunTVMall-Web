@@ -1,0 +1,113 @@
+{extend name="$LAYOUT_MOBILE_BASE" /}
+{block name="title"}{:lang('group_activity')} - {__block__}{/block}
+{block name="meta"}
+<meta name="description" content="{$seoGrouponDesc}">
+<meta name="Keywords" content="{$seoGrouponKeywords}">
+{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__ROOT__/addons/groupon/view/mobile/index/css/list.css?v={$v}">
+{/block}
+{block name="header"}
+    <header class="ui-header ui-header-positive wst-se-header2" style="border-bottom: 0;">
+		<a href="{:url('mobile/index/index')}"><i class="ui-icon-return"></i></a>
+		<div class="wst-se-search">
+		    <i class="wst-icon-search" onclick="javascript:searchGoods();" ></i>
+		    <form action＝"" class="input-form">
+			<input type="search" value="{$keyword}" placeholder="{:lang('group_search_by_key')}" onsearch="searchGoods()" autocomplete="off" id="wst-search">
+			</form>
+		</div>
+       	<span class="wst-se-icon" onclick="javascript:dataShow();"></span>
+	</header>
+{/block}
+{block name="footer"}
+	{include file="$LAYOUT_MOBILE_FOOTER" /}
+{/block}
+{block name="main"}
+	 <input type="hidden" name="" value="{$keyword}" id="keyword" autocomplete="off">
+	 <input type="hidden" name="" value="{$goodsCatId}" id="goodsCatId" autocomplete="off">
+	 <input type="hidden" name="" value="" id="currPage" autocomplete="off">
+     <input type="hidden" name="" value="" id="totalPage" autocomplete="off">
+     <section class="ui-container">
+		<ul class="ui-tab-content" id="groupon-container" sc="{:date('Y-m-d H:i:s')}">
+	        <li id="goods-list"></li>
+	    </ul>
+     </section>
+<script id="list" type="text/html">
+{{# if(d.data && d.data.length>0){ var rate = 0;}}
+{{# for(var i=0,goods=d.data; i<goods.length; i++){ }}
+		   <div class="ui-row-flex wst-shl-list goods_{{ d.current_page }}" onclick="goGoods({{ goods[i].grouponId }})" sv="{{ goods[i].startTime }}" ev="{{ goods[i].endTime }}" st="{{ goods[i].status }}">
+				<div class="ui-col">
+				<div class="img"><a href="javascript:void(0);" onclick="goGoods({{ goods[i].grouponId }})">
+				<img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{{ goods[i].goodsImg }}" title="{{ goods[i].goodsName }}"></a></div>
+				</div>
+				<div class="ui-col ui-col-2 info">
+					<div class="title">{{ goods[i].goodsName }}</div>
+                    <p class="rate time-in">{:lang('group_progress')}</p>
+					<p class="time time-in wst-flex-row wst-jsb wst-ac">
+                        {{# rate = (goods[i].orderNum/(goods[i].orderNum+goods[i].grouponNum)*100).toFixed(2); }}
+                        <span class='gtotal'><span class='gsale' style='width:{{rate}}%;'></span></span>
+                        <span class='txtsale'>{{WST.lang('group_has_buy_rate',[rate])}}%</span>
+                    </p>
+                    <p class='time-before countDown_{{ d.current_page }}'></p>
+                    <div class="wst-flex-row wst-jsb wst-ac btnbox">
+                        <p class="prices wst-flex-row" style="align-items: baseline;"><span class="price">{:lang('currency_symbol')}{{ goods[i].grouponPrice }}</span><span class="price2">{:lang('currency_symbol')}{{ goods[i].marketPrice }}</span>&nbsp;</p>
+                        <p class='buttons'><a href='{{WST.AU('groupon://goods/modetail','id='+goods[i].grouponId)}}'>{:lang('group_to_group')}</a></p>
+                    </div>
+				</div>
+			</div>
+{{# } }}
+{{# }else{ }}
+<div class="wst-prompt-icon" style="width:1.395rem;"><img src="__MOBILE__/img/no_data.png"></div>
+<div class="wst-prompt-info">
+    <p>{:lang('group_no_data')}</p>
+</div>
+{{# } }}
+</script>
+{/block}
+{block name="include"}
+{/* 遮盖层  */}
+<div class="wst-cover" id="cover"></div>
+{/* 分类层  */}
+<div class="wst-fr-box" id="frame">
+    <div class="title"><i onclick="javascript:dataHide();"></i><span>{:lang('group_goods_cat')}</span><div class="wst-clear"></div></div>
+    <div class="content" style="background: #fff;">
+       <div class="ui-scrollerl">
+            <ul>
+                {volist name="$data['goodscats']" key="k" id="gc"}
+                <div style="position: relative;">
+                	<li id="goodscate" class="wst-goodscate {if($k==1)}wst-goodscate_selected{/if}" onclick="javascript:showRight(this,{$k-1});">{php}echo str_replace('、', '<br/>', $gc['catName']);{/php}</li>
+                </div>
+                {/volist}
+            </ul>
+        </div>
+        {volist name="$data['goodscats']" key="k" id="gc"}
+        <div class="wst-scrollerr goodscate1" {if($k!=1)}style="display:none;"{/if}>
+        {if(isset($gc['childList']))}
+        {volist name="gc['childList']" key="k" id="gc1"}
+            <ul>
+                <li class="wst-goodsca">
+                    <a href="javascript:void(0);" onclick="javascript:goodsCat({$gc1['catId']});"><span>&nbsp;{$gc1.catName}</span></a>
+                    <a href="javascript:void(0);" onclick="javascript:goodsCat({$gc1['catId']});"><i class="ui-icon-arrow"></i></a>
+                </li>
+                <li>
+                    <div class="wst-goodscat">
+                        {volist name="$gc1['childList']" id="gc2"}
+                        <span><a href="javascript:void(0);" onclick="javascript:goodsCat({$gc2['catId']});">{$gc2.catName}</a></span>
+                        {/volist}
+                    </div>
+                </li>
+            </ul>
+        {/volist}
+        {/if}
+        </div>
+        {/volist}
+        <div class="wst-clear"></div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__ROOT__/addons/groupon/view/mobile/index/js/list.js?v={$v}'></script>
+<script type='text/javascript' src='__ROOT__/addons/groupon/view/mobile/index/js/time.js?v={$v}'></script>
+{/block}

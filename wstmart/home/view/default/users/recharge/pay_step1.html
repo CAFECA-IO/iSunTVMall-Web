@@ -1,0 +1,114 @@
+{extend name="default/users/base" /}
+{block name="title"}{:lang('money_management')}-{:lang('recharge')}{__block__}{/block}
+{block name="css"}
+<link href="__STYLE__/css/recharge-{$lang}.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="content"}
+<div class="wst-user-head"><span>{:lang('recharge')}</span></div>
+<div class='wst-user-content'>
+    <div class='pay-sbox'>
+    	<div>
+    		<div>
+				<div class='wst-tips-box' style="margin-right:10px;">
+				<div class='icon'></div>
+					<div class='tips'>
+						{:lang('money_management_tip1')}<br/>
+					</div>
+				<div style="clear:both"></div>
+	           	</div>
+    		</div>
+	   		<div>
+			    <div class="pay-type">{:lang('recharge_amount')}
+			    <div>
+			       <div class="wst-list-box">
+			          {volist name="chargeItems" id="item"}
+			          	<div class="wst-frame2 {$key} " onclick="javascript:changeSelected({$item['id']},'itmeId',this)">
+				          	{if condition="$item['giveMoney'] gt 0"}
+				          	<div class='charge-doub'>{:lang('recharge_money_desc',['<span class="charge-money">'.$item['chargeMoney'].'</span>'])}</div>
+				        	<div>{:lang('recharge_money_desc',[$item['giveMoney']])}</div>
+				        	{else/}
+				        	<div class='charge-alone'>{:lang('recharge_money_desc',['<span class="charge-money">'.$item['chargeMoney'].'</span>'])}</div>
+				          	{/if}
+				          	<i></i>
+			     		</div>
+			          {/volist}
+			          	<div class="wst-frame2 " onclick="javascript:changeSelected(0,'itmeId',this)">
+				        	<div class='charge-alone'>
+				        		<span class="j-charge-other">{:lang('other_money')}</span>
+				        		<span class="j-charge-money"><input class="charge-othermoney j-ipt" id="needPay" value="1" maxlength="10" data-rule="{:lang('recharge_amount')}:required;" onkeypress="return WST.isNumberKey(event)" onkeyup="javascript:WST.isChinese(this,1)" maxlength="8"></span>
+				        	</div>
+				          <i></i>
+			   			</div>
+			          	<input type="hidden" value="" id='itmeId' class='j-ipt' />
+			          <div class='wst-clear'></div>
+			       </div>
+			  		
+			    </div>
+			    </div>
+	    	</div><div></div>
+		    <div>
+			    <div class="pay-type">{:lang('select_pay_type')}</div>
+			    <div class="pay-list">
+			    	<input type="hidden" id="payCode" name="payCode" />
+			    	{volist name="payments" id="payment"}
+	                 	{if condition="$payment['isOnline'] eq 1"}
+	                    	<div class="wst-payCode-{$payment['payCode']}" data="{$payment['payCode']}"></div>
+	                 	{/if}
+	                 {/volist}
+			         <div class="wst-clear"></div>
+			    </div>
+			    <div class="bnt-box">
+			    	<div onclick='javascript:getPayUrl();' class="wst-pay-bnt"></div>
+			    	<div id='paypalBox'  style="width: 200px;margin: 0 auto;display: none;"></div>
+			    </div>
+	    	</div>
+        </div>
+    </div>
+</div>
+<div id="alipayform" style="display:none;"></div>
+{/block}  
+{block name="js"}
+<script type='text/javascript' src='__STYLE__/users/recharge/recharge.js?v={$v}'></script>
+{php}$paypalClientId = WSTGetPaypalClientId();{/php}
+{if $paypalClientId!=""}
+<script src="https://www.paypal.com/sdk/js?client-id={$paypalClientId}&debug=true&currency=HKD"></script>
+<script>
+	paypal.Buttons({
+		createOrder: function() {
+			var needPay = $.trim($("#needPay").val());
+			var itmeId = $.trim($("#itmeId").val());
+		  return fetch(WST.U('home/paypals/getpaypalsurl'), {
+		    method: 'post',
+		    headers: {
+		      'content-type': 'application/json'
+		    },
+		　　body:JSON.stringify({
+		 　　'payObj' : 'recharge',
+		 　　'itmeId' : itmeId,
+		 　　'needPay' : needPay
+		　　})
+		  }).then(function(res) {
+		  	console.log("res______________",res);
+		    return res.json();
+		  }).then(function(data) {
+		  	console.log("data______________",data);
+		    return data.id; // Use the key sent by your server's response, ex. 'id' or 'token'
+		  });
+		},
+		onApprove: function(data, actions) {
+			console.log("onApprove______________",data);
+	        return actions.order.capture().then(function(details) {
+	        	console.log("details——————————————————————————————————————————",details);
+	        	if(details['purchase_units'][0]['payments']['captures'][0]['status']=='COMPLETED'){
+	        		setTimeout(function(){
+	        			location.href = WST.U('home/logmoneys/usermoneys');
+	        		},3000);
+	        	}
+	        });
+	    }
+	}).render('#paypalBox');
+
+</script>
+{/if}
+{/block}
+

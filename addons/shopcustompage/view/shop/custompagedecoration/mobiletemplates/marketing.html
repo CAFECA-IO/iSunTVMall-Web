@@ -1,0 +1,182 @@
+{php}
+    $componentId = "componentIdPlaceholder";
+    $type = "marketingTypePlaceholder";
+    $shopId = "shopIdPlaceholder";
+    $marketingData = shop_custom_page_marketing_data($componentId,$type);
+{/php}
+{volist name="marketingData" id="vo"}
+{php}$style='';{/php}
+{if $vo['verticalPadding']}
+    {php}
+        $style.="padding-top:".intval($vo['verticalPadding'])."px;";
+        $style.="padding-bottom:".intval($vo['verticalPadding'])."px;";
+    {/php}
+{/if}
+<div class="marketing-container" style="{$style}">
+    <div class='marketing-title'>
+        <div class='wst-flex-row wst-ac'>
+            <div class='marketing-title-text'>{$vo['title']}</div>
+            {if $vo['type'] == 'Seckill'}
+            {php}
+                $seckillInfo = custom_page_seckill_info();
+            {/php}
+            <div class="seckill-title ">
+                <div class='seckill-title-text'>{$seckillInfo['secTitle']}{:lang('shopcustompage_session')}</div>
+                <div class="seckill_items_timer">
+                    <label class="lab_timer">
+                        <span>00</span><em>:</em>
+                        <span>00</span><em>:</em>
+                        <span>00</span>
+                    </label>
+                </div>
+            </div>
+            {/if}
+        </div>
+        {if $vo['type'] == 'Seckill'}
+        <div class="seckill-more " onclick="javascript:location.href=WST.AU('seckill://goods/molists','shopId={$shopId}')">{:lang('shopcustompage_more')}</div>
+        {/if}
+    </div>
+    {if $vo['type'] == 'Seckill'}
+    {php}
+        $seckill = [];
+        if(WSTConf('WST_ADDONS.seckill')!='' && count(custom_page_seckill_list($shopId))>0){
+                $seckill = custom_page_seckill_list($shopId);
+        }
+    {/php}
+    <div class="seckill-container">
+        <input type="hidden" value="{$seckillInfo['secStartTime']}" class="stime">
+        <input type="hidden" value="{$seckillInfo['secEndTime']}" class="etime">
+        {if count($seckill)>0}
+        {volist name="seckill" id="voo" key="k"}
+        <div class="wst-in-goods {if $k%2==0}right{else}left{/if}" onclick="javascript:location.href=WST.AU('seckill://goods/modetail','id={$voo['id']}')">
+            <div class="img j-imgAdapt"><a href="javascript:void(0);" ><img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{$voo['goodsImg']}" /></a></div>
+            <div class="name ui-nowrap-multi">{$voo['goodsName']}</div>
+            <div class="info2"><span class="sec-price">{:lang('currency_symbol')} <span>{$voo['secPrice']}</span></span><span class="deal sec-shop-price">{:lang('currency_symbol')}{$voo['shopPrice']}</span></div>
+        </div>
+        {/volist}
+        <div class="wst-clear"></div>
+        {else}
+        <div class="marketing-remind-box">
+            {:lang('shopcustompage_no_more_goods')}
+        </div>
+        {/if}
+    </div>
+    {elseif $vo['type'] == 'Auction'}
+    {php}
+        $auction = [];
+        if(WSTConf('WST_ADDONS.auction')!='' && count(custom_page_auction_list($shopId))>0){
+            $auction = custom_page_auction_list($shopId);
+        }
+    {/php}
+    <div class="auction-container">
+        {if count($auction)>0}
+        {volist name="auction" id="voo" key="k"}
+        <div class="wst-in-goods {if $k%2==0}right{else}left{/if}" onclick="javascript:location.href=WST.AU('auction://goods/modetail','id={$voo['auctionId']}')">
+            <div class="img j-imgAdapt"><a href="javascript:void(0);" ><img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{$voo['goodsImg']}" /></a></div>
+            <div class="name ui-nowrap-multi" >{$voo['goodsName']}</div>
+            <div class="info"><div class="auction-num">{$voo['auctionNum']}{:lang('shopcustompage_auction_num2')}</div></div>
+            <div class="info2">{:lang('shopcustompage_current_price')}：<span class="auction-price">{:lang('currency_symbol')} <span>{$voo['currPrice']}</span></span></div>
+        </div>
+        {/volist}
+        <div class="wst-clear"></div>
+        {else}
+        <div class="marketing-remind-box">
+            {:lang('shopcustompage_no_more_goods')}
+        </div>
+        {/if}
+    </div>
+    {/if}
+</div>
+<script>
+    if(seckillStatus==false){
+        $('.seckill-title').remove();
+        $('.seckill-more').remove();
+        $('.seckill-container').remove();
+    }
+    if(auctionStatus==false){
+        $('.auction-container').remove();
+    }
+</script>
+{if $vo['type'] == 'Seckill'}
+<script>
+    $(document).ready(function() {
+        //头部倒计时
+        var stime = $('.stime').val();
+        var etime = $('.etime').val();
+        var timer = null;
+        if(stime!=undefined && etime!=undefined){
+            $.post(WST.AU('seckill://goods/getNowTime'),{},function(data,textStatus){
+                var nowTime = new Date(Date.parse(data.nowTime.replace(/-/g, "/")));
+                var startTime = new Date(Date.parse(stime.replace(/-/g, "/")));
+                var endTime = new Date(Date.parse(etime.replace(/-/g, "/")));
+                timer = countDown(nowTime,endTime);
+            });
+        }
+    });
+    function customCountDown(opts){
+        var itvTime = (opts.countDownType==1)?100:1000;
+        var f = {
+            zero: function(n){
+                var n = parseInt(n, 10);
+                if(n > 0){
+                    if(n <= 9){
+                        n = "0" + n;
+                    }
+                    return String(n);
+                }else{
+                    return "0";
+                }
+            },
+            count: function(){
+                if(opts.nowTime){
+                    var d = new Date();
+                    d.setTime(opts.nowTime.getTime()+itvTime);
+                    opts.nowTime = d;
+                    d = null;
+                }else{
+                    opts.nowTime = new Date();
+                }
+                //现在将来秒差值
+                var dur = 0;
+                var pms = {
+                    msec: "0",
+                    sec: "0",
+                    mini: "0",
+                    hour: "0",
+                    day: "0"
+                };
+                var dur = Math.round((opts.endTime.getTime() - opts.nowTime.getTime()));
+                if(dur >= 0){
+                    pms.msec = Math.floor(dur / 100 % 10);
+                    pms.sec = Math.floor((dur /1000 % 60)) > 0? f.zero(dur / 1000 % 60) : "00";
+                    pms.mini = Math.floor((dur / 60000)) > 0? f.zero(Math.floor((dur / 60000)) % 60) : "00";
+                    pms.hour = Math.floor((dur / 3600000)) > 0? f.zero(Math.floor((dur / 3600000)) % 24) : "00";
+                    pms.day = Math.floor((dur / 86400000)) > 0? f.zero(Math.floor(dur / 86400000)) : "00";
+                }
+                pms.last = dur;
+                pms.nowTime = opts.nowTime;
+                opts.callback(pms);
+                if(pms.last<=0)clearInterval(itv);
+            }
+        };
+        var itv = setInterval(f.count, itvTime);
+        return itv;
+    };
+    function countDown(nowTime,endTime){
+        var opts = {
+            nowTime:nowTime,
+            endTime: endTime,
+            callback: function(data){
+                if(data.last>0){
+                    // html.push(data.hour+"小时"+data.mini+"分"+data.sec+"秒");
+                    $(".lab_timer").html('<span>'+data.hour+'</span><em>:</em><span>'+data.mini+'</span><em>:</em><span>'+data.sec+'</span>');
+                }else{
+                    $(".seckill_items_timer").html('<label class="lab_timer"></label>');
+                }
+            }
+        };
+        return customCountDown(opts);
+    }
+</script>
+{/if}
+{/volist}

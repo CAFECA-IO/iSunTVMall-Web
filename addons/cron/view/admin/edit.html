@@ -1,0 +1,110 @@
+{extend name="../../../wstmart/admin/view/base" /}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script src="__ROOT__/addons/cron/view/admin/crons.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<form id="editForm">
+<table class='wst-form wst-box-top'>
+  <tr>
+      <th width='150'>{:lang('cron_task_name')}：</th>
+      <td style='line-height:30px;'>
+           <input id='cronName' class="ipt"  style='width:70%;' maxLength="25" type='text' value='{$data['cronName']}' data-rule="{:lang('cron_task_name')}: required;">
+      </td>
+  </tr>
+  <tr>
+      <th>{:lang('cron_task_desc')}：</th>
+      <td style='line-height:30px;'>
+        <input id='cronDesc' class="ipt"  style='width:70%;' maxLength="25" type='text' value='{$data['cronDesc']}' data-rule="{:lang('cron_task_desc')}: required;">
+      </td>
+  </tr>
+  <tr>
+      <th>{:lang('cron_task_url')}：</th>
+      <td style='line-height:30px;'>
+        <input id='cronUrl' class="ipt"  style='width:70%;' maxLength="200" type='text' value='{$data['cronUrl']}' data-rule="{:lang('cron_task_url')}: required;">
+      </td>
+  </tr>
+ {if $data['cronJson']!=''}
+ {volist name="$data['cronJson']" id='vj'}
+  <tr>
+      <th>{$vj['fieldLabel']}：</th>
+      <td>
+        <input type="text" id="{$vj['fieldCode']}" class="ipt" style='width:70%;' maxLength="255" value='{$vj['fieldVal']}' />
+      </td>
+  </tr>
+  {/volist}
+  {/if}
+  <tr>
+      <th>计划时间<font color='red'></font>：</th>
+      <td class='layui-form'>
+            <label>
+               <input type='radio' name='cronCycle' value='0' id='cronCycle0' class='ipt' onclick='javascript:checkType(0)' {if $data['cronCycle']==0}checked{/if} title="{:lang('cron_every_month')}"/>
+            </label>
+            <label>
+               <input type='radio' name='cronCycle' value='1' id='cronCycle1' class='ipt' onclick='javascript:checkType(1)'  {if $data['cronCycle']==1}checked{/if} title="{:lang('cron_every_week')}"/>
+            </label>
+            <label>
+               <input type='radio' name='cronCycle' value='2' id='cronCycle2' class='ipt' onclick='javascript:checkType(2)'  {if $data['cronCycle']==2}checked{/if} title="{:lang('cron_every_day')}"/>
+               
+            </label>
+    </td>
+  </tr>
+  <tr class='cycle0 cycle' {if $data['cronCycle']!=0}style='display:none'{/if}>
+    <th>日期<font color='red'></font>：</th>
+    <td>
+            <select id='cronDay' class='ipt'>
+               {for start="1" end="32"}
+               <option value='{$i}' {if $data['cronDay']==$i}selected{/if}>{:lang('cron_many_day',[$i])}</option>
+               }
+               {/for}
+            </select>
+    </td>
+  </tr>
+  <tr class='cycle1 cycle' {if $data['cronCycle']!=1}style='display:none'{/if}>
+    <th>星期<font color='red'></font>：</th>
+    <td>
+            <select id='cronWeek' class='ipt'>
+                 <option value='1' {if $data['cronWeek']==1}selected{/if}>{:lang('cron_week_1')}</option>
+                 <option value='2' {if $data['cronWeek']==2}selected{/if}>{:lang('cron_week_2')}</option>
+                 <option value='3' {if $data['cronWeek']==3}selected{/if}>{:lang('cron_week_3')}</option>
+                 <option value='4' {if $data['cronWeek']==4}selected{/if}>{:lang('cron_week_4')}</option>
+                 <option value='5' {if $data['cronWeek']==5}selected{/if}>{:lang('cron_week_5')}</option>
+                 <option value='6' {if $data['cronWeek']==6}selected{/if}>{:lang('cron_week_6')}</option>
+                 <option value='0' {if $data['cronWeek']==0}selected{/if}>{:lang('cron_week_7')}</option>
+            </select>
+    </td>
+  </tr>
+  <tr>
+    <th>小时<font color='red'></font>：</th>
+    <td>
+            <select id='cronHour' class='ipt'>
+               <option value='-1' {if $data['cronHour']==-1}selected{/if}>每小时</option>
+               {for start="0" end="24"}
+               <option value='{$i}' {if $data['cronHour']==$i}selected{/if}>{$i}时</option>
+               }
+               {/for}
+            </select>
+    </td>
+  </tr>
+  <tr>
+    <th>{:lang('cron_minute')}<font color='red'></font>：</th>
+    <td>
+            <input type="text" id="cronMinute" class="ipt" style='width:70%' maxLength="255" value='{$data['cronMinute']}' />{:lang('cron_time_tips')}
+    </td>
+  </tr>
+  <tr>
+    <th>{:lang('cron_task_status')}<font color='red'></font>：</th>
+    <td class='layui-form'>
+        <input type="checkbox" style='width:80px;' {if $data['isEnable']=='1'}checked{/if} class="ipt" name="isEnable" id='isEnable' lay-skin="switch" title="{:lang('cron_open_close')}" value='1' lay-text="{:lang('cron_enable')}|{:lang('cron_disable')}">
+    </td>
+  </tr>
+  <tr>
+      <td colspan='2' align='center'>
+      	    <button type="button" onclick='javascript:edit({$data['id']+0},{$p})' style='margin-right:15px;' class='btn btn-primary btn-mright'><i class="fa fa-check"></i>{:lang('cron_submit')}</button>
+            <button type="button" onclick="javascript:location.href=WST.AU('cron://cron/index','p={$p}')" class='btn'><i class="fa fa-angle-double-left"></i>{:lang('cron_back')}</button>
+      </td>
+  </tr>
+</table>
+</form>
+{/block}
+

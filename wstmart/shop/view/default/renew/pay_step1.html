@@ -1,0 +1,122 @@
+{extend name="default/base" /}
+{block name="css"}
+<link href="__SHOP__/css/recharge-{$lang}.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<div class='wst-shop-content'>
+    <div class='pay-sbox'>
+    	<div>
+    		<div>
+				<div class='wst-tips-box'>
+				<div class='icon'></div>
+					<div class='tips'>
+						{:lang('renew_tips1')}；<br/>
+					</div>
+				<div style="clear:both"></div>
+	           	</div>
+    		</div>
+	   		<div class="wst-form">
+				<div>
+					{php}$isExpire = ((strtotime($data['expireDate'])-strtotime(date('Y-m-d')))<2592000)?true:false;{/php}
+					<div class="pay-type" style="overflow: hidden; float: left;">{:lang('due_date')}：</div>
+					<div style='width:500px;float:left;line-height:40px;'>
+						<span style="float:none;{if $isExpire}color:red;{/if}">{$data['expireDate']}</span>
+					</div>
+					<div class='f-clear'></div>
+				</div>
+				<div>
+					<div class="pay-type" style="overflow: hidden; float: left;">{:lang('industry')}：</div>
+					{volist name=":WSTTrades(0)" id="vo"}
+					{if($vo['tradeId']==$catShopInfo['tradeId'])}
+					<div style='width:500px;float:left;line-height:40px;'>
+						{$vo['tradeName']}
+					</div>
+					{/if}
+					{/volist}
+					<div class='f-clear'></div>
+				</div>
+			    <div class="pay-type" style="overflow: hidden; float: left;">{:lang('annual_fee_amount')}：</div>
+			    <div style='width:500px;float:left;line-height:40px;'>
+					{$needPay}{:lang('element')}<input type='hidden' class="charge-othermoney j-ipt" id="needPay" value="{$needPay}" maxlength="10" readonly></span>
+				</div>
+				<div class="wst-clear"></div>
+			    </div>
+			    <div style="overflow: hidden;border-top: 1px dashed #eee;border-bottom: 1px dashed #eee;width: 100%">
+				{if (int)$needPay>0}
+			    <div class="pay-type">{:lang('choose_payment_method')}：</div>
+			    <div class="pay-list" style="overflow: hidden;">
+			    	<input type="hidden" id="payCode" name="payCode" />
+			    	{volist name="payments" id="payment"}
+	                 	{if condition="$payment['isOnline'] eq 1"}
+	                    	<div class="wst-payCode-{$payment['payCode']}" data="{$payment['payCode']}"></div>
+	                 	{/if}
+	                 {/volist}
+			         <div class="wst-clear"></div>
+			    </div>
+				{/if}
+			    
+	    	    </div>
+
+	    	    <div class="bnt-box" style="width: 200px;">
+					{if (int)$needPay>0}
+			    	<button type='button' class='btn btn-success wst-pay-bnt' onclick='javascript:getPayUrl();'><i class='fa fa-shield'></i>{:lang('confirm_submission_of_payment')}</button>
+					<div id='paypalBox'  style="width: 200px;margin: 0 auto;display: none;"></div>
+					{else}
+					<button type='button' class='btn btn-success wst-pay-bnt' onclick='javascript:renew();'><i class='fa fa-shield'></i>{:lang('renew')}</button>
+					{/if}
+			    </div>
+
+
+			</div>
+	    	
+		    
+        </div>
+    </div>
+</div>
+<div id="alipayform" style="display:none;"></div>
+{/block}  
+{block name="js"}
+<script type='text/javascript' src='__SHOP__/renew/renew.js?v={$v}'></script>
+{php}$paypalClientId = WSTGetPaypalClientId();{/php}
+{if $paypalClientId!=""}
+<script src="https://www.paypal.com/sdk/js?client-id={$paypalClientId}&debug=true&currency=HKD"></script>
+<script>
+	paypal.Buttons({
+		createOrder: function() {
+			var needPay = $.trim($("#needPay").val());
+			var itmeId = $.trim($("#itmeId").val());
+		  return fetch(WST.U('shop/paypals/getpaypalsurl'), {
+		    method: 'post',
+		    headers: {
+		      'content-type': 'application/json'
+		    },
+		　　body:JSON.stringify({
+		 　　'payObj' : 'enter',
+		 　　'itmeId' : itmeId,
+		 　　'needPay' : needPay
+		　　})
+		  }).then(function(res) {
+		  	console.log("res______________",res);
+		    return res.json();
+		  }).then(function(data) {
+		  	console.log("data______________",data);
+		    return data.id; // Use the key sent by your server's response, ex. 'id' or 'token'
+		  });
+		},
+		onApprove: function(data, actions) {
+			console.log("onApprove______________",data);
+	        return actions.order.capture().then(function(details) {
+	        	console.log("details——————————————————————————————————————————",details);
+	        	if(details['purchase_units'][0]['payments']['captures'][0]['status']=='COMPLETED'){
+	        		setTimeout(function(){
+	        			location.href = WST.U('shop/logmoneys/torenew');
+	        		},3000);
+	        	}
+	        });
+	    }
+	}).render('#paypalBox');
+
+</script>
+{/if}
+{/block}
+

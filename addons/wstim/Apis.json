@@ -1,0 +1,262 @@
+{
+  "imServer":{
+    "desc":"【通用】im客服系统服务器地址及端口号",
+    "link":"ws://192.168.3.193:8585"
+  },
+  "listenerData":{
+    "desc":"【通用】监听所需数据",
+    "link":"addon/wstim-chats-listenerData"
+  },
+  "delDialog":{
+    "desc":"【通用】删除对话",
+    "link":"addon/wstim-chats-deldialog"
+  },
+  "pcUploadServer":{
+  	"desc":"【通用】PC端图片上传接口",
+  	"link":"home/index/uploadPic"
+  },
+  "moUploadServer":{
+  	"desc":"【通用】手机端图片上传接口",
+  	"link":"mobile/index/uploadPic"
+  },
+  "wxUploadServer":{
+  	"desc":"【通用】微信端图片上传接口",
+  	"link":"wechat/index/uploadPic"
+  },
+  "userEvalate":{
+  	"desc":"【通用】用户评价客服",
+  	"link":"addon/wstim-serviceevaluates-commitEval"
+  },
+  "notificationUrl":{
+  	"desc":"【通用】离线推送",
+  	"link":"addon/wstim-chats-pushNotification"
+  },
+
+  "getChatGoods":{
+    "desc":"【通用】根据商品id获取商品信息",
+    "link":"addon/wstim-chats-getChatGoods"
+  },
+  "getOrderInfo":{
+    "desc":"【通用】根据订单id获取订单信息",
+    "link":"addon/wstim-chats-getOrderInfo"
+  },
+
+
+
+  "pcMessage":{
+  	"desc":"【通用】PC端商城消息页",
+  	"link":"home/messages/index"
+  },
+  "moMessage":{
+  	"desc":"【通用】手机端商城消息页",
+  	"link":"mobile/messages/index"
+  },
+  "wxMessage":{
+  	"desc":"【通用】微信端商城消息页",
+  	"link":"wechat/messages/index"
+  },
+
+
+  "pcShopHome":{
+  	"desc":"【通用】PC端店铺主页",
+  	"link":"shop-"
+  },
+  "moShopHome":{
+  	"desc":"【通用】手机端店铺主页",
+  	"link":"mshop-"
+  },
+  "wxShopHome":{
+  	"desc":"【通用】微信端店铺主页",
+  	"link":"wechat/shops/index"
+  },
+
+
+  "pcGoodsDetail":{
+  	"desc":"【通用】PC端商品详情",
+  	"link":"goods-"
+  },
+  "moGoodsDetail":{
+  	"desc":"【通用】手机端商品详情",
+  	"link":"mgoods-"
+  },
+  "wxGoodsDetail":{
+  	"desc":"【通用】微信商品详情",
+  	"link":"wechat/goods/detail"
+  },
+
+
+  "pcOrderDetail":{
+  	"desc":"【通用】订单详情",
+  	"link":"home/orders/detail"
+  },
+  "moOrderDetail":{
+  	"desc":"【通用】手机端订单详情",
+  	"link":"mobile/orders/getDetail"
+  },
+  "wxOrderDetail":{
+  	"desc":"【通用】微信端订单详情",
+  	"link":"wechat/orders/getDetail"
+  },
+
+
+
+  "userBaseData":{
+  	"desc":"【用户】获取基础数据用户、店铺、连接信息",
+  	"link":"addon/wstim-chats-getBaseData"
+  },
+  "pcUserIndex":{
+    "desc":"【用户】pc端聊天页url",
+    "link":"addon/wstim-chats-index"
+  },
+
+  "userChatList":{
+  	"desc":"【用户】获取最近对话列表",
+  	"link":"addon/wstim-chats-getChatList"
+  },
+  "userSetRead":{
+  	"desc":"【用户】身份设置已读",
+  	"link":"addon/wstim-chats-setRead"
+  },
+  "userChatQuery":{
+  	"desc":"【用户】身份获取聊天记录",
+  	"link":"addon/wstim-chats-pagequery"
+  },
+  "userSendMsg":{
+  	"desc":"【用户】身份留言接口",
+  	"link":"addon/wstim-chats-sendMsg"
+  },
+  "userOrderListQuery":{
+  	"desc":"【用户】获取订单列表",
+  	"link":"addon/wstim-chats-getOrderList"
+  },
+  "userHistoryQuery":{
+    "desc":"【用户】获取浏览历史",
+    "link":"addon/wstim-chats-getHistory"
+  },
+  "moUserIndex":{
+  	"desc":"【用户】手机端聊天页url,在手机聊天列表页进行跳转",
+  	"link":"addon/wstim-chats-moIndex"
+  },
+  "moUserChatList":{
+    "desc":"【用户】手机端最近对话页url",
+    "link":"addon/wstim-chats-moChatlist"
+  },
+
+
+  "shopBaseData":{
+  	"desc":"【客服】获取基础数据用户、店铺、连接信息",
+  	"link":"addon/wstim-shopchats-getBaseData"
+  },
+  "shopChatList":{
+  	"desc":"【客服】获取最近对话列表",
+  	"link":"addon/wstim-shopchats-getChatList"
+  },
+  "pcShopIndex":{
+    "desc":"【客服】pc端聊天页url",
+    "link":"addon/wstim-shopchats-index"
+  },
+  "shopGetUserInfo":{
+  	"desc":"【客服】获取用户信息",
+  	"link":"addon/wstim-shopchats-getUserInfo"
+  },
+  "shopSetRead":{
+    "desc":"【客服】身份设置已读",
+    "link":"addon/wstim-shopchats-setRead"
+  },
+  "shopSendMsg":{
+  	"desc":"【客服】身份留言接口",
+  	"link":"addon/wstim-shopchats-sendMsg"
+  },
+  "shopChatQuery":{
+  	"desc":"【客服】身份获取聊天记录",
+  	"link":"addon/wstim-shopchats-pagequery"
+  },
+  "moShopChatList":{
+    "desc":"【客服】手机端最近对话页url",
+    "link":"addon/wstim-shopchats-moChatlist"
+  },
+
+  "shopAutoReplyIndex":{
+    "desc":"【商家】关键字回复页",
+    "link":"addon/wstim-autoreplys-index"
+  },
+  "shopAutoReplyQuery":{
+    "desc":"【商家】关键字回复页",
+    "link":"addon/wstim-autoreplys-pageQuery"
+  },
+  "shopAutoReplyToEdit":{
+    "desc":"【商家】关键字回复编辑页",
+    "link":"addon/wstim-autoreplys-toedit"
+  },
+  "shopAutoReplyGet":{
+    "desc":"【商家】关键字回复提交接口",
+    "link":"addon/wstim-autoreplys-getById"
+  },
+  "shopAutoReplyEdit":{
+    "desc":"【商家】关键字回复提交接口",
+    "link":"addon/wstim-autoreplys-edit"
+  },
+  "shopAutoReplyDel":{
+    "desc":"【商家】关键字回复删除接口",
+    "link":"addon/wstim-autoreplys-del"
+  },
+
+
+
+
+
+  "shopDialogPage":{
+    "desc":"【店铺】历史会话弹出页",
+    "link":"addon/wstim-dialogcontents-shopIndex"
+  },
+  "shopGetDialogs":{
+  	"desc":"【店铺】历史会话列表查询",
+  	"link":"addon/wstim-shops-getDialogs"
+  },
+  "shopServiceQuery":{
+  	"desc":"【店铺】店铺下的客服查询",
+  	"link":"addon/wstim-shopservices-pageQuery"
+  },
+  "shopServiceSet":{
+  	"desc":"【店铺】店铺客服设置",
+  	"link":"addon/wstim-shopservices-setService"
+  },
+  "dialogContentsQuery":{
+    "desc":"【店铺】对话内容查询",
+    "link":"addon/wstim-dialogcontents-pagequery"
+  },
+  "shopEvalQuery":{
+    "desc":"【店铺】客服评分查询",
+    "link":"addon/wstim-serviceevaluates-pagequery"
+  },
+  "shopStatisticsQuery":{
+    "desc":"【店铺】用户访问统计",
+    "link":"addon/wstim-imchatstatistics-pagequery"
+  },
+
+  "adminDialogContentQuery":{
+    "desc":"【管理员】对话内容查询",
+    "link":"addon/wstim-dialogcontents-pageQueryByAdmin"
+  },
+  "adminDialogQuery":{
+    "desc":"【管理员】历史会话列表查询",
+    "link":"addon/wstim-dialogs-pagequery"
+  },
+  "adminDialogPage":{
+  	"desc":"【管理员】历史会话弹出页",
+    "link":"addon/wstim-dialogcontents-adminIndex"
+  },
+  "adminDiskeySet":{
+    "desc":"【商家】禁用关键字提交接口",
+    "link":"addon/wstim-disableKeywords-commit"
+  },
+  "adminDiskeyQuery":{
+    "desc":"【商家】禁用关键字页查询接口",
+    "link":"addon/wstim-disableKeywords-getKeywords"
+  }
+
+
+
+
+}
+

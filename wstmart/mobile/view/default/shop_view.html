@@ -1,0 +1,126 @@
+{extend name="default/base" /}
+{block name="title"}{$data['shop']['shopName']} - {__block__}{/block}
+{block name="meta"}
+<meta name="description" content="{$data['shop']['shopDesc']}">
+<meta name="keywords" content="{$data['shop']['shopKeywords']}">
+{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/shops.css?v={$v}">
+{/block}
+{block name="header"}
+	{php}$Title = "{:lang('shop_information')}"{/php}
+	{include file="default/header" /}
+{/block}
+
+{block name="main"}
+<input type="hidden" name="" value="{$data.shop.shopId}" id="shopId" autocomplete="off">
+
+     <section class="ui-container">
+     	<div style="border-bottom:0;">
+     		 <div class="wst-shop-home-bg"
+     		 {if $data['shop']['shopMoveBanner']!=''}
+	   		 	style="background:url(__RESOURCE_PATH__/{:WSTImg($data['shop']['shopMoveBanner'],2)}) no-repeat center top;background-size:cover;"
+	   		 {else}
+	   		 	{if(WSTConf('CONF.shopAdtop'))}
+	   		 		style="background:url(__RESOURCE_PATH__/{:WSTImg(WSTConf('CONF.shopAdtop'),2)}) no-repeat center top;background-size:cover;"
+	   		 	{/if}
+	   		 {/if}>
+     		 	<div class="wst-shop-photo">
+     		 		<img src="__RESOURCE_PATH__/{:WSTImg($data.shop.shopImg,3)}">
+     		 	</div>
+     		 	<div class="wst-shop-name">{$data.shop.shopName}</div>
+
+     		 	<div class="shop-home-btn-box">
+     		 		<div class="wst-flex-row wst-center">
+				    <a href="tel:{$data.shop.shopTel}"  class="J_service shop-home-btn" style="margin-right:0.41rem;text-align: center;">
+				        {:lang('contact_seller')}
+				    </a>
+                    {:hook('mobileDocumentContact',['type'=>'shopIndex','shopId'=>$data['shop']['shopId']])}
+				    <button class="shop-home-btn f-btn" id="fBtn" onclick="{if ($data['shop']['isfollow']>0)}WST.cancelFavorite({$data['shop']['isfollow']},1){else /}WST.favorites({$data.shop.shopId},1){/if}" style="border:0;">
+                         {if ($data['shop']['isfollow']>0)}
+                            <span id="fStatus">{:lang('has_favorited')}</span>
+                        {else /}
+                            <span id="fStatus">{:lang('favorite_shop')}</span>
+                        {/if}
+				    </button>
+					</div>
+     		 	</div>
+
+     		 	<div class="score-box">
+     		 		<div class="ui-row-flex ui-whitespace score-item">
+					    <div class="ui-col ui-col score-text">{:lang('goods_score')}：{$data.shop.scores.goodsScore}</div>
+					    <div class="ui-col ui-col score-text">{:lang('timeliness_score')}：{$data.shop.scores.timeScore}</div>
+					    <div class="ui-col ui-col score-text">{:lang('service_score')}：{$data.shop.scores.serviceScore}</div>
+					</div>
+     		 	</div>
+
+     		 </div>
+
+     		 <div class="wst-shop-home-info">
+     		 	<ul class="shop-info">
+     		 		<li class="item-address">
+                        <div class="title">{:lang('business_address')}：</div>
+                        <div class="accbox">{$data.shop.shopAddress}</div>
+                    </li>
+     		 		<li class="ui-nowrap ui-whitespace">{:lang('business_phone')}：<span>{$data.shop.shopTel}</span></li>
+     		 		<li class="ui-nowrap ui-whitespace">{:lang('service_time')}：<span>{$data.shop.serviceStartTime}-{$data.shop.serviceEndTime}</span></li>
+     		 		<li class="ui-nowrap ui-whitespace">{:lang('invoice_description')}：
+                        <span>
+                        {if ($data.shop.isInvoice==1)}
+                        {:lang('invoice_can_open')}({$data.shop.invoiceRemarks})
+                        {else /}
+                        {:lang('invoice_can_not_open')}
+                        {/if}
+                        </span>
+                    </li>
+                    {if count($data['shop']['accreds'])>0}
+                    {php}$accreds = $data['shop']['accreds'];{/php}
+                    <li class="item-acc">
+                        <div class="title">{:lang('authentication_information')}：</div>
+                        <div class="accbox">
+                        {foreach $accreds as $ac}
+                        <lable><img class="accimg" src="__RESOURCE_PATH__/{$ac['accredImg']}">{$ac['accredName']}</lable>
+                        {/foreach}
+                        </div>
+                    </li>
+                    {/if}
+                    {if isset($data['shop']['businessLicenceImg']) && $data['shop']['businessLicenceImg']!=''}
+                      <li class="ui-nowrap ui-whitespace">{:lang('business_license')}：<span><a href='{$data['shop']['businessLicenceImg']}' target='_blank' style='color:blue'>{:lang('click_to_view')}</a></span>
+                      </li>
+                    {/if}
+     		 	</ul>
+     		 	<div class="shop-qrcode">
+				    <div id='qrcode'></div>
+				</div>
+     		 </div>
+
+     		 </div>
+
+
+
+     		 
+     	</div>
+     </section>
+{/block}
+
+
+{block name="footer"}{/block}
+{block name="js"}
+<script src="__MOBILE__/js/qrcode.js"></script>
+        <script>
+        $(function(){
+    		var url= "{:url('mobile/shops/index',array('shopId'=>$data['shop']['shopId']),'',true)}";
+    		//参数1表示图像大小，取值范围1-10；参数2表示质量，取值范围'L','M','Q','H'
+    		var qr = qrcode(9, 'H');
+    			qr.addData(url);
+    			qr.make();
+    		$("#qrcode").html(qr.createImgTag(3,3));
+    		$('.wst-in-search').on('submit', '.input-form', function(event){
+    		    event.preventDefault();
+    		})
+        });
+        goShopHome = function(sid){
+            location.href=WST.U('mobile/shops/index','shopId='+sid,true);
+        }
+        </script>
+{/block}

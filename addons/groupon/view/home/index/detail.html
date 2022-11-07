@@ -1,0 +1,392 @@
+{extend name="$LAYOUT_HOME_BASE" /}
+{block name="title"}{$goods['goodsName']} - {:lang('group_goods')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="meta"}
+<meta name="description" content="{$goods['goodsSeoDesc']}">
+<meta name="keywords" content="{$goods['goodsSeoKeywords']},{$seoGrouponKeywords}">
+<meta property="og:url"           content="{$shareInfo['link']}" />
+<meta property="og:type"          content="website" />
+<meta property="og:title"         content="{$shareInfo['title']}" />
+<meta property="og:description"   content="{$goods['goodsSeoKeywords']}" />
+<meta property="og:image"         content="{$shareInfo['imgUrl']}" />
+<meta property="og:site_name" content="{:WSTConf('CONF.mallName')}">
+{/block}
+{block name="css"}
+<link href="__ROOT__/addons/groupon/view/home/index/css/goods.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="top"}
+	{include file="$LAYOUT_HOME_TOP" /}
+{/block}
+{block name="header"}
+	{include file="$LAYOUT_HOME_HEADER" /}
+{/block}
+{block name="main"}
+<div class='wst-w' style='border-bottom:1px solid #eeeeee;'>
+<div class='wst-filters'>
+   <div class='item' style="border:1px solid transparent;border-left:2px solid #df2003;padding-left: 8px">
+      <a class='link' href="{:url('home/index/index')}">{:lang('group_home_page')}</a>
+      <i class="arrow"></i>
+   </div>
+   <div class='item'>
+      <a class='link' href="{:url('/addon/groupon-goods-lists')}" style='line-height: 25px;'>{:lang('group_activity')}</a>
+      <i class="arrow"></i>
+   </div>
+   {volist name=":WSTPathGoodsCat($goods['goodsCatId'])" id='vo' length='1'}
+   <div class='wst-lfloat'>
+   	<div class='item dorpdown'>
+     <div class='drop-down'>
+        <a class='link' href='{:Url("/addon/groupon-goods-lists",["catId"=>$vo["catId"]])}'>{$vo['catName']}</a>
+     </div>
+     <div class="dorp-down-layer">
+         {volist name=":WSTGoodsCats($vo['parentId'])" id='vo2'}
+         <div class="{$vo['parentId']>0?'cat2':'cat1'}"><a href='{:Url("/addon/groupon-goods-lists","catId=".$vo2["catId"])}'>{$vo2['catName']}</a></div>
+         {/volist}
+	</div>
+	</div>
+   </div>
+   {/volist}
+   <div class='wst-clear'></div>
+</div>
+</div>
+<div class='wst-w'>
+   <div class='wst-container'>
+      <div class='goods-img-box'>
+          {if $goods['goodsVideo']!=""}
+            <div class="wst-video-box">
+              <video muted src="__RESOURCE_PATH__/{$goods["goodsVideo"]}" id='previewVideo' controls="controls" autoplay="autoplay" width='350' height='350'></video>
+            </div>
+          {/if}
+          <div class="goods-img spec-preview" id="preview">
+          	<img title="{$goods['goodsName']|WSTStripTags}" alt="{$goods['goodsName']|WSTStripTags}" src="__RESOURCE_PATH__/{:WSTImg($goods['goodsImg'])}" class="cloudzoom" data-cloudzoom="zoomImage:'__RESOURCE_PATH__/{$goods['goodsImg']}'" height="350" width="350">
+          </div>
+          <div class="goods-pics">
+            <a class="prev">&lt;</a>
+            <a class="next">&gt;</a>
+            <div class="items">
+               <ul>
+                {if $goods['goodsVideo']!=""}
+                 <li class="gallery-li hover">
+                  <div class="wst-video-btn"><i class="fa fa-play-circle"></i></div>
+                   <img class="gvideo gallery-img" src="__RESOURCE_PATH__/{$goods['goodsImg']}"  width="60" height="60">
+                 </li>
+                {/if}
+               {volist name="$goods['gallery']" id='vo'}
+                   <li class="gallery-li {$goods['goodsVideo']=='' && $key==1 ? 'hover': ''}"><img title="{$goods['goodsName']|WSTStripTags}" alt="{$goods['goodsName']|WSTStripTags}" class='cloudzoom-gallery gallery-img' src="__RESOURCE_PATH__/{:WSTImg($vo)}" data-cloudzoom="useZoom: '.cloudzoom', image:'__RESOURCE_PATH__/{:WSTImg($vo)}', zoomImage:'__RESOURCE_PATH__/{$vo}' " width="60" height="60"></li>
+               {/volist}
+			   </ul>
+			</div>
+         </div>
+      </div>
+      <div class='intro'>
+          <h2>{$goods['goodsName']}</h2>
+          <div class='summary'>
+          	<div class="infol">
+             <div class='item'>
+               <div class='dt'>{:lang('group_market_price')}：</div>
+               <div class='dd market-price' id='j-market-price'><em>{:lang('currency_symbol')}</em>{$goods['marketPrice']}</div>
+             </div>
+             <div class='item'>
+               <div class='dt'><img src='__ROOT__/addons/groupon/view/home/index/img/icon_wstmart_tg.png' style='margin-right:15px;width:35px;'/></div>
+               <div class='dd price' id='j-shop-price'>{:lang('currency_symbol')}{$goods['grouponPrice']}</div>
+               <div class='wst-clear'></div>
+             </div>
+             <div class='item'>
+                <div class='dt'>{:lang('group_goods_score')}：</div>
+                <div class='dd'>
+                  {for start="0" end="$goods['scores']['totalScores']"}
+                  <img src="__STATIC__/plugins/raty/img/star-on.png">
+                  {/for}
+                  {for start="1" end="6-$goods['scores']['totalScores']"}
+                  <img src="__STATIC__/plugins/raty/img/star-off.png">
+                  {/for}
+                  <div class='appraise'>{:lang('group_total_appraises')}：<span class='appraise-num'>{$goods['appraiseNum']}</span>
+                  </div>
+                </div>
+             </div>
+             <div class='item'>
+                <div class='dt'>{:lang('group_goods_product')}：</div>
+                <div class='dd'>{$goods['goodsSn']}</div>
+             </div>
+             <div class='item'>
+                <div class='dt'>{:lang('group_freight')}：</div>
+                <div class='dd'>{if $goods['isFreeShipping']==1}{:lang('group_free_shipping')}{else}{:lang('group_sys_calculation')}{/if}</div>
+             </div>
+             </div>
+             <div class="infor" style='display: none'>
+             	<div id='qrcode' style='width:125px;height:125px;margin-left:48px;'></div>
+             	<div style='text-align: center;'>{:lang('group_surprise_wechat_shopping')}</div>
+             </div>
+             <div class='wst-clear'></div>
+          </div>
+          <div class='groupon-time-box'>
+               <div class='dd' id='groupon-time' sc='{:date("Y-m-d H:i:s")}' sv='{$goods["startTime"]}' ev='{$goods["endTime"]}'>
+               {if $goods['status']==-1}
+               {:lang('group_finished')}
+               {else}
+               {:lang('group_calculation_time')}
+               {/if}
+               </div>
+          </div>
+          <div class='groupon-desc'>
+          	<div class='dt'>{:lang('group_explain')}：</div>
+          	<div class='dd'>{$goods['grouponDesc']}</div>
+          	<div class='wst-clear'></div>
+          </div>
+          <div class='spec'>
+             {if !empty($goods['spec'])}
+             {volist name="$goods['spec']" id='vo'}
+             <div class='item'>
+               <div class='dt'>{$vo['name']}：</div>
+               <div class='dd'>
+               {volist name="$vo['list']" id='vo2'}
+                  {if $vo2['itemImg']!=''}
+                  <div class='j-option img j-selected' data-val="{$vo2['itemId']}" style='height:28px;padding:0px;'><img class="cloudzoom-gallery" width="28" height="28" src="__RESOURCE_PATH__/{:WSTImg($vo2['itemImg'])}" data-cloudzoom="useZoom: '.cloudzoom', image:'__RESOURCE_PATH__/{:WSTImg($vo2['itemImg'])}', zoomImage:'__RESOURCE_PATH__/{$vo2['itemImg']}' "  title="{$vo2['itemName']|WSTStripTags}" alt="{$vo2['itemName']|WSTStripTags}"/><i></i></div>
+                  {else}
+                  <div class='j-option j-selected' data-val="{$vo2['itemId']}">{$vo2['itemName']}<i></i></div>
+                  {/if}
+               {/volist}
+               </div>
+               <div class='wst-clear'></div>
+             </div>
+             {/volist}
+             {/if}
+          </div>
+          <div class='buy'>
+             <div class='item'>
+                <div class='dt'>{:lang('group_stock')}：</div>
+                {php}$gunit = WSTDatas('GOODS_UNIT',$goods['goodsUnit']);$unit = ($gunit && isset($gunit['dataName']))?$gunit['dataName']:'';{/php}
+                <div class='dd'>
+	                <a href='#none' class='buy-btn' id='buy-reduce' style='color:#f1f1f1;' onclick='javascript:WST.changeIptNum(-1,"#buyNum","#buy-reduce,#buy-add")'>-</a>
+	                <input type='text' data-min='1' data-max='{$goods['canBuyNum']}' id='buyNum' class='buy-num' value='1' data-min='1' autocomplete="off" onkeyup='WST.changeIptNum(0,"#buyNum","#buy-reduce,#buy-add")' onkeypress="return WST.isNumberKey(event);" maxlength="3"/>
+	                <a href='#none' class='buy-btn' id='buy-add' onclick='javascript:WST.changeIptNum(1,"#buyNum","#buy-reduce,#buy-add")'>+</a>
+                    &nbsp; &nbsp;{:lang('group_stock_buy_limit_tips',['<span id="goods-stock">'.$goods['grouponNum'].'</span>&nbsp;'.$goods['goodsUnit'],$goods['orderNum'].$unit,$goods['limitNum'].$unit])}
+                </div>
+             </div>
+             <div class='item'>
+                <div class='dt'>{:lang('group_goods_service')}：</div>
+                {php}
+                $spurl = Url("home/shops/index","shopId=".$shop["shopId"]);
+                $spurl ="<a href='".$spurl."' target='_blank'>".$shop['shopName']."</a>";
+                {/php}
+                <div class='dd'>{:lang('group_goods_service_desc',[$spurl])}</div>
+             </div>
+             <div class='item' style='padding-left:75px;margin-top:20px;'>
+               {if $goods['read'] || $goods['status']==-1 || $goods['status']==0 }
+                 <a id='buyBtn' href='javascript:void(0);' class='buyBtn un-buy'>{:lang('group_buy_now')}</a>
+               {else}
+                 <a id='buyBtn' href='javascript:addCart(1,"#buyNum")' class='buyBtn'>{:lang('group_buy_now')}</a>
+               {/if}
+               <div class="wst-favorite">
+               {if ($goods['favGood']>0)}
+                 <a href='javascript:void(0);' onclick='WST.cancelFavorite(this,0,{$goods["goodsId"]},{$goods['favGood']})' class='favorite j-fav'>{:lang('group_has_favorited')}</a>
+               {else}
+                 <a href='javascript:void(0);' onclick='WST.addFavorite(this,0,{$goods["goodsId"]},{$goods["goodsId"]})' class='favorite j-fav2 j-fav3'>{:lang('group_favorite_goods')}</a>
+               {/if}
+               </div>
+             </div>
+              <!-- ShareThis BEGIN -->
+              <div style="padding: 10px 10px 10px 0;">
+                <div style="float: left;font-weight: bold;margin-right: 10px;">{:lang('group_share_now')}</div>
+                <div class="sharethis-inline-share-buttons" style="float: left;"></div>
+                <div class='wst-clear'></div>
+              </div>
+              <!-- ShareThis END -->
+             <div style="clear: both;"></div>
+          </div>
+      </div>
+      <div class='wst-clear'></div>
+   </div>
+</div>
+<div class='wst-w'>
+   <div class='wst-container'>
+       <div class='wst-side'>
+           <div class='shop-intro'>
+                <div class='title'>{$shop['shopName']}</div>
+                <div class='body'>
+                    <div class='totalScore'><img class="shopsImg" data-original="__RESOURCE_PATH__/{$shop['shopImg']}" title="{$shop['shopName']|WSTStripTags}" style="width:75px;height:75px;"></div>
+                    <div class='itemScore'>{:lang('group_goods_appraises')}：{if ($shop['scores']['goodsScore']!=0)}{$shop['scores']['goodsScore']}{else /}5{/if}</div>
+                    <div class='itemScore'>{:lang('group_service_score')}：{if ($shop['scores']['serviceScore']!=0)}{$shop['scores']['serviceScore']}{else /}5{/if}</div>
+                    <div class='itemScore'>{:lang('group_timeliness_score')}：{if ($shop['scores']['timeScore']!=0)}{$shop['scores']['timeScore']}{else /}5{/if}</div>
+                </div>
+                <div class='footer'>
+                   <a class="home" href='{:Url("home/shops/index","shopId=".$shop["shopId"])}' target='_blank'>{:lang('group_go_shop')}</a>
+                   {if ($goods['favShop']>0)}
+                   <a class="j-fav" href='javascript:void(0);' onclick='WST.cancelFavorite(this,1,{$shop["shopId"]},{$goods['favShop']})'>{:lang('group_has_favorited')}</a>
+                   {else}
+                   <a class="j-fav2" href='javascript:void(0);' onclick='WST.addFavorite(this,1,{$shop["shopId"]},{$goods['favShop']})'>{:lang('group_favorite_shop')}</a>
+                   {/if}
+                   <div class='wst-clear'></div>
+                </div>
+           </div>
+		   <div class="goods-side">
+				<div class="guess-like">
+					<div class="title">{:lang('group_guess_you_like')}</div>
+					{wst:goods type='best' cat="$goods['goodsCatId']" num='3'}
+					<div class="item">
+						<div class="img"><a target='_blank' href="{:Url('home/goods/detail','goodsId='.$vo['goodsId'])}"><img title="{$vo['goodsName']|WSTStripTags}" alt="{$vo['goodsName']|WSTStripTags}" data-original="__RESOURCE_PATH__/{:WSTImg($vo['goodsImg'])}" class="goodsImg" /></a></div>
+						<div class="p-name"><a class="wst-hide wst-redlink">{$vo['goodsName']}</a></div>
+						<div class="p-price">{:lang('currency_symbol')}{$vo['shopPrice']}<span class="v-price">{:lang('currency_symbol')}{$vo['marketPrice']}</span></div>
+					</div>
+					{/wst:goods}
+				</div>
+				<div class="hot-goods">
+					<div class="title">{:lang('group_hot_goods')}</div>
+					{wst:goods type='hot' num='3'}
+					<div class="item">
+						<div class="img"><a target='_blank' href="{:Url('home/goods/detail','goodsId='.$vo['goodsId'])}"><img title="{$vo['goodsName']|WSTStripTags}" alt="{$vo['goodsName']|WSTStripTags}" data-original="__RESOURCE_PATH__/{:WSTImg($vo['goodsImg'])}" class="goodsImg" /></a></div>
+						<div class="p-name"><a class="wst-hide wst-redlink">{$vo['goodsName']}</a></div>
+						<div class="p-price">{:lang('currency_symbol')}{$vo['shopPrice']}<span class="v-price">{:lang('currency_symbol')}{$vo['marketPrice']}</span></div>
+					</div>
+					{/wst:goods}
+				</div>
+			</div>
+		</div>
+		<div class='goods-desc'>
+		    <div id='tab' class="wst-tab-box">
+				<ul id='goodsTabs' class="wst-tab-nav">
+				   <li>{:lang('group_goods_introduction')}</li>
+				   <li>{:lang('group_goods_appraises')}<span class='appraise-num'>（{$goods['appraiseNum']}）</span></li>
+           {if $goods['read'] || $goods['status']==-1 || $goods['status']==0 }
+                 <a id='addCart2' href='javascript:void(0);' class='un-buy'>{:lang('group_buy_now')}</a>
+           {else}
+                 <a id='addCart2' href='javascript:addCart(1,"#buyNum")'>{:lang('group_buy_now')}</a>
+           {/if}
+				</ul>
+			    <div class="wst-tab-content" style='width:99%;margin-bottom: 10px;min-height:1312px;'>
+			       <div class="wst-tab-item" style="position: relative;">
+			       <ul class='wst-attrs-list'>
+                {volist name="$goods['attrs']" id="vo"}
+                  <li title='{$vo['attrVal']|WSTStripTags}'>{$vo['attrName']}：{$vo['attrVal']}</li>
+                {/volist}
+             </ul>
+             {$goods['goodsDesc']}
+			       </div>
+                    <input type="hidden" id="filtertype" value="all" />
+                    <script id="tblist" type="text/html">
+                        <div class="appr-filter">
+                            <ul class="appr-filterbox">
+                                <li><a href="javascript:void(0)" onclick="apprfilter('all')" id='all'>{:lang('group_all_goods_appraises')}(<span id="totalNum">0</span>)</a></li>
+                                <li><a href="javascript:void(0)" onclick="apprfilter('pic')" id='pic'>{:lang('group_pic_goods_appraises')}(<span id="picNum">0</span>)</a></li>
+                                <li><a href="javascript:void(0)" onclick="apprfilter('best')" id='best'>{:lang('group_praise_appraise')}(<span id="bestNum">0</span>)</a></li>
+                                <li><a href="javascript:void(0)" onclick="apprfilter('good')" id='good'>{:lang('group_middle_appraise')}(<span id="goodNum">0</span>)</a></li>
+                                <li><a href="javascript:void(0)" onclick="apprfilter('bad')" id='bad'>{:lang('group_bad_appraise')}(<span id="badNum">0</span>)</a></li>
+                            </ul>
+                        </div>
+                        {{# for(var i = 0; i < d.length; i++){ }}
+                        <div class="appraises-box">
+                            <div class="wst-appraises-right">
+                                <div class="userinfo">
+                                    <img data-original="{{#  if(d[i]['userPhoto'] != null){  }}{{WST.userPhoto(d[i]['userPhoto'])}}{{# } }}" class="apprimg" />
+                                    <div class="appraiser">
+                                        {{d[i]['loginName']}}
+                                    </div>
+                                </div>
+                                <p>{{d[i].rankName}}</p>
+                            </div>
+                            <div class="wst-appraises-left">
+                                <div class="appr-starbox">
+                                    {{#  for(var j=0;j<d[i].avgScore;++j){ }}
+                                    <div class="appr-star"></div>
+                                    {{# }  }}
+                                    {{#for(var g=0;g<5-d[i].avgScore;++g){ }}
+                                    <div class="appr-star-off"></div>
+                                    {{# }  }}
+                                </div>
+                                <div class='wst-clear'></div>
+                                <p class="app-content">
+                                    {{d[i]['content']}}
+                                <div class="goods-spec-box">
+                                    {{d[i]['goodsSpecNames']}}
+                                </div>
+                                </p>
+                                {{#  if(WST.blank(d[i]['images'])!=''){ var img = d[i]['images'].split(','); var length = img.length;  }}
+                                <div id="img-file-{{i}}">
+                                    {{#  for(var g=0;g<length;g++){  }}
+                                    <img src="__RESOURCE_PATH__/{{img[g].replace('.','_thumb.')}}" layer-src="__RESOURCE_PATH__/{{img[g]}}"  style="width:80px;height:80px;" />
+                                    {{#  } }}
+                                </div>
+                                {{# }  }}
+                                <span class="apprtime">{{d[i]['createTime']}}</span>
+                                {{# if(d[i]['shopReply']!='' && d[i]['shopReply']!=null){ }}
+                                <div class="reply-box">
+                                    <p class="reply-content"><a href="javascript:void(0)" onclick="goShop({{d[i]['shopId']}})">{{d[i]['shopName']}}</a>：{{d[i]['shopReply']}}</p>
+                                    <p class="reply-time">{{d[i]['replyTime']}}</p>
+                                </div>
+                                {{# } }}
+
+                            </div>
+
+                            <div class="wst-clear"></div>
+                        </div>
+                        {{# } }}
+               </script>
+			       <div class="wst-tab-item" style="position: relative;display:none;">
+                       <div class="appraise-head">
+                           <div class="app-head-l">
+                               <div class="app-head-lbox">
+                                   <strong class="text">{:lang('group_praise_appraise_rate')}</strong>
+                                   <div class='percent'>
+                                       <i class="best_percent">0</i><span>%</span>
+                                   </div>
+                               </div>
+
+                           </div>
+                           <div class="app-head-r">
+                               <div class="app-head-rbox">
+                                   <div class="app-hr-item">
+                                       <div class="app-hr-text">{:lang('group_praise_appraise')}(<i class="best_percent">0</i>%)</div>
+                                       <div class="percentbox">
+                                           <div class="percentbg" id="best_percentbg" style="width:0%"></div>
+                                       </div>
+                                   </div>
+                                   <div class="app-hr-item">
+                                       <div class="app-hr-text">{:lang('group_middle_appraise')}(<i class="good_percent">0</i>%)</div>
+                                       <div class="percentbox">
+                                           <div class="percentbg" id="good_percentbg" style="width:0%"></div>
+                                       </div>
+                                   </div>
+                                   <div class="app-hr-item">
+                                       <div class="app-hr-text">{:lang('group_bad_appraise')}(<i class="bad_percent">0</i>%)</div>
+                                       <div class="percentbox">
+                                           <div class="percentbg" id="bad_percentbg" style="width:0%"></div>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+
+                       </div>
+                <div id='ga-box'></div>
+                <div id='pager' style='text-align:center;'></div>
+			       </div>
+		    </div>
+		</div>
+		<div class='wst-clear'></div>
+	</div>
+	<div class='wst-clear'></div>
+</div>
+{include file="$LAYOUT_HOME_RIGHT_CART"/}
+{/block}
+{block name="footer"}
+	{include file="$LAYOUT_HOME_FOOTER" /}
+{/block}
+{block name="js"}
+<script>
+var goodsInfo = {grouponId:{$goods['grouponId']},id:{$goods['goodsId']}}
+</script>
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__STYLE__/js/cloudzoom.js?v={$v}'></script>
+<script type='text/javascript' src='__ROOT__/addons/groupon/view/home/index/js/time.js?v={$v}'></script>
+<script type='text/javascript' src='__ROOT__/addons/groupon/view/home/index/js/goods.js?v={$v}'></script>
+<script type='text/javascript' src='__STYLE__/js/qrcode.js?v={$v}'></script>
+<script>
+$(function(){
+	var qr = qrcode(10, 'M');
+	var url = '{:url("mobile/goods/detail","","html",true)}?goodsId={$goods["goodsId"]}';
+	qr.addData(url);
+	qr.make();
+	$('#qrcode').html(qr.createImgTag());
+});
+function goShop(id){
+  location.href=WST.U('home/shops/index','shopId='+id);
+}
+</script>
+{/block}

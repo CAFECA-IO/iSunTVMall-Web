@@ -1,0 +1,24 @@
+<footer class="ui-footer wst-footer-btns" style="position:fixed;bottom:0;height:43px; border-top: 1px solid {$menu['borderStyle']};" id="footer">
+    <div class="wst-toTop" id="toTop">
+        <i class="wst-toTopimg"></i>
+    </div>
+    <div class="ui-row-flex wst-custom-menus" style="background:{$menu['backgroundColor']}">
+        {volist name="menu['tabbars']" id="vo"}
+        <div class='ui-col ui-col'>
+            <a href='javascript:void(0);' menu-flag="{$vo['menuFlag']}"  link="{$vo['link']}"  onclick="javascript:WST.toCustomMenuPage(this)">
+                <div class="wst-flex-column wst-center wst-custom-menus-item {if $vo['menuFlag'] == 'cart'}carsNum{/if}">
+                    <img class='custom-menu-icon ' src="__RESOURCE_PATH__/{$vo['icon']}">
+                    <img class='custom-menu-select-icon wst-none' src="__RESOURCE_PATH__/{$vo['selectIcon']}">
+                    <p style="color:{$menu['color']};" class='custom-menu-text'>{$vo['text']}</p>
+                    <p style="color:{$menu['selectedColor']};" class='custom-menu-select-text wst-none'>{$vo['text']}</p>
+                    {if $vo['menuFlag'] == 'cart'}<div id="cartNum2">{if $cartNum>0}<i>{php} echo $cartNum;{/php}</i>{/if}</div>{/if}
+                </div>
+            </a>
+        </div>
+        {/volist}
+    </div>
+</footer>
+<script>
+    $('.wst-footer').hide();
+    $("#pageId").val({$pageId});
+</script>

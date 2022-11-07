@@ -1,0 +1,26 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/languages/languages.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+{if WSTGrant('YHGL_01')}
+<div class="wst-toolbar">
+   <button class="btn btn-success f-right" onclick='javascript:toEdit(0)'><i class='fa fa-plus'></i>{:lang('add')}</button>
+   <div style="clear:both"></div>
+{/if}
+</div>
+<div class='wst-grid'>
+<form lay-filter='gridForm' class='layui-form wst-grid'>
+<div id="mmg" class="mmg"></div>
+</form>
+<div id="pg" style="text-align: right;"></div>
+</div>
+</form>
+<script>
+  $(function(){initGrid({$p})});
+</script>
+{/block}

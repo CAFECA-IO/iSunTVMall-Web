@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+  <meta name="keywords" content=""> 
+  <meta name="description" content="">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <title>{:lang('wstim_online_service')}</title> 
+  <link rel="stylesheet" type="text/css" href="__ROOT__/addons/wstim/view/home/chats/skin-min.css">
+  <link rel="stylesheet" type="text/css" href="__ROOT__/addons/wstim/view/static/webuploader/webuploader.css" />
+  <script type="text/javascript" src="__ROOT__/addons/wstim/view/static/js/jquery.min.js"></script>
+  <script type='text/javascript' src='__ROOT__/addons/wstim/view/static/js/common.js'></script>
+  <script type='text/javascript' src='__ROOT__/addons/wstim/view/static/webuploader/webuploader.js'></script>
+  <script src="__ROOT__/addons/wstim/view/static/layer/layer.js"></script>
+  <script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+
+  <link rel="stylesheet" href="__ROOT__/addons/wstim/view/static/photoswipe/photoswipe.css">
+  <link rel="stylesheet" href="__ROOT__/addons/wstim/view/static/photoswipe/default-skin/default-skin.css">
+  <script src="__ROOT__/addons/wstim/view/static/photoswipe/photoswipe.min.js"></script>
+  <script src="__ROOT__/addons/wstim/view/static/photoswipe/photoswipe-ui-default.min.js"></script>
+</head> 
+ <body>
+    {/* 图片查看层 */}
+    <div id="gallery" class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="pswp__bg"></div>
+        <div class="pswp__scroll-wrap">
+            <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            </div>
+            <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="{:lang('wstim_close')}"></button>
+                <button class="pswp__button pswp__button--fs" title="{:lang('wstim_full_screen')}"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip">
+                </div>
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center">
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    
+   <div class="wrapper">
+     <div class="im-content" style="margin-left: -600px; width: 1200px;"> 
+    <div class="im-main-content"> 
+
+      <div class="im-left-sidebar"> 
+        <div class="im-left-top">
+          <p>{:lang('wstim_session_list')}</p>
+        </div>  
+        <div class="u-wrap" id="listDetails"> 
+         <ul class="u-lst"></ul> 
+        </div>
+      </div> 
+
+
+     <div class="im-middle" id="im-middle" conver=""> 
+      <div class="im-header im-chat-t"> 
+       <div class="im-shop">
+        <a href="#" class="enter"></a> 
+        <h1 class="off">
+          <span title="{:lang('wstim_click_to_enter_the_store')}" onclick="entryShop()" class="im-chat-object" id="logoTitle"> </span>
+          <i class="shop-on"></i>
+        </h1> 
+       </div> 
+       <div class="im-ads">
+       </div> 
+      </div> 
+      <div class="im-chat-window" style="margin-right: 300px;"> 
+       <!-- -- scrollDiv 消息渲染区域 -- --> 
+       <div class="im-chat-list" id="scrollDiv"> 
+          <div class="chat-more" id="clickMore" onclick="clickMore(this)">
+           <p class=""><span class="icon">
+            </span><span class="txt">{:lang('wstim_click_to_load_more_chats')}</span></p>
+          </div>
+          <input type="hidden" id="service_msg">
+      </div>
+       <div class="im-edit-area"> 
+
+       </div>
+      </div> 
+      <div class="im-right-sidebar" style="width: 300px;">
+        <div class="curr_visit">
+            <div class="cv_tit">
+              {:lang('wstim_browsing')}
+            </div>
+            <a target="_blank" href="" class="cv_main clearfix">
+              <div class="cv_l">
+                <img src="" alt="" />
+              </div>
+              <div class="cv_r">
+                <div class="cv_gname">{:lang('wstim_trade_name')}</div>
+                <div class="cv_price">{:lang('currency_symbol')}9.90</div>
+              </div>
+              <a class="cv_send" onclick="sendCurrVisit()">{:lang('wstim_send_out')}</a>
+            </a>
+        </div>
+        <ul class="im-tab">
+          <li  data-info="order" class="im-item current"><div class="im-item-content">{:lang('wstim_my_order')}</div></li>
+          <li  data-info="faq" class="im-item"><div class="im-item-content">{:lang('wstim_recent_browsing')}</div></li>
+        </ul>
+        <div class="im-tab-contents">
+          <div class="im-tab-content im-my-order im-show">
+            <ul id="o_list" class="im-list01 im-list03">
+            </ul>
+            <div class="comonMore" onclick="getOrderList(this)">
+              <p><span class="icon">
+                </span><span class="txt">{:lang('wstim_click_to_load_more')}</span></p>
+            </div>
+          </div>
+          <div class="im-tab-content im-my-faq">
+            <ul class="im-question-list im-list01 im-list03" id="h_list">
+              <p class="tc"><i></i>{:lang('wstim_no_data_available')}</p>
+            </ul>
+          </div>
+
+          </div>
+        </div>
+     </div> 
+    </div> 
+   </div> 
+  </div> 
+
+  <div class="evaluate-box" style="display: none;">
+    <div class="eval-tit">
+        <span>{:lang('wstim_tips3')}</span>
+        <div class="eval-close">
+          <img src="__ROOT__/addons/wstim/view/home/img/cancel.png" alt="">
+        </div>
+    </div>
+    <div class="star-box">
+      <div class="eval-star chked"></div>
+      <div class="eval-star chked"></div>
+      <div class="eval-star chked"></div>
+      <div class="eval-star chked"></div>
+      <div class="eval-star chked"></div>
+      <div class="clear"></div>
+    </div>
+    <div class="eval-btm">
+      <span id="star-text">{:lang('wstim_very_satisfied')}</span>
+      <a href="javascript:void(0)" onclick="submitEval()">{:lang('wstim_submit')}</a>
+    </div>
+  </div>
+
+<input type="hidden" value="" id="shopId">
+<input type="hidden" value="" id="userId">
+<input type="hidden" value="" id="shopImg">
+<input type="hidden" value="" id="shopName">
+<input type="hidden" value="" id="loginName">
+<input type="hidden" value="1" id="currPage">
+<input type="hidden" value="1" id="totalPage">
+<input type="hidden" value="0" id="currOrderPage">
+<input type="hidden" value="1" id="totalOrderPage">
+<script type="text/javascript" src="__ROOT__/addons/wstim/view/home/chats/index.js"></script>
+<script>
+var goodsInfo, userId, loginName;
+$(function(){
+  getApis(getConfig)
+})
+
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('modify_logistics_information')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/orders_express.css?v={$v}">
+{/block}
+{block name="header"}
+<header style="background:#ffffff;" class="ui-header ui-header-positive wst-header">
+	<i class="ui-icon-return" onclick="javascript:location.href='{:url('mobile/orders/sellerorder')}'"></i><h1 id="header-title">{:lang('modify_logistics_information')}</h1>
+</header>
+{/block}
+{block name="footer"}
+{/block}
+{block name="main"}
+<section class="ui-container">
+	<input type="hidden" name="" value="{$orderId}" id="orderId" autocomplete="off">
+	<input type="hidden" name="" value="{$type}" id="type" autocomplete="off">
+	<div id="express-box"></div>
+	<script id="expressList" type="text/html">
+		{{# for(var i = 0; i < d.length; i++){ }}
+			<div class="deliver-container" orderExpressId="{{d[i].id}}">
+				<input type="hidden" class="orderExpressId" value="{{d[i].id}}">
+				<input type="hidden" class="expressId" value="{{d[i].expressId}}">
+				<div class="wst-flex-row wst-center express-title">{:lang('express_package')}{{i+1}}</div>
+				<div class="deliver_express">
+					<div class='delivery-item wst-flex-row wst-jsb wst-ac' >
+						<span class="title">{:lang('express_company')}</span>
+						<div class="content">
+							<div onclick="showExpressBox(this)" orderExpressId="{{d[i].id}}" expressId="{{d[i].expressId}}" class="express-menu"><span class="expressText">{{d[i].expressName}}</span><i class="icon-right-arrow"></i></div>
+						</div>
+					</div>
+					<div class='delivery-item wst-flex-row wst-jsb wst-ac' >
+						<span class="title">{:lang('logistics_order_no')}</span>
+						<div class="content wst-flex-row wst-jfe">
+							<input type="text" class="expressNo"  placeholder="{:lang('please_input_logistics_order_no')}" value="{{d[i].expressNo}}" maxlength="20"/>
+						</div>
+					</div>
+				</div>
+			</div>
+		{{# } }}
+	</script>
+	<div class="wst-ad-footer wst-ad-submit"><button class="button" onclick="javascript:saveExpress();">{:lang('save')}</button></div>
+
+</section>
+{/block}
+{block name="include"}
+{include file="default/dialog" /}<!-- 对话框模板 -->
+{/* 选择快递 */}
+<div class="wst-cover" id="cover"></div>
+<div class="wst-express-box" id="expressBox">
+	<input type="hidden" id="chooseOrderExpressId">
+	<div class="title">{:lang('choose_express')}</div>
+	<div class="content">
+		{volist name="$express" id="vo"}
+		<div class="wst-flex-row wst-jsb wst-ac item">
+			<div class="name">{$vo["expressName"]}</div>
+			<label class="ui-checkbox">
+				<input class="express-active" type="radio" name="data" value='{$vo["expressId"]}' >
+			</label>
+		</div>
+		{/volist}
+	</div>
+	<div class="bottom-two-btn-box wst-flex-row wst-center">
+		<button type="button" class="wst-dialog-b1" data-role="button" onclick="javascript:hideExpressBox();">{:lang('cancel')}</button>
+		<button type="button" class="wst-dialog-b2" onclick="javascript:chooseExpress();">{:lang('confirm')}</button>
+	</div>
+</div>
+
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__MOBILE__/users/sellerorders/orders_express.js?v={$v}'></script>
+<script>
+	$(function(){
+		var orderId = $('#orderId').val();
+		$.post(WST.U('mobile/orders/getOrderExpressInfo'), {orderId:orderId}, function(data){
+			var json = WST.toJson(data);
+			if(json && json.data && json.data.length>0) {
+				var gettpl = document.getElementById('expressList').innerHTML;
+				laytpl(gettpl).render(json.data, function (html) {
+					$('#express-box').append(html);
+				});
+			}
+		});
+	})
+</script>
+{/block}
+
+
+

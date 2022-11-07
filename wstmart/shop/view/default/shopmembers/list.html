@@ -1,0 +1,76 @@
+{extend name="default/base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__SHOP__/shopmembers/list.js?v={$v}" type="text/javascript"></script>
+<script>
+    $(function(){
+        initGrid({$p});
+        var element = layui.element;
+        element.on('tab(msgTab)', function(data){
+            if(data.index==1){
+                initGrid2({$p});
+            }else{
+                initGrid({$p});
+            }
+        });
+    })
+</script>
+{/block}
+{block name="main"}
+<input type="hidden" id="isNew" value="1"/>
+<div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+    <ul class="layui-tab-title">
+        <li class="layui-this">{:lang('follow_orders')}</li>
+        <li>{:lang('focus_on_not_placing_an_order')}</li>
+    </ul>
+    <div class="layui-tab-content" style='width:99%;margin-bottom: 10px;'>
+        <div class="layui-tab-item layui-show">
+            <div class="wst-toolbar">
+                <input type='text' id='key' placeholder='{:lang("customer_nickname")}'/>
+                <button class="btn btn-primary" onclick='javascript:loadGrid(0)'><i class='fa fa-search'></i>{:lang('query')}</button>
+                <a class="btn btn-success" style="float:right;margin-left:10px;" href="javaScript:setGroup(1)"><i class="fa fa-plus"></i>{:lang('set_grouping')}</a>
+                {:hook('shopDocumentGiveUserCouponButton',['type'=>1])}
+                <div style='clear:both'></div>
+            </div>
+            <div class='wst-grid'>
+                <div id="mmg" class="mmg"></div>
+                <div id="pg" style="text-align: right;"></div>
+            </div>
+        </div>
+        <div class="layui-tab-item" >
+            <div class="wst-toolbar">
+                <input type='text' id='key2' placeholder='{:lang("customer_nickname")}'/>
+                <button class="btn btn-primary" onclick='javascript:loadGrid2(0)'><i class='fa fa-search'></i>{:lang('query')}</button>
+                <a class="btn btn-success" style="float:right;margin-left:10px;" href="javaScript:setGroup(0)"><i class="fa fa-plus"></i>{:lang('set_grouping')}</a>
+                {:hook('shopDocumentGiveUserCouponButton',['type'=>0])}
+                <div style='clear:both'></div>
+            </div>
+            <div class='wst-grid'>
+                <div id="mmg2" class="mmg2"></div>
+                <div id="pg2" style="text-align: right;"></div>
+            </div>
+        </div>
+    </div>
+    <div id='editBox' style='display:none'>
+        <form id='editForm' autocomplete="off">
+        <table class='wst-form wst-box-top'>
+           <tr>
+              <th width='80'>{:lang('grouping')}<font color='red'>*</font>：</th>
+              <td>
+                <select id='groupId'>
+                   <option value='0'>{:lang('no_grouping')}</option>
+                   {volist name='groups' id='vo'}
+                   <option value='{$vo['id']}'>{$vo['groupName']}</option>
+                   {/volist}
+                </select>
+              </td>
+           </tr>
+        </table>
+        </form>
+    </div>
+</div>
+{:hook('shopDocumentGiveUserCoupon')}
+{/block}

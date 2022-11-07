@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS `wst_addon_captchas`;

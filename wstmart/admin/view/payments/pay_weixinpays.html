@@ -1,0 +1,95 @@
+
+{extend name="base" /}
+{block name="js"}
+<script src="__ADMIN__/payments/payments.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div class="l-loading" style="display: block" id="wst-loading"></div>
+
+<form id="payForm" autocomplete="off">
+<table class='wst-form wst-box-top'>
+  <tr>
+    <td colspan="2">
+      <div style="font-size:15px;font-weight:bold;color:red;">
+        <div>{:lang('label_paymeny_weixin_tips')}</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{:lang('label_paymeny_weixin_tips')}</div>
+      </div>
+    </td>
+  </tr>
+  <tr>
+      <th width='150'>{:lang('label_payment_name')}<font color='red'>*</font>：</th>
+          <td>
+            <input type="text" id="payName" name="payName" value="{$object['payName']}" class="ipt" maxLength='100' />
+            
+          </td>
+       </tr>
+       <tr>
+          <th>{:lang('label_payment_app_id')}<font color='red'>*</font>：</th>
+          <td>
+            <input type="text" id="appId" name="appId" value="{$object['appId'] ?? ''}" class="cfg" maxLength='100' />
+          </td>
+       </tr>
+       <tr>
+          <th>Appsecret<font color='red'>*</font>：</th>
+          <td>
+              <input type="text" id="appsecret" name="appsecret" value="{$object['appsecret']?? ''}" class="cfg" maxLength='100' />
+              <input type="hidden" id="payIcon"  class="cfg" maxLength='100' />
+          </td>
+       </tr>
+       <tr>
+          <th>{:lang('label_weixinpay_no')}<font color='red'>*</font>：(mch_id)&nbsp;&nbsp;&nbsp;&nbsp;</th>
+          <td>
+              <input type="text" id="mchId" name="mchId" value="{$object['mchId']?? ''}" class="cfg" maxLength='100' />
+          </td>
+       </tr>
+       <tr>
+          <th>{:lang('label_weixinpay_certificateserial')}<font color='red'>*</font>：</th>
+          <td>
+              <input type="text" id="certificateSerial" name="certificateSerial" value="{$object['certificateSerial']?? ''}" class="cfg" maxLength='100' />
+          </td>
+       </tr>
+
+       <tr>
+          <th>{:lang('label_weixinpay_pri_key')}<font color='red'>*</font>：</th>
+          <td>
+              <input type="text" id="apiKey" name="apiKey" value="{$object['apiKey']?? ''}" class="cfg" maxLength='100' />
+          </td>
+       </tr>
+       <tr>
+          <th>MCC 代码<font color='red'>*</font>：</th>
+          <td>
+              <input type="text" id="mccCode" name="mccCode" value="{$object['mccCode']?? ''}" class="cfg" maxLength='100' />
+          </td>
+       </tr>
+       <tr>
+          <th>{:lang('label_weixinpay_publicKey')}<font color='red'>*</font>：</th>
+          <td> 
+              <textarea id="publicKey" name="publicKey" class="cfg" style="width:400px;height:100px;">{$object['publicKey']?? ''}</textarea>
+          </td>
+       </tr>
+       <tr>
+          <th>{:lang('label_aplipay_txt')}<font color='red'>*</font>：</th>
+          <td> 
+              <textarea id="payDesc" name="payDesc" class="ipt" style="width:400px;height:100px;">{$object['payDesc']}</textarea>
+          </td>
+       </tr>
+       <tr>
+          <th>{:lang('sort')}<font color='red'>*</font>：</th>
+          <td> 
+              <input type="text" id="payOrder" name="payOrder" value="{$object['payOrder']}" class="ipt" maxLength='20' />
+          </td>
+       </tr>
+  
+  <tr>
+     <td colspan='2' align='center' class='wst-bottombar'>
+       <input type="hidden" id="id" value="{$object['id']}" />
+        <button type="submit" class="btn btn-primary btn-mright"><i class="fa fa-check"></i>{:lang('submit')}</button> 
+        <button type="button" class="btn" onclick="javascript:history.go(-1)"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+     </td>
+  </tr>
+</table>
+</form>
+
+
+{/block}
+

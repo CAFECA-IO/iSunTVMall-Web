@@ -1,0 +1,88 @@
+{extend name="$LAYOUT_MOBILE_BASE" /}
+{block name="title"}{:lang('coupon_my_coupon')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__ROOT__/addons/coupon/view/mobile/users/coupon.css?v={$v}">
+{/block}
+{block name="header"}
+    <header class="ui-header ui-header-positive wst-in-header">
+        <a href="javascript:" onClick="history.go(-1)"><i class="ui-icon-return"></i></a>
+    </header>
+    <div class="wst-in-search tit">
+        {:lang('coupon_my_coupon')}
+    </div>
+    <div class="wst-in-icon" id="j-icon">
+    </div>
+{/block}
+{block name="footer"}
+    
+{/block}
+{block name="main"}
+     <input type="hidden" name="" value="" id="currPage" autocomplete="off">
+    <input type="hidden" name="" value="" id="totalPage" autocomplete="off">
+    <input type="hidden" name="" value="{$status}" id="status" autocomplete="off">
+
+    <script id="shopList" type="text/html">
+    {{# for(var i = 0; i < d.length; i++){ }}
+      <div class="coupon_item">
+            <div class="coupon_item_left {{# if($('#status').val()==2) { }}coupon_expired{{# } }}  ">
+                <div class="coupon_left_main">
+                    <div class="coupon_left_main_inner">
+                        <p class="coupon_left_txt1"><span class="yan">{:lang('currency_symbol')}</span>{{d[i].couponValue}}</p>
+                        <span class="coupon_left_txt2">
+                        {{# if(d[i].useCondition==0){ }}
+                            {:lang('coupon_no_threshold')}
+                        {{# }else{  }}
+                            {{WST.lang('coupon_upto_available',[d[i].useMoney])}}
+                        {{# }  }}
+                        </span>
+                    </div>
+                </div>
+                <div class="wst-clear"></div>
+            </div>
+            <div class="coupon_item_right">
+                <div class="coupon_item_right_inner">
+                    <div class="c_item_r_left">
+                        <p class="c_item_txt1 ui-nowrap ui-whitespace">{{WST.lang('coupon_money_tips2',[d[i].couponValue])}}</p>
+                        <p class="c_item_txt3 ui-nowrap ui-whitespace">{{d[i].shopName}}</p>
+                        <p class="c_item_txt4 ui-nowrap ui-whitespace">{{d[i].createTime.split(' ')[0]}}~{{d[i].endDate}}</p>
+                    </div>
+
+                    {{# if($('#status').val()==2){  }}
+                        <a href="javascript:" class="get_btn unuse_btn">{:lang('coupon_status_3')}</a>
+                    {{# }else if($('#status').val()==1){  }}
+                        <a href="javascript:" class="get_btn unuse_btn">{:lang('coupon_status_2')}</a>
+                    {{# }else{  }}
+                        <a href="javascript:void(0)" onClick="useCoupon({{d[i].couponId}})"  class="get_btn">{:lang('coupon_use_now')}</a>
+                    {{# }  }}
+
+                    <div class="wst-clear"></div>
+                </div>
+            </div>
+            <div class="wst-clear"></div>
+        </div>
+    {{#  } }}
+    </script>
+
+    <section class="ui-container" id="shopBox">
+        <div class="ui-tab">
+            <ul class="ui-tab-nav coupon-tab">
+                <li class="tab-item tab-curr" status='0'>{:lang('coupon_status_1')}</li>
+                <li class="tab-item" status='1'>{:lang('coupon_status_2')}</li>
+                <li class="tab-item" status='2'>{:lang('coupon_status_3')}</li>
+            </ul>
+        </div>
+
+        <div id="order-box">
+        </div>
+
+    </section>
+    </div>
+{/block}
+{block name="include"}
+{/* 遮盖层  */}
+<div class="wst-cover" id="cover"></div>
+{block name="js"}
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__ROOT__/addons/coupon/view/mobile/users/list.js'></script>
+
+{/block}

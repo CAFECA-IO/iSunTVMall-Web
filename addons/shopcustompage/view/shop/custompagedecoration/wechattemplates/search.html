@@ -1,0 +1,21 @@
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/font-awesome/css/font-awesome.min.css" />
+<div class='search-container'>
+    {if intval($vo['class'])==1 }
+        {php}$class="search-class-square";{/php}
+    {elseif intval($vo['class'])==2 }
+        {php}$class="search-class-circular";{/php}
+    {else}
+        {php}$class="search-class-arc";{/php}
+    {/if}
+    {if intval($vo['alignment'])==1 }
+        {php}$class .=" search-alignment-left";{/php}
+    {elseif intval($vo['alignment'])==2 }
+        {php}$class .=" search-alignment-center";{/php}
+    {else}
+        {php}$class .=" search-alignment-right";{/php}
+    {/if}
+    <div class='search-info {$class}' onclick="javascript:WST.searchPage('goods',1);">
+        <i class='fa fa-search'></i>
+        <p>{$vo['placeholder']}</p>
+    </div>
+</div>

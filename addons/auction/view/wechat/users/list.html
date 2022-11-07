@@ -1,0 +1,74 @@
+{extend name="$LAYOUT_WECHAT_BASE" /}
+{block name="title"}{:lang('auction_my_goods')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__ROOT__/addons/auction/view/wechat/index/css/users_list.css?v={$v}">
+{/block}
+{block name="header"}
+	<header style="background:#ffffff;" class="ui-header ui-header-positive ui-border-b wst-header">
+		<a href="{:url('wechat/users/index')}"><i class="ui-icon-return" ></i></a><h1>{:lang('auction_my_goods')}</h1>
+    </header>
+{/block}
+{block name="footer"}
+	{include file="$LAYOUT_WECHAT_FOOTER" /}
+{/block}
+{block name="main"}
+	 <input type="hidden" name="" value="" id="currPage" autocomplete="off">
+     <input type="hidden" name="" value="" id="totalPage" autocomplete="off">
+     <section class="ui-container" style="margin-bottom:0.5rem;">
+		<ul class="ui-tab-content" id="groupon-container" sc="{:date('Y-m-d H:i:s')}">
+	        <li id="goods-list"></li>
+	    </ul>
+     </section>
+<script id="list" type="text/html">
+	{{# if(d && d.length>0){ }}
+	{{# for(var i=0; i<d.length; i++){ }}
+	<div class="wst-flex-row wst-jsb wst-ac time">
+		<span>{:lang('auction_time')}</span><p >{{ d[i].startTime }}{:lang('auction_to_title')}{{ d[i].endTime }}</p>
+	</div>
+	<div class="wst-shl-list">
+		<div class="ui-row-flex goods" onclick="goGoods({{ d[i].auctionId }})" sv="{{ d[i].startTime }}" ev="{{ d[i].endTime }}">
+			<div class="ui-col">
+				<div class="img"><a href="javascript:void(0);" onclick="goGoods({{ d[i].auctionId }})">
+					<img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{{ d[i].goodsImg }}" title="{{ d[i].goodsName }}"></a></div>
+			</div>
+			<div class="ui-col ui-col-2 info">
+				<div class="title ui-nowrap">{{ d[i].goodsName }}</div>
+				<p ><span class="title1">{:lang('auction_auction_price')}：</span><span class="price2">{:lang('currency_symbol')}{{ d[i].auctionPrice }}</span>&nbsp;</p>
+				<p ><span class="title2">{:lang('auction_curr_price2')}：</span><span class="price3">{:lang('currency_symbol')}{{ d[i].currPrice }}</span>&nbsp;</p>
+				<p ><span class="title2">{:lang('auction_my_price')}：</span><span class="price">{:lang('currency_symbol')}{{ d[i].payPrice }}</span>&nbsp;</p>
+				{{#if(d[i]['status']==1){}}
+				<span class="state">{:lang('auction_label_status_1')}</span>
+				{{#}else{}}
+				{{#if(d[i]['isTop']==1){}}
+				{{# if(d[i]['isClose']==2 && d[i]['isPay']==0){}}
+				<span class='state state4'>{:lang('auction_label_status_2')}</span>
+				{{#}else{}}
+				<span class='state state2'>{:lang('auction_label_status_3')}</span>
+				{{#}}}
+				{{#}else{}}
+				<span class='state state3'>{:lang('auction_label_status_4')}</span>
+				{{#}}}
+				{{#}}}
+			</div>
+		</div>
+		<div class="ui-row-flex">
+			<div class="ui-col">
+				{{#if(d[i]['isTop']==1 && d[i]['isClose']==1){}}
+				<div class="complete"><button class="ui-btn ui-btn-danger" onclick="toPerfect({{ d[i].auctionId }})">完成竞价</button></div>
+				{{#}}}
+			</div>
+		</div>
+	</div>
+	{{# } }}
+	{{# }else{ }}
+	<div class="wst-prompt-icon" style="width:1.395rem;"><img src="__WECHAT__/img/no_data.png"></div>
+	<div class="wst-prompt-info">
+		<p>暂无数据</p>
+	</div>
+	{{# } }}
+</script>
+{/block}
+{block name="include"}{/block}
+{block name="js"}
+<script type='text/javascript' src='__ROOT__/addons/auction/view/wechat/index/js/users_list.js?v={$v}'></script>
+{/block}

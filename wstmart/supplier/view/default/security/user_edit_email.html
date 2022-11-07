@@ -1,0 +1,106 @@
+{extend name="default/base" /}
+{block name="css"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link href="__SUPPLIER__/css/security.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<div class="f-clear"></div>
+<div class="wst-sec-head2">
+	<div class="wst-lfloat wst-sec-min {if ($process=='One')}wst-sec-gr{/if}">1、{:lang('verify_identity')}</div>
+	<div class="wst-lfloat wst-sec-min1 {if ($process=='One')}wst-sec-gr1{/if}"></div>
+	<div class="wst-lfloat wst-sec-mi">
+		<div class="wst-lfloat wst-sec-min2 {if ($process=='Two')}wst-sec-gr2{/if}"></div>
+		<div class="wst-lfloat wst-sec-min3 {if ($process=='Two')}wst-sec-gr3{/if}"></div>
+	</div>
+	<div class="wst-lfloat wst-sec-min {if ($process=='Two')}wst-sec-gr{/if}">2、{:lang('edit_email')}</div>
+	<div class="wst-lfloat wst-sec-min1 {if ($process=='Two')}wst-sec-gr1{/if}"></div>
+	<div class="wst-lfloat wst-sec-mi">
+		<div class="wst-lfloat wst-sec-min2 {if ($process=='Three')}wst-sec-gr2{/if}"></div>
+		<div class="wst-lfloat wst-sec-min3 {if ($process=='Three')}wst-sec-gr3{/if}"></div>
+	</div>
+	<div class="wst-lfloat wst-sec-min {if ($process=='Three')}wst-sec-gr{/if}">3、{:lang('finish')}</div>
+</div>
+{if ($process=='One')}
+	<form method="post" id="getemailForm" autocomplete="off">
+        <table class='wst-form' style="width: auto;">
+           <tr>
+             <th align='right'><font color='red'>*</font>{:lang('already_verify_email')}：</th>
+             <td>{$data['userEmail']}</td>
+           </tr>
+       <tr>
+	        <th align='right'><font color='red'>*</font>{:lang('verify_code')}：</th>
+			<td>
+				<input id="verifyCode" style="ime-mode:disabled;" name="verifyCode" data-rule="{:lang('verify_code')}: required;" data-msg-required="{:lang('require_security_verify')}" data-tip="{:lang('require_security_verify')}" data-target="#verify"  class="ipt wst-lfloat" tabindex="6" autocomplete="off" maxlength="6" type="text"/>
+				<label class="wst-sec-img">
+					<img id='verifyImg' src="{:url('supplier/users/getVerify')}" onclick='javascript:WST.getVerify("#verifyImg")' style="width:110px;height: 30px;margin-left: 5px;float: left;">
+				</label>
+			   	<label>&nbsp;{:lang('verify_vague')}？<a href="javascript:WST.getVerify('#verifyImg')" style="color:#69b7b5;">{:lang('verify_change')}</a></label><span id="verify"></span>
+			</td>
+		</tr>
+           <tr>
+           	<th align='right'><font color='red'>*</font>{:lang('label_security_email_code')}：</th>
+             <td style='height:60px;'>
+           		<input id="secretCode" style="ime-mode:disabled;width:250px;" data-rule="{:lang('label_security_email_code')}:required;" data-target="#secretErr" name="secretCode"  class="ipt wst-lfloat" tabindex="6" autocomplete="off" maxlength="6" type="text"/>
+                 <button id="timeSend" class="wst-sec-but btn btn-primary" type="button"  onclick="sendEmail(true)" style="width:120px;height: 30px;margin-left:5px;">{:lang('send_verify_email')}</button><span id="secretErr"></span>
+             </td>
+           </tr>
+
+           <tr>
+           	<td colspan="2">
+           		<button id="next" class="wst-sec-but btn btn-primary" type="submit" style="width:120px;height: 30px;margin-left:150px"><i class="fa fa-check"></i>{:lang('next_step')}</button>
+           	</td>
+           </tr>
+        </table>
+      </form>
+{/if}
+{if ($process=='Two')}
+	<form method="post" id="emailForm" autocomplete="off">
+    <input type='hidden' id='process' class='ipt' value='{$process}'/>
+        <table class='wst-form'>
+           <tr>
+             <th align='right'>{:lang('label_security_bind_email')} <font color='red'>*</font>：</th>
+             <td>
+             <input type='text' class="ipt" id='userEmail' name='userEmail' style='width:250px;' maxLength='30'/>
+             </td>
+           </tr>
+       <tr>
+	        <th align='right'>{:lang('verify_code')} <font color='red'>*</font>：</th>
+			<td>
+				<input id="verifyCode" data-rule="{:lang('verify_code')}:required" data-target="#verify" style="ime-mode:disabled;width:250px;" name="verifyCode"  class="ipt wst-lfloat" tabindex="6" autocomplete="off" maxlength="6" type="text"/>
+				<label class="wst-sec-img">
+					<img id='verifyImg' src="{:url('supplier/users/getVerify')}" onclick='javascript:WST.getVerify("#verifyImg")' style="width:110px;height: 30px;margin-left: 5px;float: left;">
+				</label>
+			   	<label>&nbsp;{:lang('verify_vague')}？<a href="javascript:WST.getVerify('#verifyImg')" style="color:#69b7b5;">{:lang('verify_change')}</a></label><span id="verify"></span>
+			</td>
+		</tr>
+           <tr>
+           	<th align='right'><font color='red'>*</font>{:lang('label_security_email_code')}：</th>
+             <td>
+           		<input id="secretCode" style="ime-mode:disabled;width:250px;" data-rule="{:lang('label_security_email_code')}:required;" data-target="#secretErr" name="secretCode"  class="ipt wst-lfloat" tabindex="6" autocomplete="off" maxlength="6" type="text"/>
+                 <button id="timeSend" class="wst-sec-but btn btn-primary" type="button"  onclick="sendEmail()" style="width:120px;height: 30px;margin-left:5px;">{:lang('send_verify_email')}</button><span id="secretErr"></span>
+             </td>
+           </tr>
+
+           <tr>
+           	<td colspan="2">
+           		<button id="next" class="wst-sec-but btn btn-primary" type="submit" style="width:120px;height: 30px;margin-left:150px"><i class="fa fa-check"></i>{:lang('next_step')}</button>
+           	</td>
+           </tr>
+           <input type="hidden" id="editEmail" value="1">
+        </table>
+      </form>
+{/if}
+{if ($process=='Three')}
+<div class="wst-sec-su">
+	<span class="wst-sec-sut"><img src="__SUPPLIER__/img/icon_success.png"/></span>
+	<span class="wst-sec-sub">{:lang('bind_email_success')}</span>
+</div>
+{/if}
+{/block}
+{block name="js"}
+	<script type='text/javascript' src='__SUPPLIER__/security/security.js?v={$v}'></script>
+	<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+	<script>
+	$(function(){veemailForm();vegetemailForm();})
+	</script>
+{/block}

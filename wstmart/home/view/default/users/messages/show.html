@@ -1,0 +1,25 @@
+{extend name="default/users/base" /}
+{block name="title"}{:lang('home_page')}-{:lang('user_center')}{__block__}{/block}
+{block name="css"}
+<style>
+.msgContent img{
+	max-width: 100%;
+}
+</style>
+{/block}
+{block name="content"}
+<div class="wst-user-head"><span>{:lang('message_check')}</span><a href="<?=url('home/messages/index','p='.$p);?>">{:lang('back')}</a></div>
+<div class="wst-clear"></div>
+  <div class="wst-body"> 
+       <div class='wst-page-content'>        
+        <div class='wst-tbar-group'>
+                      
+        </div>
+          <div class="msgContent">      
+            {$data['msgContent']}
+          </div>
+        </div>
+    </div>
+{/block}
+{block name="js"}
+{/block}

@@ -1,0 +1,57 @@
+后台安装完插件之后
+1.清除缓存
+2.进入插件配置填入数据库配置及gatewayworker监听的端口
+3.到基础设置-商城配置-服务器配置-客服系统服务器设置填入服务器地与端口号址例如 demo.wstmart.net:8585,保存之后清除缓存.
+   注意:(1)端口号要与gatewayworker监听的端口保持一致(在)
+		(2)服务器端记得开放端口
+4.启动客服系统服务器
+   windows版本:
+		(1)先确保已在插件配置中填入了相关配置
+		(2)双击wstmart\addons\wstim\GatewayWorker\start_for_win.bat文件启动服务
+   linux版本
+		(1)先确保已在插件配置中填入了相关配置
+		(2)linux下cd到wstmart\addons\wstim\gatewayworker-linux之后
+			以debug（调试）方式启动（调试）
+				php start.php start
+			以daemon（守护进程）方式启动（正式环境）
+				php start.php start -d
+			停止
+				php start.php stop
+			重启
+				php start.php restart
+			平滑重启(修改Event.php文件之后)
+				php start.php reload
+			查看状态
+				php start.php status
+参考文档：http://doc2.workerman.net/326102
+
+
+=============================================== 可能出现的错误 ==========================================================
+
+*若出现 stream_socket_server() has been disabled for security reasons ...
+失败原因：
+stream_socket_server 函数被php.ini禁用
+解决方法
+1、运行php --ini 找到php.ini文件
+2、打开php.ini找到disable_functions一项，将stream_socket_server禁用项删掉
+
+重载lnmp
+
+
+*若出现Error in connection establishment: net::ERR_CONNECTION_TIMED_OUT
+失败原因：
+1.端口未开放
+2.服务器防火墙阻止了连接
+
+解决方法
+1.到服务器开放相应端口
+2.可以临时关闭防火墙试
+
+
+
+# 若后台查询聊天记录是出现如下错误
+1055 Expression #4 of SELECT list is not in GROUP BY clause and contains nonaggregated column....
+
+解决方法：
+在mysql中执行->
+SET @@GLOBAL.sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION";  

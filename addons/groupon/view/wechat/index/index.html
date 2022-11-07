@@ -1,0 +1,42 @@
+{if count($rs)>0}
+<link rel="stylesheet"  href="__ROOT__/addons/groupon/view/wechat/index/css/list.css">
+<style>
+    .wst-in-groupon{width:100%;background: #fff;margin-top:0.1rem;}
+    .wst-in-groupon .groupon-header{padding:0.15rem 0.12rem 0.15rem 0.12rem;border-bottom: 1px solid #f2f2f2;}
+    .wst-in-groupon .groupon-title p{font-size:0.17rem;font-weight: bold;color:#000;}
+    .wst-in-groupon .groupon-title .more{color:#999;font-size:0.12rem;font-weight: normal;}
+</style>
+<div class="wst-in-groupon">
+    <div class="groupon-header">
+        <div class="groupon-title wst-flex-row wst-jsb wst-ac">
+            <div class="wst-flex-row wst-jsb wst-ac">
+                <p>团购活动</p>
+            </div>
+            <p class="more" onclick="javascript:location.href=WST.AU('groupon://goods/wxlists')">查看更多></p>
+        </div>
+    </div>
+    <div class="groupon-content">
+        {volist name="rs" id="vo"}
+        <div class="ui-row-flex wst-shl-list goods" onclick="location.href=WST.AU('groupon://goods/wxdetail','id='+{$vo['grouponId']})" >
+            <div class="ui-col">
+                <div class="img"><a href="javascript:void(0);" onclick="goGoods({$vo['grouponId']})">
+                    <img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{$vo['goodsImg']}" title="{$vo['goodsName']}"></a></div>
+            </div>
+            <div class="ui-col ui-col-2 info" style="padding-bottom:0;">
+                <div class="title">{$vo['goodsName']}</div>
+                <p class="time time-in wst-flex-row wst-jsb wst-ac">
+                    {php} $rate = round($vo['orderNum']/($vo['orderNum']+$vo['grouponNum'])*100,2); {/php}
+                    <span class='gtotal'><span class='gsale' style='width:{$rate}%;'></span></span>
+                    <span class='txtsale'>已团{$rate}%</span>
+                </p>
+                <p class='time-before countDown_{{ d.current_page }}'></p>
+                <div class="wst-flex-row wst-jsb wst-ac" style="margin-top:0.2rem">
+                    <p class="prices wst-flex-row" style="align-items: baseline;"><span class="price">{:lang('currency_symbol')}{$vo['grouponPrice']}</span><span class="price2">{:lang('currency_symbol')}{$vo['marketPrice']}</span>&nbsp;</p>
+                    <p class='buttons'><a href="{:addon_url('groupon://goods/wxdetail',array('id'=>$vo['grouponId']))}">去参团</a></p>
+                </div>
+            </div>
+        </div>
+        {/volist}
+    </div>
+</div>
+{/if}

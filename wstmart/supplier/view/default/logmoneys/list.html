@@ -1,0 +1,38 @@
+{extend name="default/base" /}
+{block name='css'}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+
+{/block}
+
+{block name="main"}
+<div class='money-head'>
+  <div class='supplier-logo'><img height='100' width='100'src='__RESOURCE_PATH__/{:session("WST_SUPPLIER.supplierImg")}'></div>
+  <div class='supplier-info'>
+     <div class='supplierName'>{:session('WST_SUPPLIER.supplierName')}</div>
+     <div class='supplierMoney'>{:lang('can_use_money')}：<font color='red'>{:lang('currency_symbol')}{$object['supplierMoney']}</font></div>
+     <div class="money-rows">
+       <div class='supplierMoney wst-lfloat'>{:lang('lock_money')}：<font color='red'>{:lang('currency_symbol')}{$object['lockMoney']}</font></div>
+     </div>
+  </div>
+</div>
+<div class='wst-user-content'>
+   <div id='tab' class="wst-tab-box">
+		<ul class="wst-tab-nav">
+		   <li onclick="loadGrid(-1)">{:lang('label_logmoney')}</li>
+		   <li onclick="loadGrid(1)">{:lang('label_logmoney_income')}</li>
+		   <li onclick="loadGrid(0)">{:lang('label_logmoney_expend')}</li>
+		</ul>
+    </div>
+</div>
+<div class='wst-grid'>
+    <div id="mmg" class="mmg"></div>
+    <div id="pg" style="text-align: right;"></div>
+</div>
+<style type="text/css">
+  .wst-tab-nav{border-bottom: 0px;}
+</style>
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__SUPPLIER__/logmoneys/logmoneys.js?v={$v}'></script>
+{/block}

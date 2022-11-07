@@ -1,0 +1,124 @@
+{extend name="$LAYOUT_MOBILE_BASE" /}
+{block name="title"}{:lang('auction_pay_for_order')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__ROOT__/addons/auction/view/mobile/index/css/carts.css?v={$v}">
+{/block}
+{block name="header"}
+    <header style="background:#ffffff;" class="ui-header ui-header-positive ui-border-b wst-header">
+        <a class="ui-icon-return" onclick="history.back()"></a><h1>{:lang('auction_pay_for_order')}</h1>
+    </header>
+{/block}
+{block name="main"}
+   	{/* 大加载 */}
+	<div class="ui-loading-block" id="Loadl">
+	    <div class="ui-loading-cnt">
+	        <i class="ui-loading-bright"></i>
+	        <p id="j-Loadl">{:lang('auction_loading')}</p>
+	    </div>
+	</div>
+	<section class="ui-container">
+	{if(empty($message))}
+		<div class="order-item">
+			<div class="ui-row-flex ui-whitespace border-b">
+				<div class="">
+					<img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{:WSTImg($object['goodsImg'],3)}" title="{$object['goodsName']|WSTStripTags}" class="o-Img">
+				</div>
+				<div class="o-gInfo-container">
+					<div class="o-gInfo">
+						<p class="o-gName ui-nowrap-multi ">{$object['goodsName']}</p>
+					</div>
+					<div class="o-gInfo2 wst-flex-row wst-ac wst-jfe">
+						<p class="o-gPrice">×1</p>
+					</div>
+				</div>
+			</div>
+			<div class="ui-btn-wrap" style="text-align: right;padding:10px 0;">
+				<span class="wst-orders_pricet">{if($payObj=='bao')}{:lang('auction_caution_money')}{else}{:lang('auction_transaction_fee')}{/if}：<span class="wst-orders_prices">{:lang('currency_symbol')}<?php echo sprintf("%.2f", $object['cautionMoney']);?></span></span>
+			</div>
+			<div class="wst-clear"></div>
+		</div>
+	 
+		<div id="paybtnbox" style="text-align: center;padding:0.12rem;">
+			{if($payFrom=='weixinpays')}
+			<button type="button" class="wst-btn-dangerlo" onclick="javascript:callpay();" style="width: 80%;  display: inline-block;">{:lang('auction_confirm_pay')}</button>
+			{/if}
+		</div>
+	{else}
+		<ul class="ui-row-flex wst-flexslp">
+			<li class="ui-col ui-flex ui-flex-pack-center">
+			<p>{$message}</p>
+			</li>
+		</ul>
+	{/if}
+	</section>
+	<div class="ui-dialog" id="wst-di-wxpay">
+		<div class="ui-dialog-cnt">
+			<header class="ui-dialog-hd ui-border-b">
+			  <h3>{:lang('auction_please_confirm_that_wechat_payment_has_been_completed')}</h3>
+			  <i class="ui-dialog-close" data-role="button"></i>
+			</header>
+			<div class="ui-dialog-hd ui-border-b">
+				<a href="{$returnUrl}"><div style="color:red;">{:lang('auction_has_finish_pay')}</div></a>
+			</div>
+			<div class="ui-dialog-hd ui-border-b">
+				<a href=""><div >{:lang('auction_payment_problem_pay_again')}</div></a>
+			</div>
+		</div>
+	</div>
+{/block}
+{block name="footer"}{/block}
+{block name="js"}
+<script type='text/javascript' src='__ROOT__/addons/auction/view/mobile/index/js/carts.js?v={$v}'></script>
+{if(empty($message))}
+
+	{if($payFrom=='paypals')}
+		{php}$paypalClientId = WSTGetPaypalClientId();{/php}
+		{if $paypalClientId!=""}
+		<script src="https://www.paypal.com/sdk/js?client-id={$paypalClientId}&debug=true&currency=HKD"></script>
+		<script>
+			paypal.Buttons({
+				createOrder: function() {
+					var pkey = "{$pkey}";
+				  return fetch(WST.AU('auction://paypalsmo/getpaypalinfo'), {
+				    method: 'post',
+				    headers: {
+				      'content-type': 'application/json'
+				    },
+				　　body:JSON.stringify({
+				 　　'payObj' : '{$payObj}',
+				 　　'pkey' : pkey
+				　　})
+				  }).then(function(res) {
+				  	console.log("res______________",res);
+				    return res.json();
+				  }).then(function(data) {
+				  	console.log("data______________",data);
+				    return data.id; // Use the key sent by your server's response, ex. 'id' or 'token'
+				  });
+				},
+				onApprove: function(data, actions) {
+					console.log("onApprove______________",data);
+			        return actions.order.capture().then(function(details) {
+			        	console.log("details——————————————————————————————————————————",details);
+			        	if(details['purchase_units'][0]['payments']['captures'][0]['status']=='COMPLETED'){
+			        		setTimeout(function(){
+			        			location.href = "{$returnUrl}";
+			        		},3000);
+			        		
+			        	}
+			        });
+			    }
+			}).render('#paybtnbox');
+
+		</script>
+		{/if}
+	{else}
+	<script type="text/javascript">
+    function callpay(){
+		$("#wst-di-wxpay").dialog("show");
+		location.href = "{$mweb_url}";
+	}
+	</script>
+	{/if}
+{/if}
+{/block}

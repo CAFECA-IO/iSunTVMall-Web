@@ -1,0 +1,93 @@
+{extend name="$LAYOUT_MOBILE_BASE" /}
+{block name="title"}优惠券适用商品 - {__block__}{/block}
+{block name="meta"}
+<meta name="description" content="{$seoDesc}">
+<meta name="keywords" content="{$seoKeywords}">
+{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__STATIC__/plugins/swiper/swiper.min.css"/>
+<link rel="stylesheet"  href="__ROOT__/addons/coupon/view/mobile/index/goods_list.css?v={$v}">
+{/block}
+{block name="header"}
+    <header class="ui-header ui-header-positive wst-se-header2" style="border-bottom: 1px solid #f6f6f8;">
+        <a href="javascript:void(0);" onclick="history.back()"><i class="ui-icon-return"></i></a>
+        <div class="wst-se-search">
+        	<i class="ui-icon-search" onclick="javascript:couponSearch();"></i>
+            <span class="input-form">
+            <input type="search"  placeholder="{:lang('coupon_require_goods_name')}" onsearch="javascript:couponSearch();" autocomplete="off" id="keyword">
+            </span>
+        </div>
+    </header>
+{/block}
+{block name="footer"}
+
+{/block}
+{block name="main"}
+     <input type="hidden" name="" value="{$couponId}" id="couponId" autocomplete="off">
+     <input type="hidden" name="" value="" id="condition" autocomplete="off">
+	 <input type="hidden" name="" value="" id="desc" autocomplete="off">
+	 <input type="hidden" name="" value="" id="currPage" autocomplete="off">
+     <input type="hidden" name="" value="" id="totalPage" autocomplete="off">
+     <section class="ui-container">
+        <div class="wst-shl-ads">
+     		<div class="title">{:lang('coupon_hot_sale_recomm')}</div>
+		   <div class="wst-gol-adsb">
+			<div class="swiper-container">
+	          <div class="swiper-wrapper">
+	          	{wst:goods type='recom' cat='0' num='8'}
+	                <div class="swiper-slide" style="width:33.333333%;">
+	                     <div class="wst-gol-img j-imgRec">
+		                     <a href="javascript:void(0);" onclick="javascript:WST.intoGoods({$vo['goodsId']});">
+		                     <img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{:WSTImg($vo['goodsImg'],3)}" title="{$vo['goodsName']|WSTStripTags}">
+		                     </a>
+	                     </div>
+	                     <p>{:lang('currency_symbol')}{$vo['shopPrice']}</p>
+	                </div>
+	             {/wst:goods}
+	          </div>
+	        </div>
+	        </div>
+     	</div>
+     	<div class="ui-row-flex wst-shl-head">
+		    <div class="ui-col ui-col sorts active" status="down" onclick="javascript:orderCondition(this,0);">
+		   		 <p class="pd0">{:lang('coupon_sale_volume')}</p><i class="down2"></i>
+		    </div>
+		    <div class="ui-col ui-col sorts" status="down" onclick="javascript:orderCondition(this,1);">
+		   		 <p class="pd0">{:lang('coupon_price')}</p><i class="down"></i>
+		    </div>
+		    <div class="ui-col ui-col sorts" status="down" onclick="javascript:orderCondition(this,2);">
+		   		 <p class="pd0">{:lang('coupon_popularity')}</p><i class="down"></i>
+		    </div>
+		    <div class="ui-col ui-col sorts" status="down" onclick="javascript:orderCondition(this,3);">
+		   		 <p style="margin-right:0.3rem;">{:lang('coupon_onsale_time')}</p><i class="down"></i>
+		    </div>
+		</div>
+		 <ul id="goods-container" class="ui-tab-content goods-container">
+			 <li id="goods-list"  ></li>
+		 </ul>
+     </section>
+<script id="list" type="text/html">
+{{# if(d && d.length>0){ }}
+{{# for(var i=0; i<d.length; i++){ }}
+<div class="wst-in-goods {{# if((i)%2==0){ }}left{{# }else{ }}right{{# } }}" >
+<div class="img j-imgAdapt"><a href="javascript:void(0);" onclick="javascript:WST.intoGoods({{ d[i].goodsId }});"><img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{{ d[i].goodsImg }}" title="{{ d[i].goodsName }}"/></a></div>
+	<div class="name ui-nowrap-multi" onclick="javascript:WST.intoGoods({{ d[i].goodsId }});">{{ d[i].goodsName }}</div>
+	<div class="info">
+		<div class="wst-flex-row wst-jsb"><span class="price">{:lang('currency_symbol')} <span>{{ d[i].shopPrice }}</span></span><span class="cart deal"  onclick="javascript:WST.addCart({{d[i].goodsId}});"></span></div>
+		<div class="wst-flex-row wst-jsb"><span class="deal">{:lang('coupon_praise_rate')} <span>{{ d[i].praiseRate }}</span></span><span class="deal">{:lang('coupon_fixture_number')}:{{ d[i].saleNum }}</span></div>
+	</div>
+</div>
+{{# } }}
+<div class="wst-clear"></div>
+{{# }else{ }}
+	<div class="wst-prompt-icon"><img src="__MOBILE__/img/no_data.png"></div>
+<div class="wst-prompt-info">
+	<p>{:lang('coupon_no_data')}</p>
+</div>
+{{# } }}
+</script>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__STATIC__/plugins/swiper/swiper.min.js'></script>
+<script type='text/javascript' src='__ROOT__/addons/coupon/view/mobile/index/goods_list.js?v={$v}'></script>
+{/block}

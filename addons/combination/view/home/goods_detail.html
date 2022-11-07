@@ -1,0 +1,121 @@
+<link rel="stylesheet"  href="__ROOT__/addons/combination/view/home/css/goods.css">
+<div id='combine' class="wst-tab-box" {if count($combineGoods)==0}style='display:none'{/if}>
+    <ul class="wst-tab-nav">
+    	{php}
+        $tno = 0;
+    	foreach($combineGoods as $i => $vo){
+	        echo '<li id="combieTab_'.$tno.'" dataval="'.$vo['combineId'].'">'.$vo['combineName'].'</li>';
+            $tno++;
+	    }
+    	{/php}
+    </ul>
+    <div class="wst-tab-content" style='width:99%;margin-bottom: 10px;height:190px;overflow:hidden;'>
+    	{php}
+    	$combinePrice = 0;
+        $ik = 0;
+    	foreach($combineGoods as $i => $vo){
+    	{/php}
+        <div class="wst-tab-item combine-box" style="position: relative;">
+        	<div class='combineMGoods'>
+        		<div><a target='_blank' href='{:Url('home/goods/detail','goodsId='.$vo['goodsId'])}'><img src="__RESOURCE_PATH__/{$vo['goodsImg']}"/></a></div>
+                <div class='goodsName'>{$vo['goodsName']}</div>
+                <div class='goodsPrice' style='display: none'><label><input type='checkbox' class='j-combine{$vo['combineId']} j-combine-goodsId{$vo['combineId']}_{$vo['goodsId']}' combineId='{$vo['combineId']}' combineGoodsId='{$vo['id']}' goodsId='{$vo['goodsId']}'combineGoodsSpecId='{$vo['goodsSpecId']}' combineMain={$vo['isMain']} checked onclick='javascript:checkCombineGoodsMoney(this)' goodsType='1'>{:lang('currency_symbol')}{$vo['shopPrice']}</label></div>
+        	</div>
+        	<div class='plus'><i class='fa fa-plus fa-2x'></i></div>
+        	<div class='combineCGoods'>
+                <div class="als-container" id="js-combineGoods{$ik}">
+                    <span class="als-prev">&lt;</span>
+                    <div class='als-viewport'>
+                    <ul class='als-wrapper'>
+                    {php}
+                    foreach($vo['list'] as $j => $gvo){
+                       if($vo['combineType']==1){
+                           $combinePrice += $gvo['shopPrice'];
+                       }
+                       if($gvo['goodsId']==$vo['goodsId'])continue;
+                    {/php}
+                        <li class='combineMGoods als-item'>
+            	        	<div><a target='_blank' href='{:Url('home/goods/detail','goodsId='.$gvo['goodsId'])}'><img id='combineGoodsImg_{$vo['combineId']}_{$gvo['goodsId']}' src="__RESOURCE_PATH__/{$gvo['goodsImg']}"/></a></div>
+            	            <div class='goodsName'>{$gvo['goodsName']}</div>
+            	            <div class='goodsPrice'><label><input type='checkbox' class='j-combine{$vo['combineId']} j-combine-goodsId{$vo['combineId']}_{$gvo['goodsId']}' combineId='{$vo['combineId']}' combineGoodsId='{$gvo['id']}' combineGoodsSpecId='{$gvo['goodsSpecId']}'  {if $vo['combineType']==1}checked disabled{/if} goodsType='0' goodsId='{$gvo['goodsId']}' onclick='javascript:checkCombineGoodsMoney()'><span id='combineGoodsPrice_{$vo['combineId']}_{$gvo['goodsId']}'>{:lang('currency_symbol')}{$gvo['shopPrice']}<span></label></div>
+                            {if $gvo['isSpec']==1 && $goodsId!=$gvo['goodsId']}
+                            <div><a href='javascript:selectGoods({$vo['combineId']},{$gvo['goodsId']})'>[{:lang('combination_select_spec')}]</a></div>
+                            {/if}
+                        </li>
+                    {php}}{/php}
+                    </ul>
+                    </div>
+                  <span class="als-next">&gt;</span>
+                </div>
+        	</div>
+        	<div class='equal'></div>
+        	<div class='total'>
+                {if $vo['isRead']}
+                <div class='start-time'>{:lang('combination_activity_start_time')}：<br/>{:date('Y-m-d H:i:s',strtotime($vo['startTime']))}</div>
+                {else}
+        		<div class='price'>{:lang('combination_has_select_num_tips',['<span id="goodsNum_'.$vo['combineId'].'">'.(($vo['combineType']==1)?(count($vo['list'])-1):0).'</span>'])}</div>
+                <div class='price'>{:lang('combination_portfolio_price')}：<span class='unit'>{:lang('currency_symbol')}</span><span class='combineReduceMoney' id='combineTotalMoney_{$vo['combineId']}'>{:round($combinePrice,2)}</span></div>
+        		<div><a href="javascript:combinecart({$vo['combineId']})" class='buyBtn'>{:lang('combination_buy_now')}</a></div>
+                {/if}
+        	</div>
+        	<div style='clear:both;'></div>
+        </div>
+        {php}
+            $combinePrice = 0;
+            $ik++;
+        }
+        {/php}
+    </div>
+</div>
+<div id='combineteGoodsSpec' style='display:none'>
+<div class="standard" id="standard" ></div>
+<script id="combineBoxlist" type="text/html">
+    <div id='standardGoodsSpec' style='height:475px'>
+    {{#
+        var ids = d['ids'];
+        var goodsUnit = d['goodsUnit'];
+        var defaultPrice = d['defaultPrice'];
+        var defaultStock = d['defaultStock'];
+        var combineId = d['combineId'];
+        var goodsId = d['goodsId'];
+        var goodsSpecId = d['goodsSpecId'];
+        var reduceMoney = d['reduceMoney'];
+        var d = d['specs'];
+        for(var i in d){
+    }}
+        <div class="spec">
+            <p3>{{d[i]['name']}}</p>
+            {{# for(var j=0;j<d[i]['list'].length;j++){ }}
+                {{# if(d[i]['list'][j]['itemImg']!=''){ }}
+                <span style="line-height: 44px;" class="j-option {{# if(ids.indexOf(':'+d[i]['list'][j]['itemId']+':')!=-1){ }}active{{# } }}" data-val="{{d[i]['list'][j]['itemId']}}" data-name="{{d[i]['list'][j]['itemName']}}" data-image="__RESOURCE_PATH__/{{d[i]['list'][j]['itemImg']}}"><img class="img" data-image="__RESOURCE_PATH__/{{d[i]['list'][j]['itemImg']}}" src="__RESOURCE_PATH__/{{d[i]['list'][j]['itemImg']}}">{{d[i]['list'][j]['itemName']}}</span>
+                {{# }else{ }}
+                <span class="j-option {{# if(ids.indexOf(':'+d[i]['list'][j]['itemId']+':')!=-1){ }}active{{# } }}" data-val="{{d[i]['list'][j]['itemId']}}" data-name="{{d[i]['list'][j]['itemName']}}">{{d[i]['list'][j]['itemName']}}</span>
+                {{# } }}
+            {{# } }}
+            <div class="wst-clear"></div>
+        </div>
+    {{# } }}
+    </div>
+    <div class="wst-combine-footer">
+        <div class='left'>
+            <div style='float:left;margin-right:15px;color:#e4393c'>{:lang('combination_price')}：{:lang('currency_symbol')}<span id="j-goods-price">{{defaultPrice}}</span>&nbsp;</div>
+            <div style='float:left;'>{:lang('combination_stock')}：<span id="j-goods-stock">{{defaultStock}}</span>&nbsp;{{goodsUnit}}</div>
+        </div>
+        <div class='right'>
+            {{# if(defaultStock <= 0){ }}
+            <button class="button disabled" id='j-specBtn' onclick="javascript:void(0);" >{:lang('combination_confirm')}</button>
+            {{# }else{ }}
+            <button class="button" id='j-specBtn' onclick="javascript:selectSpec({{combineId}},{{goodsId}},{{goodsSpecId}});" >{:lang('combination_confirm')}</button>
+            {{#} }}
+        </div>
+    </div>
+</script>
+</div>
+<script>
+var combineJosn = {:json_encode($combineGoods)};
+var goodsSpec = {:json_encode($goodsSpec)};
+</script>
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__STATIC__/js/base64.js'></script>
+<script type='text/javascript' src='__ROOT__/wstmart/home/view/default/js/jquery.als.js'></script>
+<script type='text/javascript' src='__ROOT__/addons/combination/view/home/js/goods.js'></script>

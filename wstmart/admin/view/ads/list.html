@@ -1,0 +1,42 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/ads/admgrs.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div id='alertTips' class='alert alert-success alert-tips fade in'>
+  <div id='headTip' class='head'><i class='fa fa-lightbulb-o'></i>{:lang('menu_tips')}</div>
+  <ul class='body'>
+    <li>{:lang('ads_menu_tips')}</li>
+  </ul>
+</div>
+<form autocomplete="off" >
+<div class="wst-toolbar">
+		<select name="positionType" id="positionType" class="query" onchange='javascript:addPosition(this.value);'>
+			<option value="">{:lang('select_ads_posi')}</option>
+            {volist name=":WSTDatas('ADS_TYPE')" id='vo'}
+            <option value="{$vo['dataVal']}">{$vo['dataName']}</option>
+            {/volist}
+	    </select>
+		<select name="adPositionId" id="adPositionId" class="query" >
+			<option value="">{:lang('select')}</option>
+		</select>
+		<button class="btn btn-primary" type='button' onclick="javascript:loadQuery()"><i class='fa fa-search'></i>{:lang('query')}</button>
+   {if WSTGrant('GGGL_01')} 
+   <button class="btn btn-success f-right btn-fixtop" type='button' onclick="javascript:location.href='<?=url("admin/ads/toEdit")?>'"><i class='fa fa-plus'></i>{:lang('add')}</button>
+   {/if}
+   <div style="clear:both"></div>
+</div>
+</form>
+<div class='wst-grid'>
+<div id="mmg" class="mmg"></div>
+<div id="pg" style="text-align: right;"></div>
+</div>
+<script>
+$(function(){initGrid({$p})});
+</script>
+
+{/block}

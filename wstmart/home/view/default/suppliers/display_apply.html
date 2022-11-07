@@ -1,0 +1,23 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('shop_enter_link_type')} - {:lang('supplier_enter')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="main"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link href="__STYLE__/suppliers/apply-{$lang}.css?v={$v}" rel="stylesheet">
+<div class="wst-container">
+    
+<div class='apply-box'>
+	<div class='examine-tips'>
+		
+		<img src='__ROOT__/wstmart/home/view/default/img/error_1.png' style="vertical-align:middle"/>
+		{:lang('suppler_enter_account_reday_desc')}
+		<div style='clear:both;'></div>
+	  
+	</div>
+</div>
+    
+</div>
+{/block}
+{block name="js"}
+
+{/block}

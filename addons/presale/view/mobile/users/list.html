@@ -1,0 +1,305 @@
+{extend name="$LAYOUT_MOBILE_BASE" /}
+{block name="title"}{:lang('presale_my_presale')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__ROOT__/addons/presale/view/mobile/users/css/list.css?v={$v}">
+{/block}
+{block name="header"}
+	<div id="info_list">
+    <header style="background:#ffffff;" class="ui-header ui-header-positive ui-border-b wst-header">
+        <i class="ui-icon-return" onclick="history.back()"></i><h1>{:lang('presale_my_presale')}</h1>
+    </header>
+{/block}
+{block name="footer"}
+    {include file="$LAYOUT_MOBILE_FOOTER" /}
+{/block}
+{block name="main"}
+	<input type="hidden" name="" value="-2" id="ftype" autocomplete="off">
+	<input type="hidden" name="" value="" id="currPage" autocomplete="off">
+    <input type="hidden" name="" value="" id="totalPage" autocomplete="off">
+    <section class="user-info">
+        <div class="ui-tab">
+            <ul class="ui-tab-nav order-tab">
+                <li class="tab-item tab-curr" type="-2">{:lang('presale_all')}</li>
+                <li class="tab-item" type="0">{:lang('presale_wait_pay_deposit_money')}</li>
+                <li class="tab-item" type="1">{:lang('presale_wait_pay_deposit_balance')}</li>
+                <li class="tab-item" type="2">{:lang('presale_buy_success')}</li>
+                <li class="tab-item" type="-1">{:lang('presale_buy_fail')}</li>
+            </ul>
+        </div>
+    </section>
+    <section class="ui-container" id="shopBox">
+
+        <div class="ui-tab-content" id="presale-container">
+            <div id="goods-list" class="wst-or-list"></div>
+        </div>
+    </section>
+
+<script id="list" type="text/html">
+{{# if(d && d.length>0){ }}
+{{# for(var i=0; i < d.length; i++){ }}
+<div class="list" >
+    <div class="head">
+        <div class="shop"  onclick="javascript:WST.intoShops({{d[i].shopId}});">
+            <p class="ui-nowrap-flex" style="padding-left: 0.25rem;"><i class="shopicon"></i>{{d[i].shopName}}</p>
+        </div>
+        <div class='state'>
+        {{# if(d[i].presaleStatus==0){ }}
+            <div class="order-status red">{{ WST.lang('presale_wait_pay_deposit_money') }}</div>
+        {{# }else if(d[i].presaleStatus==1){ }}
+            <div class="order-status orange">{{ WST.lang('presale_wait_pay_deposit_balance') }}</div>
+        {{# }else if(d[i].presaleStatus==2){ }}
+            <div class="order-status green">{{ WST.lang('presale_buy_success') }}</div>
+        {{# }else if(d[i].presaleStatus==-1){ }}
+            <div class="order-status red">{{ WST.lang('presale_buy_fail') }}</div>
+        {{# } }}
+        </div>
+        <div class="wst-clear"></div>
+    </div>
+    <div class="goods" onclick="toDetail({{ d[i].id }});">
+        <div class="img">
+            <img class="goods-img" src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{{ d[i].goodsImg }}" title="{{ d[i].goodsName }}">
+        </div>
+        <div class="details">
+            <div class="names">
+                <div class="name">{{ d[i].goodsName }}</div>
+                {{# if(d[i].shotGoodsSpecNames!=''){ }}
+                <div class="spec">{{ d[i].shotGoodsSpecNames }}</div>
+                {{# } }}
+            </div>
+            <div class="wst-clear"></div>
+            <div class="pmiddle">
+                <span class="iright">× {{ d[i].goodsNum }}</span>
+                <div class="wst-clear"></div>
+            </div>
+            <div class="bottom-box">
+                <div class='price'>{:lang('currency_symbol')}{{d[i].goodsPrice}}</div>
+                <div class="info">
+                    <span class="title">
+                    {{# if(d[i].presaleStatus==0){ }}
+                        {{ WST.lang('presale_wait_pay_deposit_money') }}：<span class="needpay">{:lang('currency_symbol')}{{d[i].depositMoney}}</span>
+                    {{# }else if(d[i].presaleStatus==1){ }}
+                        {{ WST.lang('presale_wait_pay_deposit_balance') }}：<span class="needpay">{:lang('currency_symbol')}{{d[i].surplusMoney}}</span>
+                    {{# }else if(d[i].presaleStatus==2){ }}
+                        {{ WST.lang('presale_should_pay') }}：<span class="needpay">{:lang('currency_symbol')}{{d[i].realTotalMoney}}</span>
+                    {{# } }}
+                    </span>
+
+                </div>
+                <div class="wst-clear"></div>
+            </div>
+        </div>
+        <div class="wst-clear"></div>
+
+    </div>
+    <div class="operate">
+        <span class="time">{{d[i].createTime}}</span>
+        {{# if(d[i].presaleStatus==0){ }}
+            <button class="button red" onclick="choicePay('{{ d[i].pkey }}');">{{ WST.lang('presale_to_pay_deposit_money') }}</button>
+        {{# }else if(d[i].presaleStatus==1 && d[i].canPaySurplus==1){ }}
+            <button class="button red" onclick="choicePay('{{ d[i].pkey }}');">{{ WST.lang('presale_to_pay_deposit_balance') }}</button>
+        {{# } }}
+        <button class="button" onclick="toDetail({{ d[i].id }});">{{ WST.lang('presale_view_detail') }}</button>
+    </div>
+</div>
+
+{{# } }}
+<div class="wst-clear"></div>
+{{# }else{ }}
+<div class="wst-prompt-icon"><img src="__MOBILE__/img/nothing-order.png"></div>
+<div class="wst-prompt-info">
+	<p>{{ WST.lang('presale_no_presale') }}</p>
+</div>
+{{# } }}
+</script>
+
+<script type="text/html" id="detailBox">
+    <div id="detailBox">
+     <div class="detail-head-status" style="margin-top:0;">
+
+
+     </div>
+
+    <div class="detail-head ">
+        <div class="ui-row-flex">
+            <div class="ui-col ui-col wst-or-term wst-flex-row wst-ac"><i class="icon-address"></i><span class="wst-or-username">{{ WST.lang('presale_consignee_information') }}</span></div>
+        </div>
+        <div class="ui-row-flex">
+            <div class="ui-col ui-col wst-or-term"><span class="d-uaddr wst-or-username">{{d.userName}}</span><span class="d-utel">{{d.userPhone}}</span></div>
+        </div>
+        <div class="ui-row-flex">
+            <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe"></span><span class="d-uaddr">{{d.userAddress}}</span></div>
+        </div>
+    </div>
+    {{# if(d.deliverType==1){ }}
+    <div class="detail-head ">
+
+        <div class="ui-row-flex">
+            <div class="ui-col ui-col wst-or-term wst-flex-row wst-ac"><i class="icon-address"></i><span class="wst-or-username">{{ WST.lang('presale_pick_up_info') }}</span></div>
+        </div>
+        {{# if(d.store){}}
+        <div class="ui-row-flex">
+            <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe"></span><span class="d-uaddr">{{ WST.lang('presale_store_name') }}：{{d.store.storeName}}</span></div>
+        </div>
+        <div class="ui-row-flex">
+            <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe"></span><span class="d-uaddr">{{ WST.lang('presale_contact_number') }}：{{d.store.storeTel}}</span></div>
+        </div>
+        <div class="ui-row-flex">
+            <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe"></span><span class="d-uaddr">{{ WST.lang('presale_store_address') }}：{{d.store.storeAddress}}</span></div>
+        </div>
+
+        {{# }else{ }}
+            <div class="ui-row-flex">
+                <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe"></span><span class="d-uaddr">{{ WST.lang('presale_store_address') }}：{{d.shopAddress}}</span></div>
+            </div>
+        {{# } }}
+
+    </div>
+    {{# } }}
+
+    <div class="detail-head" style="padding:0;">
+        <div class="ui-row-flex item-head" style="padding: 0 0.12rem;">
+            <div class="ui-col ui-col-2" onclick="javascript:WST.intoShops({{d.shopId}});"><p class="ui-nowrap-flex"><i class="shopicon"></i>{{d.shopName}}</p></div>
+            <div class="ui-col order-tr o-status" style="color:#999;">
+                {{# if(d.presaleStatus==0){ }}
+                    <div class="order-status red">{{ WST.lang('presale_wait_pay_deposit_money') }}</div>
+                {{# }else if(d.presaleStatus==1){ }}
+                    <div class="order-status orange">{{ WST.lang('presale_wait_pay_deposit_balance') }}</div>
+                {{# }else if(d.presaleStatus==2){ }}
+                    <div class="order-status green">{{ WST.lang('presale_buy_success') }}</div>
+                {{# }else if(d.presaleStatus==-1){ }}
+                    <div class="order-status red">{{ WST.lang('presale_buy_fail') }}</div>
+                {{# } }}
+            </div>
+        </div>
+
+        <div class="ui-row-flex ui-whitespace border-b d-goodsitme" style="padding:0 0.12rem;" onClick="toPresaleGoods({{d.presaleId}})">
+            <div class="">
+                <img src="__RESOURCE_PATH__/{{d.goodsImg}}" class="o-Img">
+            </div>
+            <div class="o-gInfo-container">
+                <div class="o-gInfo">
+                    <p class="o-gName ui-nowrap-multi">{{d.goodsName}}</p>
+                    {{# if(d.goodsSpecNames){ }}
+                    <p class="o-gSpec ui-nowrap-multi ">{{d.goodsSpecNames.replace(/@@_@@/g,' ')}}</p>
+                    {{# } }}
+                </div>
+                <div class="o-gInfo2 wst-flex-row wst-ac wst-jsb">
+
+                    <p class="o-gPrice">{:lang('currency_symbol')} {{d.goodsPrice}}</p><p class="o-gNum">x {{d.goodsNum}}</p>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="o-gInfo3 wst-flex-row wst-jsb wst-ac" style="padding:0 0.12rem 0.12rem 0.12rem;">
+
+            <span class="order_from"></span>
+
+            <div class="o-oListMoney">
+                {{ WST.lang('presale_real_total_money') }}：<span>{:lang('currency_symbol')} {{d.realTotalMoney}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="detail-head">
+         <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">
+             {{ WST.lang('presale_deposit_money') }}：</span><span>{{d.depositMoney}}</span>【{{(d.payMap[1])?WST.lang("presale_is_pay"):"<span style='color: red'>"+WST.lang('presale_no_pay')+"</span>" }}】
+             {{# if(d.payMap[1] && d.failType==2) { }}
+                {{d.refundMap[1]?"-- "+WST.lang('presale_is_refund'):"-- "+WST.lang('presale_no_refund')}}
+             {{# }else if(d.payMap[1] && d.failType==1) { }}
+                -- {{ WST.lang('presale_deposit_money_confiscate') }}
+             {{# } }}
+             </div>
+         </div>
+         <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">
+             {{ WST.lang('presale_deposit_balance_title') }}：</span><span>{{d.surplusMoney}}</span>【{{(d.presaleStatus==2 || d.payMap[2])?WST.lang("presale_is_pay"):"<span style='color: red'>"+WST.lang('presale_no_pay')+"</span>" }}】
+             {{# if(d.payMap[2] && d.failType==2) { }}
+                {{d.refundMap[2]?"-- "+WST.lang('presale_is_refund'):"-- "+WST.lang('presale_no_refund')}}
+             {{# } }}
+             </div>
+         </div>
+         {{# if(d.presaleStatus!=0 && d.payMap[1]) { }}
+         <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{{ WST.lang('presale_deposit_balance_pay_time') }}：</span><span>{{d.startPayTime}} {{ WST.lang('presale_to') }} {{d.endPayTime}}</span></div>
+         </div>
+         {{# } }}
+    </div>
+    <div class="detail-head">
+         <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{{ WST.lang('presale_order_no') }}：</span><span class="wst-or-describe">{{d.orderNo}}</span></div>
+         </div>
+         <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{{ WST.lang('presale_create_time') }}：</span>{{d.createTime}}</div>
+         </div>
+         <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{{ WST.lang('presale_pay_info') }}：</span>{{d.payTypeName}}</div>
+         </div>
+         <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{{ WST.lang('presale_delivery_info') }}：</span>{{d.deliverTypeName}}</div>
+         </div>
+          <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{{ WST.lang('presale_invoice_information') }}：</span>{{# if(d.isInvoice==1) { }}{{ WST.lang('presale_need') }}{{# } else{ }}{{ WST.lang('presale_no_need') }}{{# } }}</div>
+         </div>
+     {{# if(d.isInvoice==1) { }}
+
+          <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{{ WST.lang('presale_invoice_head') }}：</span>{{d.invoiceClient}}</div>
+         </div>
+     {{#
+          var inv_json = JSON.parse(d.invoiceJson);
+          var inv_code = (inv_json!=null && inv_json.invoiceCode!=undefined)?inv_json.invoiceCode:'';
+          if(inv_json!=null && inv_json.type!=undefined && inv_json.type==0){
+      }}
+          <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{{ WST.lang('presale_invoice_code') }}：</span>{{inv_code}}</div>
+         </div>
+     {{# } }}
+     {{# } }}
+          <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{{ WST.lang('presale_order_remark') }}：</span>{{ (d.orderRemarks!=''&&d.orderRemarks!=null)?d.orderRemarks:'-' }}</div>
+         </div>
+    </div>
+
+
+
+     <div class="detail-head">
+        <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe2">{{ WST.lang('presale_can_get_score') }}</span><span class="o-status2">{{d.orderScore}} {{ WST.lang('presale_score_unit') }}</span></div>
+        </div>
+          <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe2">{{ WST.lang('presale_goods_money') }}</span><span class="o-status2">{:lang('currency_symbol')} {{d.goodsMoney}}</span></div>
+         </div>
+          <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe2">{{ WST.lang('presale_freight') }}</span><span class="o-status2">{:lang('currency_symbol')} {{d.deliverMoney}}</span></div>
+         </div>
+         {{# if(d.useScore>0){ }}
+          <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe2">{{ WST.lang('presale_use_score_number') }}</span><span class="o-status2">{{d.useScore}} {{ WST.lang('presale_score_unit') }}</span></div>
+         </div>
+         <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe2">{{ WST.lang('presale_score_money') }}</span><span class="o-status2">{:lang('currency_symbol')} -{{d.scoreMoney}}</span></div>
+         </div>
+         {{# } }}
+          <div class="ui-row-flex wst-or-term2 wst-flex-row wst-jfe wst-ac">
+             <span class="wst-or-describe2">{{ WST.lang('presale_pay_real_total_money') }}：</span><span class="o-status2"><span style="font-size:0.13rem;">{:lang('currency_symbol')} </span>{{d.realTotalMoney}}</span>
+         </div>
+     </div>
+  </div>
+</script>
+{/* 遮盖层  */}
+<div class="wst-cover" id="cover"></div>
+{/* 订单详情层  */}
+<div class="wst-fr-box" id="frame">
+    <div class="title" id="boxTitle"><i onclick="javascript:dataHide();"></i><span>{:lang('presale_detail_title')}</span><div class="wst-clear"></div></div>
+    <div class="content" id="content">
+
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__ROOT__/addons/presale/view/mobile/users/js/list.js?v={$v}'></script>
+{/block}

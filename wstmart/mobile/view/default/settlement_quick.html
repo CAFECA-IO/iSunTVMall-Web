@@ -1,0 +1,250 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('confirm_order')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/settlement.css?v={$v}">
+{/block}
+{block name="header"}
+    <header style="background:#ffffff;" class="ui-header ui-header-positive wst-header">
+    	<i class="ui-icon-return" onclick="history.back()"></i><h1>{:lang('confirm_order')}</h1>
+    </header>
+{/block}
+{block name="main"}
+     <input type="hidden" name="" value="2" id="sign" autocomplete="off">
+     <section class="ui-container" style="border-bottom: 0.49rem solid transparent;">
+	    {if($carts['carts'])}
+	    {volist name="$carts['carts']" id="ca"}
+		<div class="wst-se-sh" style="margin-top:0;">
+			<p class="ui-nowrap-flex shopn wst-flex-row wst-ac" shopId="{$ca['shopId']}"><i></i>{$ca['shopName']}</p>
+			{volist name="ca['list']" id="li"}
+			<ul class="ui-row goods">
+			    <li class="ui-col ui-col-25">
+			    	<div class="img">
+				    	<a href="javascript:void(0);" onclick="javascript:WST.intoGoods({$li['goodsId']});">
+				    	<img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{:WSTImg($li['goodsImg'],3)}" title="{$li['goodsName']|WSTStripTags}">
+				    	</a>
+			    	</div>
+			    </li>
+				<li class="ui-col ui-col-75 wst-flex-column wst-jsb" style="height:0.9rem;">
+			    	<ul class="ui-row info">
+			    		<li class="ui-col ui-col-75">
+			    			<div class="name"><p class="names">{$li['goodsName']}</p>
+			    			</div>
+			    		</li>
+					</ul>
+					<ul class="ui-row info">
+						<li class="wst-flex-row wst-jsb wst-ac"><p class="price">{:lang('currency_symbol')}{$li['shopPrice']}</p><p class="number">×{$li['cartNum']}</p></li>
+					</ul>
+			    </li>
+			</ul>
+			{/volist}
+
+			{:hook('mobileDocumentCartShopPromotion',$ca)}
+			<div class="cost">
+				<div class="wst-flex-row wst-jsb item"><span class="title">{:lang('shop_total')}</span><span id="shopF_{$ca['shopId']}">{:lang('currency_symbol')}{php}echo sprintf("%.2f", $ca['goodsMoney']);{/php}</span></div>
+			</div>
+			{if WSTConf('CONF.isOrderScore')==1}
+            <div class="cost">
+				<div class="wst-flex-row wst-jsb item"><span class="title">{:lang('can_get_integral_title')}</span><span id="shopOS_{$ca['shopId']}">{php}echo WSTMoneyGiftScore($ca['goodsMoney']);{/php}</span></div>
+			</div>
+			{/if}
+			 <div class="remarks wst-flex-row wst-jsb wst-ac">
+				 <span class="title">{:lang('order_remark')}</span>
+				 <input id="remark_{$ca['shopId']}" maxLength='100' autocomplete="off" placeholder="{:lang('require_order_remark')}" />
+			 </div>
+		</div>
+		{/volist}
+		{else}
+			<p class="ui-nowrap-flex shopn">{:lang('not_add_goods_tips')}</p>
+		{/if}
+		<ul class="ui-list ui-list-text ui-list-active wst-se-mode" style="margin-bottom:0.1rem;">
+		    <li class="mode" onclick="javascript:dataShow('payments');">
+		        <h4 class="ui-nowrap">{:lang('pay_type')}</h4>
+				<div class="wst-flex-row wst-jfe wst-ac mode-content">
+					<div class="ui-txt-info" id="paymentst">{if !empty($payments['0']) || !empty($payments['1'])}{if !empty($payments['1'])}{$payments['1']['0']['payName']}{/if}{else}{:lang('nothing')}{/if}</div>
+					<i class="icon-right-arrow"></i>
+				</div>
+		    </li>
+		    <li class="{if(WSTConf('CONF.isOpenScorePay')==1)}mode{/if}" onclick="javascript:getInvoiceList();">
+		        <h4 class="ui-nowrap">{:lang('invoice_information')}</h4>
+				<div class="wst-flex-row wst-jfe wst-ac mode-content">
+					<div class="ui-txt-info" id="invoicest">{:lang('no_invoice')}</div>
+					<i class="icon-right-arrow"></i>
+				</div>
+		    </li>
+		    {if(WSTConf('CONF.isOpenScorePay')==1)}
+		   	<li class="mode" onclick="javascript:dataShow('score');">
+		        <h4 class="ui-nowrap">{:lang('integral_pay')}</h4>
+				<div class="wst-flex-row wst-jfe wst-ac mode-content">
+					<div class="ui-txt-info" id="scoret">{:lang('no')}</div>
+					<i class="icon-right-arrow"></i>
+				</div>
+		    </li>
+		    {/if}
+		</ul>
+     </section>
+{/block}
+{block name="footer"}
+		{/* 大加载 */}
+		<div class="ui-loading-block" id="Loadl">
+		    <div class="ui-loading-cnt">
+		        <i class="ui-loading-bright"></i>
+		        <p id="j-Loadl">{:lang('loading')}</p>
+		    </div>
+		</div>
+        <footer class="ui-footer wst-footer-btns" style="height:0.49rem;" id="footer">
+        	<input type="hidden" name="" value="{$carts['goodsTotalMoney']}" id="totalPrice" autocomplete="off">
+			<div class="wst-flex-row wst-jsb">
+				<div class="wst-se-total wst-flex-column wst-jc wst-se-summary"><span class="title">{:lang('needpay_total_money')}：</span><span id="totalMoney">{:lang('currency_symbol')}{$carts['goodsTotalMoney']}</span></div>
+				<div class="wst-se-confirm"><button class="button" onclick="javascript:quickSubmitOrder();">{:lang('confirm')}</button></div>
+			</div>
+        </footer>
+{/block}
+{block name="include"}
+{/* 遮盖层  */}
+<div class="wst-cover" id="cover"></div>
+{/* 支付方式 */}
+{if !empty($payments['0']) || !empty($payments['1'])}
+<input type="hidden" name="" value="{if !empty($payments['1'])}1{/if}" id="paymentsh" autocomplete="off">
+<input type="hidden" name="" value="{if !empty($payments['1'])}{$payments['1']['0']['payCode']}{else}{$payments['0']['0']['payCode']}{/if}" id="paymentsw" autocomplete="off">
+<div class="wst-fr-box frame" id="payments">
+	<div class="title"><span>{:lang('pay_type')}</span><div class="wst-clear"></div></div>
+	<div class="content" id="content">
+    {if !empty($payments)}
+          {if !empty($payments['1'])}
+          {volist name="$payments['1']" id="pay" key="paykey"}
+			<div class="fr-list wst-flex-row wst-jsb wst-ac" onclick="javascript:onSwitch(this);" >
+				<div class="wst-list-infose1 wst-flex-row wst-ac"><i class="{$pay['payCode']}"></i><span>{$pay['payName']}</span></div>
+				<i class="ui-icon-push payments_{$pay['payCode']} ui-icon-checked-s" payCode="{$pay['payCode']}" mode="{$pay['isOnline']}" word="{$pay['payName']}"></i>
+			</div>
+          {/volist}
+          {/if}
+    {/if}
+	</div>
+	<div class="bottom-two-btn-box wst-flex-row wst-center">
+		<button type="button" class="button wst-dialog-b1" onclick="javascript:dataHide('payments');">{:lang('cancel')}</button>
+		<button type="button" class="button wst-dialog-b2" onclick="javascript:inDetermine('payments');">{:lang('confirm')}</button>
+	</div>
+</div>
+{/if}
+
+
+{/* 用户发票列表  */}
+<script type="text/html" id="invoiceBox">
+	{{# for(var i = 0; i < d.length; i++){ }}
+	<li class="{{ d[i].invoiceType==0?'j-normal':'j-special'  }}"
+		invType="{{d[i].invoiceType}}"
+		invId="{{d[i].id}}"
+		invCode="{{d[i].invoiceCode}}">{{d[i].invoiceHead}}</li>
+	{{# } }}
+</script>
+
+{/* 发票信息层  */}
+<div class="wst-fr-box" id="frame">
+    <div class="title" id="boxTitle"><span>{:lang('invoice_information')}</span><div class="wst-clear"></div></div>
+    <div class="content" id="invoice_content" style="height:4.32rem;">
+		<div class="inv_item">
+			<div class="inv_tit">{:lang('invoice_type')}</div>
+			<div class="ui-list inv_ul wst-flex-row" id="j-normal-btn" onclick="javascript:invTypeSwitch(this,0);">
+				<i class="ui-icon-push invoices0 ui-icon-checked-s wst-active inv_chk" mode="0" word="{:lang('invoice_normal')}"></i>
+				<div class="pdtb10"><span>{:lang('invoice_normal')}</span></div>
+			</div>
+			<div class="ui-list inv_ul wst-flex-row" id="j-special-btn" onclick="javascript:invTypeSwitch(this,1);">
+				<i class="ui-icon-push invoices1 ui-icon-unchecked-s inv_chk" mode="1" word="{:lang('invoice_special_vat')}"></i>
+				<div class="pdtb10"><span>{:lang('invoice_special_vat')}</span></div>
+			</div>
+			<div class="wst-clear"></div>
+		</div>
+		<div class="inv_item" id="j-special-box">
+			<div class="special_inv_hidebox" style="display: block">
+				<div class="inv_head_inputbox">
+					<input class="inv_head_input" readonly type="text" id="special_invoice_head" placeholder="{:lang('require_invoice')}" />
+					<div id="special_inv_headlist">
+						<ul class="inv_list_item">
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<input type="hidden" id="invoiceId" value="0" />
+		<input type="hidden" id="invoiceType" value="0" class='j-ipt' />
+		<div class="inv_item">
+			<div class="inv_tit">{:lang('invoice_head')}</div>
+			<div class="ui-list inv_ul wst-flex-row" onclick="javascript:invOnSwitch(this,0);">
+				<i class="ui-icon-push invoices0 ui-icon-checked-s wst-active inv_chk" mode="0" word="{:lang('personal')}"></i>
+				<div class="pdtb10"><span>{:lang('personal')}</span></div>
+			</div>
+			<div class="ui-list inv_ul wst-flex-row" onclick="javascript:invOnSwitch(this,1);">
+				<i class="ui-icon-push invoices1 ui-icon-unchecked-s inv_chk" mode="1" word="{:lang('unit')}"></i>
+				<div class="pdtb10"><span>{:lang('unit')}</span></div>
+			</div>
+	        <input type="hidden" id="invoice_obj" value="0" />
+	        <div class="wst-clear"></div>
+
+			<div class="inv_hidebox">
+				<div class="inv_head_inputbox">
+					<input class="inv_head_input" type="text" id="invoice_head" placeholder="{:lang('require_unit_name')}" />
+					<div id="inv_headlist">
+						<ul class="inv_list_item">
+						</ul>
+					</div>
+				</div>
+				<div class="inv_code_inputbox">
+					<input class="inv_code_input" type="text" id="invoice_code" placeholder="{:lang('require_taxpayer_code')}" />
+				</div>
+			</div>
+		</div>
+		<div class="inv_item">
+			<input type="hidden" id="isInvoice" value="0" />
+			<div class="inv_tit">{:lang('invoice_content')}</div>
+			<div class="wst-flex-row">
+				<div class="ui-list inv_ul none_float wst-flex-row" onclick="javascript:isInvoice(this,0);">
+					<i class="ui-icon-push invoices0 ui-icon-checked-s wst-active inv_chk" mode="0" word="{:lang('no_invoice')}"></i>
+					<div class="pdtb10"><span>{:lang('no_invoice')}</span></div>
+				</div>
+				<div class="ui-list inv_ul none_float wst-flex-row" onclick="javascript:isInvoice(this,1);">
+					<i class="ui-icon-push invoices1 ui-icon-unchecked-s inv_chk" mode="1" word="{:lang('invoice_detail')}"></i>
+					<div class="pdtb10"><span>{:lang('invoice_detail')}</span></div>
+				</div>
+			</div>
+	        <div class="wst-clear"></div>
+		</div>
+
+		<ul class="inv_tip">
+			<li>{:lang('invoice_tips_1')}</li>
+			<li>{:lang('invoice_tips_2')}</li>
+		</ul>
+    </div>
+	<div class="bottom-two-btn-box wst-flex-row wst-center">
+		<button type="button" class="button wst-dialog-b1" onclick="javascript:invoiceHide();">{:lang('cancel')}</button>
+		<button type="button" class="button wst-dialog-b2" onclick="javascript:saveInvoice();">{:lang('confirm')}</button>
+	</div>
+</div>
+
+
+
+
+{/* 积分支付 */}
+<input type="hidden" name="" value="0" id="scoreh" autocomplete="off">
+<div class="wst-fr-box frame" id="score">
+	<div class="title"><span>{:lang('integral_pay')}</span><div class="wst-clear"></div></div>
+	<div class="content" id="content">
+		<div class="fr-list wst-flex-row wst-jsb wst-ac" onclick="javascript:onSwitch(this);">
+			<div class="wst-list-infose1 wst-flex-row wst-ac"><span>{:lang('yes')}</span></div>
+			<i class="ui-icon-push score1 ui-icon-checked-s wst-active" mode="1" word="{:lang('yes')}"></i>
+		</div>
+		<div class="fr-list wst-flex-row wst-jsb wst-ac" onclick="javascript:onSwitch(this);">
+			<div class="wst-list-infose1 wst-flex-row wst-ac"><span>{:lang('no')}</span></div>
+			<i class="ui-icon-push score0 ui-icon-unchecked-s" mode="0" word="{:lang('no')}"></i>
+		</div>
+         <div class="wst-fr-score">{:lang('integral_deduct_desc',[$userOrderScore,$userOrderMoney])}</div>
+	</div>
+	<div class="bottom-two-btn-box wst-flex-row wst-center">
+		<button type="button" class="button wst-dialog-b1" onclick="javascript:dataHide('score');">{:lang('cancel')}</button>
+		<button type="button" class="button wst-dialog-b2" onclick="javascript:inDetermine('score');">{:lang('confirm')}</button>
+	</div>
+</div>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__MOBILE__/js/settlement.js?v={$v}'></script>
+{/block}

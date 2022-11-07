@@ -1,0 +1,179 @@
+{extend name="default/base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+<style>
+    .webuploader-pick{background:#1890ff;}
+</style>
+{/block}
+{block name="main"}
+<style>
+label{margin-right:10px;}
+th{height:25px;}
+</style>
+<div id='tab' class="layui-tab layui-tab-brief">
+    <ul class="layui-tab-title">
+        <li class="layui-this">{:lang('label_supp_info')}</li>
+        <li>{:lang('label_supp_bank_info')}</li>
+    </ul>
+    <div class="layui-tab-content" style='width:99%;margin-bottom: 10px;'>
+        <div class="layui-tab-item layui-show wst-box-top" style="position: relative;">
+           <table id='vinfo_1' class='wst-form'>
+			  <tr>
+			     <th width='150'>{:lang('label_supp_sn')}：</th>
+			     <td><span style='float:left;padding: 0px 8px;'>{$object['supplierSn']}</span>
+                 <a class="btn btn-blue" onclick="javascript:toEdit(1)"><i class="fa fa-pencil"></i>{:lang('edit')}</a>
+			     </td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_supp_name')}：</th>
+			     <td>{$object['supplierName']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_supp_keeper')}：</th>
+			     <td>{$object['supplierkeeper']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_supp_telephone')}：</th>
+			     <td>{$object['telephone']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_supp_company')}：</th>
+			     <td>{$object['supplierCompany']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_supp_tel')}：</th>
+			     <td>{$object['supplierTel']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_supp_cat_name')}：</th>
+			     <td>
+			      {volist name="$object['catsupplierNames']" id="vo"}
+			      <div style='width:200px;float:left;line-height: 18px;'>
+			      	{$vo}
+			      </div>
+			      {/volist}
+			     </td>
+			  </tr>
+			 <tr>
+			     <th>{:lang('label_supp_trade_name')}：</th>
+			     <td>
+			      {$object['tradeName']}
+			     </td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_supp_img')}：</th>
+			     <td>
+			     <img id='v_supplierImg' width='150' height='150' src='__RESOURCE_PATH__/{$object["supplierImg"]}'/>
+			     </td>
+			  </tr>
+			
+			  <tr>
+			     <th>{:lang('label_supp_area_name')}：</th>
+			     <td>
+			       {$object['areaName']}
+			     </td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_supp_address')}：</th>
+			     <td>{$object['supplierAddress']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_supp_is_invoice')}：</th>
+			     <td id='v_isInvoice'>
+			        {if $object['isInvoice']==1}{:lang('label_supp_is_invoice_yes')}{/if}
+			        {if $object['isInvoice']==0}{:lang('label_supp_is_invoice_no')}{/if}
+			     </td>
+			  </tr>
+			  <tr id='tr_isInvoice' {if $object['isInvoice']==0}style='display:none'{/if}>
+			     <th>{:lang('label_supp_invoice_remark')}：</th>
+			     <td id='v_invoiceRemarks'>{$object['invoiceRemarks']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_supp_service_time')}：</th>
+			     <td><span id='v_serviceStartTime'>{$object['serviceStartTime']}</span>{:lang('until')}<span id='v_serviceEndTime'>{$object['serviceEndTime']}</span>
+			     </td>
+			  </tr>
+           </table>
+           <form id='editFrom_1' autocomplete="off">
+           <table id='einfo_1' class='wst-form hide'>
+			  <tr>
+			     <th width='150'>{:lang('label_supp_img')}<font color='red'>*</font>：</th>
+			     <td>
+			     	<input type='text' id='supplierImg' class='ipt_1' value='{$object["supplierImg"]}' style="width: 500px; float: left;" />
+			     	<div id='supplierImgPicker' style='float: left; margin-top:5px;'>{:lang('upload')}</div><span id='uploadMsg'></span>
+			     	<div id='supplierImgBox' style='margin-bottom:5px; float: left; height: 30px; margin-left: 5px;'>
+			     		<span class='weixin'>
+			     			<img class='img' style='height:16px;width:18px;' src='__STATIC__/images/upload-common-select.png'>
+			     			<img class='imged'  id='preview'  style='max-height:150px;max-width: 200px; border:1px solid #dadada; background:#fff' src="__RESOURCE_PATH__/{if $object['supplierImg']!=''}{$object['supplierImg']}{else}{:WSTConf('CONF.goodsLogo')}{/if}">
+			     		</span>
+			     	</div>
+			     </td>
+			  </tr>
+			  
+			  <tr>
+			     <th>{:lang('label_supp_is_invoice')}<font color='red'>*</font>：</th>
+			     <td class="layui-form">
+			        <label>
+			        	<input type='radio' value='1' class="ipt_1" name='isInvoice' onclick='javascript:WST.showHide(1,"#trInvoice")' {if $object['isInvoice']==1}checked{/if} title="{:lang('label_supp_is_invoice_yes_short')}"/>
+			        </label>
+			        <label>
+			        	<input type='radio' value='0' class="ipt_1" name='isInvoice' onclick='javascript:WST.showHide(0,"#trInvoice")' {if $object['isInvoice']==0}checked{/if} title="{:lang('label_supp_is_invoice_no_short')}"/>
+			        </label>
+			     </td>
+			  </tr>
+			  <tr id='trInvoice' {if $object['isInvoice']==0}style='display:none'{/if}>
+			     <th>{:lang('label_supp_invoice_remark')}<font color='red'>*</font>：</th>
+			     <td><input class="ipt_1" id="invoiceRemarks" value="{$object['invoiceRemarks']}" type="text" data-rule="{:lang('label_supp_invoice_remark')}:required(#isInvoice1:checked)"></td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_supp_service_time')}<font color='red'>*</font>：</th>
+			     <td>
+			     <select class='ipt_1' id='serviceStartTime' v="{$object['serviceStartTime']}"></select>
+		         {:lang('until')}
+		         <select class='ipt_1' id='serviceEndTime' v="{$object['serviceEndTime']}"></select>
+			     </td>
+			  </tr>
+			  <tr>
+			  	<td colspan='2' style="padding-left: 155px;">
+                    <button type="submit" class="btn btn-primary btn-mright" onclick="javascript:editInfo()"><i class="fa fa-check"></i>{:lang('save')}</button>
+                    <button type="button" class="btn" onclick="javascript:toCancel(1)" style="margin-left: 10px;"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+			  	</td>
+			  </tr>
+           </table>
+           </form>
+        </div>
+
+        <div class="layui-tab-item" style="display:none;">
+           <table class='wst-form wst-box-top'>
+              <tr>
+			     <th width='150'>{:lang('label_supp_bank_name')}：</th>
+			     <td>{$object['bankName']}</td>
+			  </tr>
+			  <tr>
+			     <th width='150'>{:lang('label_supp_bank_area_name')}：</th>
+			     <td>{$object['bankAreaName']}</td>
+			  </tr>
+              <tr>
+			     <th>{:lang('label_supp_bank_no')}：</th>
+			     <td>{$object['bankNo']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_supp_bank_user_name')}：</th>
+			     <td>{$object['bankUserName']}</td>
+			  </tr>
+
+           </table>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script type='text/javascript' src='__SUPPLIER__/supplier/suppliers.js?v={$v}'></script>
+<script>
+$(function(){
+//	$('#tab').TabPanel({tab:0,callback:function(no){}});
+})
+</script>
+{/block}

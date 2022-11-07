@@ -1,0 +1,141 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__ADMIN__/js/wstgridtree.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/trades/trades.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+<script>
+$(function () {
+    initUpload();
+    $('#goodstradesForm').validator({
+        fields: {
+            {volist name=":WSTSysLangs()" id='vo'}
+            langParams{$vo["id"]}tradeName: {
+                tip: "{:lang('require_trade_name')}",
+                rule: "{:lang('label_trade_name')}:required;length[~20];"
+            },
+            langParams{$vo["id"]}simpleName: {
+                tip: "{:lang('require_trade_simple_name')}",
+                rule: "{:lang('label_trade_simple_name')}:required;length[~20];"
+            },
+            {/volist}
+            
+            tradeSort: {
+                tip: "{:lang('require_trade_sort')}",
+                rule: "{:lang('sort')}:required;length[~8];"
+            }
+        },
+        valid: function(form){
+            var tradeId = $('#tradeId').val();
+            toEdits(tradeId);
+        }
+    });
+});
+</script>
+{/block}
+{block name="main"}
+<form id='goodstradesForm' autocomplete="off">
+<input type='hidden' id='parentId' name="parentId" class='ipt' value="{$object.parentId}"/>
+<input type="hidden" id="tradeId" name="tradeId" class="ipt" value="{$object.tradeId}"/>
+<div id='tab' class="layui-tab layui-tab-brief">
+
+    <div class="layui-tab-content" style='width:99%;margin-bottom: 10px;'>
+        <div class="layui-tab-item layui-show wst-box-top" style="position: relative;">
+            <div class='layui-form'>
+                <fieldset>
+                  <legend>{:lang('base_info')}</legend>
+                    <div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+                      <ul class="layui-tab-title">
+                        {volist name=":WSTSysLangs()" id='vo'}
+                        <li {if $key==0}class="layui-this"{/if}>{$vo['name']}</li>
+                        {/volist}
+                      </ul>
+                      <div class="layui-tab-content">
+                        {volist name=":WSTSysLangs()" id='vo'}
+                        <div class="layui-tab-item {if $key==0}layui-show{/if}">
+                            <table class='wst-form wst-box-top'>
+                                <tr>
+                                    <th width='100'>{:lang('label_trade_name')}<font color='red'>*</font>：</th>
+                                    <td><input type='text' id='langParams{$vo["id"]}tradeName' name="langParams{$vo["id"]}tradeName" class='ipt' maxLength='100' value="{$object['langParams'][$vo['id']]['tradeName']}" /></td>
+                                </tr>
+                                <tr>
+                                    <th width='100'>{:lang('label_trade_simple_name')}<font color='red'>*</font>：</th>
+                                    <td><input type='text' id='langParams{$vo["id"]}simpleName' name="langParams{$vo["id"]}simpleName" class='ipt' maxLength='30' value="{$object['langParams'][$vo['id']]['simpleName']}"/></td>
+                                </tr>
+                                <tr>
+                                    <th width='100'>{:lang('label_goods_cat_floor_name2')}<font color='red'> </font>：</th>
+                                    <td><input type='text' id='langParams{$vo["id"]}subTitle' name='langParams{$vo["id"]}subTitle' class='ipt' value="{$object['langParams'][$vo['id']]['subTitle']}"/></td>
+                                </tr>
+                                <tr>
+                                    <th width='150'>{:lang('label_trade_seo_title')}：</th>
+                                    <td>
+                                        <input type="text" id='langParams{$vo["id"]}seoTitle' name='langParams{$vo["id"]}seoTitle' class='ipt' value="{$object['langParams'][$vo['id']]['seoTitle']}" maxLength='100'/>
+                                        <span >{:lang('trade_seo_title_tips')}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{:lang('label_trade_seo_keyword')}：</th>
+                                    <td>
+                                        <input type="text" id='langParams{$vo["id"]}seoKeywords' name='langParams{$vo["id"]}seoKeywords' class='ipt' value="{$object['langParams'][$vo['id']]['seoKeywords']}" maxLength='100'/>
+                                        <span >{:lang('trade_seo_keyword_tips')}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{:lang('label_trade_seo_desc')}：</th>
+                                    <td>
+                                        <textarea id='langParams{$vo["id"]}seoDes' name='langParams{$vo["id"]}seoDes' class=" ipt" style='width:400px;'>{$object['langParams'][$vo['id']]['seoDes']}</textarea>
+                                        <span >{:lang('trade_seo_desc_tips')}</span>
+                                    </td>
+                                </tr>
+                            </table>
+                         </div>
+                        {/volist}
+
+                        <table class='wst-form wst-box-top'>    
+                            <tr>
+                                <th width='100'>{:lang('label_trade_img')}：</th>
+                                <td>
+                                    <input type="text" readonly="readonly"  id='tradeImg' name="tradeImg" class="ipt" value="{$object.tradeImg}" style="float: left;width: 355px;" />
+                                    <div id='tradeFilePicker'>{:lang('upload')}</div><span id='uploadMsg'></span>
+                                    <div style="min-height:30px; float: left; margin-left: 5px;" id="preview">{if $object['tradeImg']}<img src="__RESOURCE_PATH__/{$object['tradeImg']}" height="30" />{/if}</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width='100'>{:lang('is_show')}<font color='red'>*</font>：</th>
+                                <td height='24'>
+                                    <input type="checkbox" id="isShow" {if $object['isShow']==1}checked{/if} name="isShow" value="1" class="ipt" lay-skin="switch" lay-filter="isShow1" lay-text="{:lang('is_show_val1')}|{:lang('is_show_val0')}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width='100'>{:lang('sort')}<font color='red'>*</font>：</th>
+                                <td><input type='text' id='tradeSort' name='tradeSort' class='ipt' style='width:60px;' onkeypress='return WST.isNumberKey(event);' onkeyup="javascript:WST.isChinese(this,1)" maxLength='10' value='{$object.tradeSort}'/></td>
+                            </tr>
+                            {if $object.parentId==0}
+                            <tr>
+                                <th width='100'>{:lang('label_trade_fee')}：</th>
+                                <td><input type='text' id='tradeFee' name='tradeFee' class='ipt' style='width:120px;' onkeypress='return WST.isNumberKey(event);' onkeyup="javascript:WST.isChinese(this,1)" maxLength='7' value='{$object.tradeFee}'/></td>
+                            </tr>
+                            {/if}
+                            <tr>
+                                <td colspan='2' align='center'>
+                                    <button type="submit" class="btn btn-primary btn-mright" ><i class="fa fa-check"></i>{:lang('save')}</button>
+                                    <button type="button" class="btn" onclick="javascript:parent.closeEditBox()"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </fieldset>
+                   
+
+            </div>
+        </div>
+
+</div>
+</form>
+{/block}
+
+
+

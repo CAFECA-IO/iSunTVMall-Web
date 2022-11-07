@@ -1,0 +1,56 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('shop_enter')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/shop_applys.css?v={$v}">
+<style type="text/css">
+    
+</style>
+{/block}
+{block name="footer"}
+{/block}
+{block name="header"}
+    <div id="useri_infos">
+        <header style="background:#ffffff;" class="ui-header ui-header-positive ui-border-b wst-header">
+            <a href="{:url('mobile/users/index')}"><i class="ui-icon-return"></i></a><h1 class="useri_info">{:lang('shop_enter')}</h1>
+        </header>
+    </div>
+{/block}
+
+{block name="main"}
+{if $isApply}
+<div class="apply" style="background: #FFFFFF" >
+    <div class="apply-box"><img class="apply-after" src="__MOBILE__/img/apply-after.png"></div>
+    <div class="apply-title">{:lang('shop_enter_apply_tips_1')}</div>
+    <div class="apply-title2">{:lang('shop_enter_apply_tips_2')}</div>
+    <a href="{:url('mobile/users/index')}" class='back-center'>{:lang('iknow')}</a>
+</div>
+{else}
+<div id="form"  style="margin-top:0.43rem;">
+    <div class="addData">
+        <div class="inputItem">
+            <label>{:lang('linkman')}：</label>
+            <input type="text" id="linkman" placeholder="{:lang('please_input_linkman')}" maxlength='20'>
+        </div>
+        <div class="inputItem">
+            <label>{:lang('contact_number')}：</label>
+            <input id="linkPhone" type="text" placeholder="{:lang('require_contact_number')}" value="{$userPhone}" maxlength='20'/>
+        </div>
+        <div class="inputItem" style="height: auto;margin-top: 0.1rem">
+            <label style='line-height:0.4rem'>{:lang('business_scope')}：</label>
+            <div>
+                <textarea id="applyIntention" class="data-text"  placeholder="{:lang('require_business_scope')}" maxlength="200"></textarea>
+            </div>
+        </div>
+        <button class="button" onclick="save()">{:lang('submit')}</button>
+ 
+    </div>
+</div>
+{/if}
+{/block}
+{block name="include"}
+{include file="default/dialog" /}<!-- 对话框模板 -->
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__MOBILE__/users/shopapplys/shop_applys.js?v={$v}'></script>
+{/block}

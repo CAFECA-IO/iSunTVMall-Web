@@ -1,0 +1,28 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/reports/score_consume.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div class="wst-toolbar">
+<input type="text" id="startDate" name="startDate" class="laydate-icon ipt" maxLength="20" value='{$startDate}' placeholder='{:lang("start_date")}'/>
+{:lang('to')}
+<input type="text" id="endDate" name="endDate" class="laydate-icon ipt" maxLength="20" value='{$endDate}' placeholder='{:lang("end_date")}'/>
+<button class="btn btn-primary" onclick='javascript:loadGrid(0)'><i class='fa fa-search'></i>{:lang('query')}</button>
+<button class="btn btn-primary f-right" style='margin-top:0px;' onclick='javascript:toExport(0)'><i class="fa fa-sign-in"></i>{:lang('export')}</button>  
+<span class="f-right">{:lang('total_points_used')}:<span style="color:red;font-weight:bold;" id="totalScore">0</span>{:lang('individual')}&nbsp;&nbsp;&nbsp;</span>
+<span class="f-right">{:lang('total_deduction_amount_of_points')}:<span style="color:red;font-weight:bold;" id="totalScoreMoney">0</span>{:lang('unit')}&nbsp;&nbsp;&nbsp;</span>
+
+
+</div>
+<div class='wst-grid'>
+<div id="mmg" class="mmg"></div>
+<div id="pg" style="text-align: right;"></div>
+</div>
+<script>
+$(function(){initGrid();})
+</script>
+{/block}

@@ -1,0 +1,304 @@
+{extend name="$LAYOUT_WECHAT_BASE" /}
+{block name="title"}我的预购 - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__ROOT__/addons/presale/view/wechat/users/css/list.css?v={$v}">
+{/block}
+{block name="header"}
+	<div id="info_list">
+    <header style="background:#ffffff;" class="ui-header ui-header-positive ui-border-b wst-header">
+        <i class="ui-icon-return" onclick="history.back()"></i><h1>我的预购</h1>
+    </header>
+{/block}
+{block name="footer"}
+    {include file="$LAYOUT_WECHAT_FOOTER" /}
+{/block}
+{block name="main"}
+	<input type="hidden" name="" value="-2" id="ftype" autocomplete="off">
+	<input type="hidden" name="" value="" id="currPage" autocomplete="off">
+    <input type="hidden" name="" value="" id="totalPage" autocomplete="off">
+    <section class="user-info">
+       
+        <div class="ui-tab">
+            <ul class="ui-tab-nav order-tab">
+                <li class="tab-item tab-curr" type="-2">全部</li>
+                <li class="tab-item" type="0">待付定金</li>
+                <li class="tab-item" type="1">待付尾款</li>
+                <li class="tab-item" type="2">购买成功</li>
+                <li class="tab-item" type="-1">购买失败</li>
+            </ul>
+        </div>
+    </section>
+    <section class="ui-container" id="shopBox">
+        
+        <div class="ui-tab-content" id="presale-container">
+            <div id="goods-list" class="wst-or-list"></div>
+        </div>
+    </section>
+
+<script id="list" type="text/html">
+{{# if(d && d.length>0){ }}
+{{# for(var i=0; i < d.length; i++){ }}
+<div class="list" >
+    <div class="head">
+        <div class="shop"  onclick="javascript:WST.intoShops({{d[i].shopId}});">
+            <p class="ui-nowrap-flex" style="padding-left: 0.25rem;"><i class="shopicon"></i>{{d[i].shopName}}</p>
+        </div>
+        <div class='state'>
+        {{# if(d[i].presaleStatus==0){ }}
+            <div class="order-status red">待付定金</div>
+        {{# }else if(d[i].presaleStatus==1){ }}
+            <div class="order-status orange">待付尾款金</div>
+        {{# }else if(d[i].presaleStatus==2){ }}
+            <div class="order-status green">购买成功</div>
+        {{# }else if(d[i].presaleStatus==-1){ }}
+            <div class="order-status red">购买失败</div>
+        {{# } }}
+        </div>
+        <div class="wst-clear"></div>
+    </div>
+    <div class="goods" onclick="toDetail({{ d[i].id }});">
+        <div class="img">
+            <img class="goods-img" src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{{ d[i].goodsImg }}" title="{{ d[i].goodsName }}">
+        </div>
+        <div class="details">
+            <div class="names">
+                <div class="name">{{ d[i].goodsName }}</div>
+                {{# if(d[i].shotGoodsSpecNames!=''){ }}
+                <div class="spec">{{ d[i].shotGoodsSpecNames }}</div>
+                {{# } }}
+            </div>
+            <div class="wst-clear"></div>
+            <div class="pmiddle">
+                <span class="iright">× {{ d[i].goodsNum }}</span>
+                <div class="wst-clear"></div>
+            </div>
+            <div class="bottom-box">
+                <div class='price'>{:lang('currency_symbol')}{{d[i].goodsPrice}}</div>
+                <div class="info">
+                    <span class="title">
+                    {{# if(d[i].presaleStatus==0){ }}
+                        待付定金：<span class="needpay">{:lang('currency_symbol')}{{d[i].depositMoney}}</span>
+                    {{# }else if(d[i].presaleStatus==1){ }}
+                        待付尾款：<span class="needpay">{:lang('currency_symbol')}{{d[i].surplusMoney}}</span>
+                    {{# }else if(d[i].presaleStatus==2){ }}
+                        实付：<span class="needpay">{:lang('currency_symbol')}{{d[i].realTotalMoney}}</span>
+                    {{# } }}
+                    </span>
+                    
+                </div>
+                <div class="wst-clear"></div>
+            </div>
+        </div>
+        <div class="wst-clear"></div>
+        
+    </div>
+    <div class="operate">
+        <span class="time">{{d[i].createTime}}</span>
+        {{# if(d[i].presaleStatus==0){ }}
+            <button class="button red" onclick="choicePay('{{ d[i].pkey }}');">去支付定金</button>
+        {{# }else if(d[i].presaleStatus==1 && d[i].canPaySurplus==1){ }}
+            <button class="button red" onclick="choicePay('{{ d[i].pkey }}');">去支付尾款</button>
+        {{# } }}
+        <button class="button" onclick="toDetail({{ d[i].id }});">查看详情</button>
+    </div>
+</div>
+
+{{# } }}
+<div class="wst-clear"></div>
+{{# }else{ }}
+<div class="wst-prompt-icon"><img src="__WECHAT__/img/nothing-order.png"></div>
+<div class="wst-prompt-info">
+	<p>暂无预购</p>
+</div>
+{{# } }}
+</script>
+
+<script type="text/html" id="detailBox">
+    <div id="detailBox">
+     <div class="detail-head-status" style="margin-top:0;">
+     
+
+     </div>
+
+    <div class="detail-head ">
+        <div class="ui-row-flex">
+            <div class="ui-col ui-col wst-or-term wst-flex-row wst-ac"><i class="icon-address"></i><span class="wst-or-username">收货人信息</span></div>
+        </div>
+        <div class="ui-row-flex">
+            <div class="ui-col ui-col wst-or-term"><span class="d-uaddr wst-or-username">{{d.userName}}</span><span class="d-utel">{{d.userPhone}}</span></div>
+        </div>
+        <div class="ui-row-flex">
+            <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe"></span><span class="d-uaddr">{{d.userAddress}}</span></div>
+        </div>
+    </div>
+    {{# if(d.deliverType==1){ }}
+    <div class="detail-head ">
+         
+        <div class="ui-row-flex">
+            <div class="ui-col ui-col wst-or-term wst-flex-row wst-ac"><i class="icon-address"></i><span class="wst-or-username">自提信息</span></div>
+        </div>
+        {{# if(d.store){}}
+        <div class="ui-row-flex">
+            <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe"></span><span class="d-uaddr">门店：{{d.store.storeName}}</span></div>
+        </div>
+        <div class="ui-row-flex">
+            <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe"></span><span class="d-uaddr">电话：{{d.store.storeTel}}</span></div>
+        </div>
+        <div class="ui-row-flex">
+            <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe"></span><span class="d-uaddr">地址：{{d.store.storeAddress}}</span></div>
+        </div>
+       
+        {{# }else{ }}
+            <div class="ui-row-flex">
+                <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe"></span><span class="d-uaddr">地址：{{d.shopAddress}}</span></div>
+            </div>
+        {{# } }}
+        
+    </div>
+    {{# } }}
+
+    <div class="detail-head" style="padding:0;">
+        <div class="ui-row-flex item-head" style="padding: 0 0.12rem;">
+            <div class="ui-col ui-col-2" onclick="javascript:WST.intoShops({{d.shopId}});"><p class="ui-nowrap-flex"><i class="shopicon"></i>{{d.shopName}}</p></div>
+            <div class="ui-col order-tr o-status" style="color:#999;">
+                {{# if(d.presaleStatus==0){ }}
+                    <div class="order-status red">待付定金</div>
+                {{# }else if(d.presaleStatus==1){ }}
+                    <div class="order-status orange">待付尾款金</div>
+                {{# }else if(d.presaleStatus==2){ }}
+                    <div class="order-status green">购买成功</div>
+                {{# }else if(d.presaleStatus==-1){ }}
+                    <div class="order-status red">过期没收定金</div>
+                {{# } }}
+            </div>
+        </div>
+       
+        <div class="ui-row-flex ui-whitespace border-b d-goodsitme" style="padding:0 0.12rem;"  onClick="toPresaleGoods({{d.presaleId}})">
+            <div class="">
+                <img src="__RESOURCE_PATH__/{{d.goodsImg}}" class="o-Img">
+            </div>
+            <div class="o-gInfo-container">
+                <div class="o-gInfo">
+                    <p class="o-gName ui-nowrap-multi">{{d.goodsName}}</p>
+                    {{# if(d.goodsSpecNames){ }}
+                    <p class="o-gSpec ui-nowrap-multi ">{{d.goodsSpecNames.replace(/@@_@@/g,' ')}}</p>
+                    {{# } }}
+                </div>
+                <div class="o-gInfo2 wst-flex-row wst-ac wst-jsb">
+                    
+                    <p class="o-gPrice">{:lang('currency_symbol')} {{d.goodsPrice}}</p><p class="o-gNum">x {{d.goodsNum}}</p>
+                    
+                </div>
+            </div>
+        </div>
+
+    
+        <div class="o-gInfo3 wst-flex-row wst-jsb wst-ac" style="padding:0 0.12rem 0.12rem 0.12rem;">
+            
+            <span class="order_from"></span>
+            
+            <div class="o-oListMoney">
+                订单总价：<span>{:lang('currency_symbol')} {{d.realTotalMoney}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="detail-head">
+         <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">
+             预售定金：</span><span>{{d.depositMoney}}</span>【{{(d.payMap[1])?"已缴":"<span style='color: red'>未缴</span>" }}】
+             {{# if(d.payMap[1] && d.failType==2) { }}
+                {{d.refundMap[1]?"-- 已退":"-- 未退"}}
+             {{# }else if(d.payMap[1] && d.failType==1) { }}
+                -- 过期定金已没收
+             {{# } }}
+             </div>
+         </div>
+         <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">
+             预售尾款：</span><span>{{d.surplusMoney}}</span>【{{(d.presaleStatus==2 || d.payMap[2])?"已缴":"<span style='color: red'>未缴</span>" }}】
+             {{# if(d.payMap[2] && d.failType==2) { }}
+                {{d.refundMap[2]?"-- 已退":"-- 未退"}}
+             {{# } }}
+             </div>
+         </div>
+         {{# if(d.presaleStatus!=0 && d.payMap[1]) { }}
+         <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">尾款支付时间：</span><span>{{d.startPayTime}} 至 {{d.endPayTime}}</span></div>
+         </div>
+         {{# } }}
+    </div>
+    <div class="detail-head">
+         <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">预售单号：</span><span class="wst-or-describe">{{d.orderNo}}</span></div>
+         </div>
+         <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">下单时间：</span>{{d.createTime}}</div>
+         </div>
+         <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">支付信息：</span>{{d.payInfo}}</div>
+         </div>
+         <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">配送信息：</span>{{d.deliverInfo}}</div>
+         </div>
+          <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">发票信息：</span>{{# if(d.isInvoice==1) { }}需要{{# } else{ }}不需要{{# } }}</div>
+         </div>
+     {{# if(d.isInvoice==1) { }}
+          <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">发票抬头：</span>{{d.invoiceClient}}</div>
+         </div>
+     {{#
+          var inv_json = JSON.parse(d.invoiceJson);
+          var inv_code = (inv_json!=null && inv_json.invoiceCode!=undefined)?inv_json.invoiceCode:'';
+          if(inv_json!=null && inv_json.type!=undefined && inv_json.type==0){
+      }}
+          <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">发票税号：</span>{{inv_code}}</div>
+         </div>
+     {{# } }}
+     {{# } }}
+          <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">订单备注：</span>{{ (d.orderRemarks!=''&&d.orderRemarks!=null)?d.orderRemarks:'-' }}</div>
+         </div>
+    </div>
+
+
+
+     <div class="detail-head">
+        <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe2">预计可获得积分</span><span class="o-status2">{{d.orderScore}} 个</span></div>
+        </div>
+          <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe2">商品总额</span><span class="o-status2">{:lang('currency_symbol')} {{d.goodsMoney}}</span></div>
+         </div>
+          <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe2">运费</span><span class="o-status2">{:lang('currency_symbol')} {{d.deliverMoney}}</span></div>
+         </div>
+         {{# if(d.useScore>0){ }}
+          <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe2">使用积分数</span><span class="o-status2">{{d.useScore}} 个</span></div>
+         </div>
+         <div class="ui-row-flex">
+             <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe2">积分抵扣金额</span><span class="o-status2">{:lang('currency_symbol')} -{{d.scoreMoney}}</span></div>
+         </div>
+         {{# } }}
+          <div class="ui-row-flex wst-or-term2 wst-flex-row wst-jfe wst-ac">
+             <span class="wst-or-describe2">实付款：</span><span class="o-status2"><span style="font-size:0.13rem;">{:lang('currency_symbol')} </span>{{d.realTotalMoney}}</span>
+         </div>
+     </div>
+  </div>
+</script>
+{/* 遮盖层  */}
+<div class="wst-cover" id="cover"></div>
+{/* 订单详情层  */}
+<div class="wst-fr-box" id="frame">
+    <div class="title" id="boxTitle"><i onclick="javascript:dataHide();"></i><span>预购详情</span><div class="wst-clear"></div></div>
+    <div class="content" id="content">
+
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__WECHAT__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__ROOT__/addons/presale/view/wechat/users/js/list.js?v={$v}'></script>
+{/block}

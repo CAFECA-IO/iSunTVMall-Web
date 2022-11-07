@@ -1,0 +1,189 @@
+{extend name="default/base" /}
+{block name="title"}售后详情 - 买家中心{__block__}{/block}
+{block name="css"}
+<link href="__SHOP__/supplier/css/common.css?v={$v}" rel="stylesheet">
+<link href="__SHOP__/supplier/css/user.css?v={$v}" rel="stylesheet">
+<link href="__SHOP__/supplier/css/osdetail.css?v={$v}" rel="stylesheet">
+
+{/block}
+{block name="main"}
+<div class='wst-user-content' style="padding: 10px;">
+        <table class='wst-order-list' style="border-collapse: collapse;width: 100%;">
+            <thead>
+                <tr class='head'>
+                    <th class="th-padding" width="200">{:lang('product_information')}</th>
+                    <th width="115">{:lang('unit_Price')}</th>
+                    <th width="115">{:lang('number')}</th>
+                    <th width="115">{:lang('total_price')}</th>
+                </tr>
+            </thead>
+            <tbody class="j-order-row">
+                {if(isset($detail['glists']))}
+                {volist name="detail['glists']" id="gItem"}
+                <tr>
+                    <td>
+                        <div class="fl">
+                            <img data-original='__RESOURCE_PATH__/{:WSTImg($gItem.goodsImg,1)}' class='gImg'>
+                        </div>
+                        <div class="g-info">{$gItem.goodsName}</div>
+                        <div class="wst-clear"></div>
+                    </td>
+                    <td>{:lang('currency_symbol')}{$gItem.goodsPrice}</td>
+                    <td>{$gItem.goodsNum}</td>
+                    {php}
+                        $goodsTotalPrice = $gItem['goodsNum']*$gItem['goodsPrice'];
+                    {/php}
+                    <td>{:lang('currency_symbol')}{$goodsTotalPrice}</td>
+                </tr>
+                {/volist}
+                {/if}
+            </tbody>
+        </table>
+        <div class="service-box">
+            <p class="tl-tit">{:lang('type_of_after_sales_service_order')}</p>
+            <span class="refund-money">{$detail['goodsServiceTypeText']}</span>
+        </div>
+        <div class="service-box">
+            <p class="tl-tit">{:lang('after_sales_service_order_status')}</p>
+            <span class="refund-money">{$detail['statusText']}</span>
+        </div>
+        {if($detail['goodsServiceType']==0)}
+        <div class="service-box">
+            <p class="tl-tit">{:lang('total_refund_amount')}</p>
+            <span class="refund-money">{:lang('currency_symbol')}{:floatval($detail['refundMoney'])}</span>
+        </div>
+        {/if}
+
+        {if($detail['isClose']!=1 && $detail['serviceStatus']==1)}
+            <div class="express-box">
+                <p class="tl-tit">{:lang('fill_in_logistics_information')}</p>
+                <label style="cursor:pointer;margin-right:10px;color: #666">
+                    <input class="ex-ipt" checked type='radio' onchange="deliverType(this.value)" name="expressType" value='0'>
+                    {:lang('no_logistics_required')}
+                </label>
+                <label style="cursor:pointer;margin-right:10px;color: #666">
+                    <input class="ex-ipt" type='radio' onchange="deliverType(this.value)" name="expressType" value='1'>
+                    {:lang('express')}
+                </label>
+                <div id="j-express" style='display: none'>
+                    <div class="os-input-item">
+                        <span>{:lang('logistics_company')}<font color='red'>*</font>：</span>
+                        <select id='expressId' class="ex-ipt">
+                            <option value=''>{:lang('select')}</option>
+                            {volist name="$express" id='vo'}
+                                <option value='{$vo["expressId"]}'>{$vo["expressName"]}</option>
+                            {/volist}
+                        </select>
+                    </div>
+                    <div class="os-input-item">
+                        <span>{:lang('logistics_order_no')}<font color='red'>*</font>：</span>
+                        <input type="text" id="expressNo" class="ex-ipt" placeholder="{:lang('please_fill_in_the_logistics_number')}" />
+                    </div>
+                </div>
+                <div>
+                    <input type="button" class="btn btn-primary" onclick="userExpress()" value="{:lang('submit')}" />
+                </div>
+            </div>
+        {/if}
+        {/* 展示用户物流信息 */}
+        {if($detail['isUserSendGoods']==1)}
+            <div class="express-box">
+                <p class="tl-tit">{:lang('customer_logistics_information')}</p>
+                {if($detail['expressType']==1)}
+                <div class="pdl5">
+                    {:lang('courier_services_company')}：{$detail['expressName']}
+                </div>
+                <div class="pdl5">
+                    {:lang('logistics_order_no')}：{$detail['expressNo']}
+                </div>
+                {else /}
+                <div class="pdl5">
+                    {:lang('logistics_order_no')}：{:lang('no_logistics_required')}
+                </div>
+                {/if}
+            </div>
+        {/if}
+        {if($detail['isSupplierSend']==1)}
+            <div class="express-box">
+                <p class="tl-tit">{:lang('business_logistics_information')}</p>
+                {if($detail['supplierExpressType']==1)}
+                <div class="pdl5">
+                    {:lang('courier_services_company')}：{$detail['supplierExpressName']}
+                </div>
+                <div class="pdl5">
+                    {:lang('logistics_order_no')}：{$detail['supplierExpressNo']}
+                </div>
+                {else /}
+                <div class="pdl5">
+                    {:lang('logistics_order_no')}：{:lang('no_logistics_required')}
+                </div>
+                {/if}
+            </div>
+        {/if}
+        
+        {/* 等待用户收货时显示 */}
+        {if($detail['isClose']!=1 && $detail['serviceStatus']==4)}
+        <div class="comfirm-box">
+            <p class="tl-tit">{:lang('user_confirms_receipt')}</p>
+            <label style="cursor:pointer;margin-right:10px;color: #666">
+                <input class="cm-ipt" checked type='radio' onchange="isUserAccept(this.value)" name="isUserAccept" value='1'>
+                {:lang('confirm_receipt')}
+            </label>
+            <label style="cursor:pointer;margin-right:10px;color: #666">
+                <input class="cm-ipt" type='radio' onchange="isUserAccept(this.value)" name="isUserAccept" value='-1'>
+                {:lang('rejection')}
+            </label>
+            <div id="j-confirm" style='display: none'>
+                <div class="os-input-item">
+                    <span>{:lang('rejection_type')}<font color='red'>*</font>：</span>
+                    <select class="cm-ipt" id='userRejectType' onchange='javascript:changeRejectType(this.value)'>
+                            <option value='0'>{:lang('select')}</option>
+                        {volist name=":WSTDatas('ORDER_REJECT')" id="vo"}
+                        <option value='{$vo["dataVal"]}'>{$vo["dataName"]}</option>
+                        {/volist}
+                    </select>
+                </div>
+                <div id="j-cm-input" class="os-input-item" style='display: none'>
+                    <span>{:lang('reasons_for_rejection')}<font color='red'>*</font>：</span>
+                    <input type="text" id="userRejectOther" class="cm-ipt" placeholder="{:lang('please_fill_in_the_reason_for_rejection')}" />
+                </div>
+            </div>
+            <div>
+                <button class="btn btn-success" type="button" onclick="userConfirm()">{:lang('submit')}</button>
+            </div>
+        </div>
+        {/if}
+
+        <div class="time-line-box">
+            <p class="tl-tit">{:lang('negotiation_history')}</p>
+            {volist name="log" id="lItem"}
+            <div class="tl-item">
+                <img data-original='{:WSTUserPhoto(WSTImg($lItem['avatar'],1))}' class="tl-img fl">
+                <div class="tl-info fl">
+                    <div class="tl-r-t">
+                        <span>{$lItem.nickname}</span>
+                        <span class="tl-time">{$lItem.logTime}</span>
+                        <div class="wst-clear"></div>
+                    </div>
+                    <div class="tl-log">{:WSTLogJson($lItem.logJson)}</div>
+                </div>
+                <div class="wst-clear"></div>
+            </div>
+            {/volist}
+        </div>
+        
+</div>
+<input type="hidden" id="id" value="{$id}">
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/js/jquery.min.js?v={$v}"></script>
+<script type="text/javascript" src="__STATIC__/plugins/layer/layer.js?v={$v}"></script>
+<script type="text/javascript" src="__STATIC__/plugins/lazyload/jquery.lazyload.min.js?v={$v}"></script>
+<script type='text/javascript' src='__SHOP__/supplier/js/common.js?v={$v}'></script>
+<script type='text/javascript' src='__SHOP__/supplier/orderservices/orderservices.js?v={$v}'></script>
+<script>
+    $(function () {
+        $('.gImg,.tl-img').lazyload({ effect: "fadeIn",failurelimit : 10,skip_invisible : false,threshold: 200,placeholder:window.conf.RESOURCE_PATH+'/'+WST.conf.GOODS_LOGO});
+    })
+</script>
+{/block}

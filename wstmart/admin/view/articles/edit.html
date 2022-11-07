@@ -1,0 +1,222 @@
+{extend name="base" /}
+{block name="css"}
+<link href="__STATIC__/plugins/ztree/css/zTreeStyle/zTreeStyle.css?v={$v}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/ztree/jquery.ztree.all-3.5.js?v={$v}"></script>
+<script src="__STATIC__/plugins/webuploader/webuploader.js?v={$v}" type="text/javascript" ></script>
+<script src="__STATIC__/plugins//kindeditor/NKeditor-all.js?v={$v}" type="text/javascript" ></script>
+<script src="__ADMIN__/articles/articles.js?v={$v}" type="text/javascript"></script>
+<script>
+$(function () {
+	initCombo(0);
+	{if condition="$object['articleId'] !=0 "}
+    var json = <?=json_encode($object)?>;
+	  WST.setValues(json);
+    var n = 0;
+    for(var key in WST.conf.sysLangs){
+        n = WST.conf.sysLangs[key]['id'];
+        WST.setValue('langParams'+n+'articleTitle',json['langParams'][n]['articleTitle']);
+        WST.setValue('langParams'+n+'articleContent',json['langParams'][n]['articleContent']);
+        WST.setValue('langParams'+n+'articleKey',json['langParams'][n]['articleKey']);
+        WST.setValue('langParams'+n+'articleDesc',json['langParams'][n]['articleDesc']);
+
+    }
+	{/if}
+	$('#articleForm').validator({
+	    fields: {
+        {volist name=":WSTSysLangs()" id='vo'}
+	    	langParams{$vo['id']}articleTitle: {
+	    		tip: WST.lang('require_article_name'),
+	    		rule: WST.lang('label_article_name')+':required;length[~50];'
+	    	},
+        langParams{$vo['id']}articleKey: {
+          tip: WST.lang('require_article_key_word'),
+          rule: WST.lang('label_article_key_word')+':required;length[~100];'
+        },
+        langParams{$vo['id']}articleDesc: {
+          tip: WST.lang('require_article_desc'),
+          rule: WST.lang('label_article_desc')+':required;length[~200];'
+        },
+        langParams{$vo['id']}articleContent: {
+          tip:WST.lang('require_article_content') ,
+          rule: WST.lang('label_article_content')+':required;'
+        },
+        {/volist}
+	    	catId: {
+		        tip: WST.lang('require_article_cat'),
+		    	rule: WST.lang('label_article_cat')+":required;",
+		    	target:"#catIdt"
+		    },
+	    	
+        layoutType: {
+          tip: WST.lang('require_article_mobile_layout'),
+          rule:WST.lang('label_article_mobile_layout')+':required;length[~100];'
+        }
+		    
+	    },
+	    valid: function(form){
+	    	var articleId = $('#articleId').val();
+	    	toEdits(articleId,{$p});
+	    }
+	})
+});
+</script>
+{/block}
+{block name="main"}
+<input type='hidden' id='articleId' value='{$object["articleId"]}'/>
+<form id='articleForm' autocomplete="off">
+<fieldset>
+  <legend>{:lang('base_info')}</legend>
+    <div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+      <ul class="layui-tab-title">
+        {volist name=":WSTSysLangs()" id='vo'}
+        <li {if $key==0}class="layui-this"{/if}>{$vo['name']}</li>
+        {/volist}
+      </ul>
+      <div class="layui-tab-content">
+        {volist name=":WSTSysLangs()" id='vo'}
+        <div class="layui-tab-item {if $key==0}layui-show{/if}">
+          <table class='wst-form wst-box-top '>
+            <tr>
+               <th width='150'>{:lang('label_article_name')}<font color='red'>*</font>：</th>
+               <td><input type="text" id='langParams{$vo["id"]}articleTitle' name='langParams{$vo["id"]}articleTitle' maxLength='50' class='ipt' style='width:60%;'/></td>
+            </tr>
+            
+            <tr>
+               <th width='150'>{:lang('label_article_key_word')}<font color='red'>*</font>：</th>
+               <td><input type="text" id='langParams{$vo["id"]}articleKey' name='langParams{$vo["id"]}articleKey' maxLength='120' class='ipt' style='width:80%;'/></td>
+            </tr>
+            <tr>
+               <th width='150'>{:lang('label_article_desc')}<font color='red'>*</font>：</th>
+               <td><textarea id='langParams{$vo["id"]}articleDesc' name='langParams{$vo["id"]}articleDesc' maxLength='200' style='width:80%;height:80px;' class='ipt'></textarea></td>
+            </tr>
+            <tr>
+                 <th width='150'>{:lang('label_article_content')}<font color='red'>*</font>：</th>
+                 <td>
+                  <textarea id='langParams{$vo["id"]}articleContent' name='langParams{$vo["id"]}articleContent' class="form-control ipt" style='width:80%;'></textarea>
+                 </td>
+              </tr>
+          </table>
+        </div>
+        {/volist}
+    </div>
+</fieldset>
+<fieldset style='margin-bottom:30px'>
+  <legend>{:lang('article_set')}</legend>
+      <table class='wst-form wst-box-top '>
+         <tr>
+           <th width='150' align='right'>{:lang('label_article_cat')}<font color='red'>*</font>：</th>
+           <td>
+             <input id="catSel" type="text" readonly onclick="showMenu();" value="{$object.catName}"/>
+             <div id="ztreeMenuContent" class="ztreeMenuContent">
+                <ul id="dropDownTree" class="ztree" style="margin-top:0; width:250px; height: 300px;"></ul>
+             </div>
+             <input id="catId" name='catId' class="text ipt" autocomplete="off" type="hidden" value=""/>
+             <span id='catIdt'></span>
+           </td>
+         </tr>
+         <tr>
+            <th width='150'>{:lang('is_show')}<font color='red'>*</font>：</th>
+            <td height='24' class="layui-form">
+               <input type="checkbox" id="isShow" {if $object['isShow']==1}checked{/if} name="isShow" value="1" class="ipt" lay-skin="switch" lay-filter="isShow" lay-text="{:lang('is_show_val')}">
+            </td>
+         </tr>
+         <tr >
+            <th>{:lang('label_article_mobile_layout')}<font color='red'>*</font>：</th>
+            <td  class="typeState" style="padding-top: 10px;">
+                <li>
+                   <input type='radio' name='TypeStatus' class='ipt' value='1' {if $object["articleId"]==0 }checked{/if} onclick="selectlLayout(1)"/>
+                   <label>
+                     <img src="__ADMIN__/img/news_1.png" style="width:150px;height:80px;">
+                   </label>
+                </li>
+                <li>
+                  <input type='radio' name='TypeStatus' class='ipt' value='2' onclick="selectlLayout(2)"/>
+                   <label>
+                      <img src="__ADMIN__/img/news_2.png" style="width:150px;height:80px;">
+                   </label>
+                </li>
+                <li>
+                   <input type='radio' name='TypeStatus' class='ipt' value='3' onclick="selectlLayout(3)"/>
+                   <label>
+                      <img src="__ADMIN__/img/news_3.png" style="width:150px;height:80px;">
+                   </label>
+                </li>
+                <li>
+                   <input type='radio' name='TypeStatus' class='ipt' value='4' onclick="selectlLayout(4)"/>
+                   <label>
+                      <img src="__ADMIN__/img/news_4.png" style="width:150px;height:80px;">
+                   </label>
+                </li>
+            </td>
+         </tr>
+        <tr id='upload'>
+           <th>{:lang('label_article_img')}：</th>
+           <td>
+            <input type="text" readonly="readonly" id='coverImg' name="coverImg" class="ipt" style="float: left;width: 355px;"/>
+           <div id='coverImgPicker'>{:lang('upload')}</div><span id='coverImgMsg'></span><span id="remind" style="line-height: 30px;float: left;margin-left: 5px;">{:lang('require_img_size',['230x195(px)'])}</span>
+           <div style="min-height:30px; float: left;margin-left: 5px;" id="preview">{if ($object['articleId']!=0 && $object['coverImg'])}<img src="__RESOURCE_PATH__/{$object['coverImg']}" height="30" />{/if}</div>
+           </td>
+        </tr>
+         
+            <tr>
+                <th>{:lang('sort')}：</th>
+                <td>
+                  <input type="text" id="catSort" class="ipt" maxLength="20"  value='{$object['catSort']}' />
+                </td>
+            </tr>
+           <tr>
+             <td colspan='2' align='center'>
+             	<button type="submit" class="btn btn-primary btn-mright" ><i class="fa fa-check"></i>{:lang('submit')}</button>
+              <button type="button" class="btn" onclick="javascript:location.href='{:Url(\'admin/articles/index\',\'p=\'.$p)}'"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+             </td>
+           </tr>
+      </table>
+</fieldset>
+ </form>
+  <script>
+$(function(){
+	//文件上传
+	WST.upload({
+  	  pick:'#coverImgPicker',
+  	  formData: {dir:'articles',isThumb:1},
+  	  accept: {extensions: 'gif,jpg,jpeg,png',mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif'},
+  	  callback:function(f){
+  		  var json = WST.toAdminJson(f);
+  		  if(json.status==1){
+  			$('#coverImgMsg').empty().hide();
+        	$('#preview').html('<img src="'+WST.conf.RESOURCE_PATH+'/'+json.savePath+json.name+'" height="30" />');
+        	$('#coverImg').val(json.savePath+json.name);
+  		  }
+	  },
+	  progress:function(rate){
+	      $('#coverImgMsg').show().html(WST.lang('upload_rate')+rate+"%");
+	  }
+    });
+    //编辑器
+    KindEditor.ready(function(K) {
+      {volist name=":WSTSysLangs()" id='vo'}
+  		editor{$vo['id']} = K.create('#langParams{$vo['id']}articleContent', {
+  			height:'500px',
+        uploadJson : WST.conf.ROOT+'/admin/articles/editorUpload',
+  			allowFileManager : false,
+  			allowImageUpload : true,
+  			themeType : "default",
+        items:[     'source', 'undo', 'redo',  'preview', 'print', 'template', 'code', 'cut', 'copy', 'paste',
+                  'plainpaste', 'wordpaste', 'justifyleft', 'justifycenter', 'justifyright',
+                  'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
+                  'superscript', 'clearhtml', 'quickformat', 'selectall',  'fullscreen',
+                  'formatblock', 'fontname', 'fontsize',  'forecolor', 'hilitecolor', 'bold',
+                  'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', 'image','multiimage','media','table', 'hr', 'emoticons', 'baidumap', 'pagebreak',
+                  'anchor', 'link', 'unlink'
+        ],
+  			afterBlur: function(){ this.sync(); }
+  		});
+      {/volist}
+	});
+  selectlLayout({$object['TypeStatus']});
+});
+</script>
+{/block}

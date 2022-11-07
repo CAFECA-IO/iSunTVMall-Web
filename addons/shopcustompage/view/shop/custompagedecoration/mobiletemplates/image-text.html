@@ -1,0 +1,85 @@
+{php}$style="";{/php}
+{if $vo['verticalPadding']}
+    {php}
+        $style.="padding-top:".intval($vo['verticalPadding'])."px;";
+        $style.="padding-bottom:".intval($vo['verticalPadding'])."px;";
+    {/php}
+{/if}
+<div class="image-text-container" style="{$style}">
+    <input type="hidden" value="{$vo['style']}" class="image-text-style">
+    <input type="hidden" value="{$vo['title']}" class="image-text-title">
+    <input type="hidden" value="{$vo['desc']}" class="image-text-desc">
+    <div class="image-text image-text-style-1 {if $vo['style']!='1'}none2{/if}">
+        <div class='image-text-imgs image-text-style-1-left'>
+            <img src="__RESOURCE_PATH__/{$vo['img'][0]}"/>
+        </div>
+        <div class='image-text-style-1-right'>
+            <p class='image-text-style-title'>{$vo['title']}</p>
+            <p class='image-text-style-desc'>{$vo['desc']}</p>
+        </div>
+    </div>
+    <div class="image-text image-text-style-2 {if $vo['style']!='2'}none2{/if}">
+        <div class='image-text-style-2-left'>
+            <p class='image-text-style-title'>{$vo['title']}</p>
+            <p class='image-text-style-desc'>{$vo['desc']}</p>
+        </div>
+        <div class='image-text-imgs image-text-style-2-right'>
+            <img src="__RESOURCE_PATH__/{$vo['img'][0]}"/>
+        </div>
+    </div>
+    <div class="image-text image-text-style-3 {if $vo['style']!='3'}none{/if}">
+        <div class='image-text-style-3-top'>
+            <p class='image-text-style-title'>{$vo['title']}</p>
+            <p class='image-text-style-desc'>{$vo['desc']}</p>
+        </div>
+        <div class='image-text-imgs image-text-style-3-bottom'>
+            <img src="__RESOURCE_PATH__/{$vo['img'][0]}"/>
+        </div>
+    </div>
+    <div class="image-text image-text-style-4 {if $vo['style']!='4'}none{/if}">
+        <div class='image-text-style-4-top'>
+            <p class='image-text-style-title'>{$vo['title']}</p>
+            <p class='image-text-style-desc'>{$vo['desc']}</p>
+        </div>
+        <div class='image-text-imgs wst-flex-row wst-jsa image-text-style-4-bottom'>
+            {for start="0" end="count($vo['img'])"  }
+                <img src="__RESOURCE_PATH__/{$vo['img'][$i]}"/>
+            {/for}
+        </div>
+    </div>
+    <div class="image-text image-text-style-5 {if $vo['style']!='5'}none{/if}" >
+        <div class='image-text-style-5-top'>
+            <p class='image-text-style-title'>{$vo['title']}</p>
+            <p class='image-text-style-desc'>{$vo['desc']}</p>
+        </div>
+        <div class='image-text-imgs wst-flex-row wst-jsa image-text-style-5-bottom'>
+            {for start="0" end="count($vo['img'])"  }
+                <img src="__RESOURCE_PATH__/{$vo['img'][$i]}"/>
+            {/for}
+        </div>
+    </div>
+</div>
+<script>
+    var image_text_style = $('.image-text-style').val();
+    var image_text_title = $('.image-text-title').val();
+    var image_text_desc = $('.image-text-desc').val();
+    $(".image-text-style-title").each(function(index, obj) {
+        if (image_text_style == 1 || image_text_style == 2) {
+            if (image_text_title.length > 12) {
+                image_text_title = image_text_title.substr(0, 12) + '...';
+            }
+        } else {
+            if (image_text_title.length > 20) {
+                image_text_title = image_text_title.substr(0, 20);
+            }
+        }
+        $(obj).html(image_text_title);
+    });
+    $(".image-text-style-desc").each(function(index, obj) {
+        if (image_text_desc.length > 50) {
+            image_text_desc = image_text_desc.substr(0, 50)+ '...';
+        }
+        $(obj).html(image_text_desc);
+    });
+
+</script>

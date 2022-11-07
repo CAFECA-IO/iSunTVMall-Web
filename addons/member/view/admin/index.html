@@ -1,0 +1,133 @@
+{extend name="$LAYOUT_ADMIN_BASE" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+<style>
+    .recommend-item{margin-top:5px;}
+    #preview img{width:120px;height:185px;}
+    .wst-clear{clear:both;}
+</style>
+{/block}
+{block name="main"}
+<div id='alertTips' class='alert alert-success alert-tips fade in'>
+   <div id='headTip' class='head'><i class='fa fa-lightbulb-o'></i>{:lang('addon_member_op_tips')}</div>
+   <ul class='body'>
+    <li>{:lang('addon_member_op_tips1')}</li>
+    <li>{:lang('addon_member_op_tips2')}</li>
+    <li>{:lang('addon_member_op_tips3')}</li>
+    <li>{:lang('addon_member_op_tips4')}</li>
+    <li>{:lang('addon_member_op_tips5')}</li>
+    <li>{:lang('addon_member_op_tips6')}</li>
+    <li>{:lang('addon_member_op_tips7')}</li>
+   </ul>
+</div>
+<fieldset class="layui-elem-field layui-field-title layui-form">
+    <legend>{:lang('addon_member_admin_invitate_set')}</legend>
+    <table class='wst-form wst-box-top'>
+        <tr>
+            <th width='150'>{:lang('addon_member_admin_is_use')}：</th>
+            <td>
+                <input type="checkbox" {if $recommendSwitch==1}checked{/if} value='1' class="ipt" id="recommendSwitch" name="recommendSwitch" lay-skin="switch" lay-filter="recommendSwitch" lay-text="{:lang('addon_member_admin_is_use_val')}">
+            </td>
+        </tr>
+        <tr>
+            <th width='150' valign="top" style="padding-top:20px;">{:lang('addon_member_admin_invitate_scoew')}：</th>
+            <td>
+                {if $recommends!=''}
+                <div class="recommend-item-container">
+                    {volist name="$recommends" id="vo"}
+                    <div class="recommend-item">
+                        {:lang('addon_member_admin_invitate')} <input type="text" class='recommendNum' value="{$vo['recommendNum']}" maxLength='5' style='width:60px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/> {:lang('addon_member_admin_invitate1')} <input type="text" class='recommendScore' value="{$vo['score']}" maxLength='5' style='width:60px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/> {:lang('addon_member_admin_invitate2')} {if $key==0}<button type="button" class="btn btn-success" onclick="addRecommendItem()"><i class="fa fa-plus"></i>{:lang('addon_member_admin_add')}</button>{else}<button type='button' class='btn btn-success del-btn' onclick='delRecommendItem(this)'><i class='fa fa-trash-o'></i>{:lang('addon_member_admin_del')}</button>{/if}
+                    </div>
+                    {/volist}
+                </div>
+                {else}
+                <div class="recommend-item-container">
+                    <div class="recommend-item">
+                        {:lang('addon_member_admin_invitate')} <input type="text" class='recommendNum' value="" maxLength='5' style='width:60px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/> {:lang('addon_member_admin_invitate1')} <input type="text" class='recommendScore' value="" maxLength='5' style='width:60px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/> {:lang('addon_member_admin_invitate2')} <button type="button" class="btn btn-success" onclick="addRecommendItem()"><i class="fa fa-plus"></i>{:lang('addon_member_admin_add')}</button>
+                    </div>
+                </div>
+                {/if}
+            </td>
+        </tr>
+    </table>
+</fieldset>
+<fieldset class="layui-elem-field layui-field-title layui-form" style="margin-top: 20px;">
+    <legend>{:lang('addon_member_admin_regist_set')}</legend>
+    <table class='wst-form wst-box-top'>
+        <tr>
+            <th width='150'>{:lang('addon_member_admin_is_use')}：</th>
+            <td>
+                <input type="checkbox" {if $registerSwitch==1}checked{/if} value='1' class="ipt" id="registerSwitch" name="registerSwitch" lay-skin="switch" lay-filter="registerSwitch" lay-text="{:lang('addon_member_admin_is_use_val')}">
+            </td>
+        </tr>
+        <tr>
+            <th width='150'>{:lang('addon_member_admin_regist_score')}：</th>
+            <td>
+                {:lang('addon_member_admin_regist_score1')} <input type="text" id="registerScore" class='ipt' value="{$registerScore}" style='width:60px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/> {:lang('addon_member_admin_regist_score2')}
+            </td>
+        </tr>
+    </table>
+</fieldset>
+<fieldset class="layui-elem-field layui-field-title layui-form" style="margin-top: 20px;">
+    <legend>{:lang('addon_member_admin_share_set')}</legend>
+    <table class='wst-form wst-box-top'>
+        <tr>
+            <th width='150'>{:lang('addon_member_admin_share_mall')}：</th>
+            <td>
+               <input type="text" id="mallShareTitle" class='ipt' value="{$mallShareTitle}" style='width:250px;' />
+            </td>
+        </tr>
+        <tr>
+            <th width='150'>{:lang('addon_member_admin_share_poster_background')}：</th>
+            <td>
+                <div>
+                    <input id="posterBg" name="posterBg" class="text ipt" autocomplete="off" type="text" readonly="readonly" value="{$posterBg!=''?$posterBg:'addons/member/view/images/poster_bg.png'}" style="float: left;width: 250px;margin:0;"/>
+                    <div id="filePicker">上传</div>
+                </div>
+                <div class="wst-clear"></div>
+                <span style='margin-left:5px;float:left;line-height: 30px;'>{:lang('addon_member_admin_share_poster_background_size')} </span>
+                <div class="wst-clear"></div>
+                <div id="preview" style="float: left;margin-left: 5px;">
+                    {if $posterBg!=''}
+                    <img src="__RESOURCE_PATH__/{$posterBg}" class="ipt" />
+                    {else}
+                    <img src="__RESOURCE_PATH__/addons/member/view/images/poster_bg.png" class="ipt" />
+                    {/if}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan='2' align='center'>
+                <button type="button" class="btn btn-primary btn-mright" onclick='javascript:edit()'><i class="fa fa-check"></i>{:lang('addon_member_admin_share_save')}</button>
+                <button type="reset" class="btn" onclick='javascript:resetForm()'><i class="fa fa-refresh"></i>{:lang('addon_member_admin_share_reset')}</button>
+            </td>
+        </tr>
+    </table>
+</fieldset>
+<script>
+
+</script>
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script src="__STATIC__/plugins/webuploader/webuploader.js?v={$v}" type="text/javascript" ></script>
+<script src="__ROOT__/addons/member/view/admin/configs.js?v={$v}" type="text/javascript"></script>
+<script>
+    $('#headTip').WSTTips({width:200,height:35,callback:function(v){}});
+    $(function(){
+        //文件上传
+        WST.upload({
+            pick:'#filePicker',
+            formData: {dir:'member'},
+            accept: {extensions: 'gif,jpg,jpeg,png',mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif'},
+            callback:function(f){
+                var json = WST.toAdminJson(f);
+                if(json.status==1){
+                    $('#preview').html('<img src="'+WST.conf.RESOURCE_PATH+"/"+json.savePath+json.thumb+'" height="30" />');
+                    $('#posterBg').val(json.savePath+json.thumb);
+                }
+            }
+        });
+    })
+</script>
+{/block}

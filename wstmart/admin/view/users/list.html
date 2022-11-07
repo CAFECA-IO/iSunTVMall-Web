@@ -1,0 +1,54 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+<style type="text/css">
+  #mmg td:nth-child(6){color: red;}
+  #mmg td:nth-child(7){color: #31c15a;}
+  #mmg td:nth-child(8){color: #1890ff;}
+</style>
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/users/users.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div id='alertTips' class='alert alert-success alert-tips fade in'>
+  <div id='headTip' class='head'><i class='fa fa-lightbulb-o'></i>{:lang('menu_tips')}</div>
+  <ul class='body'>
+      <li>{:lang('user_list_tip_1')}</li>
+      <li>{:lang('user_list_tip_2')}</li>
+  </ul>
+</div>
+<div class="wst-toolbar">
+  <form autocomplete="off" >
+   <div id="query" style="float:left;">
+        <select name="userType" id="userType" class="query">
+          <option value="">{:lang('label_user_type')}</option>
+          <option value="0">{:lang('label_user_type_1')}</option>
+          <option value="1">{:lang('label_user_type_2')}</option>
+          {if (WSTConf('CONF.isOpenSupplier')==1)}
+          <option value="3">{:lang('label_user_type_3')}</option>
+          {/if}
+        </select>
+        <input type="text" name="loginName1"  placeholder="{:lang('label_user_query_plo')}" id="loginName1" class="query" />
+        <input type="text" name="loginPhone" placeholder="{:lang('label_user_phone')}" id="loginPhone" class="query" />
+        <input type="text" name="loginEmail" placeholder="{:lang('label_user_email')}" id="loginEmail" class="query" />
+        <button type="button" class="btn btn-primary" onclick="javascript:userQuery()" ><i class="fa fa-search"></i>{:lang('query')}</button> 
+  </div>
+    <button type="button" class="btn btn-primary f-right" style='margin-top:0px;margin-left:5px;' onclick='javascript:toExport(0)'><i class="fa fa-sign-in"></i>{:lang('export')}</button>
+   {if WSTGrant('HYGL_01')}
+   <button type="button" class="btn btn-success f-right" style='margin-top:0px;' onclick="javascript:toEdit()"><i class="fa fa-plus"></i>{:lang('add')}</button> 
+   {/if}
+   <div style="clear:both"></div>
+</form>
+</div>
+<div class='wst-grid'>
+<form autocomplete="off" class='layui-form wst-grid' lay-filter='gridForm'>
+<div id="mmg" class="mmg"></div>
+</form>
+<div id="pg" style="text-align: right;"></div>
+</div>
+<script>
+  $(function(){initGrid({$p})});
+</script>
+{/block}

@@ -1,0 +1,58 @@
+{extend name="default/base" /}
+{block name='css'}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div class='money-head'>
+  <div class='shop-logo'><img height='100' width='100'src='__RESOURCE_PATH__/{:session("WST_USER.shopImg")}'></div>
+  <div class='shop-info'> 
+    <div class='shopName'>{:session('WST_USER.shopName')}</div>
+    <div class='shopMoney' style="margin-top: 10px;width:100%;">
+      <div class="usermoney">
+        {:lang('available_funds')}：<font color='red' id='shopMoney'>{:lang('currency_symbol')}0</font>
+      </div>
+      <div class="cashbox" style="width:auto;">
+        <span style='margin-left:20px;'><a class="btn btn-primary" id='drawBtn' href="javascript:toDrawMoney();" >{:lang('application_for_withdrawal')}</a></span>
+        <span class='draw-tips' style="margin-left:0;">{if (int)WSTConf('CONF.drawCashShopLimit')>0}（{:lang('at_least')}{:lang('currency_symbol')}{:WSTConf('CONF.drawCashShopLimit')}{:lang('cash_can_only_be_withdrawn')}）{/if}{if (int)WSTConf('CONF.drawCashCommission')> 0}{:lang('raise_the_existing')}{:WSTConf('CONF.drawCashCommission')}%{:lang('pay_channel_transaction_fees')}{/if}</span>
+      </div>
+      <div class="f-clear"></div>
+    </div>
+    <div class="f-clear"></div>
+    <div class="money-rows">
+      <div class="lockbox">
+        {:lang('freezing_of_funds')}：<font color='red' id='lockMoney'>{:lang('currency_symbol')}0</font>
+      </div>
+      <div class="cashbox">
+        <span class="cashmoney-box">{:lang('withdrawal_amount')}：<font color='red' id='userCashMoney'>{:lang('currency_symbol')}0</font></span>
+      </div>
+      <div class="f-clear"></div>
+    </div>
+  </div>
+</div>
+<div class='wst-user-content'>
+   <div id='tab' class="wst-tab-box">
+    <ul class="wst-tab-nav">
+       <li>{:lang('withdrawal_record')}</li>
+    </ul>
+    <div class='wst-grid'>
+       <div id="mmg" class="mmg"></div>
+       <div id="pg" style="text-align: right;"></div>
+   </div>
+    </div>
+</div>
+<style type="text/css">
+  .mmGrid{width: 100% !important;}
+  .wst-tab-nav{border-bottom: 0px;}
+</style>
+{/block}  
+{block name="js"}
+<script type='text/javascript' src='__SHOP__/cashdraws/cashdraws.js?v={$v}'></script>
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script>
+$(function(){
+   getShopMoney();
+})
+</script>
+{/block}

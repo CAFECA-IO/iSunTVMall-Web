@@ -1,0 +1,75 @@
+{extend name="base" /}
+{block name="js"}
+<script src="__ADMIN__/sysconfigs/sign.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<style>.scoreTbl td{padding-right:45px;}</style>
+<form autocomplete='off'>
+	<table class='wst-form wst-box-top'>
+	   <tr>
+	     <th width='150'>{:lang('config_mall_score_set')}：</th>
+	     <td class='layui-form'>
+	     <input type="checkbox" {if $object['signScoreSwitch']==1}checked{/if} class="ipt" id="signScoreSwitch" name="signScoreSwitch" value='1' lay-skin="switch" lay-filter="signScoreSwitch" lay-text="{:lang('config_mall_switch_val')}">
+	     </td>
+	  </tr>
+	  <tr class="signScoreBox" {if $object['signScoreSwitch']==0}style="display:none;"{/if}>
+	     <th valign="top" style='padding-top:15px'>{:lang('config_mall_score_total')}：</th>
+     	 <td id="signScores">
+	     	<table class='scoreTbl'><tbody>
+	     	<tr>
+	     	<th>{:lang('config_mall_score_day',[1])}：</th><td><input type="text" id='signScore0' class='ipt' value="{$object['signScore0']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[2])}：</th><td><input type="text" id='signScore1' class='ipt' value="{$object['signScore1']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[3])}：</th><td><input type="text" id='signScore2' class='ipt' value="{$object['signScore2']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[4])}：</th><td><input type="text" id='signScore3' class='ipt' value="{$object['signScore3']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[5])}：</th><td><input type="text" id='signScore4' class='ipt' value="{$object['signScore4']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	</tr>
+	     	<tr>
+	     	<th>{:lang('config_mall_score_day',[6])}：</th><td><input type="text" id='signScore5' class='ipt' value="{$object['signScore5']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[7])}：</th><td><input type="text" id='signScore6' class='ipt' value="{$object['signScore6']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[8])}：</th><td><input type="text" id='signScore7' class='ipt' value="{$object['signScore7']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[9])}：</th><td><input type="text" id='signScore8' class='ipt' value="{$object['signScore8']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[10])}：</th><td><input type="text" id='signScore9' class='ipt' value="{$object['signScore9']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	</tr>
+	     	<tr>
+	     	<th>{:lang('config_mall_score_day',[11])}：</th><td><input type="text" id='signScore10' class='ipt' value="{$object['signScore10']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[12])}：</th><td><input type="text" id='signScore11' class='ipt' value="{$object['signScore11']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[13])}：</th><td><input type="text" id='signScore12' class='ipt' value="{$object['signScore12']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[14])}：</th><td><input type="text" id='signScore13' class='ipt' value="{$object['signScore13']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[15])}：</th><td><input type="text" id='signScore14' class='ipt' value="{$object['signScore14']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	</tr>
+	     	<tr>
+	     	<th>{:lang('config_mall_score_day',[16])}：</th><td><input type="text" id='signScore15' class='ipt' value="{$object['signScore15']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[17])}：</th><td><input type="text" id='signScore16' class='ipt' value="{$object['signScore16']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[18])}：</th><td><input type="text" id='signScore17' class='ipt' value="{$object['signScore17']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[19])}：</th><td><input type="text" id='signScore18' class='ipt' value="{$object['signScore18']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[20])}：</th><td><input type="text" id='signScore19' class='ipt' value="{$object['signScore19']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	</tr>
+	     	<tr>
+	     	<th>{:lang('config_mall_score_day',[21])}：</th><td><input type="text" id='signScore20' class='ipt' value="{$object['signScore20']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[22])}：</th><td><input type="text" id='signScore21' class='ipt' value="{$object['signScore21']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[23])}：</th><td><input type="text" id='signScore22' class='ipt' value="{$object['signScore22']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[24])}：</th><td><input type="text" id='signScore23' class='ipt' value="{$object['signScore23']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[25])}：</th><td><input type="text" id='signScore24' class='ipt' value="{$object['signScore24']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	</tr>
+	     	<tr>
+	     	<th>{:lang('config_mall_score_day',[26])}：</th><td><input type="text" id='signScore25' class='ipt' value="{$object['signScore25']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[27])}：</th><td><input type="text" id='signScore26' class='ipt' value="{$object['signScore26']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[28])}：</th><td><input type="text" id='signScore27' class='ipt' value="{$object['signScore27']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[29])}：</th><td><input type="text" id='signScore28' class='ipt' value="{$object['signScore28']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	<th>{:lang('config_mall_score_day',[30])}：</th><td><input type="text" id='signScore29' class='ipt' value="{$object['signScore29']}" maxLength='5' style='width:40px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/></td>
+	     	</tr>
+	     	<tr><span style='color:gray;'>{:lang('config_mall_score_day_tips',[30])}</tr>
+	     	</tbody></table>
+	     </td>
+	  </tr>
+	  {if WSTGrant('QDSZ_02')}
+	  <tr>
+	     <td colspan='2' align='center'>
+	       <button type="button" onclick='javascript:edit()' class='btn btn-primary btn-mright'><i class="fa fa-check"></i>{:lang('submit')}</button>
+            <button type="reset"  class='btn'><i class="fa fa-refresh"></i>{:lang('reset')}</button>
+	     </td>
+	  </tr>
+	  {/if}
+	 </table>
+</form>
+{/block}

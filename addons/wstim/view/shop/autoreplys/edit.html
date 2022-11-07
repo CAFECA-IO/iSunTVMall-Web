@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>{:lang('wstim_tip26')}</title>
+	<link rel="stylesheet" type="text/css" href="__ROOT__/addons/wstim/view/static/mmgrid/mmGrid.css" />
+	<link rel="stylesheet" href="__ROOT__/addons/wstim/view/static/bootstrap/css/bootstrap.min.css" type="text/css" />
+	<link rel="stylesheet" href="__ROOT__/addons/wstim/view/static/layui/css/layui.css" type="text/css" />
+	<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+	<script src="__ROOT__/addons/wstim/view/static/js/jquery.min.js"></script>
+	<script type="text/javascript" src="__ROOT__/addons/wstim/view/static/layer/layer.js"></script>
+	<script src="__ROOT__/addons/wstim/view/static/bootstrap/js/bootstrap.min.js"></script>
+	<script language="javascript" type="text/javascript" src="__ROOT__/addons/wstim/view/static/layui/layui.all.js"></script>
+	<script language="javascript" type="text/javascript" src="__ROOT__/addons/wstim/view/static/js/common.js"></script>
+	<script type="text/javascript" src="__ROOT__/addons/wstim/view/shop/autoreplys/autoreplys.js"></script>
+</head>
+<div class="layui-form layui-form-pane">
+	<div class="layui-form-item">
+		<label class="layui-form-label">{:lang('wstim_tip25')}</label>
+		<div class="layui-input-block">
+			<input type="text" id="keyword" required="" lay-verify="required" placeholder="{:lang('wstim_tip27')}" autocomplete="off" class="layui-input">
+		</div>
+	</div>
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label" style="margin-bottom:0">{:lang('wstim_tip24')}：</label>
+		<div class="layui-input-block">
+			<textarea placeholder="{:lang('wstim_tip28')}" class="layui-textarea" id="reply_content" style="margin-top: 0px; margin-bottom: 0px; height: 100px;"></textarea>
+		</div>
+	</div>
+	<div class="layui-form-item" style="text-align: center">
+		<button class="layui-btn" onclick="save()" lay-filter="formDemoPane">{:lang('wstim_submit_immediately')}</button>
+	</div>
+</div>
+
+<script>
+	var id = 0;
+	$(function(){
+		var params = parseParams(location.href.split('?')[1] || '');
+		getApis(function(){
+			if(params.id>0){
+				id = params.id;
+				getById()
+			}
+		})
+	})
+	function getById(){
+		$.post(APIS['shopAutoReplyGet'],{id:id},function(data){
+			console.log('data', data);
+			if(data){
+				$('#reply_content').val(data.replyContent);
+				$('#keyword').val(data.keyword);
+			}
+		})
+	}
+</script>
+
+
+</html>

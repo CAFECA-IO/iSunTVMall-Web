@@ -1,0 +1,89 @@
+{extend name="default/base" /}
+{block name="main"}
+<div class='wst-toolbar'>
+    <input type='text' class="s-ipt" id='orderNo' placeholder="{:lang('label_order_no')}" />
+    <a class="btn btn-primary" onclick="queryByPage()"><i class="fa fa-search"></i>{:lang('query')}</a>
+</div>
+<style>
+.gImg{width: 50px; height: 50px; margin: 5px;}
+.os-tc{text-align: center;}
+.j-order-row td{text-align: center;}
+</style>
+<div class='wst-grid'>
+    <table class='wst-order-list'>
+        <thead>
+            <tr class='head'>
+                <th width="155" class="th-padding os-tc">{:lang('label_order_no')}</th>
+                <th class="os-tc">{:lang('label_order_service_goods')}</th>
+                <th width="210" class="os-tc">{:lang('label_order_service_type')}</th>
+                <th width="210" class="os-tc">{:lang('status')}</th>
+                <th width="210" class="os-tc">{:lang('op')}</th>
+            </tr>
+        </thead>
+        <tbody id='loadingBdy'>
+            <tr id='loading' class='empty-row' style='display:none'>
+                <td colspan='4'><img src="__SUPPLIER__/img/loading.gif">{:lang('getting_data')}</td>
+            </tr>
+        </tbody>
+        <script id="tblist" type="text/html">
+       {{# for(var i = 0; i < d.length; i++){ }}
+       <tbody class="j-order-row">
+            <tr>
+                <td>{{ d[i].orderNo }}</td>
+                <td>
+                    {{#
+                        var imgCode = d[i].gImgs.map(function(item){
+                            return "<img data-original='__RESOURCE_PATH__/"+item+"' class='gImg'>"
+                        });
+                        imgCode = imgCode.join('')
+                    }}
+                    {{ imgCode }}
+                </td>
+                <td>
+                    {{#
+                        var type = "";
+                        switch(d[i].goodsServiceType){
+                            case 0:
+                                type = WST.lang("order_service_type1");
+                            break;
+                            case 1:
+                                type = WST.lang("order_service_type2");
+                            break;
+                            case 2:
+                                type = WST.lang("order_service_type3");
+                            break;
+                        }
+                    }}
+                    {{ type }}
+                </td>
+                <td>
+                    {{ d[i].statusText }}
+                </td>
+                <td>
+                    {{#
+                        var props = {id:d[i].id};
+                        var dealUrl = WST.U('supplier/orderservices/deal',props);
+                    }}
+                    <a href="{{ dealUrl }}">【{{ WST.lang('detail') }}】</a>
+                </td>
+            </tr>
+       </tbody>
+       {{# }  }}
+       </script>
+        <tr class='empty-row' style="border: 0px;">
+            <td colspan='4' id='pager' align="center" style='padding:5px 0px 5px 0px'>&nbsp;</td>
+        </tr>
+    </table>
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/js/jquery.min.js?v={$v}"></script>
+<script type="text/javascript" src="__STATIC__/plugins/layer/layer.js?v={$v}"></script>
+<script type='text/javascript' src='__ROOT__/static/plugins/lazyload/jquery.lazyload.min.js?v={$v}'></script>
+<script type='text/javascript' src='__SUPPLIER__/orderservices/orderservices.js?v={$v}'></script>
+<script>
+    $(function () {
+        queryByPage({$p});
+    })
+</script>
+{/block}

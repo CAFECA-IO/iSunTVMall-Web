@@ -1,0 +1,85 @@
+<script>
+    var mmg_coupon;
+    function initGridCoupon(p,type){
+        var h = WST.pageHeight();
+        var cols = [
+            {title:'', name:'couponValue', width: 10,sortable:true,renderer: function(val,item,rowIndex){
+                    return "<input type='radio' name='selectCoupon' value="+item['couponId']+" />";
+                }},
+            {title:WST.lang('coupon_face_value'), name:'couponValue', width: 50,renderer:function(val,item,rowIndex){
+                    return WST.lang('currency_symbol')+item['couponValue'];
+                }},
+            {title:WST.lang('coupon_type'), name:'startPrice', width: 60,renderer:function(val,item,rowIndex){
+                    return (item['useCondition']==1)?(WST.lang('coupon_full_reduction',[item['useMoney'],item['couponValue']])):WST.lang('coupon_cash_coupon');
+                }},
+            {title:WST.lang('coupon_suit_obj'), name:'floorPrice', width: 60,renderer:function(val,item,rowIndex){
+                    return (item['useObjects']==0)?WST.lang('coupon_all_shop_can_use'):WST.lang('coupon_appoint_goods');
+                }},
+            {title:WST.lang('coupon_start_time'), name:'startDate', width: 120},
+            {title:WST.lang('coupon_end_time'), name:'endDate', width: 120},
+        ];
+        mmg_coupon = $('.mmg-coupon-'+type).mmGrid({height: h,indexCol: true, cols: cols,method:'POST',nowrap:true,
+            url: WST.AU('coupon://shops/pageQuery'), fullWidthRows: true, autoLoad: false,
+            plugins: [
+                $('#pg-coupon-'+type).mmPaginator({})
+            ]
+        });
+        loadGridCoupon(p,type);
+    }
+    function loadGridCoupon(p){
+        var params={};
+        p=(p<=1)?1:p;
+        params.page=p;
+        params.couponType=1;
+        params.isTrue=1;
+        mmg_coupon.load(params);
+    }
+    function setCoupon(type) {
+        var rows = (type == 1) ? mmg.selectedRows() : mmg2.selectedRows();
+        if (rows.length == 0) {
+            WST.msg(WST.lang('coupon_select_send_user'), {icon: 2});
+            return;
+        }
+        initGridCoupon(1,type);
+        var box = WST.open({title:WST.lang('coupon_select_coupon'),type:1,content:$('#couponBox-'+type),area: ['80%', '55%'],btn: [WST.lang('coupon_confirm'),WST.lang('coupon_cancel')],
+            yes:function(){
+                var couponId = 0;
+                $("input[name^='selectCoupon']").each(function(key,value){
+                    if($(value).prop('checked')){
+                        couponId = $(value).val();
+                    }
+                });
+                if(couponId==0){
+                    WST.msg(WST.lang('coupon_reqiure_select_coupon'), {icon: 2});
+                    return;
+                }
+                var ids = [];
+                for(var i=0;i<rows.length;i++){
+                    ids.push(rows[i]['userId']);
+                }
+                var params = {};
+                params.couponId = couponId;
+                params.ids = ids.join(',');
+                var loading = WST.msg(WST.lang('coupon_submitting'), {icon: 16,time:60000});
+                $.post(WST.AU('coupon://shops/toGive'),params,function(data,textStatus){
+                    layer.close(loading);
+                    var json = WST.toJson(data);
+                    if(json.status=='1'){
+                        WST.msg(WST.lang('coupon_operation_success'),{icon:1});
+                        layer.close(box);
+                        if(type==1){
+                            loadGrid(WST_CURR_PAGE);
+                        }else{
+                            loadGrid2(WST_CURR_PAGE);
+                        }
+                    }else{
+                        WST.msg(json.msg,{icon:2});
+                    }
+                });
+            },cancel:function(){
+                $('#couponBox-'+type).hide();
+            },end:function(){
+                $('#couponBox-'+type).hide();
+            }});
+    }
+</script>

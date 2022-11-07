@@ -1,0 +1,84 @@
+{if count($rs)>0}
+<style>
+    .wst-in-coupon{width:100%;background: #fff;padding-bottom:0.15rem;margin-top:0.1rem;}
+    .wst-in-coupon .coupon-bg{width:100%;height:1.84rem;background: url(__ROOT__/addons/coupon/view/images/coupon_index_bg.png) center center no-repeat;background-size: 100%;position: relative;overflow:hidden;}
+    .coupon-container{position: absolute;left:0.25rem;top:0.78rem;}
+    .wst-in-coupon-item{width:2.14rem;height:0.96rem;background:#fff;border-radius: 0.05rem;}
+    .wst-in-coupon-item .item-left{width:0.63rem;height:0.72rem;background: url(__ROOT__/addons/coupon/view/images/coupon_item_bg.png) center center no-repeat;background-size: 100%;color:#fff;font-size: 0.13rem;font-weight: 600;margin:0.1rem 0 0.1rem 0.1rem;}
+    .wst-in-coupon-item .item-left p{text-align: center;}
+    .wst-in-coupon-item .item-left .value{padding-top:0.05rem;}
+    .wst-in-coupon-item .item-left .value span{font-size:0.23rem;font-weight: 600;}
+    .wst-in-coupon-item .item-left .text{font-size:0.12rem;font-weight:normal;}
+    .wst-in-coupon-item .item-right{color:#333;font-size:0.13rem;margin:0 0 0 0.1rem;font-weight: 600;padding-top:0.12rem;}
+    .wst-in-coupon-item .item-right .condition, .wst-in-coupon-item .item-right .shop-name{width:1.01rem;overflow: hidden;text-overflow: ellipsis;white-space:nowrap;font-size:0.13rem;color:#333;line-height: 0.15rem;font-weight: bold;}
+    .wst-in-coupon-item .item-right .time{background:rgba(245,207,127,0.2);font-size:0.1rem;color:#D2A953;margin:0.07rem 0 0.05rem 0;font-weight: normal;width:1.3rem;height:0.165rem;border-radius: 0.0825rem;text-align: center;}
+    .wst-in-coupon-item .item-right .get{width:0.64rem;height:0.19rem;line-height:0.19rem;text-align:center;background:#1E90FF;font-size:0.12rem;color:#fff;border-radius:0.9rem;font-weight: normal;}
+</style>
+<div class="wst-in-coupon">
+    <div class="coupon-bg">
+        <div class="swiper-container coupon-container">
+            <div class="swiper-wrapper">
+                {volist name="rs" id="vo"}
+                <div class="swiper-slide" style="width:auto;">
+                    <div class="wst-in-coupon-item wst-flex-row" >
+                        <div class="item-left wst-flex-column wst-ac">
+                            <p class="value">{:lang('currency_symbol')}<span>{$vo['couponValue']}</span></p>
+                            <p class="text">{:lang('coupon_title')}</p>
+                        </div>
+                        <div class="item-right">
+                            <p class="condition">
+                                {if $vo['useCondition']==0}
+                                {:lang('coupon_no_threshold')}
+                                {else}
+                                {:lang('coupon_upto_available',[$vo['useMoney']])}
+                                {/if}
+                            </p>
+                            <p class="shop-name">{$vo['shopName']}</p>
+                            <div class="time">{$vo['startDate']}-{$vo['endDate']}</div>
+                            <div class="get" onclick="javascript:getCoupon({$vo['couponId']})">{:lang('coupon_receive_now2')}</div>
+                        </div>
+                    </div>
+                </div>
+                {/volist}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        new Swiper('.coupon-container', {
+            slidesPerView: 1.5,
+            freeMode : true,
+            spaceBetween: 10,
+            autoplay : false,
+            speed:1200,
+            loop : false,
+            width: window.innerWidth*0.85,
+            autoHeight: true, //高度随内容变化
+            on: {
+                resize: function(){
+                    this.params.width = window.innerWidth*0.85;
+                    this.update();
+                },
+                slideChange(){
+                    echo.init();
+                }
+            }
+        });
+    });
+    // 领取优惠券
+    function getCoupon(couponId){
+        $.post(WST.AU('coupon://coupons/receive'), {couponId:couponId}, function(data){
+            var json = WST.toJson(data);
+            if(json.status==1){
+                WST.msg(json.msg,'success');
+            }else{
+                WST.msg(json.msg,'info');
+            }
+        });
+    }
+</script>
+{/if}
+
+
+

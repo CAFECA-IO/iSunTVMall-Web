@@ -1,0 +1,64 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+<style>
+    .container{width:100%;padding-left:20px;}
+    .red{color:red;}
+    .desc{margin-top:20px;}
+    .item{margin-top:20px;}
+    .item label{margin-left:5px;cursor:pointer;}
+    #progressBox{background:#fff;width:400px;height:100px;position: fixed;top:40%;left:40%;z-index:1000;border:1px solid #ccc;}
+</style>
+{/block}
+{block name="js"}
+<script src="__ADMIN__/resources/resources.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div id='alertTips' class='alert alert-success alert-tips fade in'>
+  <div id='headTip' class='head'><i class='fa fa-lightbulb-o'></i>{:lang('menu_tips')}</div>
+  <ul class='body'>
+    <li>{:lang('resource_tips1')}</li>
+    <li>{:lang('resource_tips2')}</li>
+  </ul>
+</div>
+<div id="main" class='mmGrid wst-grid' style="margin-bottom: 10px;">
+<table class='mmg-head wst-grid-tree' width='100%' cellspacing='0' cellpadding='0'>
+   <thead class='mmg-headWrapper'>
+   <tr class='l-grid-hd-row wst-grid-tree-hd'>
+       <td width='30' class='wst-grid-tree-hd-cel' height='28' style="width:26px;text-align:center;font-weight:bold;">#</td>
+       <td width='200' class='wst-grid-tree-hd-cell' height='28' style='text-align:center;font-weight:bold;'>{:lang('label_resource_name')}</td>
+       <td class='wst-grid-tree-hd-cell' height='28' style='text-align:left;font-weight:bold;'>{:lang('label_resource_type')}</td>
+       <td width='120' class='wst-grid-tree-hd-cell' height='28' style='text-align:center;font-weight:bold;'>M</td>
+       <td width='260' class='wst-grid-tree-hd-cell' height='28' style='text-align:center;font-weight:bold;'>{:lang('op')}</td>
+   </tr>
+   </thead>
+   <tbody id='list'></tbody>
+</table>
+</div>
+<div id='picHandleBox' style='display:none'>
+    <div class="wst-flex-column container">
+        <div class='desc red wst-flex-row'>
+            <p>{:lang('resource_m_tips')}：</p>
+            <ul>
+                <li>{:lang('resource_m_tips1')}</li>
+                <li>{:lang('resource_m_tips2')}</li>
+            </ul>
+        </div>
+        <div class="wst-flex-column item">
+            <div>
+                <input type="radio" name="handleType" value="1" checked id="handleType1"/><label for='handleType1' >{:lang('resource_gen_type1')}</label>
+            </div>
+            <span class="red" style="margin-left:18px;">{:lang('resource_gen_type1_tips')}</span>
+        </div>
+        <div class="wst-flex-column item">
+            <div>
+                <input type="radio" name="handleType" value="2" id="handleType2"/><label for='handleType2' >{:lang('resource_gen_type2')}</label>
+            </div>
+            <span class="red" style="margin-left:18px;">{:lang('resource_gen_type2_tips')}</span>
+        </div>
+    </div>
+</div>
+<script>
+$(function(){initSummary();});
+</script>
+{/block}

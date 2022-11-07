@@ -1,0 +1,124 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('goods_inform')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/informs.css?v={$v}">
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+<style>
+    .webuploader-pick,.webuploader-pick-hover{width:0.8rem;height:0.8rem;background: url(../../img/upload-btn.png) center center no-repeat;background-size:100%;}
+    #filePicker div:nth-child(2){top:0!important;left:0!important;width:100%!important;height:100%!important;}
+</style>
+{/block}
+{block name="footer"}
+{/block}
+{block name="header"}
+	<div id="useri_infos">
+      <header style="background:#ffffff;" class="ui-header ui-header-positive ui-border-b wst-header">
+        <a href="javascript:history.go(-1)"><i class="ui-icon-return"></i></a><h1 class="useri_info">{:lang('goods_inform')}</h1>
+      </header>
+{/block}
+
+{block name="main"}
+    <input type="hidden" name="" value="{$goodsId}" id="goodsId" autocomplete="off">
+
+
+    <section class="ui-container" id="Ccontrainer" >
+    
+        <View class="step-container row ac">
+            <View class="flex1 center">
+                <View class="center step">
+                    <Text class="f14 cRed">1</Text>
+                </View>
+                <Text class="f14 cRed">{:lang('inform_step_1')}</Text>
+            </View>
+            <View class="flex1 center">
+                <View class="center step {$step<2?'gray':''}" >
+                    <Text class="f14 {$step<2?'c666':'cRed'}">2</Text>
+                </View>
+                <Text class="f14 {$step<2?'c666':'cRed'}">{:lang('inform_step_2')}</Text>
+            </View>
+            <View class="flex1 center">
+                <View class="center step {$step<3?'gray':''}">
+                    <Text class="f14 {$step<3?'c666':'cRed'}">3</Text>
+                </View>
+                <Text class="f14 {$step<3?'c666':'cRed'}">{:lang('inform_step_3')}</Text>
+            </View>
+        </View>
+
+        <View>
+            <View class="main">
+                <View 
+                    onclick="toTips()"
+                    class="row jsb headOrderInfo mb">
+                    <Text class="f14 c333">{:lang('inform_violation_notice_title')}</Text>
+                    <span class="arrowR" ></span>
+                </View>
+        
+                <View class="row jsb headOrderInfo">
+                    <Text class="f14 c333">{:lang('inform_reported_shop')}</Text>
+                    <Text class="f14 c333" id="j-shopName">-</Text>
+                </View>
+                <!-- 商品 -->
+                <View class="orderGoodsList">
+                    <View class="row ac orderGoodsHead">
+                        <Text class="f14 c333">{:lang('inform_relative_goods')}</Text>
+                    </View>
+                    <View class="goodsItem row">
+                        <img src="" class="goodsImg" />
+                        <View class="flex1 jsb">
+                            <Text class="goodsName">-</Text>
+                        </View>
+                    </View>
+                </View>
+                <View class="row jsb headOrderInfo mb">
+                    <Text class="f14 c333">{:lang('inform_type')}：</Text>
+                    <View class="row ac" id="renderType">
+                        
+                    </View>
+                </View>
+                <!-- 举报内容 -->
+                <View class="item row">
+                    <Text class="f14 c333">{:lang('inform_content')}</Text>
+                    
+                </View>
+                <!--  举报内容 -->
+                <View class="textInputBox mb">
+                    <textarea class="textInput ipt" placeholder="{:lang('inform_input_content_tip')}" id="informContent"></textarea>
+                </View>
+                <!--  附件 -->
+                <View class="item row">
+                    <Text class="f14 c333">{:lang('upload_annex_desc',[5])}</Text>
+                    <Text></Text>
+                </View>
+                <div class="ui-col uploadfile-box">
+                    <div class="complainFileBox wst-flex-row wst-fw">
+                        <div id="filePicker" class="upload-btn"></div>
+                    </div>
+                </div>
+            </View>
+            <!--  举报按钮 -->
+            <View class="btnBox center">
+                <Button onclick="commit()" class="btn center">
+                    {:lang('tip_off')}
+                </Button>
+            </View>
+        </View>
+        
+
+<script>
+    $(function(){
+        getInforms();
+    })
+</script>
+
+</section>
+
+{/block}
+{block name="include"}
+{include file="default/dialog" /}<!-- 对话框模板 -->
+{/block}
+
+{block name="js"}
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__MOBILE__/users/informs/index.js?v={$v}'></script>
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+{/block}

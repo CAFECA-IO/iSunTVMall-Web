@@ -1,0 +1,72 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('find_pay_password')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/security.css?v={$v}">
+{/block}
+{block name="header"}
+	{php}$Title = lang('find_pay_password');{/php}
+	{include file="default/header" /}
+{/block}
+{block name="footer"}
+		{/* 大加载 */}
+		<div class="ui-loading-block" id="Loadl">
+		    <div class="ui-loading-cnt">
+		        <i class="ui-loading-bright"></i>
+		        <p id="j-Loadl">{:lang('loading')}</p>
+		    </div>
+		</div>
+		{if($user['phoneType']==1)}
+		<div class="wst-se-footer">
+			<button id="modifyPhone" type="button" class="button" onclick="javascript:backPaypwd({$user['backType']});">{if($user['backType']==0)}{:lang('next_step')}{else}{:lang('confirm')}{/if}</button>
+		</div>
+		{else}
+		<div class="wst-se-footer">
+			<button id="modifyPhone" type="button" class="button" onclick="javascript:inPhone();">{:lang('goto_bind_phone_number')}</button>
+		</div>
+		{/if}
+{/block}
+{block name="main"}
+	<input type="hidden" value="{:WSTConf('CONF.pwdModulusKey')}" id="key" autocomplete="off">
+    <section class="ui-container">
+    	{if($user['backType']==1)}
+	    	<div class="wst-se-pay">
+	    		<div class="pay">{:lang('new_password')}：<input id="payPwd" type="password" placeholder="{:lang('new_password')}" maxlength="6"></div>
+    		    <div class="pay">{:lang('confirm_password')}：<input id="copayPwd" type="password" placeholder="{:lang('confirm_password')}" maxlength="6" style='width:calc(100% - 0.9rem)'></div>
+	    	</div>
+    	{else}
+	        {if($user['phoneType']==1)}
+	    	<div class="wst-se-phone">
+	    		<div class="phone">{:lang('you_bind_phone_number')}：+{$user['areaCode']} {$user['userPhone']}</div>
+		    	{if(WSTConf('CONF.smsVerfy')==1)}
+		    	{if (int)WSTConf('CONF.isAddonCaptcha')!=1}
+				<div class="pay" style='border:0px;'>{:lang('graphic_verifycode')}：</div>
+                <div class="pay">
+					<input id="smsVerfy" type="text" placeholder="{:lang('verify_require')}" maxlength="10" style='width:60%'>
+					<img id='verifyImg' src="{:url('mobile/users/getVerify')}" onclick='javascript:WST.getVerify("#verifyImg")'>
+				</div>
+				{/if}
+				{/if}
+				<div class="pay" style='border:0px;'>{:lang('verifycode')}：</div>
+				<div class="pay">
+					<input id="phoneCode" type="text" placeholder="{:lang('require_mobile_verifycode')}" maxlength="8" style='width:60%'>
+					{if (int)WSTConf('CONF.isAddonCaptcha')!=1}
+					<button id="obtain" class="send" onClick="javascript:backpayCode()">{:lang('press_get_check_code')}</button>
+					{else}
+					{:hook('mobileDocumentVerfiySmsCaptcha')}
+					{/if}
+				</div>
+			 </div>
+	    	{else}
+			<ul class="ui-row-flex wst-flexslp ui-whitespace">
+				<li class="ui-col ui-flex ui-flex-pack-center">
+				<p>{:lang('security_not_bind_phone_desc')}</p>
+				</li>
+			</ul>
+			{/if}
+		{/if}
+    </section>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/js/rsa.js"></script>
+<script type='text/javascript' src='__MOBILE__/users/security/security.js?v={$v}'></script>
+{/block}

@@ -1,0 +1,78 @@
+{php}
+    $style="";
+    $shopwindowStyle="";
+    $shopwindowLayoutNone="";
+{/php}
+{if intval($vo['layout'])==1 }
+    {php}
+        $style .=" width:50%;height:1.8rem;";
+        $shopwindowLayoutNone="none";
+    {/php}
+{elseif intval($vo['layout'])==2 }
+    {php}
+        $style .=" width:33.3%;height:1.2rem;";
+        $shopwindowLayoutNone="none";
+    {/php}
+{elseif intval($vo['layout'])==3 }
+    {php}
+        $style .=" width:25%;height:1rem;";
+        $shopwindowLayoutNone="none";
+    {/php}
+{else}
+    {php}
+        $shopwindowStyle .=" display:none;";
+        $shopwindowLayoutNone="";
+    {/php}
+{/if}
+<div class="shopwindows-container" style="background:{$vo['backgroundColor']}">
+    <div class='shopwindows' style="{$shopwindowStyle}" >
+        {volist name="$vo['images']" id="voo"}
+        <div class='shopwindows-item' style="{$style}">
+            <a href="{$voo['link']}">
+                <img src="__RESOURCE_PATH__/{$voo['img']}" />
+            </a>
+        </div>
+        {/volist}
+    </div>
+    <div class='shopwindows-layout {$shopwindowLayoutNone}'>
+        <div class='s-layout'>
+            <div class='s-layout-left'>
+                <div class='s-layout-left-item' >
+                    {volist name="$vo['images']" id="voo" key="key"}
+                    {if $key == 1}
+                    <img src="__RESOURCE_PATH__/{$voo['img']}" />
+                    {/if}
+                    {/volist}
+                </div>
+            </div>
+            <div class='s-layout-right'>
+                <div class='s-layout-top'>
+                    <div class='s-layout-top-item' >
+                        {volist name="$vo['images']" id="voo" key="key"}
+                        {if $key == 2}
+                        <img src="__RESOURCE_PATH__/{$voo['img']}" />
+                        {/if}
+                        {/volist}
+                    </div>
+                </div>
+                <div class='s-layout-bottom'>
+                    <div class='s-layout-bottom-item' >
+                        {volist name="$vo['images']" id="voo" key="key"}
+                        {if $key == 3}
+                        <img src="__RESOURCE_PATH__/{$voo['img']}" />
+                        {/if}
+                        {/volist}
+                    </div>
+                    <div class='s-layout-bottom-item' >
+                        {volist name="$vo['images']" id="voo" key="key"}
+                        {if $key == 4}
+                        <img src="__RESOURCE_PATH__/{$voo['img']}" />
+                        {/if}
+                        {/volist}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='shopwindows-s-hide'></div>
+</div>

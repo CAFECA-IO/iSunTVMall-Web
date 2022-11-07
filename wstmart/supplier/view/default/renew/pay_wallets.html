@@ -1,0 +1,61 @@
+{extend name="default/base" /}
+{block name="css"}
+<link href="__SUPPLIER__/css/recharge-{$lang}.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<div class="wst-container">
+	<input type="hidden" id="token" value='{:WSTConf("CONF.pwdModulusKey")}'/>
+    <div>
+    	<div class="pay-tip2"></div>
+    </div>
+    <div class='pay-sbox'>
+    	<div class="balance-box">
+    	    <div class='tips-box'>{:lang('wait_pay_annual_fee')}：<span class="wst-fred">{:lang('currency_symbol')}{$needPay}</span></div>
+		    <div class='wst-wallet-box'>
+	        	<div class='wst-wallte-item'>
+	        	{:lang('supp_wallet_balance')}：<span class="wst-fred">{:lang('currency_symbol')}{$supplierMoney}</span>
+	        	</div>
+                <div style='float:right;'>{:lang('pay')}：<span class="wst-fred">{:lang('currency_symbol')}{$needPay}</span></div>
+	        </div>
+	        {if ($supplierMoney>=$needPay)}
+	        <div class="pbox">
+	        	<input type='hidden' id='pkey' value='{$pkey}' class='j-ipt' autocomplete="off" />
+	        	{if ($hasPayPwd==1)}
+	        	{:lang('pay_pwd')}：<input type='password' class='u-query j-ipt' id='payPwd' autocomplete='off'>
+	        	<a class='pbox-tip' maxlength='6' href='{:url("supplier/users/editPayPass")}'>{:lang('forget_password')}?</a>
+	        	{else}
+	        	{:lang('no_set_pay_pwd_tips')}
+	        	<div id="paypwd-box" class="j-paypwd-box" style="display:none;padding:20px;">
+					<table class="wst-table">
+						<tr class="wst-login-tr">
+						    <td align='right'>{:lang('pay_pwd')}：</td>
+							<td><input type="password" class='j-ipt' id="payPwd" name="payPwd" style="width:250px;" maxlength="6" aria-required="true"></td>
+						</tr>
+						<tr class="wst-login-tr">
+						    <td align='right'>{:lang('confirm_pay_pwd')}：</td>
+							<td><input type="password" class="ipt n-invalid" id="reNewPass" name="reNewPass" style="width:250px;" maxlength="6" aria-required="true" aria-invalid="true"></td>
+						</tr>
+					</table>
+				</div>
+	        	{/if}
+	        </div>
+	        <div class="pbox2">
+	        {if($hasPayPwd==1)}
+	        	<button class="pay-btn" type="button" style="width:100px;height: 30px;" onclick='javascript:payByWallet()'>{:lang('confirm_pay')}</button>
+	        {else}
+	        	<button class="pay-btn" type="button" style="width:100px;height: 30px;" onclick='javascript:setPaypwd()'>{:lang('to_set_pay_pwd')}</button>
+	        {/if}
+	        </div>
+	        {else}
+	        <div class="pbox">
+	         	<img src='__SUPPLIER__/img/icon_jinggao.png'>&nbsp;{:lang('pay_annual_fee_error')}<a class='pbox-tip' href='javascript:void(0)' onclick="javascript:history.go(-1)">{:lang('go_back')}</a>。
+	        </div>
+	        {/if}
+        </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/js/rsa.js"></script>
+<script type='text/javascript' src='__SUPPLIER__/renew/renew.js?v={$v}'></script>
+{/block}

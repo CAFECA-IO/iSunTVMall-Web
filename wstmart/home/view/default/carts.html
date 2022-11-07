@@ -1,0 +1,127 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('cart_title')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="css"}
+<link href="__STYLE__/css/carts-{$lang}.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<div class="wst-container">
+	<div id="stepflex" class="stepflex">
+       <dl class="first doing">
+          <dt class="s-num">1</dt>
+          <dd class="s-text">{:lang('cart_title')}</dd>
+          <dd></dd>
+       </dl>
+       <dl class="normal">
+          <dt class="s-num1">2</dt>
+          <dd class="s-text1">{:lang('fill_check_order_information')}</dd>
+       </dl>
+       <dl class="last">
+          <dt class="s-num1">3</dt>
+          <dd class="s-text1">{:lang('order_submitted_successfully')}</dd>
+       </dl>
+    </div>
+    <div class='wst-clear'></div>
+    <div class='main-head'>{:lang('cart_title')}</div>
+    <div class='cart-box'>
+       <div class='cart-head'>
+          <div class='chk'><input type='checkbox' onclick='checkChks(this,".j-chk")'>{:lang('cart_select_all')}</div>
+          <div class='goods'>{:lang('cart_goods')}</div>
+          <div class='price'>{:lang('cart_price')}</div>
+          <div class='stock'>{:lang('cart_stock')}</div>
+          <div class='num'>{:lang('cart_num')}</div>
+          <div class='t-price'>{:lang('cart_subtotal')}</div>
+          <div class='action'>{:lang('cart_operate')}</div>
+       </div>
+       {if !empty($carts["carts"])}
+	       {volist name='$carts["carts"]' id='vo'}
+	       <div class='cart-item'>
+	          <div class='shop'>
+	           <div class='shop-title'>
+	          <input type='checkbox' class='j-chk' onclick='checkChks(this,".j-s{$vo['shopId']}")'>{$vo['shopName']}
+	         
+	          </div>
+	          {:hook('homeDocumentCartShopPromotion',['shop'=>$vo])}
+	          <div class='wst-clear'></div>
+	          </div>
+	          <div class='goods-list'>
+	             {volist name='vo["list"]' id='vo2'}
+	             {:hook('homeDocumentCartGoodsPromotion',['goods'=>$vo2])}
+	             <div class='item j-chk {if $vo2["isCheck"]==1}selected{/if} j-s{$vo['shopId']} j-g{$vo2["cartId"]}'>
+	                <div class='chk'><input id='gchk_{$vo2["cartId"]}' type='checkbox' {if $vo2["isCheck"]==1}checked{/if} mval="{$vo2['shopPrice']}" gval="{$vo2['goodsId']}" value="{$vo2['cartId']}" sval="{$vo2['goodsStock']}" allowbuy="{$vo2['allowBuy']}" class='j-chk j-s{$vo['shopId']} j-gchk' onclick='checkChks(this,".j-g{$vo2["cartId"]}")'></div>
+			        <div class='goods'>
+			            <div class='img'>
+				            <a href='{:Url("home/goods/detail","goodsId=".$vo2["goodsId"])}' target='_blank'>
+				            <img src='__RESOURCE_PATH__/{$vo2["goodsImg"]}' width='80' height='80' title='{$vo2["goodsName"]|WSTStripTags}'/>
+				            </a>
+			            </div>
+			            <div class='name'>{$vo2["goodsName"]}</div>
+			            <div class='spec'>
+			            {volist name='vo2["specNames"]' id='specs'}
+			            <div>{$specs['catName']}：{$specs['itemName']}</div>
+			            {/volist}
+			            </div>
+			        </div>
+			        <div class='price' id="gprice_{$vo2['cartId']}">{:lang('currency_symbol')}{$vo2['shopPrice']}</div>
+			        <div class='stock'>{$vo2['goodsStock']}</div>
+			        <div class='num'>
+				        <a href='#none' class='buy-btn' id='buy-reduce_{$vo2['cartId']}' onclick='javascript:WST.changeIptNum(-1,"#buyNum","#buy-reduce,#buy-add",{$vo2['cartId']},"statCartMoney")'>-</a>
+			            <input type='text' id='buyNum_{$vo2['cartId']}' class='buy-num' value="{$vo2['cartNum']}" data-max="{$vo2['goodsStock']}" data-min='1' onkeyup='WST.changeIptNum(0,"#buyNum","#buy-reduce,#buy-add",{$vo2['cartId']},"statCartMoney")' autocomplete="off"  onkeypress="return WST.isNumberKey(event);" maxlength="6"/>
+			            <a href='#none' class='buy-btn' id='buy-add_{$vo2['cartId']}' onclick='javascript:WST.changeIptNum(1,"#buyNum","#buy-reduce,#buy-add",{$vo2['cartId']},"statCartMoney")'>+</a>
+			            <div id='err_{$vo2['cartId']}' class='wst-clear'></div>
+			        </div>
+			        <div class='t-price'>{:lang('currency_symbol')}<span id="tprice_{$vo2['cartId']}">{$vo2['shopPrice']*$vo2['cartNum']}</span></div>
+                   <div class="action-btns">
+                       <div class='action'><a href='javascript:WST.delCart({$vo2["cartId"]})'>{:lang('cart_del')}</a></div>
+                       <div class='action'><a href='javascript:moveToFavorites({$vo2["goodsId"]},{$vo2["cartId"]})'>{:lang('move_to_attention')}</a></div>
+                   </div>
+			        <div class='wst-clear'></div>
+	             </div>
+	             {/volist}
+	          </div>
+	       </div>
+	       {/volist}
+	       <div class='cart-footer selected2'>
+	          <div class='cart-summary'>
+	             <div class='summary'>{:lang('total_amount_no_freight')}：{:lang('currency_symbol')}<span id='totalMoney'>{$carts["goodsTotalMoney"]}</span></div>
+	             <div class='wst-clear'></div>
+	          </div>
+	       </div>
+	       	  <div class='cart-btn'>
+	             <a href='{:url("home/index/index")}' class='wst-contnue wst-cart-asha'>{:lang('cart_continue_buy')}</a>
+	             <a href='#none' onclick='toSettlement()' class='wst-next wst-cart-reda'>{:lang('settlement')}</a>
+	             <div class='wst-clear'></div>
+	          </div>
+       {else}
+       <div class='empty-cart'>
+                             {:lang('cart_empty')}<a href='{:url("home/index/index")}'>{:lang('take_look')}</a>~
+       </div>
+       {/if}
+		<div class='wst-container'>
+			<div class="like_goods_list">
+				<div class="lg_tit">{:lang('recommended_for_you')}</div>
+				<div class="lg_glist wst-flex-row wst-fw">
+					{wst:goods type='guess' cat="0" cache='7200' num='10' id='cs'}
+					<div class="fmr_gitem fl" title="{$cs['goodsName']|WSTStripTags}">
+						<div class="fmr_img" >
+							<a target='_blank'  href="{:Url('home/goods/detail','goodsId='.$cs['goodsId'])}">
+								<img title="{$cs['goodsName']|WSTStripTags}" class='goodsImg' data-original="__RESOURCE_PATH__/{:WSTImg($cs['goodsImg'])}" src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}"/>
+							</a>
+						</div>
+						<p class="fmr_gname"><a target='_blank'  href="{:Url('home/goods/detail','goodsId='.$cs['goodsId'])}">{:WSTMSubstr($cs['goodsName'],0,33)}</a></p>
+						<div class="info wst-flex-row wst-jsb wst-ac">
+							<div class="fmr_gprice"><span class="f12">{:lang('goods_price_unit')}</span>{$cs['shopPrice']}</div>
+							<div class="cart" onclick="javascript:WST.addCart({$cs['goodsId']},1);"></div>
+						</div>
+					</div>
+					{/wst:goods}
+					<div class="wst-clear"></div>
+				</div>
+			</div>
+		</div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__STYLE__/js/carts.js?v={$v}'></script>
+<script>$(function(){statCartMoney()})</script>
+{/block}

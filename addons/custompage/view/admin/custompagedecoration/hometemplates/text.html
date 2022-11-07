@@ -1,0 +1,16 @@
+{php}$style="";{/php}
+{if $vo['verticalPadding']}
+    {php}
+        $style.="padding-top:".intval($vo['verticalPadding'])."px;";
+        $style.="padding-bottom:".intval($vo['verticalPadding'])."px;";
+    {/php}
+{/if}
+{if $vo['horizontalPadding']}
+    {php}
+        $style.="padding-left:".intval($vo['horizontalPadding'])."px;";
+        $style.="padding-right:".intval($vo['horizontalPadding'])."px;";
+    {/php}
+{/if}
+<div class="text-container" style="background:{$vo['backgroundColor']};">
+    <div class='text' style="{$style}">{php}echo htmlspecialchars_decode($vo['text']);{/php}</div>
+</div>

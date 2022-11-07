@@ -1,0 +1,28 @@
+<div class="goods-recommend-container">
+    <div class="s-buy-new-best-hot">
+        {if $vo['showGoodsRecommendTitle']==1}
+        <ul class="s-rec">
+            <li class="s-rec-item" ><a href="javascript:void(0)">{$vo['goodsRecommendTitle']}</a></li>
+        </ul>
+        {/if}
+        <div class="s-rec-glistbox" style="background:{$vo['backgroundColor']}">
+            <ul class="s-rec-goods-list">
+                {volist name="$vo['goods'][0]"  id="voo"}
+                <li>
+                    <a href='{:Url("home/goods/detail","goodsId=".$voo["goodsId"])}' target='_blank'>
+                        <img class='goodsImg' data-original="__RESOURCE_PATH__/{:WSTImg($voo['goodsImg'])}"  title="{$voo['goodsName']|WSTStripTags}" src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}"/>
+                    </a>
+                    <div class="rec_ginfo">
+                        <p class="s-rec-goods-desc"><a href='{:Url("home/goods/detail","goodsId=".$voo["goodsId"])}' target='_blank'>{$voo['goodsName']}</a></p>
+                        <div class="s-rec-goods-bottom">
+                            <p class="s-rec-goods-price"><span>{:lang('currency_symbol')}{$voo['shopPrice']}</span></p>
+                            <a href="javascript:addCart({$voo['goodsId']});">{:lang('shopcustompage_add_cart')}</a>
+                        </div>
+                    </div>
+                </li>
+                {/volist}
+                <div class="wst-clear"></div>
+            </ul>
+        </div>
+        </div>
+</div>

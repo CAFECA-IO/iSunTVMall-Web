@@ -1,0 +1,161 @@
+{extend name="base" /}
+{block name="js"}
+<script src="__ADMIN__/sysconfigs/buy.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+	<fieldset class="layui-elem-field layui-field-title">
+	  <legend>{:lang('sys_config_order_set')}</legend>
+	  <table class='wst-form wst-box-top layui-form'>
+	  <tr>
+	     <th width='150'>{:lang('label_sys_config_open_score_pay')}：</th>
+	     <td>
+	      <input type="checkbox" {if $object['isOpenScorePay']==1}checked{/if} class="ipt" id="isOpenScorePay" name="isOpenScorePay" value='1' lay-skin="switch" lay-filter="isOpenScorePay" lay-text="{:lang('sys_config_open')}|{:lang('sys_config_close')}">
+	     </td>
+	  </tr>
+	  <tr class='scoreToMoneyTr' {if $object['isOpenScorePay']==0}style='display:none'{/if}>
+	     <th>{:lang('label_sys_config_score_to_money')}：</th>
+	     <td>
+			 {:lang('sys_config_score_to_money_tips1')}<input type="text" id='scoreToMoney' class='ipt' value="{$object['scoreToMoney']}" maxLength='5' style='width:60px;margin:0 5px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/>{:lang('sys_config_score_to_money_tips2')}
+	     </td>
+	  </tr>
+	  <tr class='scoreToMoneyTr' {if $object['isOpenScorePay']==0}style='display:none'{/if}>
+	     <th>{:lang('label_sys_config_order_usable_score_rate')}：</th>
+	     <td>
+	      <input type="text" id='orderUsableScoreRate' class='ipt' value="{$object['orderUsableScoreRate']}" maxLength='3' style='width:60px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/>%
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('label_sys_config_is_order_score')}：</th>
+	     <td>
+	      <input type="checkbox" {if $object['isOrderScore']==1}checked{/if} class="ipt" id="isOrderScore" name="isOrderScore" value='1' lay-skin="switch" lay-filter="isOrderScore" lay-text="{:lang('sys_config_open')}|{:lang('sys_config_close')}">
+	     </td>
+	  </tr>
+	  <tr id='moneyToScoreTr' {if $object['isOrderScore']==0}style='display:none'{/if}>
+	     <th>{:lang('label_sys_config_money_to_score')}：</th>
+	     <td>
+			 {:lang('sys_config_money_to_score_tips1')}<input type="text" id='moneyToScore' class='ipt' value="{$object['moneyToScore']}" maxLength='5' style='width:60px;margin:0 5px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/>{:lang('sys_config_money_to_score_tips2')}
+	     <span style='color:gray;'>
+	     </span>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('label_sys_config_is_appraises_score')}：</th>
+	     <td>
+	     <input type="checkbox" {if $object['isAppraisesScore']==1}checked{/if} class="ipt" id="isAppraisesScore" name="isAppraisesScore" value='1' lay-skin="switch" lay-filter="isAppraisesScore" lay-text="{:lang('sys_config_open')}|{:lang('sys_config_close')}">
+	     </td>
+	  </tr>
+	  <tr id='appraisesScoreTr' {if $object['isAppraisesScore']==0}style='display:none'{/if}>
+	     <th>{:lang('label_sys_config_appraises_score')}：</th>
+	     <td>
+	     <input type="text" id='appraisesScore' class='ipt' value="{$object['appraisesScore']}" maxLength='5' style='width:60px;margin:0 5px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event)"/>{:lang('sys_config_appraises_score_tips')}
+	     <span style='color:gray;'>
+	     </span>
+	     </td>
+	  </tr>
+	  <tr>
+	  <tr style='display:none'>
+	     <th>{:lang('label_sys_config_score_cash_ratio')}：</th>
+	     <td><input type="text" id='scoreCashRatio' class='ipt' value="{$object['scoreCashRatio']}" maxLength='20'/></td>
+	  </tr>
+	  </table>
+	</fieldset>
+
+
+	<fieldset class="layui-elem-field layui-field-title">
+	  <legend>{:lang('sys_config_info_set')}</legend>
+	  <table class='wst-form wst-box-top layui-form'>
+	  <tr>
+	     <th width='150'>{:lang('label_sys_config_is_consult')}：</th>
+	     <td>
+	      <input type="checkbox" {if $object['isConsult']==1}checked{/if} class="ipt" id="isConsult" name="isConsult" value='1' lay-skin="switch" lay-filter="isConsult" lay-text="{:lang('yes')}|{:lang('no')}">
+	     </td>
+	  </tr>
+	  <tr>
+	     <th width='150'>{:lang('label_sys_config_is_appraise')}：</th>
+	     <td>
+	      <input type="checkbox" {if $object['isAppraise']==1}checked{/if} class="ipt" id="isAppraise" name="isAppraise" value='1' lay-skin="switch" lay-filter="isAppraise" lay-text="{:lang('yes')}|{:lang('no')}">
+	     </td>
+	  </tr>
+	  </table>
+	</fieldset>
+	<fieldset class="layui-elem-field layui-field-title">
+	  <legend>{:lang('sys_config_cash_draw_set')}</legend>
+	  <table class='wst-form wst-box-top layui-form'>
+	  <tr>
+	     <th width='150'>{:lang('label_sys_config_draw_cash_user_limit')}：</th>
+	     <td>{:lang('sys_config_at_least')}<input type="text" id='drawCashUserLimit' class='ipt' value="{$object['drawCashUserLimit']}" maxLength='10' style='width:80px' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/>{:lang('sys_config_cash_draw_tips')}</td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('label_sys_config_draw_cash_shop_limit')}：</th>
+	     <td>{:lang('sys_config_at_least')}<input type="text" id='drawCashShopLimit' class='ipt' value="{$object['drawCashShopLimit']}" maxLength='10' style='width:80px' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/>{:lang('sys_config_cash_draw_tips')}</td>
+	  </tr>
+      <tr>
+          <th width='150'>{:lang('label_sys_config_draw_cash_commission')}：</th>
+          <td><input type="text" id='drawCashCommission' class='ipt' value="{$object['drawCashCommission']}" maxLength='10' style='width:80px' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return  WST.isNumberKey(event)"/>% ({:lang('sys_config_cash_draw_fee_tips')})</td>
+      </tr>
+	  </table>
+	</fieldset>
+
+	<fieldset class="layui-elem-field layui-field-title">
+	  <legend>{:lang('sys_config_cron_set')}</legend>
+	  <table class='wst-form wst-box-top layui-form'>
+	  <tr>
+	     <th width='170'>{:lang('label_sys_config_auto_cancel_no_pay_days')}：</th>
+	     <td>{:lang('sys_config_cron_tips1')}<input type="text" id='autoCancelNoPayDays' class='ipt' value="{$object['autoCancelNoPayDays']}" maxLength='3' style='width:40px;margin:0 5px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/>{:lang('sys_config_hour')}</td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('label_sys_config_auto_receive_days')}：</th>
+	     <td>{:lang('sys_config_cron_tips2')}<input type="text" id='autoReceiveDays' class='ipt' value="{$object['autoReceiveDays']}" maxLength='3' style='width:40px;margin:0 5px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/>{:lang('sys_config_cron_tips3')}</td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('label_sys_config_auto_appraise_days')}：</th>
+	     <td>{:lang('sys_config_cron_tips4')}<input type="text" id='autoAppraiseDays' class='ipt' value="{$object['autoAppraiseDays']}" maxLength='3' style='width:40px;margin:0 5px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/>{:lang('sys_config_cron_tips5')}</td>
+	  </tr>
+	  <tr>
+		  <th>{:lang('label_sys_config_shop_handle_refund_days')}：</th>
+		  <td>{:lang('sys_config_cron_tips6')}<input type="text" id='shopHandleRefundDays' class='ipt' value="{$object['shopHandleRefundDays']}" maxLength='3' style='width:40px;margin:0 5px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/>{:lang('sys_config_cron_tips7')}</td>
+	  </tr>
+	  {if WSTConf('CONF.isOpenSupplierApply')==1}
+	  <tr>
+		  <th>{:lang('label_sys_config_supp_handle_refund_days')}：</th>
+		  <td>{:lang('sys_config_cron_tips8')}<input type="text" id='supplierHandleRefundDays' class='ipt' value="{$object['supplierHandleRefundDays']}" maxLength='3' style='width:40px;margin:0 5px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/>{:lang('sys_config_cron_tips9')}</td>
+	  </tr>
+	  {/if}
+	  <tr>
+	     <th>{:lang('label_sys_config_after_sale_service_days')}：</th>
+	     <td>
+			 {:lang('sys_config_cron_tips4')}<input type="text" id='afterSaleServiceDays' class='ipt' value="{$object['afterSaleServiceDays']}" maxLength='3' style='width:40px;margin:0 5px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/>{:lang('sys_config_day')}
+			 ({:lang('sys_config_cron_tips10')})
+		</td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('label_sys_config_shop_accept_days')}：</th>
+	     <td>{:lang('sys_config_cron_tips11')}<input type="text" id='shopAcceptDays' class='ipt' value="{$object['shopAcceptDays']}" maxLength='3' style='width:40px;margin:0 5px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/>{:lang('sys_config_day')}</td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('label_sys_config_user_send_days')}：</th>
+	     <td>{:lang('sys_config_cron_tips12')}<input type="text" id='userSendDays' class='ipt' value="{$object['userSendDays']}" maxLength='3' style='width:40px;margin:0 5px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/>{:lang('sys_config_day')}</td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('label_sys_config_shop_receive_days')}：</th>
+	     <td>{:lang('sys_config_cron_tips13')}<input type="text" id='shopReceiveDays' class='ipt' value="{$object['shopReceiveDays']}" maxLength='3' style='width:40px;margin:0 5px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/>{:lang('sys_config_day')}</td>
+	  </tr>
+	  <tr>
+		<th>{:lang('label_sys_config_shop_send_days')}：</th>
+		<td>{:lang('sys_config_cron_tips14')}<input type="text" id='shopSendDays' class='ipt' value="{$object['shopSendDays']}" maxLength='3' style='width:40px;margin:0 5px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/>{:lang('sys_config_day')}</td>
+	 </tr>
+	  <tr>
+	     <th>{:lang('label_sys_config_user_receive_days')}：</th>
+	     <td>{:lang('sys_config_cron_tips15')}<input type="text" id='userReceiveDays' class='ipt' value="{$object['userReceiveDays']}" maxLength='3' style='width:40px;margin:0 5px;' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)"/>{:lang('sys_config_day')}</td>
+	  </tr>
+	  {if WSTGrant('GWSZ_02')}
+	  <tr>
+	     <td colspan='2' align='center'>
+	       <button type="button" onclick='javascript:edit()' class='btn btn-primary btn-mright'><i class="fa fa-check"></i>{:lang('save')}</button>
+            <button type="reset"  class='btn'><i class="fa fa-refresh"></i>{:lang('reset')}</button>
+	     </td>
+	  </tr>
+	  {/if}
+	 </table>
+</div>
+{/block}

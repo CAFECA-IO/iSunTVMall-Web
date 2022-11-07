@@ -1,0 +1,161 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+<script src="__ADMIN__/users/users.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div class="l-loading" style="display: block" id="wst-loading"></div>
+<form id="userForm" autocomplete="off">
+<table class='wst-form wst-box-top'>
+  <tr>
+      <th width='150'>{:lang('label_user_login_name')}<font color='red'>*</font>：</th>
+          <td>
+            {if ($data['userId']>0)}
+              {$data['loginName']}
+            {else /}
+              <input type="text" class="ipt" id="loginName" name="loginName"  />
+            {/if}
+
+          </td>
+       </tr>
+       {if ((int)$data['userId']==0)}
+         <tr>
+            <th>{:lang('label_user_login_pwd')}<font color='red'>*</font>：</th>
+            <td><input type="text" id='loginPwd' class='ipt' maxLength='20' value='66666666' data-rule="{:lang('label_user_login_pwd')}: required;length[6~20]" data-target="#msg_loginPwd" onclick='javascript:this.select()'/>
+               <span id='msg_loginPwd'>({:lang('user_pwd_tips1')}66666666)</span>
+             </td>
+         </tr>
+         <tr>
+            <th>{:lang('label_user_pay_pwd')}<font color='red'>*</font>：</th>
+            <td><input type="text" id='payPwd' class='ipt' maxLength='6' value='666666' data-rule="{:lang('label_user_pay_pwd')}: required;length[6]" data-target="#msg_payPwd" onclick='javascript:this.select()'/>
+               <span id='msg_payPwd'>({:lang('user_pwd_tips1')}666666)</span>
+             </td>
+         </tr>
+       {else}
+          <tr>
+            <th>{:lang('label_user_login_pwd')}：</th>
+            <td><input type="text" id='loginPwd' class='ipt' maxLength='20' data-rule="{:lang('label_user_login_pwd')}: length[6~20]" data-target="#msg_loginPwd"/>
+               <span id='msg_loginPwd'>({:lang('user_pwd_tips2')})</span>
+             </td>
+         </tr>
+         <tr>
+            <th>{:lang('label_user_pay_pwd')}：</th>
+            <td><input type="text" id='payPwd' class='ipt' maxLength='20' data-rule="{:lang('label_user_pay_pwd')}: length[6~20]" data-target="#msg_payPwd"/>
+               <span id='msg_payPwd'>({:lang('user_pwd_tips2')})</span>
+             </td>
+         </tr>
+       {/if}
+       <tr>
+          <th>{:lang('label_user_name')}：</th>
+          <td>
+              <input type="text" class="ipt" id="userName" name="userName" value="{$data['userName']}" />
+          </td>
+       </tr>
+       <tr>
+          <th>{:lang('label_user_true_name')}：</th>
+          <td>
+              <input type="text" class="ipt" id="trueName" name="trueName" value="{$data['trueName']}" />
+          </td>
+       </tr>
+       <tr>
+         <th>{:lang('label_user_photo')}：</th>
+         <td>
+           <input type="text" readonly="readonly"  id="userPhoto" class="ipt" value="{$data['userPhoto']}" style="float: left;width: 355px;"/>
+            <div id='adFilePicker'>{:lang('upload')}</div>
+            <div id="preview" style="float: left;margin-left: 5px;">
+                <img src="{:WSTUserPhoto($data['userPhoto'])}"  height="30" />
+            </div>
+            <span id='uploadMsg'></span>
+         </td>
+       </tr>
+       <tr  class='layui-form'>
+          <th>{:lang('label_user_sex')}<font color='red'>*</font>：</th>
+          <td>
+            <label><input type="radio" class="ipt" id="userSex" name="userSex" <?=($data['userSex']==1)?'checked':'';?> value="1" title="{:lang('user_sex_type1')}"/></label>
+            <label><input type="radio" class="ipt" id="userSex" name="userSex" <?=($data['userSex']==2)?'checked':'';?> value="2" title="{:lang('user_sex_type2')}"/></label>
+            <label><input type="radio" class="ipt" id="userSex" name="userSex" <?=($data['userSex']==0)?'checked':'';?> value="0" title="{:lang('user_sex_type3')}"/></label>
+          </td>
+       </tr>
+       <tr>
+          <th>{:lang('label_user_birthday')}：</th>
+          <td>
+              <input type="text" class="ipt" id="brithday" name="brithday" value="{$data['brithday']}" />
+          </td>
+       </tr>
+       <tr>
+          <th>{:lang('label_user_phone')}：</th>
+          <td>
+              <select class="ipt" id="areaCode" name="areaCode" style="height: 36px;outline: 0;">
+                {volist name=":WSTAareCodes()" id="acode"}
+                  <option value="{$acode}" {if $data['areaCode']==$acode}selected{/if}>{$acode}</option>
+                {/volist}
+              </select>
+              <input type="text" class="ipt" id="userPhone" name="userPhone" value="{$data['userPhone']}" />
+          </td>
+       </tr>
+       <tr>
+          <th>{:lang('label_user_email')}：</th>
+          <td>
+              <input type="text" class="ipt" id="userEmail" name="userEmail" value="{$data['userEmail']}" />
+          </td>
+       </tr>
+       {if (WSTDatas('ADS_TYPE',2)!='')}
+       <tr>
+          <th>{:lang('label_user_wx')}openId：</th>
+          <td>
+              <input type="text" class="ipt" id="wxOpenId" name="wxOpenId" value="{$data['wxOpenId']}" />
+          </td>
+       </tr>
+       {/if}
+       {if (WSTDatas('ADS_TYPE',5)!='')}
+       <tr>
+          <th>{:lang('label_user_we')}openId：</th>
+          <td>
+              <input type="text" class="ipt" id="weOpenId" name="weOpenId" value="{$data['weOpenId']}" />
+          </td>
+       </tr>
+       {/if}
+       {if (WSTDatas('ADS_TYPE',2)!='') || (WSTDatas('ADS_TYPE',5)!='')}
+       <tr>
+          <th>{:lang('label_user_wx')}UnionId：</th>
+          <td>
+              <input type="text" class="ipt" id="wxUnionId" name="wxUnionId" value="{$data['wxUnionId']}" />
+          </td>
+       </tr>
+       {/if}
+       <tr>
+          <th>WhatsApp：</th>
+          <td>
+              <input type="text" class="ipt" id="userQQ" name="userQQ" value="{$data['userQQ']}" />
+          </td>
+       </tr>
+       <tr  class='layui-form'>
+            <th>{:lang('label_user_status')}<font color='red'>*</font>：</th>
+            <td><input type="checkbox" style='width:80px;' {if $data['userStatus']==1}checked{/if} class="ipt" name="userStatus" id='userStatus' lay-skin="switch" title="{:lang('user_status_title')}" value='1' lay-text="{:lang('user_status_type1')}|{:lang('user_status_type2')}">
+            </td>
+      </tr>
+        <tr  class='layui-form'>
+          <th>{:lang('label_user_is_inform')}<font color='red'>*</font>：</th>
+          <td>
+            <label><input type="radio" class="ipt" id="isInform" name="isInform" <?=($data['isInform']==1)?'checked':'';?> value="1" title="{:lang('user_inform_type1')}"/></label>
+            <label><input type="radio" class="ipt" id="isInform" name="isInform" <?=($data['isInform']==0)?'checked':'';?> value="0" title="{:lang('user_inform_type2')}"/></label>
+          </td>
+       </tr>
+  <tr>
+     <td colspan='2' align='center'>
+       <input type="hidden" name="userId" id="userId" class="ipt" value="<?=(int)$data['userId']?>" />
+       <button type="submit" class="btn btn-primary btn-mright" ><i class="fa fa-check"></i>{:lang('submit')}</button>
+        <button type="button" class="btn" onclick="javascript:location.href='{:Url(\'admin/users/index\',\'p=\'.$p)}'"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+     </td>
+  </tr>
+</table>
+</form>
+<script>
+$(function(){editInit({$p})});
+</script>
+
+{/block}
+

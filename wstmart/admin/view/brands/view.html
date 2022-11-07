@@ -1,0 +1,25 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/brands/brands.js?v={$v}" type="text/javascript"></script>
+<script>
+$(function(){
+    initGrid4({$p});
+});
+</script>
+{/block}
+{block name="main"}
+<input type="hidden" id="brandId" value="{$brandId}">
+    <div class="wst-toolbar">
+        <input type='text' id='key3' placeholder='{:lang('brand_apply_shop_name')}'/>
+        <button class="btn btn-primary" onclick='javascript:loadGrid4(0)'><i class='fa fa-search'></i>{:lang('label_brand_apply_name')}</button>
+        <div style='clear:both'></div>
+    </div>
+    <div class='wst-grid'>
+        <div id="mmg4" class="mmg4"></div>
+        <div id="pg4" style="text-align: right;"></div>
+    </div>
+{/block}

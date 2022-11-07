@@ -1,0 +1,73 @@
+{extend name="default/users/base" /}
+{block name="title"}{:lang('after_sales_application_list')} - {:lang('user_center')}{__block__}{/block}
+{block name="css"}
+{/block}
+{block name="content"}
+<style>
+    .j-order-row{text-align: center;}
+    .j-order-row td{border: 1px solid #f2f2f2;}
+    .gImg{width:50px;height:50px;margin: 5px 5px 5px 0;}
+</style>
+<div class="wst-user-head"><span>{:lang('after_sales_application_list')}</span></div>
+<div class='wst-user-tbar'>
+    {:lang('order_no')}：<input type='text' class="u-query" id='orderNo' />
+    <button class="wst-sec-but u-btn" onclick="queryPage()">{:lang('search')}</button>
+</div>
+<div class='wst-user-content'>
+    <table class='wst-order-list' style="border-collapse: collapse;">
+        <thead>
+            <tr class='head'>
+                <th width="200">{:lang('order_no')}</th>
+                <th>{:lang('after_sales_goods')}</th>
+                <th width="115">{:lang('apply_time')}</th>
+                <th width="115">{:lang('after_sales_type')}</th>
+                <th width="115">{:lang('status')}</th>
+                <th width="110">{:lang('operation')}</th>
+            </tr>
+        </thead>
+        <tbody id='loadingBdy' style='display:none'>
+            <tr id='loading' class='empty-row'>
+                <td colspan='4'><img src="__STYLE__/img/loading.gif">{:lang('data_loading')}</td>
+            </tr>
+        </tbody>
+
+        <script id="tblist" type="text/html">
+        {{# for(var i = 0; i < d.length; i++){ }}
+            <tbody class="j-order-row">
+                <tr>
+                    <td>{{d[i].orderNo}}</td>
+                    <td>
+                        {{# 
+                            var imgCode = d[i].gImgs.map(function(item){
+                                return "<img data-original='__RESOURCE_PATH__/"+item+"' class='gImg'>"
+                            });
+                            imgCode = imgCode.join('')
+                         }}
+                        {{ imgCode }}
+
+                    </td>
+                    <td>{{d[i].createTime}}</td>
+                    <td>{{d[i].goodsServiceTypeText}}</td>
+                    <td>{{d[i].statusText}}</td>
+                    {{# 
+                        var props = {id:d[i].id};  
+                    }}
+                    <td><div><a href='{{WST.U('home/orderservices/detail',props)}}'>{:lang('check2')}</a></div></td>
+                </tr>
+            </tbody>
+        {{# } }}
+       </script>
+       <tr class='empty-row'>
+            <td colspan='4' id='pager' align="center" style='padding:5px 0px 5px 0px'>&nbsp;</td>
+       </tr>
+    </table>
+</div>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__STYLE__/users/orderservices/orderservices.js?v={$v}'></script>
+<script>
+    $(function () {
+        queryPage({$p});
+    })
+</script>
+{/block}

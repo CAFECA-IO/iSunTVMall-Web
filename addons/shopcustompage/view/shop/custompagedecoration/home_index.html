@@ -1,0 +1,1950 @@
+{extend name="$LAYOUT_SHOP_BASE" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/font-awesome/css/font-awesome.min.css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/colpick/css/colpick.css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/dragula/dragula.css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/range/jquery.range.css" />
+<link href="__ROOT__/addons/shopcustompage/view/shop/css/homecustompagedecoration.css?v={$v}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="main"}
+<style>
+    .webuploader-pick{background: #fff!important;height:auto!important;}
+    p{line-height: 30px;}
+    .banner-picker div:nth-child(2){
+        top:-20px!important;
+        left:0!important;
+        width:100%!important;
+        height:40px!important;
+    }
+    .floor-goods-icon-picker div:nth-child(2){
+        top:-40px!important;
+        left:0!important;
+        width:100%!important;
+        height:60px!important;
+    }
+    .floor-goods-picker div:nth-child(2){
+        top:-220px!important;
+        left:0!important;
+        width:100%!important;
+        height:240px!important;
+    }
+    .search-picker div:nth-child(2){
+        top:-50px!important;
+        left:0!important;
+        width:100%!important;
+        height:70px!important;
+    }
+    .coupon-picker div:nth-child(2){
+        top:-20px!important;
+        left:0!important;
+        width:100%!important;
+        height:40px!important;
+    }
+    .nav-picker div:nth-child(2){
+        top:-50px!important;
+        left:0!important;
+        width:100%!important;
+        height:70px!important;
+    }
+    .image-picker div:nth-child(2){
+        top:-20px!important;
+        left:0!important;
+        width:100%!important;
+        height:40px!important;
+    }
+    .shopwindow-picker div:nth-child(2){
+        top:0!important;
+        left:0!important;
+        width:100%!important;
+        height:70px!important;
+    }
+    .notice-picker div:nth-child(2){
+        top:0!important;
+        left:0!important;
+        width:100%!important;
+        height:50px!important;
+    }
+    .video-picker div:nth-child(2){
+        top:-50px!important;
+        left:0!important;
+        width:100%!important;
+        height:70px!important;
+    }
+    .image-text-picker div:nth-child(2){
+        top:0!important;
+        left:0!important;
+        width:100%!important;
+        height:50px!important;
+    }
+    .page-picker div:nth-child(2){
+        top:0!important;
+        left:0!important;
+        width:100%!important;
+        height:100%!important;
+    }
+    #mmg{width:100% !important;}
+    #mmg-coupon{width:100% !important;}
+    #mmg-new{width:100% !important;}
+    /*#couponBox .mmGrid{height:300px !important;}*/
+    .layui-form input[type=checkbox]{display: inline !important;}
+    .layui-layer-content::-webkit-scrollbar {
+        display: none !important;
+    }
+    .mmg-bodyWrapper{height:795px !important;}
+</style>
+<div id='alertTips' class='alert alert-success alert-tips fade in'>
+    <div id='headTip' class='head'><i class='fa fa-lightbulb-o'></i>{:lang('shopcustompage_operation_explain')}</div>
+    <ul class='body'>
+        <li>{:lang('shopcustompage_decoration_tips4')}</li>
+        <li>{:lang('shopcustompage_decoration_tips5')}</li>
+        <li>{:lang('shopcustompage_decoration_tips3')}<a class='link-tip' href="{:addon_url('shopcustompage://shop/link',array('type'=>$pageType))}">{:lang('shopcustompage_page_link')}</a>。</li>
+    </ul>
+</div>
+<input type="hidden" id="base_url" value="__RESOURCE_PATH__"/>
+<input type="hidden" id="pageId" value="{$pageId}"/>
+<input type="hidden" id="pageType" value="{$pageType}"/>
+<div class="component border">
+    <div class="component-title">{:lang('shopcustompage_component')}</div>
+    <div class="component-reuse">
+        <div class="component-reuse-title">{:lang('shopcustompage_component_reuse')}</div>
+        <div class="component-reuse-content">
+            <div class="component-reuse-content-item component-image">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_image.png" />
+                <p>{:lang('shopcustompage_component_image')}</p>
+            </div>
+            <div class="component-reuse-content-item component-media-swiper">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_swiper.png" />
+                <p>{:lang('shopcustompage_component_swiper')}</p>
+            </div>
+            <div class="component-reuse-content-item component-floor-goods">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_floor_goods.png" />
+                <p>{:lang('shopcustompage_component_floor_goods')}</p>
+            </div>
+            <div class="component-reuse-content-item component-goods-recommend">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_goods_recommend.png" />
+                <p>{:lang('shopcustompage_component_goods_recommend')}</p>
+            </div>
+            <div class="component-reuse-content-item component-goods-group">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_goods_group.png" />
+                <p>{:lang('shopcustompage_component_goods_group')}</p>
+            </div>
+            <div class="component-reuse-content-item component-shopwindow">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_shopwindow.png" />
+                <p>{:lang('shopcustompage_component_shopwindow')}</p>
+            </div>
+            <div class="component-reuse-content-item component-marketing">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_marketing.png" />
+                <p>{:lang('shopcustompage_component_marketing')}</p>
+            </div>
+            {if WSTConf('WST_ADDONS.coupon')!=''}
+            <div class="component-reuse-content-item component-coupon">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_coupon.png" />
+                <p>{:lang('shopcustompage_component_coupon')}</p>
+            </div>
+            {/if}
+            <div class="component-reuse-content-item component-new">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_new.png" />
+                <p>{:lang('shopcustompage_component_new')}</p>
+            </div>
+            <div class="component-reuse-content-item component-video">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_video.png" />
+                <p>{:lang('shopcustompage_component_video')}</p>
+            </div>
+            <div class="component-reuse-content-item component-image-text">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_image_text.png" />
+                <p>{:lang('shopcustompage_component_image_text')}</p>
+            </div>
+            <div class="component-reuse-content-item component-text">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_text.png" />
+                <p>{:lang('shopcustompage_component_text')}</p>
+            </div>
+            <div class="component-reuse-content-item component-txt">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_txt.png" />
+                <p>{:lang('shopcustompage_component_txt')}</p>
+            </div>
+            <div class="component-reuse-content-item component-blank">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_blank.png" />
+                <p>{:lang('shopcustompage_component_blank')}</p>
+            </div>
+            <!--
+            <div class="component-reuse-content-item component-line">
+                <p>辅助线</p>
+            </div>
+            -->
+        </div>
+    </div>
+    <div class="component-only">
+        <div class="component-only-title">{:lang('shopcustompage_component_use')}</div>
+        <div class="component-only-content">
+            <!--
+            <div class="component-reuse-content-item component-search">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_search.png" />
+                <p>搜索框</p>
+            </div>
+            -->
+            <div class="component-reuse-content-item component-notice">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_notice.png" />
+                <p>{:lang('shopcustompage_component_notice')}</p>
+            </div>
+            <div class="component-reuse-content-item component-nav">
+                <img src="__ROOT__/addons/shopcustompage/view/shop/img/page/c_nav.png" />
+                <p>{:lang('shopcustompage_component_nav')}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container" style="margin:0 auto;">
+    <div class="effect-container">
+        <div class="effect border">
+            <div class='max-el-relative'>
+                <div class="">
+                    <div class="effect-title-text">{if $page_data}{$page_data['attr']['title']}{else}{$shopName}{/if}</div>
+                </div>
+                <div class='effect-title border-absolute effect-active select'  onmouseover='addClassActive(this)' onmouseout='removeClassActive(this)'></div>
+            <div class='el-relative'>
+                <div class='effect-header'>
+                </div>
+            </div>
+            </div>
+            <div class="effect-content" id="effect-content">
+                {if condition="count($data) != 0"}
+                {volist name="data" id="vo" key="k"}
+                {if condition="$vo['name'] == 'swiper'"}
+                <div class='max-el-relative'>
+                    <div class='effect-media-swiper swiper{$k} ' swiper_num='{$k}'   >
+                        <input type="hidden" class="sort" value="{$vo['id']}"/>
+                        {php}$style="";{/php}
+                        {if $vo['attr']['padding_top']}
+                        {php}$style.="padding-top:".intval($vo['attr']['padding_top'])."px;";{/php}
+                        {/if}
+                        {if $vo['attr']['padding_bottom']}
+                        {php}$style.="padding-bottom:".intval($vo['attr']['padding_bottom'])."px;";{/php}
+                        {/if}
+                        {if $vo['attr']['padding_left']}
+                        {php}$style.="padding-left:".intval($vo['attr']['padding_left'])."px;";{/php}
+                        {/if}
+                        {if $vo['attr']['padding_right']}
+                        {php}$style.="padding-right:".intval($vo['attr']['padding_right'])."px;";{/php}
+                        {/if}
+                        <img src="__RESOURCE_PATH__/{$vo['attr']['img'][0]}" alt='' style="{$style}"/>
+                        <div class='dots round'>
+                            {if intval($vo['attr']['indicator_type'])==1 }
+                            {php}$class="rectangle";{/php}
+                            {elseif intval($vo['attr']['indicator_type'])==2 }
+                            {php}$class="square";{/php}
+                            {else}
+                            {php}$class="roundness";{/php}
+                            {/if}
+                            <span class="{$class}" style="background:{$vo['attr']['indicator_color']}"></span>
+                            <span class="{$class}" style="background:{$vo['attr']['indicator_color']}"></span>
+                        </div>
+                        <div class='btn-del' onclick='delSwiperBtn(this)'>{:lang('shopcustompage_del')}</div>
+                    </div>
+                    <div class='border-absolute' onclick='addSwiperClassActive(this)' onmouseover='addClassActive(this)' onmouseout='removeClassActive(this)'></div>
+                </div>
+                {elseif condition="$vo['name'] == 'floor_goods'"}
+                <div class='max-el-relative'>
+                    <div class='interval'></div>
+                    <div class='effect-floor-goods floor_goods{$k} ' floor_goods_num='{$k}'>
+                        <input type="hidden" class="sort" value="{$vo['id']}"/>
+                        <div class="wst-flex-row wst-jsb wst-ac floors-header">
+                            <div class="floor-left wst-flex-row wst-ac">
+                                <img class='floor-icon' src="__RESOURCE_PATH__/{$vo['attr']['icon']}">
+                                <p class="floor-goods-title-text">{$vo['attr']['title']}</p>
+                            </div>
+                            <div class="wst-flex-row wst-jfe wst-ac columns-title floor-right" >
+                                {for start="0" end="count($vo['attr']['columns_title'])"  }
+                                    <div columns_item='{$i+1}'>{$vo['attr']['columns_title'][$i]}</div>
+                                {/for}
+                            </div>
+                        </div>
+                        <div class='wst-flex-row wst-center floors' style="background:{$vo['attr']['background_color']}">
+                            <div class="wst-flex-row floors-main" >
+                                <div class="floor-left">
+                                    <img class="floor-img" src="__RESOURCE_PATH__/{$vo['attr']['img']}"/>
+                                </div>
+                                <div class='wst-flex-row wst-jsb wst-fw floor-right'>
+                                    {for start="0" end="8"}
+                                        <div class="goods" >
+                                            {php}
+                                                if($i==0 || $i==4){
+                                                    $floorImg = "good_01.jpg";
+                                                }elseif($i==1 || $i==5){
+                                                    $floorImg = "good_02.jpg";
+                                                }elseif($i==2 || $i==6){
+                                                    $floorImg = "good_03.jpg";
+                                                }elseif($i==3 || $i==7){
+                                                    $floorImg = "good_04.jpg";
+                                                }
+                                            {/php}
+                                            <img src='__RESOURCE_PATH__/upload/shopcustompagedecoration/base/{$floorImg}'/>
+                                            <div class="goods-info" >
+                                                <div class='wst-flex-column wst-jsb' >
+                                                    <p class="goods-name ">{:lang('shopcustompage_goods_name')}</p>
+                                                    <p class="goods-price red ">{:lang('currency_symbol')}99.00</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {/for}
+                                </div>
+                            </div>
+                        </div>
+                        <div class='btn-del' onclick='delFloorGoodsBtn(this)'>{:lang('shopcustompage_del')}</div>
+                    </div>
+                    <div class='border-absolute' onclick='addFloorGoodsClassActive(this)' onmouseover="addClassActive(this)" onmouseout="removeClassActive(this)"></div>
+                </div>
+                {elseif condition="$vo['name'] == 'goods_recommend'"}
+                <div class='max-el-relative'>
+                    <div class='interval'></div>
+                    <div class='effect-goods-recommend goods_recommend{$k}' goods_recommend_num='{$k}'>
+                        <input type="hidden" class="sort" value="{$vo['id']}"/>
+                        {php}$style="";{/php}
+                        {if $vo['attr']['show_goods_recommend_title']==0}
+                        {php}$style.="display:none;";{/php}
+                        {/if}
+                        <div class="wst-flex-row wst-jsb wst-ac goods-recommend-header" style="{$style}">
+                            <p class="goods-recommend-title-text">{$vo['attr']['goods_recommend_title']}</p>
+                        </div>
+                        <div class='wst-flex-row wst-center goods-recommend-container' style="background:{$vo['attr']['background_color']}">
+                            <div class="wst-flex-row goods-recommend-main" >
+                                {for start="0" end="4"}
+                                <div class="goods" >
+                                    <img src='__RESOURCE_PATH__/upload/shopcustompagedecoration/base/good_0{$i+1}.jpg'/>
+                                </div>
+                                {/for}
+                            </div>
+                        </div>
+                        <div class='btn-del' onclick='delGoodsRecommendBtn(this)'>{:lang('shopcustompage_del')}</div>
+                    </div>
+                    <div class='border-absolute' onclick='addGoodsRecommendClassActive(this)' onmouseover="addClassActive(this)" onmouseout="removeClassActive(this)"></div>
+                </div>
+                {elseif condition="$vo['name'] == 'goods_group'"}
+                <div class='el-relative'>
+                    <div class='interval'></div>
+                    <div class='effect-goods-group goods_group{$k}' goods_group_num='{$k}'>
+                        <input type="hidden" class="sort" value="{$vo['id']}"/>
+                        {php}$style="";{/php}
+                        {if $vo['attr']['show_goods_group_title']==0}
+                        {php}$style.="display:none;";{/php}
+                        {/if}
+                        <div class="wst-flex-row wst-jc">
+                            <div class="goods-head wst-flex-row wst-ac" style="{$style}">
+                                <div class="goods-line"></div>
+                                <p class="goods-group-title-text">{$vo['attr']['goods_group_title']}</p>
+                                <div class="goods-line"></div>
+                            </div>
+                        </div>
+                        <div class="wst-flex-row goods-main wst-jsb wst-fw">
+                            {for start="0" end="10"}
+                                <div class="goods" goods_item="{$i+1}" {if $vo['attr']['goods_nums']==5 && ($i+1>5)}style="display:none;";{/if}>
+                                    {php}
+                                        if($i==0 || $i==5){
+                                            $goodImg = "good_01.jpg";
+                                        }elseif($i==1 || $i==6){
+                                            $goodImg = "good_02.jpg";
+                                        }elseif($i==2 || $i==7){
+                                            $goodImg = "good_03.jpg";
+                                        }elseif($i==3 || $i==8){
+                                            $goodImg = "good_04.jpg";
+                                        }elseif($i==4 || $i==9){
+                                            $goodImg = "good_05.jpg";
+                                        }
+                                    {/php}
+                                    <img src='__RESOURCE_PATH__/upload/shopcustompagedecoration/base/{$goodImg}'/>
+                                    <div class="goods-info" >
+                                        <div class='wst-flex-column wst-jsb' >
+                                            <p class="goods-name ">{:lang('shopcustompage_goods_name')}</p>
+                                            <p class="goods-price red ">{:lang('currency_symbol')}99.00</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {/for}
+                        </div>
+                        <div class='btn-del' onclick='delGoodsGroupBtn(this)'>{:lang('shopcustompage_del')}</div>
+                    </div>
+                    <div class='border-absolute' onclick='addGoodsGroupClassActive(this)' onmouseover="addClassActive(this)" onmouseout="removeClassActive(this)"></div>
+                </div>
+                {elseif condition="$vo['name'] == 'nav'"}
+                <div class='max-el-relative'>
+                    <div class='interval'></div>
+                    <div class='effect-nav wst-flex-row wst-jc nav{$k}' nav_num='{$k}' {if $vo['attr']['show_nav_category'] == 0}style="border-bottom:none;"{/if}>
+                        <input type='hidden' class='sort' value="{$vo['id']}"/>
+                        <div class="navs-main wst-flex-row wst-ac" style="background:{$vo['attr']['background_color']}">
+                            <div class="nav-left {if $vo['attr']['show_nav_category'] == 0}none{/if}">{:lang('shopcustompage_shop_goods_cat')}</div>
+                            <div class="nav-right wst-flex-row wst-jsa wst-ac" {if $vo['attr']['show_nav_category'] == 0}style="width:100%;"{/if}>
+                                {for start="0" end="count($vo['attr']['item_text'])"  }
+                                <div class='nav-item' nav_item='{$i+1}'>
+                                    <div class='nav-text' style="color:{$vo['attr']['item_color'][$i]}">{$vo['attr']['item_text'][$i]}</div>
+                                </div>
+                                {/for}
+                            </div>
+                            <div class="nav-btn {if $vo['attr']['show_nav_button']==0}none{/if}" >{:lang('shopcustompage_return_mall_index')}</div>
+                        </div>
+                        <div class='btn-del' onclick='delNavBtn(this)'>{:lang('shopcustompage_del')}</div>
+                    </div>
+                    <div class='border-absolute' onclick='addNavClassActive(this)' onmouseover='addClassActive(this)' onmouseout='removeClassActive(this)'></div>
+                </div>
+                {elseif condition="$vo['name'] == 'notice'"}
+                <div class='el-relative'>
+                    <div class='interval'></div>
+                    <div class='effect-notice notice{$k}' notice_num='{$k}' style="background:{$vo['attr']['background_color']}">
+                        <input type='hidden' class='sort' value="{$vo['id']}"/>
+                        <div class='notice-info'>
+                            <div class="notice-left">
+                                <img src="__RESOURCE_PATH__/{$vo['attr']['img']}" alt=''/>
+                            </div>
+                            <div class="notice-right">
+                                <p style="color:{$vo['attr']['text_color']}">{$vo['attr']['text'][0]}</p>
+                            </div>
+                        </div>
+                        <div class='btn-del' onclick='delNoticeBtn(this)'>{:lang('shopcustompage_del')}</div>
+                    </div>
+                    <div class='border-absolute' onclick='addNoticeClassActive(this)' onmouseover='addClassActive(this)' onmouseout='removeClassActive(this)'></div>
+                </div>
+                {elseif condition="$vo['name'] == 'search'"}
+                <div class='el-relative'>
+                    <div class='interval'></div>
+                    <div class='effect-search search{$k}' search_num='{$k}' >
+                        <input type='hidden' class='sort' value="{$vo['id']}"/>
+                        <div class='search-info '>
+                            <div class="search-left">
+                                <img src="__RESOURCE_PATH__/{$vo['attr']['img']}"/>
+                            </div>
+                            <div class="search-mid">
+                                <div class="search-mid-content wst-flex-row wst-jsb">
+                                    <div class="wst-flex-row">
+                                        <p class="search-type">{$vo['attr']['type'][0]}</p>
+                                        <p class="search-text">{$vo['attr']['pc_text'][0]}</p>
+                                    </div>
+                                    <div class="search-btn wst-flex-row wst-center">{:lang('shopcustompage_search')}</div>
+                                </div>
+                                <div class="wst-flex-row search-hot-container">
+                                    {for start="0" end="count($vo['attr']['hots'])"  }
+                                    <div class="search-hot-item wst-flex-row wst-ac" hots_item='{$i+1}'>
+                                        {if $i>0}<div class="search-hot-line"></div>{/if}
+                                        <p>{$vo['attr']['hots'][$i]}</p>
+                                    </div>
+                                    {/for}
+                                </div>
+                            </div>
+                            <div class="search-right wst-flex-row wst-center">
+                                <div class='search-icon'></div>
+                                <p>{:lang('shopcustompage_my_cart')}</p>
+                            </div>
+                        </div>
+                        <div class='btn-del' onclick='delSearchBtn(this)'>{:lang('shopcustompage_del')}</div>
+                    </div>
+                    <div class='border-absolute' onclick='addSearchClassActive(this)' onmouseover='addClassActive(this)' onmouseout='removeClassActive(this)'></div>
+                </div>
+                {elseif condition="$vo['name'] == 'coupon'"}
+            <div class='el-relative'>
+                <div class='interval'></div>
+                <div class='effect-coupon coupon{$k}' coupon_num='{$k}' style="background:url('__RESOURCE_PATH__/{$vo['attr']['img']}') no-repeat;background-size: 100%;">
+                    <input type='hidden' class='sort' value="{$vo['id']}"/>
+                    <div class="coupons">
+                        <div class="coupon-left wst-flex-column wst-jc wst-afs">
+                            <div class="coupon-title" style="color:{$vo['attr']['title_color']};">{$vo['attr']['title']}</div>
+                            <div class="coupon-desc" style="color:{$vo['attr']['desc_color']};">{$vo['attr']['desc']}</div>
+                        </div>
+                        <div class="coupon-right wst-flex-row">
+                            {for start="0" end="4"}
+                            <div class='coupon-item wst-flex-column wst-center'>
+                                <div class="wst-flex-row wst-afe">
+                                    <div class='coupon-value-content' style="color:{$vo['attr']['text_color']};">{:lang('currency_symbol')}<span class='coupon-value'>5</span></div>
+                                    <div>
+                                        <div class='coupon-text' style="color:{$vo['attr']['text_color']};">{:lang('shopcustompage_coupon')}</div>
+                                        <div class='coupon-condition' style="color:{$vo['attr']['text_color']};">{:lang('shopcustompage_coupon_condition_demo2')}</div>
+                                    </div>
+                                </div>
+                                <div class='coupon-get' style="background:{$vo['attr']['btn_color']};color:{$vo['attr']['btn_text_color']};">{:lang('shopcustompage_get_now')}</div>
+                            </div>
+                            {/for}
+                        </div>
+                    </div>
+                    <div class='btn-del' onclick='delCouponBtn(this)'>{:lang('shopcustompage_del')}</div>
+                </div>
+                <div class='border-absolute' onclick='addCouponClassActive(this)' onmouseover='addClassActive(this)' onmouseout='removeClassActive(this)'></div>
+            </div>
+                {elseif condition="$vo['name'] == 'image'"}
+                <div class='el-relative'>
+                    <div class='effect-image image{$k}' image_num='{$k}' style="background:{$vo['attr']['background_color']}">
+                        <input type='hidden' class='sort' value="{$vo['id']}"/>
+                        <div class='images'>
+                            {for start="0" end="intval(count($vo['attr']['img']))"  }
+                            {php}$style="";{/php}
+                            {if $vo['attr']['padding_top']}
+                            {php}$style.="padding-top:".intval($vo['attr']['padding_top'])."px;";{/php}
+                            {/if}
+                            {if $vo['attr']['padding_bottom']}
+                            {php}$style.="padding-bottom:".intval($vo['attr']['padding_bottom'])."px;";{/php}
+                            {/if}
+                            {if $vo['attr']['padding_left']}
+                            {php}$style.="padding-left:".intval($vo['attr']['padding_left'])."px;";{/php}
+                            {/if}
+                            {if $vo['attr']['padding_right']}
+                            {php}$style.="padding-right:".intval($vo['attr']['padding_right'])."px;";{/php}
+                            {/if}
+                            <div class='images-item' style="{$style}">
+                                <img src="__RESOURCE_PATH__/{$vo['attr']['img'][$i]}" alt='' image_item='{$i+1}'/>
+                            </div>
+                            {/for}
+                        </div>
+                        <div class='btn-del' onclick='delImageBtn(this)'>{:lang('shopcustompage_del')}</div>
+                    </div>
+                    <div class='border-absolute' onclick='addImageClassActive(this)' onmouseover='addClassActive(this)' onmouseout='removeClassActive(this)'></div>
+                </div>
+                {elseif condition="$vo['name'] == 'shopwindow'"}
+                <div class='el-relative'>
+                    <div class='effect-shopwindow shopwindow{$k}' shopwindow_num='{$k}' style="background:{$vo['attr']['background_color']}">
+                        <input type='hidden' class='sort' value="{$vo['id']}"/>
+                        {php}
+                        $style="";
+                        $shopwindowStyle="";
+                        $shopwindowLayoutNone="";
+                        {/php}
+                        {if intval($vo['attr']['layout'])==1 }
+                        {php}
+                        $style .=" width:50%;";
+                        $shopwindowLayoutNone="none";
+                        {/php}
+                        {elseif intval($vo['attr']['layout'])==2 }
+                        {php}
+                        $style .=" width:33%;";
+                        $shopwindowLayoutNone="none";
+                        {/php}
+                        {elseif intval($vo['attr']['layout'])==3 }
+                        {php}
+                        $style .=" width:25%;";
+                        $shopwindowLayoutNone="none";
+                        {/php}
+                        {else}
+                        {php}
+                        $shopwindowStyle .=" display:none;";
+                        $shopwindowLayoutNone="";
+                        {/php}
+                        {/if}
+                        <div class='shopwindows' style="{$shopwindowStyle}" >
+                            {for start="0" end="intval(count($vo['attr']['img']))"  }
+                            <div class='shopwindows-item' style="{$style}">
+                                <img src="__RESOURCE_PATH__/{$vo['attr']['img'][$i]}" alt='' shopwindow_item='{$i+1}'/>
+                            </div>
+                            {/for}
+                        </div>
+                        <div class='btn-del' onclick='delShopwindowBtn(this)'>{:lang('shopcustompage_del')}</div>
+                        <div class='shopwindows-layout {$shopwindowLayoutNone}'>
+                            <div class='s-layout'>
+                                <div class='s-layout-left'>
+                                    <div class='s-layout-left-item' >
+                                        {for start="0" end="intval(count($vo['attr']['img']))"  }
+                                        {if $i == 0}
+                                        <img src="__RESOURCE_PATH__/{$vo['attr']['img'][$i]}" alt='' shopwindow_item='{$i+1}'/>
+                                        {/if}
+                                        {/for}
+                                    </div>
+                                </div>
+                                <div class='s-layout-right'>
+                                    <div class='s-layout-top'>
+                                        <div class='s-layout-top-item' >
+                                            {for start="0" end="intval(count($vo['attr']['img']))"  }
+                                            {if $i == 1}
+                                            <img src="__RESOURCE_PATH__/{$vo['attr']['img'][$i]}" alt='' shopwindow_item='{$i+1}'/>
+                                            {/if}
+                                            {/for}
+                                        </div>
+                                    </div>
+                                    <div class='s-layout-bottom'>
+                                        <div class='s-layout-bottom-item' >
+                                            {for start="0" end="intval(count($vo['attr']['img']))"  }
+                                            {if $i == 2}
+                                            <img src="__RESOURCE_PATH__/{$vo['attr']['img'][$i]}" alt='' shopwindow_item='{$i+1}'/>
+                                            {/if}
+                                            {/for}
+                                        </div>
+                                        <div class='s-layout-bottom-item' >
+                                            {for start="0" end="intval(count($vo['attr']['img']))"  }
+                                            {if $i == 3}
+                                            <img src="__RESOURCE_PATH__/{$vo['attr']['img'][$i]}" alt='' shopwindow_item='{$i+1}'/>
+                                            {/if}
+                                            {/for}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='shopwindows-s-hide'></div>
+                    </div>
+                    <div class='border-absolute' onclick='addShopwindowClassActive(this)' onmouseover='addClassActive(this)' onmouseout='removeClassActive(this)'></div>
+                </div>
+                {elseif condition="$vo['name'] == 'video'"}
+                {php}$style="";{/php}
+                {if $vo['attr']['vertical_padding']}
+                {php}
+                $style.="margin-top:".intval($vo['attr']['vertical_padding'])."px;";
+                $style.="margin-bottom:".intval($vo['attr']['vertical_padding'])."px;";
+                {/php}
+                {/if}
+                <div class='el-relative'>
+                    <div class='effect-video video{$k}' video_num='{$k}' style="{$style}">
+                        <input type='hidden' class='sort' value="{$vo['id']}"/>
+                        <img src="__RESOURCE_PATH__/{$vo['attr']['img']}" alt=''/>
+                        <div class='btn-del' onclick='delVideoBtn(this)'>{:lang('shopcustompage_del')}</div>
+                    </div>
+                    <div class='border-absolute' onclick='addVideoClassActive(this)' onmouseover='addClassActive(this)' onmouseout='removeClassActive(this)'></div>
+                </div>
+                {elseif condition="$vo['name'] == 'blank'"}
+                <div class='el-relative'>
+                    <div class='effect-blank blank{$k}' blank_num='{$k}' style="background:{$vo['attr']['background_color']};height:{$vo['attr']['height']}px;" >
+                        <input type='hidden' class='sort' value="{$vo['id']}"/>
+                        <div class='btn-del' onclick='delBlankBtn(this)'>{:lang('shopcustompage_del')}</div>
+                    </div>
+                    <div class='border-absolute' onclick='addBlankClassActive(this)' onmouseover='addClassActive(this)' onmouseout='removeClassActive(this)'></div>
+                </div>
+                {elseif condition="$vo['name'] == 'line'"}
+                {php}$style="";{/php}
+                {if $vo['attr']['vertical_margin']}
+                {php}
+                $style.="margin-top:".intval($vo['attr']['vertical_margin'])."px;";
+                $style.="margin-bottom:".intval($vo['attr']['vertical_margin'])."px;";
+                {/php}
+                {/if}
+                {if $vo['attr']['height']}
+                {php}
+                $style.="border-width:".intval($vo['attr']['height'])."px;";
+                {/php}
+                {/if}
+                {if intval($vo['attr']['class'])==1 }
+                {php}
+                $style.="border-top-style:solid;";
+                {/php}
+                {elseif intval($vo['attr']['class'])==2 }
+                {php}
+                $style.="border-top-style:dashed;";
+                {/php}
+                {else}
+                {php}
+                $style.="border-top-style:dotted;";
+                {/php}
+                {/if}
+                <div class='el-relative'>
+                    <div class='effect-line line{$k}' line_num='{$k}' style="background:{$vo['attr']['background_color']};" >
+                        <input type='hidden' class='sort' value="{$vo['id']}"/>
+                        <div class='line' style="border-color:{$vo['attr']['border_color']};{$style}"></div>
+                        <div class='btn-del' onclick='delLineBtn(this)'>{:lang('shopcustompage_del')}</div>
+                    </div>
+                    <div class='border-absolute' onclick='addLineClassActive(this)' onmouseover='addClassActive(this)' onmouseout='removeClassActive(this)'></div>
+                </div>
+                {elseif condition="$vo['name'] == 'text'"}
+                {php}$style="";{/php}
+                {if $vo['attr']['vertical_padding']}
+                {php}
+                $style.="padding-top:".intval($vo['attr']['vertical_padding'])."px;";
+                $style.="padding-bottom:".intval($vo['attr']['vertical_padding'])."px;";
+                {/php}
+                {/if}
+                {if $vo['attr']['horizontal_padding']}
+                {php}
+                $style.="padding-left:".intval($vo['attr']['horizontal_padding'])."px;";
+                $style.="padding-right:".intval($vo['attr']['horizontal_padding'])."px;";
+                {/php}
+                {/if}
+                <div class='el-relative'>
+                    <div class='effect-text text{$k}' text_num='{$k}' style="background:{$vo['attr']['background_color']};" >
+                        <input type='hidden' class='sort' value="{$vo['id']}"/>
+                        <div class='text' style="{$style}">{php}echo htmlspecialchars_decode($vo['attr']['text']);{/php}</div>
+                        <div class='btn-del' onclick='delTextBtn(this)'>{:lang('shopcustompage_del')}</div>
+                    </div>
+                    <div class='border-absolute' onclick='addTextClassActive(this)' onmouseover='addClassActive(this)' onmouseout='removeClassActive(this)'></div>
+                </div>
+                {elseif condition="$vo['name'] == 'txt'"}
+                {php}$style="background:".$vo['attr']['background_color'].";";{/php}
+                {if $vo['attr']['vertical_padding']}
+                    {php}
+                        $style.="padding-top:".intval($vo['attr']['vertical_padding'])."px;";
+                        $style.="padding-bottom:".intval($vo['attr']['vertical_padding'])."px;";
+                    {/php}
+                {/if}
+                {if $vo['attr']['horizontal_padding']}
+                    {php}
+                        $style.="padding-left:".intval($vo['attr']['horizontal_padding'])."px;";
+                        $style.="padding-right:".intval($vo['attr']['horizontal_padding'])."px;";
+                    {/php}
+                {/if}
+                {if intval($vo['attr']['alignment'])==1 }
+                    {php}$class =" txt-alignment-left";{/php}
+                {elseif intval($vo['attr']['alignment'])==2 }
+                    {php}$class =" txt-alignment-center";{/php}
+                {else}
+                    {php}$class =" txt-alignment-right";{/php}
+                {/if}
+                <div class='el-relative'>
+                    <div class='effect-txt txt{$k}' txt_num='{$k}' >
+                        <input type='hidden' class='sort' value="{$vo['id']}"/>
+                        <div class='txt-info {$class}'  style="{$style}"><p style="color:{$vo['attr']['text_color']}">{if mb_strlen($vo['attr']['text'])>15}{:WSTMSubstr($vo['attr']['text'],0,15).'...'}{else}{$vo['attr']['text']}{/if}</p></div>
+                        <div class='btn-del' onclick='delTxtBtn(this)'>{:lang('shopcustompage_del')}</div>
+                    </div>
+                    <div class='border-absolute' onclick='addTxtClassActive(this)' onmouseover='addClassActive(this)' onmouseout='removeClassActive(this)'></div>
+                </div>
+                {elseif condition="$vo['name'] == 'image_text'"}
+                {php}$style="";{/php}
+                {if $vo['attr']['vertical_padding']}
+                {php}
+                $style.="padding-top:".intval($vo['attr']['vertical_padding'])."px;";
+                $style.="padding-bottom:".intval($vo['attr']['vertical_padding'])."px;";
+                {/php}
+                {/if}
+                <div class='el-relative'>
+                    <div class='effect-image-text image_text{$k}' image_text_num='{$k}' >
+                        <input type='hidden' class='sort' value="{$vo['id']}"/>
+                        <div class="image-text image-text-style-1 {if $vo['attr']['style']!='1'}none2{/if}" image_text_item='1'>
+                            <div class='image-text-imgs image-text-style-1-left'>
+                                <img src="__RESOURCE_PATH__/{$vo['attr']['img'][0]}" alt=''/>
+                            </div>
+                            <div class='image-text-style-1-right'>
+                                <p class='image-text-style-title'>{$vo['attr']['title']}</p>
+                                <p class='image-text-style-desc'>{$vo['attr']['desc']}</p>
+                            </div>
+                        </div>
+                        <div class="image-text image-text-style-2 {if $vo['attr']['style']!='2'}none2{/if}" image_text_item='2'>
+                            <div class='image-text-style-2-left'>
+                                <p class='image-text-style-title'>{$vo['attr']['title']}</p>
+                                <p class='image-text-style-desc'>{$vo['attr']['desc']}</p>
+                            </div>
+                            <div class='image-text-imgs image-text-style-2-right'>
+                                <img src="__RESOURCE_PATH__/{$vo['attr']['img'][0]}" alt=''/>
+                            </div>
+                        </div>
+                        <div class="image-text image-text-style-3 {if $vo['attr']['style']!='3'}none{/if}" image_text_item='3'>
+                            <div class='image-text-style-3-top'>
+                                <p class='image-text-style-title'>{$vo['attr']['title']}</p>
+                                <p class='image-text-style-desc'>{$vo['attr']['desc']}</p>
+                            </div>
+                            <div class='image-text-imgs image-text-style-3-bottom'>
+                                <img src="__RESOURCE_PATH__/{$vo['attr']['img'][0]}" alt=''/>
+                            </div>
+                        </div>
+                        <div class="image-text image-text-style-4 {if $vo['attr']['style']!='4'}none{/if}" image_text_item='4'>
+                            <div class='image-text-style-4-top'>
+                                <p class='image-text-style-title'>{$vo['attr']['title']}</p>
+                                <p class='image-text-style-desc'>{$vo['attr']['desc']}</p>
+                            </div>
+                            <div class='image-text-imgs wst-flex-row wst-jsa image-text-style-4-bottom'>
+                                {for start="0" end="count($vo['attr']['img'])"  }
+                                    {if $i<2}
+                                        <img src="__RESOURCE_PATH__/{$vo['attr']['img'][$i]}" alt=''/>
+                                    {/if}
+                                {/for}
+                                {if count($vo['attr']['img'])<2}
+                                    <img src="__RESOURCE_PATH__/upload/shopcustompagedecoration/base/banner_01.jpg" alt=''/>
+                                {/if}
+                            </div>
+                        </div>
+                        <div class="image-text image-text-style-5 {if $vo['attr']['style']!='5'}none{/if}" image_text_item='5'>
+                            <div class='image-text-style-5-top'>
+                                <p class='image-text-style-title'>{$vo['attr']['title']}</p>
+                                <p class='image-text-style-desc'>{$vo['attr']['desc']}</p>
+                            </div>
+                            <div class='image-text-imgs wst-flex-row wst-jsa image-text-style-5-bottom'>
+                                {for start="0" end="count($vo['attr']['img'])"  }
+                                    <img src="__RESOURCE_PATH__/{$vo['attr']['img'][$i]}" alt=''/>
+                                {/for}
+                                {if count($vo['attr']['img'])==2}
+                                    <img src="__RESOURCE_PATH__/upload/shopcustompagedecoration/base/banner_01.jpg" alt=''/>
+                                {/if}
+                                {if count($vo['attr']['img'])<2}
+                                    <img src="__RESOURCE_PATH__/upload/shopcustompagedecoration/base/banner_01.jpg" alt=''/>
+                                    <img src="__RESOURCE_PATH__/upload/shopcustompagedecoration/base/banner_01.jpg" alt=''/>
+                                {/if}
+                            </div>
+                        </div>
+                        <div class='btn-del' onclick='delImageTextBtn(this)'>{:lang('shopcustompage_del')}</div>
+                    </div>
+                    <div class='border-absolute' onclick='addImageTextClassActive(this)' onmouseover='addClassActive(this)' onmouseout='removeClassActive(this)'></div>
+                </div>
+                {elseif condition="$vo['name'] == 'new'"}
+                <div class='el-relative'>
+                    <div class='effect-new new{$k}' new_num='{$k}' >
+                        <input type='hidden' class='sort' value="{$vo['id']}"/>
+                        <div class='new-title'>
+                            <div class='new-title-text'>{$vo['attr']['title']}</div>
+                            <div>{:lang('shopcustompage_more')}</div>
+                        </div>
+                        <div class='btn-del' onclick='delNewBtn(this)'>{:lang('shopcustompage_del')}</div>
+                    </div>
+                    <div class='border-absolute' onclick='addNewClassActive(this)' onmouseover='addClassActive(this)' onmouseout='removeClassActive(this)'></div>
+                </div>
+                {elseif condition="$vo['name'] == 'marketing'"}
+                {php}
+                    $isShowSeckill = 'none';
+                    $isShowAuction = 'none';
+                    switch($vo['attr']['type']){
+                        case 'Seckill':
+                            $isShowSeckill = '';
+                            $isShowAuction = 'none';
+                            break;
+                        case 'Auction':
+                            $isShowSeckill = 'none';
+                            $isShowAuction = '';
+                            break;
+                        break;
+                    }
+                {/php}
+                <div class='el-relative'>
+                    <div class='effect-marketing marketing{$k}' marketing_num='{$k}' >
+                        <input type='hidden' class='sort' value="{$vo['id']}"/>
+                        <div class='marketing-title'>
+                            <div class='wst-flex-row wst-ac'>
+                                <div class='marketing-title-text'>{$vo['attr']['title']}</div>
+                                <div class="seckill-title {if $vo['attr']['type']!='Seckill'}none2{/if}">
+                                    <div class='seckill-title-text'>12:00{:lang('shopcustompage_session')}</div>
+                                    <div class='seckill-time'>01:15:16</div>
+                                </div>
+                            </div>
+                            <div class="seckill-more {if $vo['attr']['type']!='Seckill'}none{/if}">{:lang('shopcustompage_more')}</div>
+                        </div>
+                        <div class='wst-flex-row marketing-main'>
+                            <div class="goods wst-flex-row" >
+                                <div class="goods-image">
+                                    <img src='__RESOURCE_PATH__/upload/shopcustompagedecoration/base/good_01.jpg' alt=''  />
+                                </div>
+                                <div class="goods-info wst-flex-column wst-jsb" >
+                                    <p class="goods-name">{:lang('shopcustompage_here_show_goods_name')}</p>
+                                    <div class='seckill-detail {$isShowSeckill}'>
+                                        <div class='wst-flex-row wst-jsb'>
+                                            <p class="goods-price red ">{:lang('currency_symbol')}99.00</p>
+                                            <p class="goods-price goods-price-decoration" >{:lang('currency_symbol')}150.00</p>
+                                        </div>
+                                    </div>
+                                    <div class='auction-detail {$isShowAuction}'>
+                                        <p class="goods-price auction-num">1{:lang('shopcustompage_auction_num')}</p>
+                                        <p class="goods-price " >{:lang('shopcustompage_current_price')}：<span class='red'>{:lang('currency_symbol')}10.00</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="goods wst-flex-row" >
+                                <div class="goods-image">
+                                    <img src='__RESOURCE_PATH__/upload/shopcustompagedecoration/base/good_02.jpg' alt=''  />
+                                </div>
+                                <div class="goods-info wst-flex-column wst-jsb" >
+                                    <p class="goods-name">{:lang('shopcustompage_here_show_goods_name')}</p>
+                                    <div class='seckill-detail {$isShowSeckill}'>
+                                        <div class='wst-flex-row wst-jsb'>
+                                            <p class="goods-price red ">{:lang('currency_symbol')}99.00</p>
+                                            <p class="goods-price goods-price-decoration" >{:lang('currency_symbol')}150.00</p>
+                                        </div>
+                                    </div>
+                                    <div class='auction-detail {$isShowAuction}'>
+                                        <p class="goods-price auction-num">1{:lang('shopcustompage_auction_num')}</p>
+                                        <p class="goods-price " >{:lang('shopcustompage_current_price')}：<span class='red'>{:lang('currency_symbol')}10.00</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='btn-del' onclick='delMarketingBtn(this)'>{:lang('shopcustompage_del')}</div>
+                    </div>
+                    <div class='border-absolute' onclick='addMarketingClassActive(this)' onmouseover='addClassActive(this)' onmouseout='removeClassActive(this)'></div>
+                </div>
+                {/if}
+                {/volist}
+                {/if}
+            </div>
+        </div>
+    </div>
+    <div class="attr border">
+        <div class="attr-title">{:lang('shopcustompage_page_set')}</div>
+        <div class="attr-content">
+            <div class="attr-content-page" >
+                <div class="attr-content-page-item">
+                    <label class="label">{:lang('shopcustompage_page_name')}</label><input type="text" maxlength="32" value="{if $page_data['pageName']}{$page_data['pageName']}{/if}" class="attr-content-page-name" />
+                </div>
+            </div>
+            <div class="attr-content-page" >
+                <div class="attr-content-page-item">
+                    <label class="label">{:lang('shopcustompage_page_title')}</label><input type="text" value="{if $page_data['attr']['title']}{$page_data['attr']['title']}{else}{$shopName}{/if}" class="attr-content-page-title" onkeyup="setPageTitle(this)"/>
+                </div>
+                <div class='attr-content-page-item-img' >
+                    <div class='attr-content-page-img' img_url="{if $page_data['attr']['poster']}{$page_data['attr']['poster']}{/if}">
+                        <label class='label'>{:lang('shopcustompage_page_image')}</label>
+                        <div class='page-picker' id="page-picker">
+                            {if $page_data['attr']['poster']}
+                            <img class='page-poster' src="__RESOURCE_PATH__/{$page_data['attr']['poster']}"/>
+                            <img class='page-poster-default none' src="__ROOT__/addons/custompage/view/admin/img/page/upload.png"/>
+                            {else}
+                            <img class='page-poster none' src=''/>
+                            <img class='page-poster-default' src="__ROOT__/addons/custompage/view/admin/img/page/upload.png"/>
+                            {/if}
+                        </div>
+                    </div>
+                    <div class="attr-content-page-item">
+                        <div class="page-tip">{:lang('shopcustompage_page_image_tips2')}</div>
+                    </div>
+                </div>
+            </div>
+            {if condition="count($data) != 0"}
+            {volist name="data" id="vo" key="k"}
+            {if condition="$vo['name'] == 'swiper'"}
+            <div class='attr-content-swiper swiper_attr{$k} none' swiper_num='{$k}'>
+                <div class='attr-content-swiper-item' >
+                    <label class='d-label'>{:lang('shopcustompage_indicator_type')}</label>
+                    <input type='radio' value='1' name='swiper-indicator{$k}'  id='i-rectangle{$k}' onclick='changeSwiperIndicator(this)'  {if intval($vo['attr']['indicator_type'])==1 }checked{/if} />
+                    <label for='i-rectangle{$k}' class='d-a-label'>{:lang('shopcustompage_rectangle')}</label>
+                    <input type='radio' value='2' name='swiper-indicator{$k}' id='i-square{$k}' onclick='changeSwiperIndicator(this)'  {if intval($vo['attr']['indicator_type'])==2 }checked{/if} />
+                    <label for='i-square{$k}' class='d-a-label'>{:lang('shopcustompage_square')}</label>
+                    <input type='radio' value='3' name='swiper-indicator{$k}' id='i-roundness{$k}' onclick='changeSwiperIndicator(this)'  {if intval($vo['attr']['indicator_type'])==3 }checked{/if} />
+                    <label for='i-roundness{$k}' class='d-a-label'>{:lang('shopcustompage_roundness')}</label>
+                </div>
+                <div class='attr-content-swiper-item' >
+                    <label class='d-label'>{:lang('shopcustompage_swiper_interval')}</label>
+                    <select name='swiper-inteval{$k}' onchange='changeSwiperInterval(this)'>
+                        <option value='3' {if empty($vo['attr']['interval'])||$vo['attr']['interval']==3}selected{/if}>3s</option>
+                        <option value='4' {if $vo['attr']['interval']==4}selected{/if}>4s</option>
+                        <option value='5' {if $vo['attr']['interval']==5}selected{/if}>5s</option>
+                        <option value='6' {if $vo['attr']['interval']==6}selected{/if}>6s</option>
+                    </select>
+                </div>
+                <div class='attr-content-swiper-item' >
+                    <label class='d-label'>{:lang('shopcustompage_indicator_color')}</label>
+                    <div class='select-component-item-color swiper-indicator-select-color'  style="background:{$vo['attr']['indicator_color']}"></div>
+                </div>
+                <div class='attr-content-swiper-item'>
+                    <label class='d-label'>{:lang('shopcustompage_padding_top')}</label>
+                    <div class='attr-content-swiper-item-content'>
+                        <input type='hidden' class='swiper-range-slider'  value="{$vo['attr']['padding_top']}" onchange='changeSwiperPadding(this,1)'/>
+                        <span class='swiper-padding-top-value'>{$vo['attr']['padding_top']}</span>
+                        <span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <div class='attr-content-swiper-item'>
+                    <label class='d-label'>{:lang('shopcustompage_padding_bottom')}</label>
+                    <div class='attr-content-swiper-item-content'>
+                        <input type='hidden' class='swiper-range-slider'  value="{$vo['attr']['padding_bottom']}" onchange='changeSwiperPadding(this,2)'/>
+                        <span class='swiper-padding-bottom-value'>{$vo['attr']['padding_bottom']}</span>
+                        <span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <div class='attr-content-swiper-item'>
+                    <label class='d-label'>{:lang('shopcustompage_padding_left')}</label>
+                    <div class='attr-content-swiper-item-content'>
+                        <input type='hidden' class='swiper-range-slider'  value="{$vo['attr']['padding_left']}" onchange='changeSwiperPadding(this,3)'/>
+                        <span class='swiper-padding-left-value'>{$vo['attr']['padding_left']}</span>
+                        <span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <div class='attr-content-swiper-item'>
+                    <label class='d-label'>{:lang('shopcustompage_padding_right')}</label>
+                    <div class='attr-content-swiper-item-content'>
+                        <input type='hidden' class='swiper-range-slider'  value="{$vo['attr']['padding_right']}" onchange='changeSwiperPadding(this,4)'/>
+                        <span class='swiper-padding-right-value'>{$vo['attr']['padding_right']}</span>
+                        <span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <input type="hidden" class="swiper-item-id" value="{$vo['id']}"/>
+                {for start="0" end="count($vo['attr']['img'])"  }
+                <div class='attr-content-swiper-item-img' >
+                    <div class='attr-content-swiper-img' img_url="{$vo['attr']['img'][$i]}">
+                        <label class='d-label'>{:lang('shopcustompage_image')}</label>
+                        <div class='banner-picker' id="banner-picker-{$k}-{$i+1}">
+                            <img src="__RESOURCE_PATH__/{$vo['attr']['img'][$i]}"/>
+                        </div>
+                        <div class='image-tips'>{:lang('shopcustompage_swiper_image_tips2')}</div>
+                    </div>
+                    <label class='d-label'>{:lang('shopcustompage_link')}</label>
+                    <input type='text' value="{$vo['attr']['link'][$i]}" class='attr-content-swiper-link' />
+                    <div class='attr-btn-del' onclick='delSwiperItemBtn(this)'>X</div>
+                </div>
+                {/for}
+                <div class='attr-content-swiper-item-add' onclick='addSwiperItem(this)'>{:lang('shopcustompage_add_one')}</div>
+                <input type='hidden' class='indicator-type' value="{$vo['attr']['indicator_type']}" />
+                <input type='hidden' class='indicator-color' value="{$vo['attr']['indicator_color']}" />
+                <input type='hidden' class='interval' value="{$vo['attr']['interval']}" />
+                <input type='hidden' class='swiper-padding-top' value="{$vo['attr']['padding_top']}" />
+                <input type='hidden' class='swiper-padding-bottom' value="{$vo['attr']['padding_bottom']}" />
+                <input type='hidden' class='swiper-padding-left' value="{$vo['attr']['padding_left']}" />
+                <input type='hidden' class='swiper-padding-right' value="{$vo['attr']['padding_right']}" />
+            </div>
+            {elseif condition="$vo['name'] == 'floor_goods'"}
+            <div class='attr-content-floor-goods floor_goods_attr{$k} none' floor_goods_num='{$k}'>
+                <input type="hidden" class="floor-goods-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-floor-goods-item' >
+                    <label class='d-label'>{:lang('shopcustompage_background_color')}</label>
+                    <div class='select-component-item-color floor-goods-select-bg-color' style="background:{$vo['attr']['background_color']}">
+                    </div>
+                </div>
+                <div class='attr-content-floor-goods-item' >
+                    <label class='d-label'>{:lang('shopcustompage_floor_goods_title')}</label>
+                    <input type='text' value="{$vo['attr']['title']}" class='attr-content-floor-goods-title' onkeyup='setFloorGoodsTitle(this)'/>
+                    <span class='floor-goods-title-tip'><span class='floor-goods-title-length'>0</span>/10</span>
+                </div>
+                <div class='attr-content-floor-goods-item' style='margin-bottom:5px'>
+                    <div class='attr-content-floor-goods-icon' img_url="{$vo['attr']['icon']}" >
+                        <label class='d-label'>{:lang('shopcustompage_floor_goods_icon')}</label>
+                        <div class='floor-goods-icon-picker' id='floor-goods-icon-picker-{$k}' onclick='addFloorGoodsIconImg(this)'>
+                            <img src="__RESOURCE_PATH__/{$vo['attr']['icon']}" />
+                        </div>
+                        <div class='image-tips'>{:lang('shopcustompage_floor_goods_icon_tips')}</div>
+                    </div>
+                </div>
+                <div class='attr-content-floor-goods-item' >
+                    <div class='attr-content-floor-goods-img' img_url="{$vo['attr']['img']}" >
+                        <label class='d-label'>{:lang('shopcustompage_image')}</label>
+                        <div class='floor-goods-picker' id='floor-goods-picker-{$k}' onclick='addFloorGoodsItemImg(this)'>
+                            <img src="__RESOURCE_PATH__/{$vo['attr']['img']}" />
+                        </div>
+                        <div class='image-tips'>{:lang('shopcustompage_floor_goods_image_tips')}</div>
+                    </div>
+                </div>
+                <div class='attr-content-floor-goods-item'>
+                    <label class='d-label'>{:lang('shopcustompage_link')}</label>
+                    <input type='text' value="{$vo['attr']['link']}" class='attr-content-floor-goods-link' />
+                </div>
+                <div class='attr-content-floor-goods-item' >
+                    <label class='d-label'>{:lang('shopcustompage_goods_sort')}</label>
+                    <select name='floor-goods-order1' onchange='changeFloorGoodsOrder(this)'>
+                        <option value='1' {if $vo['attr']['goods_order']==1}selected{/if}>{:lang('shopcustompage_goods_group_order1')}</option>
+                        <option value='2' {if $vo['attr']['goods_order']==2}selected{/if}>{:lang('shopcustompage_goods_group_order2')}</option>
+                        <option value='3' {if $vo['attr']['goods_order']==3}selected{/if}>{:lang('shopcustompage_goods_group_order3')}</option>
+                        <option value='4' {if $vo['attr']['goods_order']==4}selected{/if}>{:lang('shopcustompage_goods_group_order4')}</option>
+                        <option value='5' {if $vo['attr']['goods_order']==5}selected{/if}>{:lang('shopcustompage_goods_group_order5')}</option>
+                        <option value='6' {if $vo['attr']['goods_order']==6}selected{/if}>{:lang('shopcustompage_goods_group_order6')}</option>
+                        <option value='7' {if $vo['attr']['goods_order']==7}selected{/if}>{:lang('shopcustompage_goods_group_order7')}</option>
+                        <option value='8' {if $vo['attr']['goods_order']==8}selected{/if}>{:lang('shopcustompage_goods_group_order8')}</option>
+                    </select>
+                </div>
+                <div class='attr-content-floor-goods-item' >
+                    <label class='d-label'>{:lang('shopcustompage_select_goods')}</label>
+                    <input type='radio' value='1' name='floor-goods-select{$k}' id='floor-goods-select-condition{$k}' onclick='changeFloorGoodsSelect(this)'  {if $vo['attr']['goods_select']==1}checked{/if}/>
+                    <label for='floor-goods-select-condition{$k}'>{:lang('shopcustompage_condition_select')}</label>
+                    <input type='radio' value='2' name='floor-goods-select{$k}' id='floor-goods-select-manual{$k}' onclick='changeFloorGoodsSelect(this)'  {if $vo['attr']['goods_select']==2}checked{/if}/>
+                    <label for='floor-goods-select-manual{$k}'>{:lang('shopcustompage_manual_add')}</label>
+                    <input type='hidden' class='floor-goods-select-ids-value' value="{$vo['attr']['goods_select_ids']}" />
+                    <input type='hidden' class='floor-goods-select-cats-id-value' value="{$vo['attr']['goods_select_cats_id']}" />
+                    <input type='hidden' class='floor-goods-tag-value' value="{$vo['attr']['goods_tag']}" />
+                    <input type='hidden' class='floor-goods-min-price-value' value="{$vo['attr']['goods_min_price']}" />
+                    <input type='hidden' class='floor-goods-max-price-value' value="{$vo['attr']['goods_max_price']}" />
+                </div>
+                {for start="0" end="count($vo['attr']['columns_title'])"  }
+                <div class='attr-content-floor-goods-item-column' >
+                    <div class='wst-flex-row wst-ac'>
+                        <label class='d-label'>{:lang('shopcustompage_column_title')}</label>
+                        <input type='text' value="{$vo['attr']['columns_title'][$i]}" class='floor-goods-columns-name' columns_item="{$i+1}" onkeyup='setFloorGoodsColumnsTitle(this)' style='width:150px !important;'/>
+                        <span class='floor-goods-columns-name-tip'><span class='floor-goods-columns-name-length'>0</span>/6</span>
+                    </div>
+                    <label class='d-label'>{:lang('shopcustompage_jump_link')}</label>
+                    <input type='text' value="{$vo['attr']['columns_link'][$i]}" class='floor-goods-columns-link' style='width:150px !important;'/>
+                    <div class='attr-btn-del' onclick='delFloorGoodsColumnItemBtn(this)'>X</div>
+                </div>
+                {/for}
+                <div class='attr-content-floor-goods-item-column-add' onclick='addFloorGoodsColumnItem(this)'>{:lang('shopcustompage_add_one')}</div>
+                <input type='hidden' class='floor-goods-order' value="{$vo['attr']['goods_order']}" />
+                <input type='hidden' class='floor-goods-bg-color' value="{$vo['attr']['background_color']}" />
+            </div>
+            {elseif condition="$vo['name'] == 'goods_recommend'"}
+            <div class='attr-content-goods-recommend goods_recommend_attr{$k} none' goods_recommend_num='{$k}'>
+                <input type="hidden" class="goods-recommend-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-goods-recommend-item' >
+                    <label class='d-label'>{:lang('shopcustompage_background_color')}</label>
+                    <div class='select-component-item-color goods-recommend-select-bg-color' style="background:{$vo['attr']['background_color']}"></div>
+                </div>
+                <div class='attr-content-goods-recommend-item' >
+                    <label class='d-label'>{:lang('shopcustompage_goods_group_title')}</label>
+                    <input type='text' value="{$vo['attr']['goods_recommend_title']}" class='attr-content-goods-recommend-title' onkeyup='setGoodsRecommendTitle(this)'/>
+                    <span class='goods-recommend-title-tip'><span class='goods-recommend-title-length'>0</span>/10</span>
+                </div>
+                <div class='attr-content-goods-recommend-item' >
+                    <label class='d-label'>{:lang('shopcustompage_goods_group_title')}</label>
+                    <input type='radio' value='1' name='goods_recommend_title_is_show{$k}' id='goods-recommend-title-show{$k}' onclick='changeGoodsRecommendTitleDisplay(this)' {if $vo['attr']['show_goods_recommend_title']==1}checked{/if} />
+                    <label for='goods-recommend-title-show{$k}'>{:lang('shopcustompage_show')}</label>
+                    <input type='radio' value='0' name='goods_recommend_title_is_show{$k}' id='goods-recommend-title-hide{$k}' onclick='changeGoodsRecommendTitleDisplay(this)'  {if $vo['attr']['show_goods_recommend_title']==0}checked{/if} />
+                    <label for='goods-recommend-title-hide{$k}'>{:lang('shopcustompage_hide')}</label>
+                </div>
+                <div class='attr-content-goods-recommend-item' >
+                    <label class='d-label'>{:lang('shopcustompage_goods_sort')}</label>
+                    <select name='goods-recommend-order{$k}' onchange='changeGoodsRecommendOrder(this)'>
+                        <option value='1' {if $vo['attr']['goods_order']==1}selected{/if}>{:lang('shopcustompage_goods_group_order1')}</option>
+                        <option value='2' {if $vo['attr']['goods_order']==2}selected{/if}>{:lang('shopcustompage_goods_group_order2')}</option>
+                        <option value='3' {if $vo['attr']['goods_order']==3}selected{/if}>{:lang('shopcustompage_goods_group_order3')}</option>
+                        <option value='4' {if $vo['attr']['goods_order']==4}selected{/if}>{:lang('shopcustompage_goods_group_order4')}</option>
+                        <option value='5' {if $vo['attr']['goods_order']==5}selected{/if}>{:lang('shopcustompage_goods_group_order5')}</option>
+                        <option value='6' {if $vo['attr']['goods_order']==6}selected{/if}>{:lang('shopcustompage_goods_group_order6')}</option>
+                        <option value='7' {if $vo['attr']['goods_order']==7}selected{/if}>{:lang('shopcustompage_goods_group_order7')}</option>
+                        <option value='8' {if $vo['attr']['goods_order']==8}selected{/if}>{:lang('shopcustompage_goods_group_order8')}</option>
+                    </select>
+                </div>
+                <div class='attr-content-goods-recommend-item' >
+                    <label class='d-label'>{:lang('shopcustompage_select_goods')}</label>
+                    <input type='radio' value='1' name='goods-recommend-select{$k}' id='goods-recommend-select-condition{$k}' onclick='changeRecommendGoodsSelect(this)' {if $vo['attr']['goods_select']==1}checked{/if}/>
+                    <label for='goods-recommend-select-condition{$k}'>{:lang('shopcustompage_condition_select')}</label>
+                    <input type='radio' value='2' name='goods-recommend-select{$k}' id='goods-recommend-select-manual{$k}' onclick='changeRecommendGoodsSelect(this)' {if $vo['attr']['goods_select']==2}checked{/if}/>
+                    <label for='goods-recommend-select-manual{$k}'>{:lang('shopcustompage_manual_add')}</label>
+                    <input type='hidden' class='goods-select-ids-value' value="{$vo['attr']['goods_select_ids']}" />
+                    <input type='hidden' class='goods-select-cats-id-value' value="{$vo['attr']['goods_select_cats_id']}" />
+                    <input type='hidden' class='goods-tag-value' value="{$vo['attr']['goods_tag']}" />
+                    <input type='hidden' class='goods-min-price-value' value="{$vo['attr']['goods_min_price']}" />
+                    <input type='hidden' class='goods-max-price-value' value="{$vo['attr']['goods_max_price']}" />
+                </div>
+                <input type='hidden' class='show-goods-recommend-title' value="{$vo['attr']['show_goods_recommend_title']}" />
+                <input type='hidden' class='goods-recommend-order' value="{$vo['attr']['goods_order']}" />
+                <input type='hidden' class='goods-recommend-bg-color' value="{$vo['attr']['background_color']}" />
+            </div>
+            {elseif condition="$vo['name'] == 'goods_group'"}
+            <div class='attr-content-goods-group goods_group_attr{$k} none' goods_group_num='{$k}'>
+                <input type="hidden" class="goods-group-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-goods-group-item' >
+                    <label class='d-label'>{:lang('shopcustompage_goods_group_title')}</label>
+                    <input type='text' value="{$vo['attr']['goods_group_title']}" class='attr-content-goods-group-title' onkeyup='setGoodsGroupTitle(this)'/>
+                    <span class='goods-group-title-tip'><span class='goods-group-title-length'>0</span>/10</span>
+                </div>
+                <div class='attr-content-goods-group-item' >
+                    <label class='d-label'>{:lang('shopcustompage_goods_group_title')}</label>
+                    <input type='radio' value='1' name='goods_group_title_is_show{$k}' id='goods-group-title-show{$k}' onclick='changeGoodsGroupTitleDisplay(this)' {if $vo['attr']['show_goods_group_title']==1}checked{/if} />
+                    <label for='goods-group-title-show{$k}'>{:lang('shopcustompage_show')}</label>
+                    <input type='radio' value='0' name='goods_group_title_is_show{$k}' id='goods-group-title-hide{$k}' onclick='changeGoodsGroupTitleDisplay(this)'  {if $vo['attr']['show_goods_group_title']==0}checked{/if} />
+                    <label for='goods-group-title-hide{$k}'>{:lang('shopcustompage_hide')}</label>
+                </div>
+                <div class='attr-content-goods-group-item' >
+                    <label class='d-label'>{:lang('shopcustompage_goods_num')}</label>
+                    <input type='radio' value='5' name='goods_num{$k}' id='goods-num-five{$k}' onclick='changeGoodsNum(this)' {if intval($vo['attr']['goods_nums'])==5 }checked{/if} />
+                    <label for='goods-num-five{$k}'>5{:lang('shopcustompage_goods_unit')}</label>
+                    <input type='radio' value='10' name='goods_num{$k}' id='goods-num-ten{$k}' onclick='changeGoodsNum(this)' {if intval($vo['attr']['goods_nums'])==10 }checked{/if} />
+                    <label for='goods-num-ten{$k}'>10{:lang('shopcustompage_goods_unit')}</label>
+                </div>
+                <div class='goods-num-tips'>{:lang('shopcustompage_goods_num_tips')}</div>
+                <div class='attr-content-goods-group-item' >
+                    <label class='d-label'>{:lang('shopcustompage_goods_sort')}</label>
+                    <select name='goods-group-order{$k}' onchange='changeGoodsGroupOrder(this)'>
+                        <option value='1' {if $vo['attr']['goods_order']==1}selected{/if}>{:lang('shopcustompage_goods_group_order1')}</option>
+                        <option value='2' {if $vo['attr']['goods_order']==2}selected{/if}>{:lang('shopcustompage_goods_group_order2')}</option>
+                        <option value='3' {if $vo['attr']['goods_order']==3}selected{/if}>{:lang('shopcustompage_goods_group_order3')}</option>
+                        <option value='4' {if $vo['attr']['goods_order']==4}selected{/if}>{:lang('shopcustompage_goods_group_order4')}</option>
+                        <option value='5' {if $vo['attr']['goods_order']==5}selected{/if}>{:lang('shopcustompage_goods_group_order5')}</option>
+                        <option value='6' {if $vo['attr']['goods_order']==6}selected{/if}>{:lang('shopcustompage_goods_group_order6')}</option>
+                        <option value='7' {if $vo['attr']['goods_order']==7}selected{/if}>{:lang('shopcustompage_goods_group_order7')}</option>
+                        <option value='8' {if $vo['attr']['goods_order']==8}selected{/if}>{:lang('shopcustompage_goods_group_order8')}</option>
+                    </select>
+                </div>
+                <div class='attr-content-goods-group-item' >
+                    <label class='d-label'>{:lang('shopcustompage_select_goods')}</label>
+                    <input type='radio' value='1' name='goods-select{$k}' id='goods-select-condition{$k}' onclick='changeGoodsSelect(this)' {if $vo['attr']['goods_select']==1}checked{/if}/>
+                    <label for='goods-select-condition{$k}'>{:lang('shopcustompage_condition_select')}</label>
+                    <input type='radio' value='2' name='goods-select{$k}' id='goods-select-manual{$k}' onclick='changeGoodsSelect(this)' {if $vo['attr']['goods_select']==2}checked{/if}/>
+                    <label for='goods-select-manual{$k}'>{:lang('shopcustompage_manual_add')}</label>
+                    <input type='hidden' class='goods-select-ids-value' value="{$vo['attr']['goods_select_ids']}" />
+                    <input type='hidden' class='goods-select-cats-id-value' value="{$vo['attr']['goods_select_cats_id']}" />
+                    <input type='hidden' class='goods-tag-value' value="{$vo['attr']['goods_tag']}" />
+                    <input type='hidden' class='goods-min-price-value' value="{$vo['attr']['goods_min_price']}" />
+                    <input type='hidden' class='goods-max-price-value' value="{$vo['attr']['goods_max_price']}" />
+                </div>
+                <input type='hidden' class='show-goods-group-title' value="{$vo['attr']['show_goods_group_title']}" />
+                <input type='hidden' class='goods-group-order' value="{$vo['attr']['goods_order']}" />
+                <input type='hidden' class='goods-group-goods-nums' value="{$vo['attr']['goods_nums']}" />
+            </div>
+            {elseif condition="$vo['name'] == 'nav'"}
+            <div class='attr-content-nav nav_attr{$k} none' nav_num='{$k}'>
+                <input type="hidden" class="nav-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-nav-item' >
+                    <label class='d-label'>{:lang('shopcustompage_background_color')}</label>
+                    <div class='select-component-item-color nav-select-bg-color' style="background:{$vo['attr']['background_color']}"></div>
+                </div>
+                <div class='attr-content-nav-item' >
+                    <label class='d-label'>{:lang('shopcustompage_show_cat')}</label>
+                    <input type='radio' value='1' name='nav-category{$k}'  id='n-category-show{$k}' onclick='changeNavCategoryDisplay(this)' {if $vo['attr']['show_nav_category']==1}checked{/if} />
+                    <label for='n-category-show{$k}'>{:lang('shopcustompage_show')}</label>
+                    <input type='radio' value='0' name='nav-category{$k}' id='n-category-hide{$k}' onclick='changeNavCategoryDisplay(this)' {if $vo['attr']['show_nav_category']==0}checked{/if} />
+                    <label for='n-category-hide{$k}'>{:lang('shopcustompage_hide')}</label>
+                </div>
+                <div class='attr-content-nav-item' >
+                    <label class='d-label'>{:lang('shopcustompage_show_button')}</label>
+                    <input type='radio' value='1' name='nav-button{$k}'  id='n-button-show{$k}' onclick='changeNavButtonDisplay(this)' {if $vo['attr']['show_nav_button']==1}checked{/if} />
+                    <label for='n-button-show{$k}'>{:lang('shopcustompage_show')}</label>
+                    <input type='radio' value='0' name='nav-button{$k}' id='n-button-hide{$k}' onclick='changeNavButtonDisplay(this)' {if $vo['attr']['show_nav_button']==0}checked{/if} />
+                    <label for='n-button-hide{$k}'>{:lang('shopcustompage_hide')}</label>
+                </div>
+                {for start="0" end="count($vo['attr']['item_text'])"  }
+                <div class='attr-content-nav-item-group' nav_item='{$i+1}'>
+                    <div class='attr-content-nav-info'>
+                        <label class='nav-label'>{:lang('shopcustompage_text_content')}</label>
+                        <input type='text' value="{$vo['attr']['item_text'][$i]}" class='attr-content-nav-text' onkeyup='setNavItemTitle(this)' />
+                        <span class='nav-text-tip'><span class='nav-text-length'>0</span>/4</span>
+                    </div>
+                    <div class='attr-content-nav-info'>
+                        <label class='nav-label'>{:lang('shopcustompage_text_color')}</label>
+                        <div class='select-component-item-color nav-select-text-color' style='background:{$vo['attr']['item_color'][$i]};' ></div>
+                        <input type='hidden' class='attr-content-nav-text-color' value="{$vo['attr']['item_color'][$i]}" />
+                    </div>
+                    <div class='attr-content-nav-info'>
+                        <label class='nav-label'>{:lang('shopcustompage_link_address')}</label>
+                        <input type='text' value="{$vo['attr']['item_link'][$i]}" class='attr-content-nav-link' />
+                    </div>
+                    <div class='attr-btn-del' onclick='delNavItemBtn(this)'>X</div>
+                </div>
+                {/for}
+                <div class='attr-content-nav-item-add' onclick='addNavItem(this)'>{:lang('shopcustompage_add_one')}</div>
+                <input type='hidden' class='nav-bg-color' value="{$vo['attr']['background_color']}" />
+                <input type='hidden' class='show-nav-category' value="{$vo['attr']['show_nav_category']}" />
+                <input type='hidden' class='show-nav-button' value="{$vo['attr']['show_nav_button']}" />
+            </div>
+            {elseif condition="$vo['name'] == 'notice'"}
+            <div class='attr-content-notice notice_attr{$k} none' notice_num='{$k}'>
+                <input type="hidden" class="notice-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-notice-item'>
+                    <label class='d-label'>{:lang('shopcustompage_vertical_padding')}</label>
+                    <div class='attr-content-notice-item-content'>
+                        <input type="hidden" class="notice-range-slider"  value="{$vo['attr']['vertical_padding']}" onchange="changeNoticePadding(this)"/>
+                        <span class="notice-vertical-padding-value">{$vo['attr']['vertical_padding']}</span><span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <div class='attr-content-notice-item' >
+                    <label class='d-label'>{:lang('shopcustompage_background_color')}</label>
+                    <div class='select-component-item-color notice-select-bg-color' style="background:{$vo['attr']['background_color']}"></div>
+                </div>
+                <div class='attr-content-notice-item' >
+                    <label class='d-label'>{:lang('shopcustompage_text_color')}</label>
+                    <div class='select-component-item-color notice-select-text-color' style="background:{$vo['attr']['text_color']}"></div>
+                </div>
+                <div class='attr-content-notice-item'>
+                    <label class='d-label'>{:lang('shopcustompage_notice_icon')}</label>
+                    <div class='notice-picker' id='notice-picker-{$k}' onclick='addNoticeImg(this)'>
+                        <img src="__RESOURCE_PATH__/{$vo['attr']['img']}" />
+                    </div>
+                </div>
+                <div class='attr-content-notice-item' >
+                    <label class='d-label'>{:lang('shopcustompage_scroll_direction')}</label>
+                    <input type='radio' value='1' name='notice-direction' id='notice-direction-vertical' onclick='changeNoticeDirection(this)'  {if $vo['attr']['direction']==1}checked{/if}/>
+                    <label for='notice-direction-vertical' class='d-a-label'>{:lang('shopcustompage_vertical')}</label>
+                    <input type='radio' value='2' name='notice-direction' id='notice-direction-horizontal' onclick='changeNoticeDirection(this)'  {if $vo['attr']['direction']==2}checked{/if} />
+                    <label for='notice-direction-horizontal' class='d-a-label'>{:lang('shopcustompage_horizontal')}</label>
+                </div>
+                {for start="0" end="intval(count($vo['attr']['text']))"  }
+                <div class='attr-content-notice-item-group' >
+                    <div>
+                        <label class='d-label'>{:lang('shopcustompage_notice')}</label>
+                        <input type='text' value="{$vo['attr']['text'][$i]}" class='attr-content-notice-text' onkeyup='setNoticeText(this)'/>
+                    </div>
+                    <div>
+                        <label class='d-label'>{:lang('shopcustompage_link')}</label>
+                        <input type='text' value="{$vo['attr']['link'][$i]}" class='attr-content-notice-link' />
+                    </div>
+                    <div class='attr-btn-del' onclick='delNoticeItemBtn(this)'>X</div>
+                </div>
+                {/for}
+                <div class='attr-content-notice-item-group-add' onclick='addNoticeItem(this)'>{:lang('shopcustompage_add_one')}</div>
+                <input type='hidden' class='notice-bg-color' value="{$vo['attr']['background_color']}" />
+                <input type='hidden' class='notice-text-color' value="{$vo['attr']['text_color']}" />
+                <input type='hidden' class='notice-img' value="{$vo['attr']['img']}" />
+                <input type='hidden' class='notice-vertical-padding' value="{$vo['attr']['vertical_padding']}" />
+                <input type='hidden' class='notice-direction' value="{$vo['attr']['direction']}" />
+            </div>
+            {elseif condition="$vo['name'] == 'search'"}
+            <div class='attr-content-search search_attr{$k} none ' search_num='{$k}' >
+                <input type="hidden" class="search-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-search-item' >
+                    <div class='attr-content-search-img' img_url="{$vo['attr']['img']}" >
+                        <label class='d-label'>{:lang('shopcustompage_image')}</label>
+                        <div class='search-picker' id='search-picker-{$k}' onclick='addSearchItemImg(this)'>
+                            <img src="__RESOURCE_PATH__/{$vo['attr']['img']}" />
+                        </div>
+                        <div class='image-tips'>{:lang('shopcustompage_search_image_tips')}</div>
+                    </div>
+                </div>
+                <div class='attr-content-search-item'>
+                    <label class='d-label'>{:lang('shopcustompage_link')}</label>
+                    <input type='text' value="{$vo['attr']['link']}" class='attr-content-search-link' />
+                </div>
+                <div class='attr-content-search-item'>
+                    <div class='attr-content-search-item-title'>
+                        <label class='d-label'>{:lang('shopcustompage_search_goods_prompt_text')}</label>
+                    </div>
+                    <div class="attr-content-search-group">
+                        <div class='attr-content-search-item-content'>
+                            <input type='text' value="{$vo['attr']['type'][0]}" class='attr-content-search-type' item='1' onkeyup='setSearchTextType(this)' style='width:150px !important;'/>
+                            <span class='search-type-tip'><span class='search-type-length' item='1'>0</span>/3</span>
+                        </div>
+                        <div class='attr-content-search-item-content'>
+                            <input type='text' value="{$vo['attr']['pc_text'][0]}" class='attr-content-search-text' item='1' onkeyup='setSearchText(this)' style='width:150px !important;'/>
+                            <span class='search-text-tip'><span class='search-text-length' item='1'>0</span>/10</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="search-tips">{:lang('shopcustompage_search_tips')}</div>
+                <div class='attr-content-search-item'>
+                    <div class='attr-content-search-item-title'>
+                        <label class='d-label'>{:lang('shopcustompage_search_shop_prompt_text')}</label>
+                    </div>
+                    <div class="attr-content-search-group">
+                        <div class='attr-content-search-item-content'>
+                            <input type='text' value="{$vo['attr']['type'][1]}" class='attr-content-search-type' item='2' onkeyup='setSearchTextType(this)' style='width:150px !important;'/>
+                            <span class='search-type-tip'><span class='search-type-length' item='2' >0</span>/3</span>
+                        </div>
+                        <div class='attr-content-search-item-content'>
+                            <input type='text' value="{$vo['attr']['pc_text'][1]}" class='attr-content-search-text' item='2' onkeyup='setSearchText(this)' style='width:150px !important;'/>
+                            <span class='search-text-tip'><span class='search-text-length' item='2'>0</span>/10</span>
+                        </div>
+                    </div>
+                </div>
+                {for start="0" end="count($vo['attr']['hots'])"  }
+                <div class='attr-content-search-hot-item' >
+                    <div class='wst-flex-row wst-ac'>
+                        <label class='d-label search-label'>{:lang('shopcustompage_hot_keyword')}</label>
+                        <input type='text' value="{$vo['attr']['hots'][$i]}" class='search-hots-text' hots_item="{$i+1}" onkeyup='setSearchHotsText(this)' style='width:120px !important;'/>
+                        <span class='search-hots-text-tip'><span class='search-hots-text-length'>2</span>/5</span>
+                    </div>
+                    <div class='attr-btn-del' onclick='delSearchHotItemBtn(this)'>X</div>
+                </div>
+                {/for}
+                <div class='attr-content-search-hot-item-add' onclick='addSearchHotItem(this)'>{:lang('shopcustompage_add_one')}</div>
+            </div>
+            {elseif condition="$vo['name'] == 'coupon'"}
+            <div class='attr-content-coupon coupon_attr{$k} none' coupon_num='{$k}'>
+                <input type="hidden" class="coupon-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-coupon-item' >
+                    <div class='attr-content-coupon-img' img_url="{$vo['attr']['img']}" >
+                        <label class='d-label'>{:lang('shopcustompage_background_image')}</label>
+                        <div class='coupon-picker' id='coupon-picker-{$k}' onclick='addCouponBgImg(this)'>
+                            <img src="__RESOURCE_PATH__/{$vo['attr']['img']}" />
+                        </div>
+                        <div class='image-tips coupon-image-tips'>{:lang('shopcustompage_coupon_image_tips')}</div>
+                    </div>
+                </div>
+                <div class='attr-content-coupon-item' >
+                    <label class='d-label'>{:lang('shopcustompage_coupon_title')}</label>
+                    <input type='text' value="{$vo['attr']['title']}" class='attr-content-coupon-title' onkeyup='setCouponTitle(this)'/>
+                    <span class='coupon-title-tip'><span class='coupon-title-length'>0</span>/4</span>
+                </div>
+                <div class='attr-content-coupon-item' >
+                    <label class='d-label'>{:lang('shopcustompage_coupon_desc')}</label>
+                    <input type='text' value="{$vo['attr']['desc']}" class='attr-content-coupon-desc' onkeyup='setCouponDesc(this)'/>
+                    <span class='coupon-desc-tip'><span class='coupon-desc-length'>0</span>/9</span>
+                </div>
+                <div class='attr-content-coupon-item' >
+                    <label class='d-label'>{:lang('shopcustompage_coupon_title_select_color')}</label>
+                    <div class='select-component-item-color coupon-title-select-color'  style="background:{$vo['attr']['title_color']}" ></div>
+                </div>
+                <div class='attr-content-coupon-item' >
+                    <label class='d-label'>{:lang('shopcustompage_coupon_desc_select_color')}</label>
+                    <div class='select-component-item-color coupon-desc-select-color' style="background:{$vo['attr']['desc_color']}" ></div>
+                </div>
+                <div class='attr-content-coupon-item' >
+                    <label class='d-label'>{:lang('shopcustompage_coupon_text_select_color')}</label>
+                    <div class='select-component-item-color coupon-text-select-color' style="background:{$vo['attr']['text_color']}" ></div>
+                </div>
+                <div class='attr-content-coupon-item' >
+                    <label class='d-label'>{:lang('shopcustompage_coupon_btn_select_color')}</label>
+                    <div class='select-component-item-color coupon-btn-select-color' style="background:{$vo['attr']['btn_color']}" ></div>
+                </div>
+                <div class='attr-content-coupon-item' >
+                    <label class='d-label'>{:lang('shopcustompage_coupon_btn_text_select_color')}</label>
+                    <div class='select-component-item-color coupon-btn-text-select-color' style="background:{$vo['attr']['btn_text_color']}" ></div>
+                </div>
+                <div class='attr-content-coupon-item' >
+                    <label class='d-label'>{:lang('shopcustompage_add_coupon')}</label>
+                    {if WSTConf('WST_ADDONS.coupon')!='' }
+                    <div class='add-coupon' onclick='addCoupons(this)'>+ {:lang('shopcustompage_add_coupon')}</div>
+                    {/if}
+                </div>
+                <div class='coupon-tips'>{:lang('shopcustompage_coupon_tips5')}</div>
+                <div class='coupon-tips'>{:lang('shopcustompage_coupon_tips6')}</div>
+                <div class='coupon-tips red'>{:lang('shopcustompage_coupon_tips3')}</div>
+                <div class='coupon-tips red'>{:lang('shopcustompage_coupon_tips4')}</div>
+                <input type='hidden' class='coupon-select-ids-value' value="{$vo['attr']['coupon_select_ids']}" >
+                <input type='hidden' class='coupon-title-color' value="{$vo['attr']['title_color']}" />
+                <input type='hidden' class='coupon-desc-color' value="{$vo['attr']['desc_color']}" />
+                <input type='hidden' class='coupon-text-color' value="{$vo['attr']['text_color']}" />
+                <input type='hidden' class='coupon-btn-color' value="{$vo['attr']['btn_color']}" />
+                <input type='hidden' class='coupon-btn-text-color' value="{$vo['attr']['btn_text_color']}" />
+            </div>
+            {elseif condition="$vo['name'] == 'image'"}
+            <div class='attr-content-image image_attr{$k} none' image_num='{$k}'>
+                <input type="hidden" class="image-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-image-item'>
+                    <label class='d-label'>{:lang('shopcustompage_padding_top')}</label>
+                    <div class='attr-content-image-item-content'>
+                        <input type='hidden' class='image-range-slider'  value="{$vo['attr']['padding_top']}" onchange='changeImagePadding(this,1)'/>
+                        <span class='image-padding-top-value'>{$vo['attr']['padding_top']}</span>
+                        <span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <div class='attr-content-image-item'>
+                    <label class='d-label'>{:lang('shopcustompage_padding_bottom')}</label>
+                    <div class='attr-content-image-item-content'>
+                        <input type='hidden' class='image-range-slider'  value="{$vo['attr']['padding_bottom']}" onchange='changeImagePadding(this,2)'/>
+                        <span class='image-padding-bottom-value'>{$vo['attr']['padding_bottom']}</span>
+                        <span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <div class='attr-content-image-item'>
+                    <label class='d-label'>{:lang('shopcustompage_padding_left')}</label>
+                    <div class='attr-content-image-item-content'>
+                        <input type='hidden' class='image-range-slider'  value="{$vo['attr']['padding_left']}" onchange='changeImagePadding(this,3)'/>
+                        <span class='image-padding-left-value'>{$vo['attr']['padding_left']}</span>
+                        <span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <div class='attr-content-image-item'>
+                    <label class='d-label'>{:lang('shopcustompage_padding_right')}</label>
+                    <div class='attr-content-image-item-content'>
+                        <input type='hidden' class='image-range-slider'  value="{$vo['attr']['padding_right']}" onchange='changeImagePadding(this,4)'/>
+                        <span class='image-padding-right-value'>{$vo['attr']['padding_right']}</span>
+                        <span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <div class='attr-content-image-item' >
+                    <label class='d-label'>{:lang('shopcustompage_background_color')}</label>
+                    <div class='select-component-item-color image-select-bg-color' style="background:{$vo['attr']['background_color']}"></div>
+                </div>
+                {for start="0" end="count($vo['attr']['img'])"  }
+                <div class='attr-content-image-item-img' >
+                    <div class='attr-content-image-img' img_url="{$vo['attr']['img'][$i]}" image_item='{$i+1}'>
+                        <label class='d-label'>{:lang('shopcustompage_image')}</label>
+                        <div class='image-picker' id="image-picker-{$k}-{$i+1}" onclick='addImageItemImg(this)'>
+                            <img src="__RESOURCE_PATH__/{$vo['attr']['img'][$i]}"/>
+                        </div>
+                        <div class='image-tips'>{:lang('shopcustompage_image_img_tips2')}</div>
+                    </div>
+                    <label class='d-label'>{:lang('shopcustompage_link')}</label>
+                    <input type='text' value="{$vo['attr']['link'][$i]}" class='attr-content-image-link' />
+                    <div class='attr-btn-del' onclick='delImageItemBtn(this)'>X</div>
+                </div>
+                {/for}
+                <div class='attr-content-image-item-add' onclick='addImageItem(this)'>{:lang('shopcustompage_add_one')}</div>
+                <input type='hidden' class='image-padding-top' value="{$vo['attr']['padding_top']}" />
+                <input type='hidden' class='image-padding-bottom' value="{$vo['attr']['padding_bottom']}" />
+                <input type='hidden' class='image-padding-left' value="{$vo['attr']['padding_left']}" />
+                <input type='hidden' class='image-padding-right' value="{$vo['attr']['padding_right']}" />
+                <input type='hidden' class='image-bg-color' value="{$vo['attr']['background_color']}" />
+            </div>
+            {elseif condition="$vo['name'] == 'shopwindow'"}
+            <div class='attr-content-shopwindow shopwindow_attr{$k} none' shopwindow_num='{$k}'>
+                <input type="hidden" class="shopwindow-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-shopwindow-item' >
+                    <label class='d-label'>{:lang('shopcustompage_background_color')}</label>
+                    <div class='select-component-item-color shopwindow-select-bg-color' style="background:{$vo['attr']['background_color']}"></div>
+                </div>
+                <div class='attr-content-shopwindow-item'>
+                    <label class='d-label'>{:lang('shopcustompage_layout_type')}</label>
+                    <div class='shopwindow-layout'>
+                        <input type='radio' value='1' name='shopwindow-layout{$k}' id='s-two{$k}' onclick='changeShopwindowLayout(this)' {if intval($vo['attr']['layout'])==1 }checked{/if} />
+                        <label for='s-two{$k}'>{:lang('shopcustompage_layout_type1')}</label>
+                        <input type='radio' value='2' name='shopwindow-layout{$k}' id='s-three{$k}' onclick='changeShopwindowLayout(this)' {if intval($vo['attr']['layout'])==2 }checked{/if} />
+                        <label for='s-three{$k}'>{:lang('shopcustompage_layout_type2')}</label>
+                        <input type='radio' value='3' name='shopwindow-layout{$k}' id='s-four{$k}' onclick='changeShopwindowLayout(this)' {if intval($vo['attr']['layout'])==3 }checked{/if} />
+                        <label for='s-four{$k}'>{:lang('shopcustompage_layout_type3')}</label>
+                        <input type='radio' value='4' name='shopwindow-layout{$k}' id='s-s{$k}' onclick='changeShopwindowLayout(this)' {if intval($vo['attr']['layout'])==4 }checked{/if} />
+                        <label for='s-s{$k}'>{:lang('shopcustompage_layout_type4')}</label>
+                    </div>
+                </div>
+                <div class='attr-content-shopwindow-item'>
+                    <label class='d-label'>{:lang('shopcustompage_layout_desc')}</label>
+                    <div class='shopwindow-layout-info'>{if $vo['attr']['layout']!=4}{:lang('shopcustompage_shopwindow_image_tips1')}{else}{:lang('shopcustompage_shopwindow_image_tips2')}{/if}</div>
+                </div>
+                {for start="0" end="intval(count($vo['attr']['img']))"  }
+                <div class='attr-content-shopwindow-item-img' >
+                    <div class='attr-content-shopwindow-img' img_url="{$vo['attr']['img'][$i]}" shopwindow_item='{$i+1}'>
+                        <label class='d-label'>{:lang('shopcustompage_image')}</label>
+                        <div class='shopwindow-picker' id="shopwindow-picker-{$k}-{$i+1}" onclick='addShopwindowItemImg(this)'>
+                            <img src="__RESOURCE_PATH__/{$vo['attr']['img'][$i]}" />
+                        </div>
+                    </div>
+                    <label class='d-label'>{:lang('shopcustompage_link')}</label>
+                    <input type='text' value="{$vo['attr']['link'][$i]}" class='attr-content-shopwindow-link' />
+                    <div class='attr-btn-del' onclick='delShopwindowItemBtn(this)'>X</div>
+                </div>
+                {/for}
+                <div class='attr-content-shopwindow-item-add' onclick='addShopwindowItem(this)'>{:lang('shopcustompage_add_one')}</div>
+                <input type='hidden' class='shopwindow-bg-color' value="{$vo['attr']['background_color']}" />
+                <input type='hidden' class='shopwindow-layout-value' value="{$vo['attr']['layout']}" />
+            </div>
+            {elseif condition="$vo['name'] == 'video'"}
+            <div class='attr-content-video video_attr{$k} none' video_num='{$k}' >
+                <input type="hidden" class="video-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-video-item'>
+                    <label class='d-label'>{:lang('shopcustompage_vertical_padding')}</label>
+                    <div class='attr-content-video-item-content'>
+                        <input type='hidden' class='video-range-slider'  value="{$vo['attr']['vertical_padding']}" onchange='changeVideoMargin(this)'/>
+                        <span class='video-vertical-padding-value'>{$vo['attr']['vertical_padding']}</span>
+                        <span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <div class='attr-content-video-item'>
+                    <div class='attr-content-video-img' img_url="{$vo['attr']['img']}" >
+                        <!--<label class='d-label'>{:lang('shopcustompage_video_poster')}</label>-->
+                        <!--<div class='video-picker' id='video-picker-{$k}' onclick='addVideoItemImg(this)'>-->
+                            <!--<img src="__RESOURCE_PATH__/{$vo['attr']['img']}" />-->
+                        <!--</div>-->
+                        <!--<div class='image-tips video-image-tips'>{:lang('shopcustompage_video_image_tips')}</div>-->
+                    </div>
+                </div>
+                <div class='attr-content-video-item'>
+                    <label class='d-label'>{:lang('shopcustompage_video_link')}</label>
+                    <input type='text' value="{$vo['attr']['link']}" class='attr-content-video-link' />
+                </div>
+                <input type='hidden' class='video-vertical-padding' value="{$vo['attr']['vertical_padding']}" />
+            </div>
+            {elseif condition="$vo['name'] == 'blank'"}
+            <div class='attr-content-blank blank_attr{$k} none' blank_num='{$k}' >
+                <input type="hidden" class="blank-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-blank-item'>
+                    <label class='d-label'>{:lang('shopcustompage_component_height')}</label>
+                    <div class='attr-content-blank-item-content'>
+                        <input type='hidden' class='blank-range-slider'  value="{$vo['attr']['height']}" onchange='changeBlankHeight(this)'/>
+                        <span class='blank-height-value'>{$vo['attr']['height']}</span><span>px </span>
+                    </div>
+                </div>
+                <div class='attr-content-blank-item' >
+                    <label class='d-label'>{:lang('shopcustompage_background_color')}</label>
+                    <div class='attr-content-blank-item-content'>
+                        <div class='select-component-item-color blank-select-bg-color' style="background:{$vo['attr']['background_color']}"></div>
+                    </div>
+                </div>
+                <input type='hidden' class='blank-bg-color' value="{$vo['attr']['background_color']}" />
+                <input type='hidden' class='blank-height' value="{$vo['attr']['height']}" />
+            </div>
+            {elseif condition="$vo['name'] == 'line'"}
+            <div class='attr-content-line line_attr{$k} none' line_num='{$k}' >
+                <input type="hidden" class="line-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-line-item' >
+                    <label class='d-label'>{:lang('shopcustompage_background_color')}</label>
+                    <div class='attr-content-line-item-content'>
+                        <div class='select-component-item-color line-select-bg-color' style="background:{$vo['attr']['background_color']}"></div>
+                    </div>
+                </div>
+                <div class='attr-content-line-item'>
+                    <label class='d-label'>{:lang('shopcustompage_line_style')}</label>
+                    <div class='attr-content-line-item-content'>
+                        <input type='radio' value='1' name='line-class{$k}' id='l-solid{$k}' onclick='changeLineClass(this)' {if intval($vo['attr']['class'])==1 }checked{/if} />
+                        <label for='l-solid{$k}'>{:lang('shopcustompage_line_class1')}</label>
+                        <input type='radio' value='2' name='line-class{$k}' id='l-dashed{$k}' onclick='changeLineClass(this)' {if intval($vo['attr']['class'])==2 }checked{/if} />
+                        <label for='l-dashed{$k}'>{:lang('shopcustompage_line_class2')}</label>
+                        <input type='radio' value='3' name='line-class{$k}' id='l-dotted{$k}' onclick='changeLineClass(this)' {if intval($vo['attr']['class'])==3 }checked{/if} />
+                        <label for='l-dotted{$k}'>{:lang('shopcustompage_line_class3')}</label>
+                    </div>
+                </div>
+                <div class='attr-content-line-item' >
+                    <label class='d-label'>{:lang('shopcustompage_line_color')}</label>
+                    <div class='attr-content-line-item-content'>
+                        <div class='select-component-item-color line-select-color' style="background:{$vo['attr']['border_color']}"></div>
+                    </div>
+                </div>
+                <div class='attr-content-line-item'>
+                    <label class='d-label'>:lang('shopcustompage_line_height')}</label>
+                    <div class='attr-content-line-item-content'>
+                        <input type='hidden' class='line-height-range-slider'  value="{$vo['attr']['height']}" onchange='changeLineHeight(this)'/>
+                        <span class='line-height-value'>{$vo['attr']['height']}</span><span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <div class='attr-content-line-item'>
+                    <label class='d-label'>{:lang('shopcustompage_vertical_padding')}</label>
+                    <div class='attr-content-line-item-content'>
+                        <input type='hidden' class='line-margin-range-slider'  value="{$vo['attr']['vertical_margin']}" onchange='changeLineMargin(this)'/>
+                        <span class='line-vertical-margin-value'>{$vo['attr']['vertical_margin']}</span><span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <input type='hidden' class='line-bg-color' value="{$vo['attr']['background_color']}" />
+                <input type='hidden' class='line-class' value="{$vo['attr']['class']}" />
+                <input type='hidden' class='line-border-color' value="{$vo['attr']['border_color']}" />
+                <input type='hidden' class='line-height' value="{$vo['attr']['height']}" />
+                <input type='hidden' class='line-vertical-margin' value="{$vo['attr']['vertical_margin']}" />
+            </div>
+            {elseif condition="$vo['name'] == 'text'"}
+            <div class='attr-content-text text_attr{$k} none' text_num='{$k}' >
+                <input type="hidden" class="text-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-text-item'>
+                    <label class='d-label'>{:lang('shopcustompage_vertical_padding')}</label>
+                    <div class='attr-content-text-item-content'>
+                        <input type='hidden' class='text-range-slider'  value="{$vo['attr']['vertical_padding']}" onchange='changeTextPadding(this,1)'/>
+                        <span class='text-vertical-padding-value'>{$vo['attr']['vertical_padding']}</span><span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <div class='attr-content-text-item'>
+                    <label class='d-label'>{:lang('shopcustompage_horizontal_padding')}</label>
+                    <div class='attr-content-text-item-content'>
+                        <input type='hidden' class='text-range-slider'  value="{$vo['attr']['horizontal_padding']}" onchange='changeTextPadding(this,2)'/>
+                        <span class='text-horizontal-padding-value'>{$vo['attr']['horizontal_padding']}</span><span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <div class='attr-content-text-item' >
+                    <label class='d-label'>{:lang('shopcustompage_background_color')}</label>
+                    <div class='select-component-item-color text-select-bg-color' style="background:{$vo['attr']['background_color']}"></div>
+                </div>
+                <div class='attr-content-text-item'>
+                    <textarea rows='2' cols='60' class='text-desc{$k}' >{php}echo htmlspecialchars_decode($vo['attr']['text']);{/php}</textarea>
+                </div>
+                <input type='hidden' class='text-vertical-padding' value="{$vo['attr']['vertical_padding']}" />
+                <input type='hidden' class='text-horizontal-padding' value="{$vo['attr']['horizontal_padding']}" />
+                <input type='hidden' class='text-bg-color' value="{$vo['attr']['background_color']}" />
+            </div>
+            {elseif condition="$vo['name'] == 'txt'"}
+            <div class='attr-content-txt txt_attr{$k} none' txt_num='{$k}' >
+                <input type="hidden" class="txt-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-txt-item'>
+                    <label class='d-label'>{:lang('shopcustompage_prompt_text')}</label>
+                    <input type='text' value="{$vo['attr']['text']}" class='attr-content-txt-text' onkeyup='setTxtText(this)' />
+                    <span class='txt-text-tip'><span class='txt-text-length'>0</span>/50</span>
+                </div>
+                <div class='attr-content-txt-item'>
+                    <label class='d-label'>{:lang('shopcustompage_link_address')}</label>
+                    <input type='text' value="{$vo['attr']['link']}" class='attr-content-txt-link' />
+                </div>
+                <div class='attr-content-txt-item'>
+                    <label class='d-label'>{:lang('shopcustompage_font_position')}</label>
+                    <input type='radio' value='1' checked name='txt-text-alignment{$k}'  id='t-left{$k}' onclick='changeTxtTextAlignment(this)' {if intval($vo['attr']['alignment'])==1 }checked{/if}/>
+                    <label for='t-left{$k}'>{:lang('shopcustompage_alignment_left')}</label>
+                    <input type='radio' value='2' name='txt-text-alignment{$k}' id='t-center{$k}' onclick='changeTxtTextAlignment(this)' {if intval($vo['attr']['alignment'])==2 }checked{/if}/>
+                    <label for='t-center{$k}'>{:lang('shopcustompage_alignment_center')}</label>
+                    <input type='radio' value='3' name='txt-text-alignment{$k}' id='t-right{$k}' onclick='changeTxtTextAlignment(this)' {if intval($vo['attr']['alignment'])==3 }checked{/if}/>
+                    <label for='t-right{$k}'>{:lang('shopcustompage_alignment_right')}</label>
+                </div>
+                <div class='attr-content-txt-item' >
+                    <label class='d-label'>{:lang('shopcustompage_background_color')}</label>
+                    <div class='select-component-item-color txt-select-bg-color' style="background:{$vo['attr']['background_color']}"></div>
+                </div>
+                <div class='attr-content-txt-item' >
+                    <label class='d-label'>{:lang('shopcustompage_text_color')}</label>
+                    <div class='select-component-item-color txt-select-text-color' style="background:{$vo['attr']['text_color']}"></div>
+                </div>
+                <div class='attr-content-txt-item'>
+                    <label class='d-label'>{:lang('shopcustompage_vertical_padding')}</label>
+                    <div class='attr-content-txt-item-content'>
+                        <input type='hidden' class='txt-range-slider'  value="{$vo['attr']['vertical_padding']}" onchange='changeTxtPadding(this,1)'/>
+                        <span class='txt-vertical-padding-value'>{$vo['attr']['vertical_padding']}</span><span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <div class='attr-content-txt-item'>
+                    <label class='d-label'>{:lang('shopcustompage_horizontal_padding')}</label>
+                    <div class='attr-content-txt-item-content'>
+                        <input type='hidden' class='txt-range-slider'  value="{$vo['attr']['horizontal_padding']}" onchange='changeTxtPadding(this,2)'/>
+                        <span class='txt-horizontal-padding-value'>{$vo['attr']['horizontal_padding']}</span><span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <input type='hidden' class='txt-vertical-padding' value="{$vo['attr']['vertical_padding']}" />
+                <input type='hidden' class='txt-horizontal-padding' value="{$vo['attr']['horizontal_padding']}" />
+                <input type='hidden' class='txt-bg-color' value="{$vo['attr']['background_color']}" />
+                <input type='hidden' class='txt-text-color' value="{$vo['attr']['text_color']}" />
+                <input type='hidden' class='attr-content-txt-text-alignment' value="{$vo['attr']['alignment']}" />
+            </div>
+            {elseif condition="$vo['name'] == 'image_text'"}
+            <div class='attr-content-image-text image_text_attr{$k} none' image_text_num='{$k}' >
+                <input type="hidden" class="image-text-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-image-text-item'>
+                    <label class='d-label'>{:lang('shopcustompage_image_text_style')}</label>
+                </div>
+                <div class='attr-content-image-text-item'>
+                    <div class="image-text-style-item {if $vo['attr']['style']==1}active{/if}" onclick='changeImageTextStyle(this)' image_text_item='1'>{:lang('shopcustompage_image_text_style1')}</div>
+                    <div class="image-text-style-item {if $vo['attr']['style']==2}active{/if}" onclick='changeImageTextStyle(this)' image_text_item='2'>{:lang('shopcustompage_image_text_style2')}</div>
+                    <div class="image-text-style-item {if $vo['attr']['style']==3}active{/if}" onclick='changeImageTextStyle(this)' image_text_item='3'>{:lang('shopcustompage_image_text_style3')}</div>
+                    <div class="image-text-style-item {if $vo['attr']['style']==4}active{/if}" onclick='changeImageTextStyle(this)' image_text_item='4'>{:lang('shopcustompage_image_text_style4')}</div>
+                    <div class="image-text-style-item {if $vo['attr']['style']==5}active{/if}" onclick='changeImageTextStyle(this)' image_text_item='5'>{:lang('shopcustompage_image_text_style5')}</div>
+                </div>
+                <div class='attr-content-image-text-item-img' >
+                    <div class='image-text-img'>
+                        <div class='attr-content-image-text-img ' img_url="{$vo['attr']['img'][0]}">
+                            <div class='wst-flex-row'>
+                                <label class='d-label'>{:lang('shopcustompage_image')}</label>
+                                <div class='image-text-picker' id='image-text-picker-{$k}-1'>
+                                    <img src="__RESOURCE_PATH__/{$vo['attr']['img'][0]}"/>
+                                </div>
+                            </div>
+                            <div class='image-tips'>{if $vo['attr']['style']==1 || $vo['attr']['style']==2 || $vo['attr']['style']==5}{:lang('shopcustompage_image_text_img_tips1')}{elseif $vo['attr']['style']==3}{:lang('shopcustompage_image_text_img_tips2')}{elseif $vo['attr']['style']==4}{:lang('shopcustompage_image_text_img_tips3')}{/if}</div>
+                        </div>
+                    </div>
+                    {php}
+                        $img_url2 = 'upload/shopcustompagedecoration/base/banner_01.jpg';
+                        $img_url3 = 'upload/shopcustompagedecoration/base/banner_01.jpg';
+                        if(count($vo['attr']['img'])==2){
+                            $img_url2 = $vo['attr']['img'][1];
+                        }
+                        if(count($vo['attr']['img'])==3){
+                            $img_url3 = $vo['attr']['img'][2];
+                        }
+                    {/php}
+                    <div class="image-text-img {if $vo['attr']['style']==1 || $vo['attr']['style']==2 || $vo['attr']['style']==3}none{/if}">
+                        <div class='attr-content-image-text-img 'img_url="{$img_url2}">
+                            <div class='wst-flex-row'>
+                                <label class='d-label'>{:lang('shopcustompage_image')}</label>
+                                <div class='image-text-picker' id='image-text-picker-{$k}-2'>
+                                    <img src="__RESOURCE_PATH__/{$img_url2}"/>
+                                </div>
+                            </div>
+                            <div class='image-tips'>{if $vo['attr']['style']==4}{:lang('shopcustompage_image_text_img_tips3')}{elseif $vo['attr']['style']==5}{:lang('shopcustompage_image_text_img_tips1')}{/if}</div>
+                        </div>
+                    </div>
+                    <div class="image-text-img {if $vo['attr']['style']!=5}none{/if}">
+                        <div class='attr-content-image-text-img ' img_url="{$img_url3}">
+                            <div class='wst-flex-row'>
+                                <label class='d-label'>{:lang('shopcustompage_image')}</label>
+                                <div class='image-text-picker' id='image-text-picker-{$k}-3'>
+                                    <img src="__RESOURCE_PATH__/{$img_url3}"/>
+                                </div>
+                            </div>
+                            <div class='image-tips'>{:lang('shopcustompage_image_text_img_tips1')}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class='d-label'>{:lang('shopcustompage_title')}</label>
+                        <input type='text' value="{$vo['attr']['title']}" class='attr-content-image-text-title' onkeyup='setImageTextTitle(this)' style='width:145px !important;'/>
+                        <span class='image-text-title-tip'><span class='image-text-title-length'>0</span>/20</span>
+                    </div>
+                    <div>
+                        <label class='d-label'>{:lang('shopcustompage_desc')}</label>
+                        <input type='text' value="{$vo['attr']['desc']}" class='attr-content-image-text-desc' onkeyup='setImageTextDesc(this)' style='width:145px !important;' />
+                        <span class='image-text-desc-tip'><span class='image-text-desc-length'>0</span>/200</span>
+                    </div>
+                    <div>
+                        <label class='d-label'>{:lang('shopcustompage_link')}</label>
+                        <input type='text' value="{$vo['attr']['link']}" class='attr-content-image-text-link' />
+                    </div>
+                </div>
+                <div class='attr-content-image-text-item'>
+                    <label class='d-label'>{:lang('shopcustompage_vertical_padding')}</label>
+                    <div class='attr-content-image-text-item-content'>
+                        <input type='hidden' class='image-text-range-slider'  value="{$vo['attr']['vertical_padding']}" onchange='changeImageTextPadding(this)'/>
+                        <span class='image-text-vertical-padding-value'>{$vo['attr']['vertical_padding']}</span><span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <input type='hidden' class='image-text-style' value="{$vo['attr']['style']}" />
+                <input type='hidden' class='image-text-vertical-padding' value="{$vo['attr']['vertical_padding']}">
+            </div>
+            {elseif condition="$vo['name'] == 'new'"}
+            <div class='attr-content-new new_attr{$k} none' new_num='{$k}' >
+                <input type="hidden" class="new-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-new-item'>
+                    <label class='d-label'>{:lang('shopcustompage_new_num')}</label>
+                    <input type='radio' value='2' name='new-count{$k}'  id='n-count-2-{$k}' checked onclick='changeNewCount(this)' {if $vo['attr']['count'] == 2}checked{/if} />
+                    <label for='n-count-2-{$k}' class='d-a-label'>2{:lang('shopcustompage_goods_unit')}</label>
+                    <input type='radio' value='4' name='new-count{$k}' id='n-count-4-{$k}' onclick='changeNewCount(this)' {if $vo['attr']['count'] == 4}checked{/if} />
+                    <label for='n-count-4-{$k}' class='d-a-label'>4{:lang('shopcustompage_goods_unit')}</label>
+                    <input type='radio' value='6' name='new-count{$k}' id='n-count-6-{$k}' onclick='changeNewCount(this)' {if $vo['attr']['count'] == 6}checked{/if} />
+                    <label for='n-count-6-{$k}' class='d-a-label'>6{:lang('shopcustompage_goods_unit')}</label>
+                    <input type='radio' value='8' name='new-count{$k}' id='n-count-8-{$k}' onclick='changeNewCount(this)' {if $vo['attr']['count'] == 8}checked{/if} />
+                    <label for='n-count-8-{$k}' class='d-a-label'>8{:lang('shopcustompage_goods_unit')}</label>
+                </div>
+                <div class='attr-content-new-item'>
+                    <label class='d-label'>{:lang('shopcustompage_new_title')}</label>
+                    <input type='text' value="{$vo['attr']['title']}" class='attr-content-new-title' onkeyup='setNewTitle(this)'/>
+                    <span class='new-title-tip'><span class='new-title-length'>0</span>/8</span>
+                </div>
+                <div class='attr-content-new-item'>
+                    <label class='d-label'>{:lang('shopcustompage_new_column_add')}</label>
+                    <input type='radio' value='1' name='news-select{$k}'  onclick='addNews(this)'  />
+                </div>
+                <input type='hidden' class='new-select-ids-value' value="{$vo['attr']['new_select_ids']}" >
+                <input type='hidden' class='new-count' value="{$vo['attr']['count']}" />
+            </div>
+            {elseif condition="$vo['name'] == 'marketing'"}
+            <div class='attr-content-marketing marketing_attr{$k} none' marketing_num='{$k}' >
+                <input type="hidden" class="marketing-item-id" value="{$vo['id']}"/>
+                <div class='attr-content-marketing-item'>
+                    <label class='d-label'>{:lang('shopcustompage_component_marketing')}</label>
+                    <select name='marketing-type' onchange='changeMarketingType(this)'>
+                        <option value="0">{:lang('shopcustompage_select')}</option>
+                        {if WSTConf('WST_ADDONS.seckill')!=''}
+                        <option value="Seckill" {if $vo['attr']['type']=='Seckill'}selected{/if}>{:lang('shopcustompage_seckill')}</option>
+                        {/if}
+                        {if WSTConf('WST_ADDONS.auction')!=''}
+                        <option value="Auction" {if $vo['attr']['type']=='Auction'}selected{/if}>{:lang('shopcustompage_auction')}</option>
+                        {/if}
+                    </select>
+                </div>
+                <div class='attr-content-marketing-item'>
+                    <label class='d-label'>{:lang('shopcustompage_column_title')}</label>
+                    <input type='text' value="{$vo['attr']['title']}" class='attr-content-marketing-title' onkeyup='setMarketingTitle(this)'/>
+                    <span class='marketing-title-tip'><span class='marketing-title-length'>0</span>/6</span>
+                </div>
+                <div class='attr-content-marketing-item'>
+                    <label class='d-label'>{:lang('shopcustompage_vertical_padding')}</label>
+                    <div class='attr-content-marketing-item-content'>
+                        <input type='hidden' class='marketing-range-slider'  value="{$vo['attr']['vertical_padding']}" onchange='changeMarketingPadding(this)'/>
+                        <span class='marketing-vertical-padding-value'>{$vo['attr']['vertical_padding']}</span><span class='pixel'>px ({:lang('shopcustompage_px')})</span>
+                    </div>
+                </div>
+                <div class='marketing-tips red'>{:lang('shopcustompage_marking_tips3')}</div>
+                <input type='hidden' class='marketing-type' value="{$vo['attr']['type']}">
+                <input type='hidden' class='marketing-vertical-padding' value="{$vo['attr']['vertical_padding']}">
+            </div>
+            {/if}
+            {/volist}
+            {/if}
+        </div>
+    </div>
+</div>
+<div class="wst-flex-row wst-center" style="margin-bottom: 20px;">
+    <button onclick="submit()" class="btn btn-primary btn-mright" ><i class="fa fa-check"></i>{:lang('shopcustompage_save_page')}</button>
+    <button type="button" class="btn" onclick="javascript:location.href='{:addon_url(\'custompage://admin/index\',\'type=\'.$pageType)}'"><i class="fa fa-angle-double-left"></i>{:lang('shopcustompage_back')}</button>
+</div>
+<div class="none couponHtml1">
+    <div class='coupons-item-1 wst-flex-column wst-ac'>
+        <p class='coupon-value-content-1'>{:lang('currency_symbol')}<span class='coupon-value-1'>100</span></p>
+        <p class='coupon-condition-1'>{:lang('shopcustompage_coupon_condition_demo')}</p>
+        <p class='coupon-get-1'>{:lang('shopcustompage_get_now')}</p>
+    </div>
+    <div class='coupons-item-1 wst-flex-column wst-ac'>
+        <p class='coupon-value-content-1'>{:lang('currency_symbol')}<span class='coupon-value-1'>100</span></p>
+        <p class='coupon-condition-1'>{:lang('shopcustompage_coupon_condition_demo')}</p>
+        <p class='coupon-get-1'>{:lang('shopcustompage_get_now')}</p>
+    </div>
+    <div class='coupons-item-1 wst-flex-column wst-ac'>
+        <p class='coupon-value-content-1'>{:lang('currency_symbol')}<span class='coupon-value-1'>100</span></p>
+        <p class='coupon-condition-1'>{:lang('shopcustompage_coupon_condition_demo')}</p>
+        <p class='coupon-get-1'>{:lang('shopcustompage_get_now')}</p>
+    </div>
+</div>
+<div class="none couponHtml2">
+    <div class='coupons-item-2 wst-flex-row wst-jc wst-ac'>
+        <p class='coupon-value-content-2'>{:lang('currency_symbol')}<span class='coupon-value-2'>100</span></p>
+        <div class='wst-flex-column wst-ac coupon-area'>
+            <p class='coupon-condition-2'>{:lang('shopcustompage_coupon_condition_demo')}</p>
+            <p class='coupon-get-2'>{:lang('shopcustompage_get_now')}</p>
+        </div>
+    </div>
+    <div class='coupons-item-2 wst-flex-row wst-jc wst-ac'>
+        <p class='coupon-value-content-2'>{:lang('currency_symbol')}<span class='coupon-value-2'>100</span></p>
+        <div class='wst-flex-column wst-ac coupon-area'>
+            <p class='coupon-condition-2'>{:lang('shopcustompage_coupon_condition_demo')}</p>
+            <p class='coupon-get-2'>{:lang('shopcustompage_get_now')}</p>
+        </div>
+    </div>
+</div>
+<div class="none goodsCatsHtml">
+    <div class='attr-content-goods-group-item'>
+        <label class='d-label'>{:lang('shopcustompage_goods_cat')}</label>
+        <div>
+            <select class='ipt goodsCats' >
+                <option value="">-{:lang('shopcustompage_belong_cat')}-</option>
+                {volist name=":WSTGoodsCats(0)" id="voo"}
+                <option value="{$voo['catId']}">{$voo['catName']}</option>
+                {/volist}
+            </select>
+        </div>
+    </div>
+</div>
+<div id='goodBox'>
+    <div class="wst-toolbar" style="display:none;">
+        <input type="text" name="goodsName"  placeholder="{:lang('shopcustompage_goods_name')}" id="goodsName" class='j-ipt'/>
+        <button class="btn btn-primary" onclick='javascript:loadGrid(0)'><i class='fa fa-search'></i>{:lang('shopcustompage_query')}</button>
+        <div style='clear:both'></div>
+    </div>
+    <div class='wst-grid'>
+        <div id="mmg" class="mmg layui-form"></div>
+        <div id="pg" style="text-align: right;"></div>
+    </div>
+</div>
+<div id='goodBox2' style='display:none'>
+    <div class="wst-flex-row wst-jsb">
+        <div class='goods-attr-left'>
+            <div class='goods-attr-item'>
+                <div class='goods-attr-item-title'>{:lang('shopcustompage_goods_cat')}</div>
+                <div>
+                    {volist name=":WSTShopCats(0)" id="vo"}
+                    <input type="hidden" class='hidden-cats-id' value="{if $key==0}{$vo['catId']}{/if}">
+                    <div class="goods-select-cat-name"><input type="radio" name='goods-select-cat-name' cats-id="{$vo['catId']}"><span class="cat-name-text">{$vo['catName']}</span></div>
+                    {/volist}
+                </div>
+            </div>
+        </div>
+        <div class='goods-attr-right'>
+            <div class='goods-attr-item'>
+                <div class='goods-attr-item-title'>{:lang('shopcustompage_goods_tag')}</div>
+                <div class='goods-attr-item-content1'>
+                    <input type='radio' value='0' name='goods-tag'  id='is-none'  />
+                    <label for='is-none' class='g-tag-label'>{:lang('shopcustompage_goods_tag1')}</label>
+                    <input type='radio' value='1' name='goods-tag'  id='is-recom'  />
+                    <label for='is-recom' class='g-tag-label'>{:lang('shopcustompage_goods_tag2')}</label>
+                    <input type='radio' value='2' name='goods-tag' id='is-new' />
+                    <label for='is-new' class='g-tag-label'>{:lang('shopcustompage_goods_tag3')}</label>
+                    <input type='radio' value='3' name='goods-tag' id='is-hot' />
+                    <label for='is-hot' class='g-tag-label'>{:lang('shopcustompage_goods_tag4')}</label>
+                </div>
+            </div>
+            <div class='goods-attr-item'>
+                <div class='goods-attr-item-title'>{:lang('shopcustompage_price')}</div>
+                <div class='goods-attr-item-content2'>
+                    <input type='text' value='' placeholder="{:lang('shopcustompage_min_price')}" class='goods-min-price' onkeyup='javascript:WST.isChinese(this,1)' onkeypress='return WST.isNumberdoteKey(event)' />
+                    <span>{:lang('shopcustompage_to')}</span>
+                    <input type='text' value='' placeholder="{:lang('shopcustompage_max_price')}" class='goods-max-price' onkeyup='javascript:WST.isChinese(this,1)' onkeypress='return WST.isNumberdoteKey(event)' />
+                    <span>{:lang('shopcustompage_price_unit')}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id='goodBox3' style='display:none'>
+    <div class="wst-flex-row wst-jsb">
+        <div class='goods-attr-left'>
+            <div class='goods-attr-item'>
+                <div class='goods-attr-item-title'>{:lang('shopcustompage_goods_cat')}</div>
+                <div>
+                    {if $floors!=''}
+                        {volist name="floors" id="vo" key="k1"}
+                            <div class="floor-goods-select-cat-name"><input type="radio" name='floor-goods-select-cat-name' is-child='0' cats-id="{$vo['catId']}"><span class="cat-name-text">{$vo['catName']}</span></div>
+                            <div>
+                                {volist name="vo['children']" id="vo2" key="k2"}
+                                    <input type="hidden" class='hidden-child-cats-id' value="{if $k1==1 && $k2==1}{$vo['catId']}_{$vo2['catId']}{/if}">
+                                    <div class="floor-goods-select-child-cat-name"><input type="radio" name='floor-goods-select-cat-name' is-child='1' cats-id="{$vo['catId']}_{$vo2['catId']}"><span class="cat-name-text">{$vo2['catName']}</span></div>
+                                {/volist}
+                            </div>
+                        {/volist}
+                    {/if}
+                </div>
+            </div>
+        </div>
+        <div class='goods-attr-right'>
+            <div class='goods-attr-item'>
+                <div class='goods-attr-item-title'>{:lang('shopcustompage_goods_tag')}</div>
+                <div class='goods-attr-item-content1'>
+                    <input type='radio' value='0' name='floor-goods-tag'  id='floor-is-none'  />
+                    <label for='floor-is-none' class='g-tag-label'>{:lang('shopcustompage_goods_tag1')}</label>
+                    <input type='radio' value='1' name='floor-goods-tag'  id='floor-is-recom'  />
+                    <label for='floor-is-recom' class='g-tag-label'>{:lang('shopcustompage_goods_tag2')}</label>
+                    <input type='radio' value='2' name='floor-goods-tag' id='floor-is-new' />
+                    <label for='floor-is-new' class='g-tag-label'>{:lang('shopcustompage_goods_tag3')}</label>
+                    <input type='radio' value='3' name='floor-goods-tag' id='floor-is-hot' />
+                    <label for='floor-is-hot' class='g-tag-label'>{:lang('shopcustompage_goods_tag4')}</label>
+                </div>
+            </div>
+            <div class='goods-attr-item'>
+                <div class='goods-attr-item-title'>{:lang('shopcustompage_price')}</div>
+                <div class='goods-attr-item-content2'>
+                    <input type='text' value='' placeholder="{:lang('shopcustompage_min_price')}" class='floor-goods-min-price' onkeyup='javascript:WST.isChinese(this,1)' onkeypress='return WST.isNumberdoteKey(event)' />
+                    <span>{:lang('shopcustompage_to')}</span>
+                    <input type='text' value='' placeholder="{:lang('shopcustompage_max_price')}" class='floor-goods-max-price' onkeyup='javascript:WST.isChinese(this,1)' onkeypress='return WST.isNumberdoteKey(event)' />
+                    <span>{:lang('shopcustompage_price_unit')}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id='couponBox'>
+    <div class='wst-grid'>
+        <div id="mmg-coupon" class="mmg-coupon layui-form"></div>
+        <div id="pg-coupon" style="text-align: right;"></div>
+    </div>
+</div>
+<div id='newBox'>
+    <div class='wst-grid'>
+        <div id="mmg-new" class="mmg-new layui-form"></div>
+        <div id="pg-new" style="text-align: right;"></div>
+    </div>
+</div>
+<div class='marketingType' style='display:none'>
+    <select name='marketing-type' onchange='changeMarketingType(this)'>
+        <option value="0">{:lang('shopcustompage_select')}</option>
+        {if WSTConf('WST_ADDONS.seckill')!=''}
+        <option value="Seckill">{:lang('shopcustompage_seckill')}</option>
+        {/if}
+        {if WSTConf('WST_ADDONS.auction')!=''}
+        <option value="Auction">{:lang('shopcustompage_auction')}</option>
+        {/if}
+    </select>
+</div>
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script src="__STATIC__/plugins/colpick/js/colpick.js"></script>
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js'></script>
+<script type='text/javascript' src='__STATIC__/plugins/dragula/dragula.js'></script>
+<script type='text/javascript' src='__STATIC__/plugins/dragula/example.min.js'></script>
+<script type='text/javascript' src='__STATIC__/plugins/range/jquery.range.js'></script>
+<script type="text/javascript" src="__STATIC__/plugins/kindeditor/NKeditor-all.js"></script>
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ROOT__/addons/shopcustompage/view/shop/custompagedecoration/homecustompagedecoration.js?v={$v}" type="text/javascript"></script>
+{/block}

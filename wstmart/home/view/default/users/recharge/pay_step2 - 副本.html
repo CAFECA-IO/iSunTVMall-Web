@@ -1,0 +1,52 @@
+{extend name="default/users/base" /}
+{block name="title"}{:lang('money_management')}-{:lang('recharge')}{__block__}{/block}
+{block name="css"}
+<link href="__STYLE__/css/recharge-{$lang}.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="content"}
+<div class='wst-user-content'>
+	
+    <div class="pay-sbox-head">
+    	<div class="wst-user-head"><span>{:lang('recharge')}</span></div>
+    </div>
+    <div style="padding-top: 27px;">
+    	<div class="pay-tip2"></div>
+    </div>
+    <div class='pay-sbox' >
+    	<div class="qrcode-box">
+		    <div class="pbox">
+	        	{:lang('scan_qr_pay_recharge_desc')}：<span class="wst-fred">{:lang('goods_price_unit')}{$needPay}</span>
+	        </div>
+	        <div id="qrcode" class="wst-qrcode"></div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__STYLE__/js/qrcode.js?v={$v}'></script>
+<script>
+	{if condition="$out_trade_no != '' and $code_url!=''"}
+		var qrcode = new QRCode(document.getElementById("qrcode"), {
+			width : 260,
+			height : 260
+		});
+		qrcode.makeCode("{$code_url}");
+	{/if}
+	setInterval(function(){
+		var params = {};
+			params.trade_no = "{$out_trade_no}";
+			
+		$.ajax({
+			url:"{:url('home/weixinpays/getPayStatus')}",
+			data:params,
+			type:"POST",
+			dataType:"json",
+			success:function(data){
+				if(data.status==1){
+					location.href = "{:url('home/logmoneys/usermoneys')}";
+				}
+			}
+		});
+	},1500);
+</script>
+{/block}

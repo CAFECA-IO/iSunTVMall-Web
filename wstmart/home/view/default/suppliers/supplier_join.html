@@ -1,0 +1,123 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('supplier_enter')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="header"}
+{/block}
+{block name="main"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link href="__STYLE__/suppliers/apply-{$lang}.css?v={$v}" rel="stylesheet">
+<style type="text/css">
+  body{background:#fff}
+</style>
+<div class="wst-white-bg">
+    <div class="wst-container"> 
+        <div style="padding-bottom: 10px;background-color: #fff;">
+        <div>
+            <a href='{$Request.root.true}' title="{:WSTConf('CONF.mallName')}" >
+            <div class="img-banner" style="float:left;width:200px;">
+                <img src="__ROOT__/{:WSTConf('CONF.mallLogo')}" style="height:100px;">
+            </div>
+            </a>        
+            <div class="apply-header-right">
+                <ul class="apply-nav">
+                    <li class="curr"><a href="{:url('home/suppliers/join')}">{:lang('label_supp_qq_tips3')}</a></li>
+                    {volist name="$articles" id="article"}
+                    {php}if($article['articleId']==405)continue;{/php}
+                    <li onclick="checkApply(this,{$article['articleId']});" data="{$article['articleTitle']}"><a href="javascript:;">{$article['articleTitle']}</a></li>
+                    {/volist}
+                </ul>
+                <div class="tel">{:WSTConf('CONF.serviceTel')}</div>
+            </div>
+            <div class="wst-clear"></div>
+        </div>
+        </div>
+    </div>
+</div>
+<div id="apply-home" class="apply-item">
+    <div class='apply-banner'>
+        <div class='wst-container'>
+            <div class='apply-msg-box'>
+                <h3>{:lang('user_greetings',[session('WST_USER.loginName')])}：</h3>
+                <div class='title'>{:lang('enter_welcome_mall',[WSTConf('CONF.mallName')])}</div>
+                <ul>
+                    <li>
+                    {:lang('apply_enter_btn_desc',['<br/>','<span style="color:#FFB748">'.lang('apply_enter').'</span>'])}
+                    </li>
+                    <li>
+                    {:lang('apply_enter_btn_desc',['<br/>','<span style="color:#FFB748">'.lang('enter_progress_check').'</span>'])}
+                    </li>
+                </ul>
+                
+            </div>
+        </div>
+        <div class="apply-panel" style="position:absolute;top:0px;">
+            <div class="banner-auto">
+                <div class="s-b-tit">
+                    <h3>{:lang('enter_now_start_ecommerce')}</h3>
+                </div>
+                <div class="s-b-btn">
+                    
+                     <a href='{:Url("home/suppliers/joinStepNext",'id='.$flowId)}' class="im-apply" ectype="url_merchants_steps">{:lang('apply_enter')}</a>
+                    
+                    <a href='{:Url("home/suppliers/checkapplystatus")}' class="check-prog" ectype="url_merchants_steps">{:lang('enter_progress_check')}</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="wst-slide" id="wst-slide">
+
+            <ul class="wst-slide-items" style='min-width: 1200px;height: 420px;'>
+                {wst:ads code="ads-supplier-apply" cache='86400'}
+                   <li style="background: url(__ROOT__/{$vo.adFile}) no-repeat  scroll center top;background-size:cover;height:350px;"></li>
+                {/wst:ads}
+            </ul>
+            <div class="wst-slide-numbox">
+                <div class="wst-slide-controls">
+                    {wst:ads code="ads-supplier-apply" cache='86400' key='k'}
+                        {if condition="$k+1 eq 1"}
+                             <span class="curr">{$k+1}</span>
+                        {else/}
+                             <span class="">{$k+1}</span>
+                        {/if}
+                    {/wst:ads}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="apply-tips">
+      <div class="wst-container">
+         <span class="title"><i></i>
+         </span><span class="content">{:WSTConf('CONF.mallName')}{:lang('supplier_enter_intimate_tip')}</span>
+      </div>
+    </div>
+    <div class="wst-container apply-article">
+        {$articles['405']['articleContent']|htmlspecialchars_decode}
+    </div>
+    </div>
+       
+    <div class="wst-container">
+        <div class="apply-step-nav wst-white-bg">
+            <div class="title">
+                <h3></h3>
+            </div>
+            <div class="apply-r-btn">
+                <a href='{:Url("home/suppliers/checkapplystatus")}' class="applybnt">{:lang('want_enter')}</a>
+                <a href='{:Url("home/suppliers/checkapplystatus")}' class="check-prog">{:lang('enter_progress_check')}</a>
+            </div>
+        </div>
+        {volist name="$articles" id="article"}
+        {php}if($article['articleId']==405)continue;{/php}
+        <div id="apply-article-{$article['articleId']}" class="apply-item apply-article" style="position: relative;padding:15px;background: #fff;display:none"> 
+            {$article['articleContent']|htmlspecialchars_decode}
+        </div>
+        {/volist}
+    </div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script type='text/javascript' src='__STYLE__/suppliers/apply.js?v={$v}'></script>
+<script>
+$(function(){
+    WST.slides('.wst-slide');
+})
+</script>
+{/block}

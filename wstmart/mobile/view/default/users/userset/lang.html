@@ -1,0 +1,61 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('user_settings')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/userset.css?v={$v}">
+<style type="text/css">
+.fr-list{height:0.58rem;line-height: 0.58rem;background:#fff;border-bottom:1px solid #f2f2f2;    padding: 0 0.12rem;}
+.wst-fr-box{position: fixed;z-index: 9999;left:0px;bottom: -5.32rem;width:100%;min-height:40%;background-color: #f6f6f8;font-size: 0.15rem;border-radius:0.1rem 0.1rem 0 0;color:#333;}
+.wst-fr-box .title{position: relative;height:0.49rem;line-height:0.49rem;background-color: #ffffff;border-radius:0.1rem 0.1rem 0 0;}
+.wst-fr-box .title span{float: left;width: 100%;height:0.49rem;line-height:0.49rem;text-align: center;font-size: 0.15rem;color:#333;font-weight: 600;}
+.wst-fr-box .title i,.wst-cart-box .title i{position: absolute;right:5px;top:-2px;font-size: 27px;}
+.wst-fr-box .content{padding:0 0.12rem;background:#fff;height:2.32rem;overflow-y: scroll;}
+.wst-list-infose1{width:90%;padding-top: 8px;padding-bottom: 8px;position: relative;}
+.wst-list-infose1 span{width:100%;height: 20px;line-height: 20px;font-size:0.15rem;color:#333;}
+.wst-list-infose1 i{display: block;width:0.24rem;height: 0.24rem;margin-right:0.1rem;}
+
+</style>
+{/block}
+{block name="header"}
+	{php}$Title = lang('user_settings');{/php}
+	{include file="default/header" /}
+{/block}
+{block name="footer"}{/block}
+{block name="main"}
+    <section class="ui-container" >
+    	<ul class="ui-list ui-list-text ui-list-link wst-se-l" style="margin-top: 0px;">
+    	  
+		    <div class="content" id="content">
+              	<div class="fr-list wst-flex-row wst-jsb wst-ac" data-lang='zh-cn' onclick="javascript:onSwitch(this);">
+	             	<div class="wst-list-infose1 wst-flex-row wst-ac"><span>{:lang('lang_zhcn')}</span></div>
+				 	<i class="ui-icon-push {$lang=='zh-cn'?'ui-icon-checked-s wst-active':'ui-icon-unchecked-s'}"></i>
+	          	</div>
+	          	<div class="fr-list wst-flex-row wst-jsb wst-ac" data-lang='zh-tw' onclick="javascript:onSwitch(this);">
+	             	<div class="wst-list-infose1 wst-flex-row wst-ac"><span>{:lang('lang_zhtw')}</span></div>
+				 	<i class="ui-icon-push {$lang=='zh-tw'?'ui-icon-checked-s wst-active':'ui-icon-unchecked-s'}"></i>
+	          	</div>
+	        	<div class="fr-list wst-flex-row wst-jsb wst-ac" data-lang='en' onclick="javascript:onSwitch(this);">
+	             	<div class="wst-list-infose1 wst-flex-row wst-ac"><span>{:lang('lang_en')}</span></div>
+				 	<i class="ui-icon-push {$lang=='en'?'ui-icon-checked-s wst-active':'ui-icon-unchecked-s'}"></i>
+	          	</div>
+         	</div>
+		</ul>
+		<div class="ui-btn-wrap logout">
+		    <button class="ui-btn-lg ui-btn-danger logout-btn" onclick="javascript:changeLang();">
+		       	{:lang('setting')}
+		    </button>
+		</div>
+    </section>
+{/block}
+{block name="js"}
+<script type="text/javascript">
+var lang = '{$lang}';
+function onSwitch(obj){
+	lang = $(obj).data('lang');
+	$(obj).children('.ui-icon-push').removeClass('ui-icon-unchecked-s').addClass('ui-icon-checked-s wst-active');
+	$(obj).siblings().children('.ui-icon-push').removeClass('ui-icon-checked-s wst-active').addClass('ui-icon-unchecked-s');
+}
+function changeLang(){
+	location.href='{:url('mobile/index/index')}?lang='+lang;
+}
+</script>
+{/block}

@@ -1,0 +1,81 @@
+{extend name="$LAYOUT_HOME_BASE" /}
+{block name="title"}{:lang('presale_pay_title')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="meta"}
+{/block}
+{block name="css"}
+<link href="__ROOT__/addons/presale/view/home/index/css/carts-{$lang}.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="top"}
+	{include file="$LAYOUT_HOME_TOP" /}
+{/block}
+
+{block name="header"}
+	{include file="$LAYOUT_HOME_HEADER" /}
+{/block}
+{block name="main"}
+<div class="wst-container">
+	<input type="hidden" id="token" value='{:WSTConf("CONF.pwdModulusKey")}'/>
+    <div class="pay-sbox-head">
+    	<a href='{$Request.root.true}'>{:lang('presale_home_page')}</a>&nbsp;&gt;&nbsp;{:lang('presale_pay')}
+    </div>
+    <div>
+    	<div class="pay-tip2"></div>
+    </div>
+    <div class='pay-sbox' >
+    	<div class="balance-box">
+    	    <div class='tips-box'>{:lang('presale_wait_pay_order_total_money')}：<span class="wst-fred">{:lang('currency_symbol')}{$needPay}</span></div>
+		    <div class='wst-wallet-box'>
+	        	<div class='wst-wallte-item'>
+	        	{:lang('presale_wallet_balance')}：<span class="wst-fred">{:lang('currency_symbol')}{$userMoney}</span>
+	        	</div>
+                <div style='float:right;'>{:lang('presale_pay')}：<span class="wst-fred">{:lang('currency_symbol')}{$needPay}</span></div>
+	        </div>
+	        {if ($userMoney>$needPay)}
+	        <div class="pbox">
+	            <input type='hidden' id='pkey' value='{$pkey}' class='j-ipt' autocomplete="off" />
+	            {if ($hasPayPwd==1)}
+	        	{:lang('presale_pay_password')}：<input type='password' class='u-query j-ipt' id='payPwd'>
+	        	<a class='pbox-tip' target='_blank' href='{:url("home/users/editPayPass")}'>{:lang('presale_forget_password')}</a>
+	        	{else}
+	        	{:lang('presale_please_set_pay_password')}
+	        	<div id="paypwd-box" class="j-paypwd-box" style="display:none;padding:20px;">
+					<table class="wst-table">
+						<tr class="wst-login-tr">
+						    <td align='right'>{:lang('presale_pay_password')}：</td>
+							<td><input type="password" class='j-ipt' id="payPwd" name="payPwd" style="width:250px;" maxlength="6" aria-required="true"></td>
+						</tr>
+						<tr class="wst-login-tr">
+						    <td align='right'>{:lang('presale_confirm_pay_password')}：</td>
+							<td><input type="password" class="ipt n-invalid" id="reNewPass" name="reNewPass" style="width:250px;" maxlength="6" aria-required="true" aria-invalid="true"></td>
+						</tr>
+
+					</table>
+				</div>
+	        	{/if}
+
+	        </div>
+	        <div class="pbox2">
+	        {if ($hasPayPwd==1)}
+	        	<button class="pay-btn" type="button" style="width:100px;height: 30px;" onclick='javascript:payByWallet()'>{:lang('presale_confirm_pay')}</button>
+        	{else}
+        	<button class="pay-btn" type="button" style="width:100px;height: 30px;" onclick='javascript:setPaypwd()'>{:lang('presale_goto_set_pay_password')}</button>
+        	{/if}
+
+	        </div>
+	        {else}
+	        <div class="pbox">
+	         	<img src='__STYLE__/img/icon_jinggao.png'>&nbsp;{:lang('presale_wallet_balance_less_cannot_pay')}<a class='pbox-tip' href='javascript:void(0)' onclick="javascript:history.go(-1)">{:lang('presale_back_page')}</a>。
+	        </div>
+	        {/if}
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footer"}
+	{include file="$LAYOUT_HOME_FOOTER" /}
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type="text/javascript" src="__STATIC__/js/rsa.js"></script>
+<script type='text/javascript' src='__ROOT__/addons/presale/view/home/index/js/carts.js?v={$v}'></script>
+{/block}

@@ -1,0 +1,158 @@
+{extend name="base" /}
+{block name="css"}
+{/block}
+{block name="js"}
+<script src="__ADMIN__/informs/informs.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+  <ul class="layui-tab-title">
+    <li class="layui-this">{:lang('label_informs_title')}</li>
+  </ul>
+  <div class="layui-tab-content" style="margin:10px;">
+    <div class="layui-tab-item layui-show">
+      <!-- 举报信息 -->
+    <div class='order-box'>
+      <table class='wst-form wst-table-1'>
+         <tr>
+           <td class='head-ititle'>{:lang('label_informs_info')}</td>
+         </tr>
+         <tr>
+           <th>{:lang('label_informs_user')}：</th>
+           <td>{$data['userName']}</td>
+         </tr>
+         <tr>
+            <th>{:lang('label_informs_info')}：</th>
+            <td>
+              {php}$reason = WSTDatas('INFORMS_TYPE',$data['informType']);{/php}
+              {$reason['dataName']}
+            </td>
+         </tr>
+        
+         <tr>
+            <th>{:lang('label_informs_content')}：</th>
+            <td class='line-break'>{$data['informContent']}</td>
+         </tr>
+         <tr>
+            <th>{:lang('label_informs_annex')}：</th>
+            <td id="photos-inform">
+              {if !empty($data['informAnnex'])}
+              {volist name="$data['informAnnex']" id="annex"}
+                <a href="javascript:void(0)">
+                <img  layer-src="__RESOURCE_PATH__/{$annex}" width="100" height="100" src="__RESOURCE_PATH__/{$annex}" />
+                </a>
+              {/volist}
+              {/if}
+             </td>
+         </tr>
+
+         <tr>
+            <th>{:lang('label_informs_time')}：</th>
+            <td>{$data['informTime']}</td>
+         </tr>
+      </table>
+   </div>
+  {if condition="$data['informStatus'] eq 1 OR $data['informStatus'] eq 2 OR $data['informStatus'] eq 3"} 
+   <table border='0' class='wst-form wst-table-1' style='margin-top:15px;'>
+           <tr>
+              <td colspan='2' class='head'>{:lang('label_informs_time')}</td>
+           </tr>
+           <tr>
+              <th width='80'>{:lang('label_informs_result')}：</th>
+              <td>
+              {if condition="$data['informStatus'] eq 0"}
+                                          {:lang('label_informs_result1')}
+              {elseif condition="$data['informStatus'] eq 1"/}
+                                          {:lang('label_informs_result2')}
+              {elseif condition="$data['informStatus'] eq 2 "/}
+                                          {:lang('label_informs_result3')}
+               {elseif condition="$data['informStatus'] eq 3 "/}
+                                          {:lang('label_informs_result4')}
+              {/if}
+              </td>
+           </tr>
+           {if condition="$data['informStatus'] eq 1 OR $data['informStatus'] eq 2 OR $data['informStatus'] eq 3"}
+           <tr>
+              <th valign='top'>{:lang('label_informs_result_info')}：</th>
+              <td class='line-break'>
+               {$data['respondContent']}
+              </td>
+           </tr>
+           {/if}
+           {if condition="$data['informStatus'] eq 1 OR $data['informStatus'] eq 2 OR $data['informStatus'] eq 3"}
+           <tr>
+              <th>{:lang('label_informs_handle_time')}：</th>
+              <td>{$data['finalHandleTime']}&nbsp;</td>
+           </tr>
+           {/if}
+           <tr>
+              <td colspan='2' style='text-align:center;'>
+                <button type="button" class="btn" onclick="javascript:history.go(-1)"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+              </td>
+           </tr>
+        </table>
+    {/if}
+   <!--举报结果 -->
+   {if condition="$data['informStatus'] eq 0"}
+   <div class='order-box' style="border-bottom: 1px solid transparent;">
+      <table class='wst-form wst-table-1'>
+         <tr>
+           <td class='head-ititle'>{:lang('label_informs_result')}</td>
+         </tr>
+       <tr>
+          <td align='right' valign='right' width='120'>{:lang('label_informs_flow')}：</td>
+          <td style='color:red'>
+              {:WSTLangComplainStatus($data['informStatus'])}
+          </td>
+       </tr>
+           <tr>
+           <th>{:lang('label_informs_result')}<font color='red'>*</font>：</th>
+           <td class='layui-form'>
+             	<li>
+             <label>
+               <input type='radio' name='informStatus' class='ipt' value='1' title='{:lang('label_informs_result2_tips')}'/>
+             </label>
+              </li>
+              <li>
+             <label>
+               <input type='radio' name='informStatus' class='ipt' value='2' title='{:lang('label_informs_result3_tips')}'/>
+             </label>
+              </li>
+              <li>
+             <label>
+               <input type='radio' name='informStatus' class='ipt' value='3' title='{:lang('label_informs_result4_tips')}'/>
+             </label>
+              </li>
+           </td>
+        </tr>
+       <tr>
+        <th>{:lang('label_informs_handle_txt')}<font color='red'>*</font>：</th>
+          <td class='line-break'>
+             <textarea id='finalResult' style='height:150px;width:100%' placeholder=''></textarea>
+          </td>
+       </tr>
+   
+       
+      <tr>
+         <td colspan='2' align='center' >
+          <button type="button" class="btn btn-primary btn-mright"style="margin-top:10px ;" onclick='javascript:finalHandle({$data["informId"]},{$p})'><i class="fa fa-gavel"></i>
+{:lang('handle')}</button>
+          <button type="button" class="btn"style="margin-top:10px ;" onclick="javascript:location.href='{:Url(\'admin/informs/index\',\'p=\'.$p)}'"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+         </td>
+      </tr>
+        
+      </table>
+    </div>
+    {/if}
+  </div>
+<div>
+   </div>
+</div>
+</div>
+<script>
+$(function(){
+  parent.showImg({photos: $('#photos-inform')});
+});
+</script>
+
+{/block}

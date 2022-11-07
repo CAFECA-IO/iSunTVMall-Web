@@ -1,0 +1,88 @@
+{extend name="default/base" /}
+{block name="main"}
+<div class="wst-supplier-head"><span>{:lang('label_settlement_detail')}</span><a href="<?=url('supplier/settlements/index');?>">{:lang('back')}</a></div>
+<div class="f-clear"></div>
+<div class="wst-body">
+    <form id='editform' autocomplete='off'>
+        <div class="wst-tab-item" style="position: relative;">
+           <table class='wst-form'>
+			  <tr>
+			     <td class='head-ititle' colspan='2'>{:lang('label_settlement_info')}</td>
+			  </tr>
+			  <tr>
+			     <th width='120'>{:lang('label_settlement_no')}：</th>
+			     <td>{$object['settlementNo']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_settlement_money')}：</th>
+			     <td>{:lang('currency_symbol')}{$object['settlementMoney']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_settlement_commission_fee')}：</th>
+			     <td>{:lang('currency_symbol')}{$object['commissionFee']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_settlement_back_money')}：</th>
+			     <td>{:lang('currency_symbol')}{$object['backMoney']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_settlement_create_time')}：</th>
+			     <td>{$object['createTime']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_settlement_settle_status')}：</th>
+			     <td>
+			     {if $object['settlementStatus']==1}
+			     {:lang('yes_settle')}
+			     {else}
+				 {:lang('no_settle')}
+			     {/if}
+			     </td>
+			  </tr>
+			  {if $object['settlementStatus']==1}
+			  <tr>
+			     <th>{:lang('label_settlement_time')}：</th>
+			     <td>{$object['settlementTime']}</td>
+			  </tr>
+			  <tr>
+			     <th>{:lang('label_settlement_remark')}：</th>
+			     <td>{$object['remarks']}</td>
+			  </tr>
+			  {/if}
+			  <tr>
+			     <td colspan='2' align="center">
+			     	<table class='wst-list' style='margin-left:5px;'>
+			     	   <thead>
+			     		<tr>
+			     			<th>{:lang("serial_number")}</th>
+			     			<th>{:lang('label_order_no')}</th>
+			     			<th>{:lang('label_pay_type')}</th>
+			     			<th>{:lang('label_goods_money')}</th>
+			     			<th>{:lang('label_deliver_money')}</th>
+			     			<th>{:lang('label_settlement_total_money')}</th>
+			     			<th>{:lang('label_real_total_money')}</th>
+			     			<th>{:lang('label_settlement_commission')}</th>
+			     			<th>{:lang('label_pay_time')}</th>
+			     		</tr>
+			     		</thead>
+			     		{volist name='$object["list"]' id='vo'}
+		                <tr>
+		                   <td>{$key+1}</td>
+		                   <td>{$vo['orderNo']}</td>
+		                   <td>{:WSTLangPayType($vo['payType'])}</td>
+		                   <td>{:lang('currency_symbol')}{$vo['goodsMoney']}</td>
+		                   <td>{:lang('currency_symbol')}{$vo['deliverMoney']}</td>
+		                   <td>{:lang('currency_symbol')}{$vo['totalMoney']}</td>
+		                   <td>{:lang('currency_symbol')}{$vo['realTotalMoney']}</td>
+		                   <td>{:lang('currency_symbol')}{$vo['commissionFee']}</td>
+		                   <td>{$vo['createTime']}</td>
+		                </tr>
+		                {/volist}
+			     	</table>
+			     </td>
+			  </tr>
+           </table>
+        </div>
+     </form>
+</div>
+{/block}

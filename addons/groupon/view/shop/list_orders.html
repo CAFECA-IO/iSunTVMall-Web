@@ -1,0 +1,107 @@
+{extend name="$LAYOUT_SHOP_BASE" /}
+{block name="main"}
+<div class='wst-toolbar'>
+     <input type='hidden' id='grouponId' class="s-ipt" value='{$grouponId}'/>
+     <input type='text' class="s-ipt" id='orderNo' placeholder="{:lang('group_order_no')}"/>
+     <select name="payType" id="payType" class="s-ipt">
+        <option value="-1">group_pay_type</option>
+        <option value="0">{:lang('group_cash_on_delivery')}</option>
+        <option value="1">{:lang('group_online_payment')}</option>
+     </select>
+     <select name="deliverType" id="deliverType" class="s-ipt">
+        <option value="-1">{:lang('group_delivery_mode')}</option>
+        <option value="0">{:lang('group_provide_home')}</option>
+        <option value="1">{:lang('group_self_extraction')}</option>
+     </select>
+     <button class="btn btn-primary" onclick="javascript:listByPage()" type='button'><i class="fa fa-search"></i>{:lang('group_query')}</button>
+     <button class='btn f-right' type='button' onclick="javascript:history.go(-1)"><i class="fa fa-angle-double-left"></i>{:lang('group_back')}</button>
+  </div>
+  <div class='wst-shop-content'>
+    <table class='wst-order-list'>
+       <thead>
+        <tr class='head'>
+           <th>{:lang('group_order_detail')}</th>
+           <th>{:lang('group_pay_type_delivery_info')}</th>
+           <th>{:lang('group_goods_money')}</th>
+           <th>{:lang('group_operation')}</th>
+        </tr>
+     </thead>
+     <tbody id='loadingBdy'>
+         <tr id='loading' class='empty-row' style='display:none'>
+              <td colspan='4'><img src="__STYLE__/img/loading.gif">{:lang('group_loading_data')}</td>
+         </tr>
+       </tbody>
+       <script id="tblist" type="text/html">
+       {{# for(var i = 0; i < d.length; i++){ }}
+       <tbody class="j-order-row">
+         <tr class='empty-row'>
+            <td colspan='4'>&nbsp;</td>
+         </tr>
+         <tr class='order-head'>
+            <td colspan='4' align='right'>
+              <div class='time'>{{d[i].createTime}}</div>
+              <div class='orderno'>{:lang('group_order_no')}：{{d[i].orderNo}}</div>
+              <div>{{d[i].status}}</div>
+            </td>
+         </tr>
+         {{#
+          var tmp = null,rows = d[i]['list'].length;
+          for(var j = 0; j < d[i]['list'].length; j++){
+             tmp = d[i]['list'][j];
+         }}
+         <tr class='goods-box'>
+            <td>
+               <div class='goods-img'>
+                <a href="{{WST.U('home/goods/detail','goodsId='+tmp.goodsId)}}" target='_blank'>
+                <img data-original='__RESOURCE_PATH__/{{tmp.goodsImg}}'  title='{{tmp.goodsName}}' class="gImg">
+                </a>
+               </div>
+               <div class='goods-name'>
+                 <div>{{tmp.goodsName}}</div>
+                 <div>{{tmp.goodsSpecNames}}</div>
+               </div>
+               <div class='goods-extra'>{{tmp.goodsPrice}} x {{tmp.goodsNum}}</div>
+            </td>
+            {{# if(j==0){ }}
+            <td rowspan="{{rows}}">
+                <div>{{d[i].payTypeName}}</div>
+                <div>{{d[i].deliverType}}</div>
+            </td>
+            <td rowspan="{{rows}}">
+                <div>{:lang('group_goods_money')}：{:lang('currency_symbol')}{{d[i].goodsMoney}}</div>
+                <div class='line'>{:lang('group_freight')}：{:lang('currency_symbol')}{{d[i].deliverMoney}}</div>
+                <div>{:lang('group_real_total_money')}：{:lang('currency_symbol')}{{d[i].realTotalMoney}}</div>
+            </td>
+            <td rowspan="{{rows}}">
+        {{#if(d[i].isAppraise==1){}}
+        <div style="text-align:center;">{:lang('group_has_appraise')}</div>
+        {{#}else{}}
+        <div style="text-align:center;">{:lang('group_not_appraise')}</div>
+        {{#}}}
+         <div><a target='blank' href='{{WST.U("shop/orders/orderPrint","id="+d[i].orderId)}}'>{:lang('group_print_order2')}</a></div>
+                <div><a href='#none' onclick='view({{d[i].orderId}})'>{:lang('group_order_detail2')}</a></div>
+            </td>
+            {{#}}}
+         </tr>
+         {{# } }}
+       </tbody>
+       {{# } }}
+       </script>
+       <tr class='empty-row'>
+            <td colspan='4' id='pager' align="center" style='padding:5px 0px 5px 0px'>&nbsp;</td>
+       </tr>
+    </table>
+  </div>
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type="text/javascript" src="__STATIC__/js/jquery.min.js?v={$v}"></script>
+<script type="text/javascript" src="__STATIC__/plugins/layer/layer.js?v={$v}"></script>
+<script type='text/javascript' src='__ROOT__/static/plugins/lazyload/jquery.lazyload.min.js?v={$v}'></script>
+<script type="text/javascript" src="__ROOT__/addons/groupon/view/shop/shop.js?v={$v}"></script>
+<script>
+$(function(){
+  listByPage();
+})
+</script>
+{/block}

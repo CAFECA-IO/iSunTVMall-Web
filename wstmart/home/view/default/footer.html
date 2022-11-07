@@ -1,0 +1,94 @@
+<div class="footer-line"></div>
+
+<div class="wst-footer-help">
+	<div class="wst-footer">
+		<div class="wst-footer-hp-ck1">
+			{volist name=":WSTHelps(5,6)" id="vo1"}
+			<div class="wst-footer-wz-ca">
+				<div class="wst-footer-wz-pt">
+					<span class="wst-footer-wz-pn">{$vo1["catName"]}</span>
+					<ul style='margin-left:25px;'>
+						{volist name="vo1['articlecats']" id="vo2"}
+						<li style='list-style:disc;color:#999;font-size:13px;'>
+						<a href="{:Url('Home/Helpcenter/view',array('id'=>$vo2['articleId']))}">{:WSTMSubstr($vo2['articleTitle'],0,8)}</a>
+						</li>
+						{/volist}
+					</ul>
+				</div>
+			</div>
+			{/volist}
+
+			<div class="wst-contact">
+				<ul>
+					<li style="height:30px;">
+						<div class="icon-phone"></div><p class="call-wst">{:lang('service_hotline')}：</p>
+					</li>
+					<li style="height:38px;">
+						{if(WSTConf('CONF.serviceTel')!='')}<p class="email-wst">{:WSTConf('CONF.serviceTel')}</p>{/if}
+					</li>
+					<li style="height:85px;">
+						<div class="qr-code" style="position:relative;">
+						    {if(WSTConf('CONF.wxenabled')==1) && WSTConf('CONF.wxAppLogo')}
+							<img src="__RESOURCE_PATH__/{:WSTConf('CONF.wxAppLogo')}" style="height:110px;">
+							{/if}
+							<div class="focus-wst">
+          						{if(WSTConf('CONF.serviceEmail')!='')}
+								<p class="focus-wst-qr">{:lang('mall_mailbox')}：</p>
+								<p class="focus-wst-qre">{:WSTConf('CONF.serviceEmail')}</p>
+								{/if}
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+
+
+			<div class="wst-clear"></div>
+		</div>
+		<div class="wst-footer-flink">
+			<div class="wst-footer" >
+		
+				<div class="wst-footer-cld-box">
+					<div style="text-align:center;">
+						<span class="wst-footer-fl" style="margin-right: 30px;">{:lang('friend_links')}</span>
+						{wst:friendlink cache='86400'}
+						<a class="flink-hover" href="{$vo['friendlinkUrl']}"  target="_blank">{$vo["friendlinkName"]}</a>
+						{/wst:friendlink}
+						<div class="wst-clear"></div>
+					</div>
+				</div>
+		
+			</div>
+		</div>
+	    <div class="wst-footer-hp-ck3">
+	        <div class="links">
+	           {php}$navs = WSTNavigations(1);{/php}
+	           {volist name="$navs" id='vo'}
+               <a href="{$vo['navUrl']}" {if $vo['isOpen']==1}target="_blank"{/if}>{$vo['navTitle']}</a>
+               {if $i< count($navs)}&nbsp;&nbsp;|&nbsp;&nbsp;{/if}
+               {/volist}
+	        </div>
+	        <div class="copyright">
+	        {php}
+	        	if(WSTConf('CONF.mallFooter')!=''){
+	         		echo htmlspecialchars_decode(WSTConf('CONF.mallFooter'));
+	        	}
+	        {/php}
+	      	{php}
+				if(WSTConf('CONF.visitStatistics')!=''){
+					echo htmlspecialchars_decode(WSTConf('CONF.visitStatistics'))."<br/>";
+			    }
+			{/php}
+	        {if condition="WSTConf('CONF.mallLicense') eq ''"}
+	        <div>
+				Copyright©2016 Powered By <a target="_blank" href="http://www.wstmart.net">WSTMart</a>
+			</div>
+			{else/}
+				<div id="wst-mallLicense" data='1' style="display:none;">Copyright©2016 Powered By <a target="_blank" href="http://www.wstmart.net">WSTMart</a></div>
+	        {/if}
+	        </div>
+	    </div>
+	</div>
+</div>
+{:hook('homeDocumentListener')}
+{:hook('initCronHook')}

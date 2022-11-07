@@ -1,0 +1,9 @@
+@CHARSET "UTF-8";
+.wst-combine-box{background:#fff;margin-bottom: 0.1rem;}
+.wst-combine-box .title{height:0.25rem;line-height:0.25rem;padding:0.05rem;color:#666;}
+.combine-goods-container{height:1.15rem;}
+.wst-combine-adsb{height: 1.15rem;}
+.wst-combine-adsb img{width: 1rem; height: 1rem;}
+.wst-combine-adsb .combine-img{width: 1rem; height: 1rem;float:left;overflow:hidden}
+.wst-combine-adsb .combine-name{padding:0.05rem;float:left;padding-top: 0.2rem;line-height: 0.25rem}
+.wst-combine-adsb .combine-name .price{color:#FF3648;font-size:13px;}

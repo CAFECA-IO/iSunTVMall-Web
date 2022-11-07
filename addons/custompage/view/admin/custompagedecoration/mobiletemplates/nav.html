@@ -1,0 +1,24 @@
+<div class="nav-container" style="background:{$vo['backgroundColor']}">
+    {volist name="$vo['navs']" id="voo"}
+        {if $voo['style']==1}
+            {php}$navClass="nav-style-square";{/php}
+        {else}
+            {php}$navClass="nav-style-roundness";{/php}
+        {/if}
+        {if intval($voo['count'])==1 }
+            {php}$class="navs-count-three";{/php}
+        {elseif intval($voo['count'])==2 }
+            {php}$class="navs-count-four";{/php}
+        {else}
+            {php}$class="navs-count-five";{/php}
+        {/if}
+        <div class='navs {$class}' >
+            <a href="{$voo['link']}">
+                <img class="{$navClass}" src="__RESOURCE_PATH__/{$voo['img']}" alt=''/>
+                <div class='navs-info'>
+                    <p style="color:{$voo['color']}">{$voo['text']}</p>
+                </div>
+            </a>
+        </div>
+    {/volist}
+</div>

@@ -1,0 +1,155 @@
+{extend name="$LAYOUT_SHOP_BASE" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<style>
+.combineTable{width:900px;border:1px solid #f5f5f5;}
+.combineTable .thead{background: #eee;color: #fff;font-weight: bold;}
+.combineTable td,.thead th{padding:5px;text-align: left;line-height: 20px;}
+</style>
+
+<form id='editform' name='editform' autocomplete="off">
+        <input type='hidden' id='combineId' class='ipt' value='{$object["combineId"]}'/>
+        <input type='hidden' id='goodsId' class='ipt' value='{$object["goodsId"]}'/>
+        <input type='hidden' id='combineGoodsIds' class='ipt' value='{$object["combineGoodsIds"]}'/>
+        <input type='hidden' id='windowType' class='ipt'/>
+        <fieldset>
+            <legend>{:lang('combination_activity_info')}</legend>
+            <div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+                <ul class="layui-tab-title">
+                    {volist name=":WSTSysLangs()" id='vo'}
+                    <li {if $key==0}class="layui-this"{/if}>{$vo['name']}</li>
+                    {/volist}
+                </ul>
+                <div class="layui-tab-content">
+                    {volist name=":WSTSysLangs()" id='vo'}
+                    <div class="layui-tab-item {if $key==0}layui-show{/if}">
+                        <table class='wst-form'>
+                            <tr>
+                                <th>{:lang('combination_combine_name')}<font color='red'>*</font>：</th>
+                                <td>
+                                    <input type="text" class='ipt' style='width:60%' maxLength='50' id='langParams{$vo["id"]}combineName' maxLength='150' data-rule='{:lang("combination_combine_name")}:required;' value="{$object['langParams'][$vo['id']]["combineName"]}">
+                                </td>
+                            </tr>
+                            <tr >
+                                <th>{:lang('combination_combine_desc')}<font color='red'>*</font>：</th>
+                                <td>
+                                    <input type='text' id='langParams{$vo["id"]}combineDesc' name='langParams{$vo["id"]}combineDesc' class='ipt' style='width:60%' maxLength='50' data-rule="{:lang('combination_combine_desc')}:required;" value="{$object['langParams'][$vo['id']]["combineDesc"]}" />
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    {/volist}
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>{:lang('combination_activity_setting')}</legend>
+            <table class="wst-form ">
+                <tr class="wst-order-rate" >
+                    <th width='120'>{:lang('combination_combine_img')}<font color='red'>*</font>：</th>
+                    <td colspan='3'>
+                        <input type="text" id='combineImg' readonly="readonly" value='{if $object["combineImg"]!=''}{$object["combineImg"]}{/if}' class="ipt" style="float: left; width: calc(60% - 70px);" />
+                        <div id='combineImgPicker' style="float: left;margin-top: 5px;">{:lang('combination_upload')}</div><span id='uploadMsg'></span>
+                        <div id='combineImgBox' style='margin-bottom:5px; float: left; height: 30px; margin-left: 5px;'>
+                      <span class='weixin'>
+                            <img class='img' style='height:16px;width:18px;' src='__STATIC__/images/upload-common-select.png'>
+                            <img class='imged'  id='preview'  style='max-height:150px;max-width: 200px; border:1px solid #dadada; background:#fff' src="__RESOURCE_PATH__/{if $object['combineImg']!=''}{$object['combineImg']}{else}{:WSTConf('CONF.goodsLogo')}{/if}">
+                          </span>
+                        </div>
+                        <div class="f-clear"></div>
+                        <span class='msg-box' id='msg_combineImg'></span>
+                    </td>
+                </tr>
+                <tr class="wst-order-rate" >
+                    <th width='120'>{:lang('combination_combine_type')}<font color='red'>*</font>：</th>
+                    <td class="layui-form">
+                        <label><input type='radio' name='combineType' id="combineType-0" lay-filter="combineType" class='ipt' value='0' {if $object['combineType']==0}checked{/if} title="{:lang('combination_combine_type_1')}"/></label>
+                        <label><input type='radio' name='combineType' id="combineType-1" lay-filter="combineType" class='ipt' value='1' {if $object['combineType']==1}checked{/if} title="{:lang('combination_combine_type_2')}"/></label>{:lang('combination_combine_type_tips')}
+                    </td>
+                </tr>
+                <tr class="wst-order-rate" >
+                    <th width='120'>{:lang('combination_is_free_shipping')}<font color='red'>*</font>：</th>
+                    <td class="layui-form">
+                        <label><input type='radio' name='isFreeShipping' id="isFreeShipping-1" lay-filter="isFreeShipping" class='ipt' value='1' {if $object['isFreeShipping']==1}checked{/if} title="{:lang('combination_free_shipping')}"/></label>
+                        <label><input type='radio' name='isFreeShipping' id="isFreeShipping-0" lay-filter="isFreeShipping" class='ipt' value='0' {if $object['isFreeShipping']==0}checked{/if} title="{:lang('combination_not_free_shipping')}"/></label>
+                    </td>
+                </tr>
+                <tr class="wst-order-rate" >
+                    <th width='120'>{:lang('combination_activity_time')}<font color='red'>*</font>：</th>
+                    <td colspan='3'>
+                        <input type='text' id='startTime' name='startTime' class='ipt laydate-icon' value='{$object["startTime"]}' data-rule="{:lang('combination_start_date')}: required;datetime;"/>
+                        {:lang('combination_to_title')}
+                        <input type='text' id='endTime' name='endTime' class='ipt laydate-icon' value='{$object["endTime"]}' data-rule="{:lang('combination_end_date')}: required;datetime;match(gt, startTime, datetime)"/>
+                    </td>
+                </tr>
+                <tr class="wst-order-rate" >
+                    <th width='120'>{:lang('combination_activity_advance')}：</th>
+                    <td class="layui-form">
+                        <label><input type='radio' name='isAdvance' id="isAdvance-0" lay-filter="isAdvance" class='ipt' value='0' {if $object['isAdvance']==0}checked{/if} title="{:lang('combination_no')}" onclick='WST.showHide(0,"#advanceDayBox");'/></label>
+                        <label><input type='radio' name='isAdvance' id="isAdvance-1" lay-filter="isAdvance" class='ipt' value='1' {if $object['isAdvance']==1}checked{/if} title="{:lang('combination_yes')}" onclick='WST.showHide(1,"#advanceDayBox");'/></label>
+                        &nbsp;<span id='advanceDayBox' {if $object['isAdvance']==0}style='display:none'{/if}>&nbsp;&nbsp;&nbsp;&nbsp;{:lang('combination_before')}
+                        <select id='advanceDay' class='ipt' style='width:100px' lay-ignore>
+                            <option value='0'>{:lang('combination_please_select')}</option>
+                            {php}for($i=1;$i<=10;$i++){ {/php}<option value='{$i}' {if $object['advanceDay']==$i}selected{/if}>{$i}</option>{php}}{/php};
+                        </select>{:lang('combination_day')}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th width='120'>{:lang('combination_package_sort_no')}<font color='red'>*</font>：</th>
+                    <td colspan='3'>
+                        <input type='text' id='combineOrder' name='combineOrder' class='ipt' style='width:60%' maxLength='5' value='{$object["combineOrder"]}'/>
+                    </td>
+                </tr>
+                <tr class="wst-order-rate" >
+                    <th width='120'>{:lang('combination_combine_goods')}<font color='red'>*</font>：</th>
+                    <td colspan='3'>
+                        <button class='btn btn-primary' type='button' onclick="goodsWindow(1)"><i class="fa fa-check"></i>{:lang('combination_require_main_goods')}</button>
+                        <button class='btn btn-primary' type='button' onclick="goodsWindow(0)"><i class="fa fa-check"></i>{:lang('combination_require_combine_goods')}</button>
+                        <div style='line-height: 25px;'>
+                            {:lang('combination_combine_goods_tips_1')}<br/>
+                            {:lang('combination_combine_goods_tips_2')}</div>
+                        <div id='combineTable'></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan='2' style='text-align:center;padding:20px;'>
+                        <button class='btn btn-primary' type='button' onclick="save({$p})"><i class="fa fa-check"></i>{:lang('combination_save')}</button>&nbsp;&nbsp;
+                        <button class='btn' type='button' onclick="javascript:location.href=WST.AU('combination://shops/index','p={$p}')"><i class="fa fa-angle-double-left"></i>{:lang('combination_back')}</button>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+</form>
+<div id='saleGoodsBox' style='display: none'>
+<div class="wst-toolbar">
+    <select name="cat1" id="cat1" onchange="getCat(this.value)" class="s-query">
+      <option value="">{:lang('combination_require_goods_cat')}</option>
+      {volist name=":WSTShopCats(0)" id="vo"}
+            <option value="{$vo['catId']}" >{$vo['catName']}</option>
+      {/volist}
+    </select>
+    <select name="cat2" id="cat2" class="s-query"><option value="">{:lang('combination_require_goods_cat')}</option></select>
+    <input type="text" name="goodsName" id="goodsName" class="s-query" placeholder="{:lang('combination_goods_name_id')}"/>
+    <a class="s-btn btn btn-primary" onclick="loadGoodsGrid(0)"><i class="fa fa-search"></i>{:lang('combination_query')}</a>
+</div>
+<div class='wst-grid' style='padding:0 10px'>
+    <div id="mmg" class="mmg"></div>
+    <div id="pg" style="text-align: right;margin: 10px 0px 20px;"></div>
+</div>
+</div>
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script type="text/javascript" src="__ROOT__/addons/combination/view/shop/shop.js?v={$v}"></script>
+<script>
+var info = {:json_encode($object)};
+</script>
+<script>$(function(){initForm({$p});})</script>
+{/block}

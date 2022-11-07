@@ -1,0 +1,645 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('my_order')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/orders.css?v={$v}">
+{/block}
+{block name="header"}
+	<div id="info_list">
+    <header style="background:#ffffff;" class="ui-header ui-header-positive wst-header wst-headero">
+        <i class="ui-icon-return" onclick="location.href='{:url('mobile/users/index')}'"></i><h1>{:lang('my_order')}</h1>
+    </header>
+{/block}
+{block name="main"}
+    <input type="hidden" name="" value="" id="currPage" autocomplete="off">
+    <input type="hidden" name="" value="" id="totalPage" autocomplete="off">
+    <input type="hidden" name="" value="{$type}" id="type" autocomplete="off">
+
+    <script id="shopList" type="text/html">
+    {{# for(var i = 0; i < d.length; i++){ }}
+            <div class="order-item">
+                <div class="ui-row-flex item-head">
+                    <div class="ui-col ui-col-2" onclick="javascript:WST.intoShops({{d[i].shopId}});"><p class="ui-nowrap-flex"><i class="shopicon"></i>{{d[i].shopName}}</p></div>
+                    <div class="ui-col order-tr o-status">
+                        {{ d[i].status }}
+                        {{# if($.inArray(d[i].orderStatus,[-1,-3])!=-1){ }}
+						{{# if(d[i].payType==1 && d[i].isPay==1) { }}
+                            {{# if(d[i].isRefund==1) { }}
+                            {:lang('has_refund_money2')}
+                            {{# }else{ }}
+                            {:lang('no_refund_money2')}
+                            {{# } }}
+						{{# } }}
+                        {{# } }}
+                    </div>
+                </div>
+
+                {{# for(var g=0;g<d[i].list.length;g++){ }}
+                <div class="ui-row-flex ui-whitespace border-b" onclick="getOrderDetail({{d[i].orderId}})">
+                    <div class="">
+                        <img src="__RESOURCE_PATH__/{{d[i].list[g].goodsImg}}" class="o-Img">
+                    </div>
+                    <div class="o-gInfo-container">
+                        <div class="o-gInfo">
+                            <p class="o-gName ui-nowrap-multi ">{{d[i].list[g].goodsName}}</p>
+                            {{# if(d[i].list[g].goodsSpecNames){ }}
+                            <p class="o-gSpec ui-nowrap-multi ">{{d[i].list[g].goodsSpecNames}}</p>
+                            {{# } }}
+                        </div>
+                        <div class="o-gInfo2 wst-flex-row wst-ac wst-jsb">
+                            {{# if(d[i].list[g].goodsCode=='gift'){ }}
+                            <p style="font-size:0.14rem;color:#666;font-weight: 600;">{:lang('gift_goods')}</p>
+                            {{# }else{ }}
+                            <p class="o-gPrice">{:lang('currency_symbol')} {{d[i].list[g].goodsPrice}}</p><p class="o-gNum">x {{d[i].list[g].goodsNum}}</p>
+                            {{# } }}
+                        </div>
+                    </div>
+                </div>
+                {{#  } }}
+                <div class="o-gInfo3 wst-flex-row wst-jsb wst-ac">
+                    {{# if(d[i].orderCodeTitle!=""){ }}
+                    <span class="order_from">{{d[i].orderCodeTitle}}</span>
+                    {{# } }}
+                    <div class="o-oListMoney">
+                        {:lang('order_total_price')}：<span>{:lang('currency_symbol')} {{d[i].realTotalMoney}}</span>
+                    </div>
+                </div>
+
+                <div class="ui-btn-wrap" style="padding:0;">
+                {{# if(d[i].orderStatus==-2){ }}
+                    <button class="ui-btn o-btn o-pay-btn" onclick="choicePay('{{d[i].pkey}}');">
+                        {:lang('order_pay_now')}
+                    </button>
+                {{# } }}
+
+                {{# if(d[i].orderStatus==0 && d[i].noticeDeliver==0 ){ }}
+                    <button class="ui-btn o-btn o-cancel-btn" onclick="WST.dialog('{:lang(\'order_confirm_remind_delivery\')}','noticeDeliver({{d[i].orderId}})')">
+                        {:lang('order_remind_delivery')}
+                    </button>
+                {{# } }}
+
+
+                {{# if(d[i].orderStatus==-2 || d[i].orderStatus==0){ }}
+                    <button class="ui-btn o-btn o-cancel-btn" onclick="showCancelBox('cancelOrder({{d[i].orderId}})')">
+                        {:lang('cancel_order')}
+                    </button>
+                {{# } }}
+
+                {{# if((d[i].orderStatus!=-1 || d[i].orderStatus==1) && d[i].orderStatus!=-2 && d[i].isComplain==0 ){ }}
+                    <button class="ui-btn o-btn o-cancel-btn" onclick="complain({{d[i].orderId}})">
+                        {:lang('complain')}
+                    </button>
+                {{# } }}
+
+                {{# if(d[i].orderStatus==2 && d[i].isAppraise==0) { }}
+                    <button class="ui-btn o-btn o-appraise-btn" onclick="toAppr({{d[i].orderId}})">
+                        {:lang('appraise')}
+                    </button>
+                {{# } }}
+                {{# if(d[i].isAppraise==1){ }}
+                    <button class="ui-btn o-btn o-appraise-btn" onclick="toAppr({{d[i].orderId}})">
+                        {:lang('check_appraise')}
+                    </button>
+                {{# } }}
+                {{# if(d[i].orderStatus==2 && d[i].canAfterSale) { }}
+                    <button class="ui-btn o-btn" style="color:#666;border:1px solid #ccc;" onclick="afterSale({{d[i].orderId}})">
+                        {:lang('apply_after_sales_order')}
+                    </button>
+                {{# }  }}
+
+
+                {{# if((d[i].allowRefund==1) && (d[i].orderStatus==-1 || d[i].orderStatus==-3)){ }}
+                <button class="ui-btn o-btn o-refund-btn" onclick="showRefundBox({{d[i].orderId}})">
+                           {:lang('apply_refund')}
+                </button>
+                {{# } }}
+
+
+                {{# if(d[i].orderStatus==1){  }}
+                    <button class="ui-btn o-btn o-cancel-btn" onclick="showRejectBox('rejectOrder({{d[i].orderId}})')">
+                        {:lang('reject')}
+                    </button>
+                    <button class="ui-btn o-btn o-receive-btn" onclick="WST.dialog('{:lang(\'order_confirm_received\')}','receive({{d[i].orderId}})','{:lang(\'order_confirm_receipt\')}')">
+                            {:lang('order_confirm_receipt')}
+                    </button>
+                {{# } }}
+				{{ d[i]['hook']?d[i]['hook']:"" }}
+                <div class="wst-clear"></div>
+                </div>
+            </div>
+    {{#  } }}
+    </script>
+
+    <section class="ui-container" id="shopBox">
+    	<div class="ui-tab">
+	        <ul class="ui-tab-nav order-tab">
+	            <div class="tab-parent"><li class="tab-item {if $type==''}tab-curr{/if}" type="" >{:lang('all')}</li></div>
+                <div class="tab-parent"><li class="tab-item {if $type=='waitPay'}tab-curr{/if}" type="waitPay" >{:lang('order_wait_pay')}</li></div>
+                <div class="tab-parent"><li class="tab-item {if $type=='waitDeliver'}tab-curr{/if}" type="waitDeliver" >{:lang('order_wait_deliver')}</li></div>
+                <div class="tab-parent"><li class="tab-item {if $type=='waitReceive'}tab-curr{/if}" type="waitReceive" >{:lang('order_wait_receive')}</li></div>
+                <div class="tab-parent"><li class="tab-item {if $type=='waitAppraise'}tab-curr{/if}" type="waitAppraise" >{:lang('order_wait_appraise')}</li></div>
+                <div class="tab-parent"><li class="tab-item {if $type=='finish'}tab-curr{/if}" type="finish" >{:lang('order_completed')}</li></div>
+                <div class="tab-parent"><li class="tab-item {if $type=='abnormal'}tab-curr{/if}" type="abnormal" >{:lang('order_cancel_reject')}</li></div>
+	        </ul>
+		</div>
+
+        <div id="order-box">
+
+        </div>
+
+    </section>
+    </div>
+
+{:hook('mobileDocumentOrderList')}
+
+<script type="text/html" id="detailBox">
+           <div id="detailBox">
+			<div class="detail-head-status" style="margin-top:0;">
+			{{# if($.inArray(d.orderStatus,[-2,0,1,2])!=-1){ }}
+			<div class="wst-or-process">
+				<div class="ui-row-flex">
+					{{# if(d.payType==1) { }}
+    				<div class="ui-col ui-col process">
+                        <p class="line">
+                            <span {{# if($.inArray(d.orderStatus,[-2,0,1,2])!=-1){ }}class="active"{{# } }}></span>
+                            <span {{# if($.inArray(d.orderStatus,[0,1,2])!=-1){ }}class="active"{{# } }}></span>
+                            <div class="icon">
+                                <div class="circular-out {{# if($.inArray(d.orderStatus,[-2,0,1,2])!=-1){ }}circular-active{{# } }}" >
+                                    <div class="circular-inner"></div>
+                                </div>
+                            </div>
+                            <div class="wst-clear"></div>
+                        </p>
+                        <p style="padding-left: 0.15rem;">{:lang('order_wait_pay')}</p>
+                    </div>
+					{{# } }}
+    				<div class="ui-col ui-col process"><p class="line">
+						<span {{# if($.inArray(d.orderStatus,[0,1,2])!=-1){ }}class="active"{{# } }}></span>
+                        <span {{# if($.inArray(d.orderStatus,[1,2])!=-1){ }}class="active"{{# } }}></span>
+                        <div class="icon">
+                            <div class="circular-out {{# if($.inArray(d.orderStatus,[0,1,2])!=-1){ }}circular-active{{# } }}" >
+                                <div class="circular-inner"></div>
+                            </div>
+                        </div>
+
+					<div class="wst-clear"></div></p><p style="padding-left: 0.15rem;">{:lang('order_wait_deliver')}</p></div>
+    				<div class="ui-col ui-col process"><p class="line">
+						<span {{# if($.inArray(d.orderStatus,[1,2])!=-1){ }}class="active"{{# } }}></span>
+                        <span {{# if(d.orderStatus==2){ }}class="active"{{# } }}></span>
+                        <div class="icon">
+                            <div class="circular-out {{# if($.inArray(d.orderStatus,[1,2])!=-1){ }}circular-active{{# } }}" >
+                                <div class="circular-inner"></div>
+                            </div>
+                        </div>
+					<div class="wst-clear"></div></p><p style="padding-left: 0.15rem;">{:lang('order_has_deliverd')}</p></div>
+    				<div class="ui-col ui-col process"><p class="line">
+						<span {{# if(d.orderStatus==2){ }}class="active"{{# } }}></span>
+                        <span {{# if(d.orderStatus==2){ }}class="active"{{# } }}></span>
+                        <div class="icon">
+                            <div class="circular-out {{# if(d.orderStatus==2){ }}circular-active{{# } }}" >
+                                <div class="circular-inner"></div>
+                            </div>
+                        </div>
+					<div class="wst-clear"></div></p><p style="padding-left: 0.15rem;">{:lang('order_has_received')}</p></div>
+				</div>
+			</div>
+			{{# } }}
+			{{# if($.inArray(d.orderStatus,[-1,-3])!=-1 && d.payType==1 && d.isPay==1){ }}
+			<div class="wst-or-process">
+				<div class="ui-row-flex">
+    				<div class="ui-col ui-col process"><p class="line">
+						<span class="active"></span>
+                        <span {{# if(d.refundStatus==1 || d.refundStatus==2 || d.refundStatus==0){ }}class="active"{{# } }}></span>
+                        <div class="icon">
+                            <div class="circular-out circular-active" >
+                                <div class="circular-inner"></div>
+                            </div>
+                        </div>
+					<div class="wst-clear"></div></p><p style="padding-left: 0.15rem;">{:lang('order_buyer_apply_refund')}</p></div>
+    				<div class="ui-col ui-col process"><p class="line">
+						<span {{# if(d.refundStatus==1 || d.refundStatus==2 || d.refundStatus==0){ }}class="active"{{# } }}></span>
+                        <span {{# if(d.refundStatus==2){ }}class="active"{{# } }}></span>
+                        <div class="icon">
+                            <div class="circular-out {{# if(d.refundStatus==1 || d.refundStatus==2 || d.refundStatus==0){ }}circular-active{{# } }}" >
+                                <div class="circular-inner"></div>
+                            </div>
+                        </div>
+					<div class="wst-clear"></div></p><p style="padding-left: 0.04rem;">{:lang('order_seller_refund_process')}</p></div>
+    				<div class="ui-col ui-col process"><p class="line">
+						<span {{# if(d.refundStatus==2) { }} class="active"{{# } }}></span>
+                        <span {{# if(d.refundStatus==2) { }} class="active"{{# } }}></span>
+                        <div class="icon">
+                            <div class="circular-out {{# if(d.refundStatus==2) { }}circular-active{{# } }}" >
+                                <div class="circular-inner"></div>
+                            </div>
+                        </div>
+
+					<div class="wst-clear"></div></p><p style="padding-left: 0.15rem;">{:lang('order_refund_completed')}</p></div>
+				</div>
+			</div>
+			{{# } }}
+
+			</div>
+           {{# if(d.orderType!=1){ }}
+           <div class="detail-head ">
+              <div class="ui-row-flex">
+                  <div class="ui-col ui-col wst-or-term wst-flex-row wst-ac"><i class="icon-address"></i><span class="wst-or-username">{:lang('consignee_information')}</span></div>
+              </div>
+              <div class="ui-row-flex">
+                  <div class="ui-col ui-col wst-or-term"><span class="d-uaddr wst-or-username">{{d.userName}}</span><span class="d-utel">+{{d.areaCode}} {{d.userPhone}}</span></div>
+              </div>
+              <div class="ui-row-flex">
+                  <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe"></span><span class="d-uaddr">{{d.userAddress}}</span></div>
+              </div>
+          </div>
+          {{# } }}
+          {{# if(d.deliverType==1){ }}
+          <div class="detail-head ">
+
+              <div class="ui-row-flex">
+                  <div class="ui-col ui-col wst-or-term wst-flex-row wst-ac"><i class="icon-address"></i><span class="wst-or-username">{:lang('pick_up_information')}</span></div>
+              </div>
+              {{# if(d.store){}}
+              <div class="ui-row-flex">
+                  <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe"></span><span class="d-uaddr">{:lang('pick_up_shop')}：{{d.store.storeName}}</span></div>
+              </div>
+              <div class="ui-row-flex">
+                  <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe"></span><span class="d-uaddr">{:lang('contact_number')}：{{d.store.storeTel}}</span></div>
+              </div>
+              <div class="ui-row-flex">
+                  <input type="hidden" id="latitude" value="{{d.store.latitude}}">
+                  <input type="hidden" id="longitude" value="{{d.store.longitude}}">
+                  <input type="hidden" id="storeName" value="{{d.store.storeName}}">
+                  <input type="hidden" id="storeAddress" value="{{d.store.storeAddress}}">
+                  <div class="ui-col ui-col wst-or-term wst-flex-row wst-ac"><span class="wst-or-describe"></span><span class="d-uaddr">{:lang('address')}：{{d.store.storeAddress}}</span>{if WSTConf('CONF.mapKey')!=''}<div class='navigation' onclick="javascript:init({{d.store.longitude}},{{d.store.latitude}});"><img src="__MOBILE__/img/car.png" /></div>{/if}</div>
+              </div>
+              {{# if(d.verificationCode>0){ }}
+                  <div class="ui-row-flex">
+                  {{# var vCode = d.verificationCode;
+                    vCode=vCode.replace(/\s/g,'').replace(/(.{4})/g,"$1 ");
+                  }}
+                  <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">
+                  <span class="d-uaddr">{:lang('order_verification_code')}：</span>
+                  <span class="vcode">{{vCode}}</span></span> </div>
+                  </div>
+                  <div class="ui-row-flex" style="padding-left: 0.75rem;">
+                      <img src="__RESOURCE_PATH__/{{d.qrCode}}" style="height: 1.5rem;width: 1.5rem;">
+                  </div>
+              {{# } }}
+              {{# }else{ }}
+                  <div class="ui-row-flex">
+                      <input type="hidden" id="latitude" value="{{d.latitude}}">
+                      <input type="hidden" id="longitude" value="{{d.longitude}}">
+                      <input type="hidden" id="storeName" value="{{d.shopName}}">
+                      <input type="hidden" id="storeAddress" value="{{d.shopAddress}}">
+                      <div class="ui-col ui-col wst-or-term wst-flex-row wst-ac"><span class="wst-or-describe"></span><span class="d-uaddr">{:lang('address')}：{{d.shopAddress}}</span>{if WSTConf('CONF.mapKey')!=''}<div class='navigation' onclick="javascript:init({{d.longitude}},{{d.latitude}});"><img src="__MOBILE__/img/car.png" /></div>{/if}</div>
+                  </div>
+              {{# } }}
+
+          </div>
+          {{# } }}
+
+           <div class="detail-head" style="padding:0;">
+               <div class="ui-row-flex item-head" style="padding: 0 0.12rem;">
+                   <div class="ui-col ui-col-2" onclick="javascript:WST.intoShops({{d.shopId}});"><p class="ui-nowrap-flex"><i class="shopicon"></i>{{d.shopName}}</p></div>
+                   <div class="ui-col order-tr o-status" style="color:#999;">
+                       {{ d.status }}
+                       {{# if($.inArray(d.orderStatus,[-1,-3])!=-1){ }}
+                           {{# if(d.payType==1 && d.isPay==1) { }}
+                               {{# if(d.isRefund==1) { }}
+                                    {:lang('has_refund_money2')}
+                               {{# }else{ }}
+                                    {:lang('no_refund_money2')}
+                                {{# } }}
+                           {{# } }}
+                       {{# } }}
+                   </div>
+               </div>
+               {{# for(var i=0;i<d.goods.length;i++){ }}
+               <div class="ui-row-flex ui-whitespace border-b d-goodsitme" style="padding:0 0.12rem;" onclick="javascript:WST.intoGoods({{d.goods[i].goodsId}})">
+                   <div class="">
+                       <img src="__RESOURCE_PATH__/{{d.goods[i].goodsImg}}" class="o-Img">
+                   </div>
+                   <div class="o-gInfo-container">
+                       <div class="o-gInfo">
+                           <p class="o-gName ui-nowrap-multi">{{d.goods[i].goodsName}}</p>
+                           {{# if(d.goods[i].goodsSpecNames){ }}
+                           <p class="o-gSpec ui-nowrap-multi ">{{d.goods[i].goodsSpecNames.replace(/@@_@@/g,' ')}}</p>
+                           {{# } }}
+                       </div>
+                       <div class="o-gInfo2 wst-flex-row wst-ac wst-jsb">
+                           {{# if(d.goods[i].goodsCode=='gift'){ }}
+                           <p style="font-size:0.14rem;color:#666;font-weight: 600;">{:lang('gift_goods')}</p>
+                           {{# }else{ }}
+                           <p class="o-gPrice">{:lang('currency_symbol')} {{d.goods[i].goodsPrice}}</p><p class="o-gNum">x {{d.goods[i].goodsNum}}</p>
+                           {{# } }}
+                       </div>
+                   </div>
+               </div>
+
+               {{# if(d.goods[i].goodsType==1 && d.orderStatus==2){ }}
+               {{# for(var e=0;e<d.goods[i].extraJson.length;e++){ }}
+               <div class="wst-flex-column d-uInfo">
+                   <div class="ui-row-flex">
+                       <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{:lang('card_coupon_number')}：</span><span class="wst-or-describe">{{d.goods[i].extraJson[e].cardNo}}</span></div>
+                   </div>
+                   <div class="ui-row-flex">
+                       <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{:lang('card_coupon_password')}：</span><span class="wst-or-describe">{{d.goods[i].extraJson[e].cardPwd}}</span></div>
+                   </div>
+               </div>
+               {{# } }}
+               {{# } }}
+
+               <div style="padding:0 0.12rem;" >
+                   <button class="ui-btn o-btn" style="color:#666;font-size:0.12rem;border:1px solid #ccc;" onclick="addCart({{d.goods[i].goodsId}},{{d.goods[i].goodsSpecId}},{{d.goods[i].goodsType}})">
+                       {:lang('add_cart')}
+                   </button>
+                   <div class="wst-clear"></div>
+               </div>
+               {{# } }}
+               <div class="o-gInfo3 wst-flex-row wst-jsb wst-ac" style="padding:0 0.12rem 0.12rem 0.12rem;">
+                   {{# if(d.orderCodeTitle!=""){ }}
+                   <span class="order_from">{{d.orderCodeTitle}}</span>
+                   {{# } }}
+                   <div class="o-oListMoney">
+                       {:lang('order_total_price')}：<span>{:lang('currency_symbol')} {{d.realTotalMoney}}</span>
+                   </div>
+               </div>
+           </div>
+
+
+			<div class="detail-head">
+                <div class="ui-row-flex">
+                    <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{:lang('order_no')}：</span><span class="wst-or-describe">{{d.orderNo}}</span></div>
+                </div>
+                <div class="ui-row-flex">
+                    <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{:lang('order_time')}：</span>{{d.createTime}}</div>
+                </div>
+            	<div class="ui-row-flex">
+                	<div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{:lang('pay_information')}：</span>{{d.payInfo}}</div>
+            	</div>
+            	<div class="ui-row-flex">
+                	<div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{:lang('distribution_information')}：</span>{{d.deliverInfo}}</div>
+            	</div>
+             	<div class="ui-row-flex">
+                	<div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{:lang('invoice_information')}：</span>{{# if(d.isInvoice==1) { }}{:lang('need')}{{# } else{ }}{:lang('not_need')}{{# } }}</div>
+            	</div>
+			{{# if(d.isInvoice==1) { }}
+                <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{:lang('invoice_status')}：</span>{{# if(d.isMakeInvoice==1) { }}{:lang('has_open')}{{# } else{ }}{:lang('has_not_open')}{{# } }}</div>
+             	<div class="ui-row-flex">
+                	<div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{:lang('invoice_head')}：</span>{{d.invoiceClient}}</div>
+            	</div>
+            {{#
+                 var inv_json = JSON.parse(d.invoiceJson);
+                 var inv_code = (inv_json!=null && inv_json.invoiceCode!=undefined)?inv_json.invoiceCode:'';
+                 if(inv_json!=null && inv_json.type!=undefined && inv_json.type==0){
+             }}
+             	<div class="ui-row-flex">
+                	<div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{:lang('invoice_tax_number')}：</span>{{inv_code}}</div>
+            	</div>
+			{{# } }}
+            {{# } }}
+             	<div class="ui-row-flex">
+                	<div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{:lang('order_remark')}：</span>{{ (d.orderRemarks!=''&&d.orderRemarks!=null)?d.orderRemarks:'' }}</div>
+            	</div>
+			</div>
+
+			{{# if(d.isRefund==1){ }}
+			<div class="detail-head">
+             	<div class="ui-row-flex">
+                	<div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{:lang('refund_money')}：</span>{:lang('currency_symbol')} {{d.backMoney}}</div>
+            	</div>
+             	<div class="ui-row-flex">
+                	<div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{:lang('refund_remarks')}：</span>{{d.refundRemark}}</div>
+            	</div>
+             	<div class="ui-row-flex">
+                	<div class="ui-col ui-col wst-or-term"><span class="wst-or-describe">{:lang('refund_time')}：</span>{{d.refundTime}}</div>
+            	</div>
+			</div>
+			{{# } }}
+
+
+
+
+			<div class="detail-head">
+             	<div class="ui-row-flex">
+                	<div class="ui-col ui-col wst-or-term"><span class="wst-or-describe2">{:lang('get_integral_title')}</span><span class="o-status2">{{d.orderScore}} 个</span></div>
+            	</div>
+             	<div class="ui-row-flex">
+                	<div class="ui-col ui-col wst-or-term"><span class="wst-or-describe2">{:lang('goods_total_money')}</span><span class="o-status2">{:lang('currency_symbol')} {{d.goodsMoney}}</span></div>
+            	</div>
+             	<div class="ui-row-flex">
+                	<div class="ui-col ui-col wst-or-term"><span class="wst-or-describe2">{:lang('freight')}</span><span class="o-status2">{:lang('currency_symbol')} {{d.deliverMoney}}</span></div>
+            	</div>
+				      {{ d['hook']?d['hook']:"" }}
+              {{# if(d.useScore>0){ }}
+              <div class="ui-row-flex">
+                  <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe2">{:lang('use_integral_number')}</span><span class="o-status2">{{d.useScore}}</span></div>
+              </div>
+              <div class="ui-row-flex">
+                  <div class="ui-col ui-col wst-or-term"><span class="wst-or-describe2">{:lang('integral_credit_amount')}</span><span class="o-status2">{:lang('currency_symbol')} -{{d.scoreMoney}}</span></div>
+              </div>
+              {{# } }}
+             	<div class="ui-row-flex wst-or-term2 wst-flex-row wst-jfe wst-ac">
+                	<span class="wst-or-describe2">{:lang('real_total_money')}：</span><span class="o-status2"><span style="font-size:0.13rem;">{:lang('currency_symbol')} </span>{{d.realTotalMoney}}</span>
+            	</div>
+			</div>
+         </div>
+</script>
+    {/* 遮盖层  */}
+    <div class="wst-cover" id="cover"></div>
+    {/* 订单详情层  */}
+    <div class="wst-fr-box" id="frame">
+        <div class="title" id="boxTitle"><i onclick="javascript:dataHide();"></i><span>{:lang('order_detail')}</span><div class="wst-clear"></div></div>
+        <div class="content" id="content">
+
+        </div>
+    </div>
+    {/* 地图层  */}
+    <div class="wst-fr-box" id="container">
+        <div class="icon-return wst-flex-row wst-center"><i style="color: #ffffff;font-size: 0.24rem;line-height:0.3rem;" class="ui-icon-return" onclick="javascript:mapHide();"></i></div>
+        <div id="map"></div>
+        <div class="wst-cover" id="map-cover"></div>
+        <div class="map-toolbar wst-flex-row wst-jsb wst-ac" >
+            <div class="store-info">
+                <div id="store-name"></div>
+                <div id="store-address"></div>
+            </div>
+            <div class="store-navigation" onclick="showNavigationBox()">
+                <img src="__MOBILE__/img/navigation.png" >
+            </div>
+        </div>
+    </div>
+    {/* 退款层  */}
+    <div class="wst-fr-box" id="refundFrame">
+        <div class="title"><i onclick="javascript:reFundDataHide();"></i><span>{:lang('apply_refund')}</span><div class="wst-clear"></div></div>
+        <div class="content" id="refund-content" style="position: relative;">
+			 <div class="detail-head" style="margin-top:0;">
+	            <div class="wst-or-process">
+	                <div class="ui-row-flex">
+	                    <div class="ui-col ui-col process"><p class="line">
+	                        <span class="active"></span>
+	                        <span></span>
+	                        <p class="icon"><i class="ui-icon-success-block active"></i></p>
+	                    <div class="wst-clear"></div></p><p>{:lang('order_buyer_apply_refund')}</p></div>
+	                    <div class="ui-col ui-col process"><p class="line">
+	                        <span></span>
+	                        <span></span>
+	                        <p class="icon"><i class="ui-icon-success-block"></i></p>
+	                    <div class="wst-clear"></div></p><p>{:lang('order_seller_refund_process')}</p></div>
+	                    <div class="ui-col ui-col process"><p class="line">
+	                        <span></span>
+	                        <span></span>
+	                        <p class="icon"><i class="ui-icon-success-block"></i></p>
+	                    <div class="wst-clear"></div></p><p>{:lang('order_refund_completed')}</p></div>
+	                </div>
+	            </div>
+	         </div>
+            <div class="wst-or-refund">
+                <p class="prompt">{:lang('order_refund_reason_desc')}</p>
+                <div class="term wst-flex-row" style="border-bottom: 1px solid #f2f2f2;">
+                    <input type="hidden" id="refundReason">
+                    <span>{:lang('order_refund_reason')}：</span><p id="refundReasonText" onclick="showRefundReasonBox()">{:lang('please_select')}</p>
+                </div>
+                <div id='refundTr' class="term" style="display:none;border-bottom: 1px solid #f2f2f2;">
+                    <span>{:lang('other_reason')}：</span><input type='text' id='refundContent' maxLength='200' autocomplete="off">
+                </div>
+                <div  class="term">
+                    <span>{:lang('refund_money')}：</span><input type='number' id='money' maxLength='10' onkeyup="javascript:WST.isChinese(this,1)" autocomplete="off">
+                </div>
+                <p class="prompt">{:lang('refund_money_limit_desc')}</p>
+
+            </div>
+            <div class="bottom-btn-box wst-flex-row wst-center">
+                <div id="wst-event8" type="button" class="wst-dialog-b2">{:lang('submit')}</div>
+            </div>
+        </div>
+
+    </div>
+    {/* 导航菜单层  */}
+    <div class="wst-navigation-box" id="navigationBox">
+        <div class="content">
+            <div class="wst-flex-row wst-center item" onclick="goStore('qq')">
+                <div class="name">{:lang('map_qq')}</div>
+            </div>
+            <div class="wst-flex-row wst-center item" onclick="goStore('baidu')">
+                <div class="name">{:lang('map_baidu')}</div>
+            </div>
+            <div class="wst-flex-row wst-center item" onclick="goStore('amap')">
+                <div class="name">{:lang('map_gaode')}</div>
+            </div>
+            <div class="wst-flex-row wst-center item" onclick="hideNavigationBox()">
+                <div class="name">{:lang('cancel')}</div>
+            </div>
+        </div>
+
+    </div>
+{/block}
+
+{block name="include"}
+{include file="default/dialog" /}<!-- 对话框模板 -->
+{/* 遮盖层  */}
+<div class="wst-cover" id="cover2"></div>
+{/* 取消订单  */}
+<div class="wst-cancel-box" id="cancelBox">
+    <input type="hidden" id="reason">
+    <div class="title">{:lang('cancel_order')}</div>
+    <div class="desc">{:lang('order_cancel_reason_desc')}</div>
+    <div class="content">
+        {volist name=":WSTDatas('ORDER_CANCEL')" id="vo"}
+        <div class="wst-flex-row wst-jsb wst-ac item">
+            <div class="name">{$vo["dataName"]}</div>
+            <label class="ui-checkbox">
+                <input class="active" type="radio" name="data" value='{$vo["dataVal"]}' >
+            </label>
+        </div>
+        {/volist}
+    </div>
+    <div class="bottom-two-btn-box wst-flex-row wst-center">
+        <button id="wst-event1" type="button" class="wst-dialog-b1" data-role="button" onclick="javascript:hideCancelBox();">{:lang('cancel')}</button>
+        <button id="wst-event0" type="button" class="wst-dialog-b2">{:lang('confirm')}</button>
+    </div>
+</div>
+
+<div class="wst-cancel-box" id="refundReasonBox">
+    <div class="title">{:lang('order_refund_reason')}</div>
+    <div class="content">
+        {volist name=":WSTDatas('REFUND_TYPE')" id="vo"}
+        <div class="wst-flex-row wst-jsb wst-ac item">
+            <div class="name">{$vo["dataName"]}</div>
+            <label class="ui-checkbox">
+                <input class="active" type="radio" name="data" value='{$vo["dataVal"]}' d-name="{$vo['dataName']}" onchange="javascript:changeRefundReason(this)">
+            </label>
+        </div>
+        {/volist}
+    </div>
+    <div class="bottom-two-btn-box wst-flex-row wst-center">
+        <button type="button" class="wst-dialog-b1" data-role="button" onclick="javascript:hideRefundReasonBox();">{:lang('cancel')}</button>
+        <button id="wst-event4" type="button" class="wst-dialog-b2">{:lang('confirm')}</button>
+    </div>
+</div>
+
+<div class="ui-dialog wst-reject-box" id="rejectBox">
+    <div class="ui-dialog-cnt">
+        <div class="ui-dialog-bd">
+            <div class="o-dialog-content wst-flex-column wst-jfs wst-ac">
+                <p class="wst-dialog-t">{:lang('reject_reasons')}</p>
+                <div class="wst-dialog-c">{:lang('order_reject_reason_desc')}</div>
+                <select id='reject' onchange='javascript:changeRejectType(this.value)'>
+                    {volist name=":WSTDatas('ORDER_REJECT')" id="vo"}
+                    <option value='{$vo["dataVal"]}'>{$vo["dataName"]}</option>
+                    {/volist}
+                </select>
+                <br />
+                <div id='rejectTr' style='display:none'>
+                    <textarea id='rejectContent' maxLength='200' placeholder="{:lang('require_order_reject_reason')}"></textarea>
+                </div>
+            </div>
+            <div class="middle-two-btn-box wst-flex-row">
+                <button id="wst-event1" type="button" class="ui-btn-s wst-dialog-b1" data-role="button">{:lang('cancel')}</button>
+                <button id="wst-event3" type="button" class="ui-btn-s wst-dialog-b2">{:lang('confirm')}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__MOBILE__/users/orders/orders_list.js?v={$v}'></script>
+<script type="text/javascript" src="{:WSTProtocol()}map.qq.com/api/js?v=2.exp&key={:WSTConf('CONF.mapKey')}"></script>
+<script>
+var currPage = totalPage = 0;
+var loading = false;
+$(document).ready(function(){
+  getOrderList();
+    if(parseInt($('#pageId').val()) == 0){
+        WST.initFooter('user');
+    }else{
+        WST.selectCustomMenuPage('order');
+    }
+  backPrevPage(WST.U('mobile/users/index'));
+  // Tab切换卡
+  $('.tab-item').click(function(){
+      $(".tab-item").removeClass("tab-curr");
+      $(this).addClass('tab-curr');
+      var type = $(this).attr('type');
+      $('#type').val(type);
+      reFlashList();
+  });
+  // 弹出层
+  $("#frame").css('top',0);
+  $("#frame").css('right','-100%');
+
+    $(window).scroll(function(){
+        if (loading) return;
+        if ((5 + $(window).scrollTop()) >= ($(document).height() - $(window).height())) {
+            currPage = Number( $('#currPage').val() );
+            totalPage = Number( $('#totalPage').val() );
+            if( totalPage > 0 && currPage < totalPage ){
+            	getOrderList();
+            }
+        }
+    });
+});
+</script>
+{/block}

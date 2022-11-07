@@ -1,0 +1,51 @@
+{extend name="default/base" /}
+{block name="css"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link href="__SHOP__/css/security.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<input type="hidden" id="token" value='{:WSTConf("CONF.pwdModulusKey")}'/>
+	<form method="post" id="payform" autocomplete="off">
+        <table class='wst-form' style="width: auto;">
+        {if ($data['payPwd'])}
+           <tr>
+             <th align='right'> <font color='red'>*</font>{:lang('original_password')}：</th>
+             <td>
+             <input type='password' class="ipt" id='oldPass' name='oldPass' {if ($data['payPwd'])}data-rule="{:lang('original_payment_password')}: required;length(6)" data-msg-required="{:lang('original_payment_password')}" data-tip="{:lang('original_payment_password')}"{/if} style='width:250px;' maxLength='6'/>
+             </td>
+           </tr>
+        {/if}
+           <tr>
+             <th align='right'> <font color='red'>*</font>{:lang('new_payment_password')}：</th>
+             <td>
+             <input type='password' class="ipt" id='newPass' name='newPass' style='width:250px;' maxLength='6' data-rule='{:lang("new_payment_password")}:required;length(6)'/>
+             </td>
+           </tr>
+           <tr>
+             <th align='right'> <font color='red'>*</font>{:lang('confirm_payment_password')}：</th>
+             <td>
+             <input type='password' class="ipt" id='reNewPass' name='reNewPass' style='width:250px;' maxLength='6' data-rule='{lang("confirm_payment_password")}:required;length(6)'/>
+             </td>
+           </tr>
+           <tr>
+             <th align='right'></th>
+             <td><a href="{:url('shop/users/backPayPass')}">{:lang('forget_the_payment_password')}</a></td>
+           </tr>
+           <tr>
+             <td colspan='2' style='padding-left:155px;height:60px;'>
+                 <button class='wst-lfloat btn btn-primary' type="submit" style="width:100px;height: 30px;"><i class="fa fa-check"></i>{:lang('save')}</button>
+                 <button class='wst-sec-but2 wst-lfloat btn' type="reset" style="width:100px;height: 30px;margin-left:16px;"><i class="fa fa-refresh"></i>{:lang('reset')}</button>
+             </td>
+           </tr>
+        </table>
+       </form>
+
+{/block}
+{block name="js"}
+	<script type="text/javascript" src="__STATIC__/js/rsa.js"></script>
+	<script type='text/javascript' src='__SHOP__/security/security.js?v={$v}'></script>
+	<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+	<script>
+	$(function(){vePayForm();})
+	</script>
+{/block}

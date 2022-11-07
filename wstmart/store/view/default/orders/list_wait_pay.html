@@ -1,0 +1,165 @@
+{extend name="default/base" /}
+{block name="main"}
+  <div class='wst-toolbar'>
+     <input type='text' class="s-ipt" id='orderNo' placeholder='{:lang("order_no")}'/>
+     <select name="payType" id="payType" class="s-ipt">
+                <option value="-1">{:lang("payment_method")}</option>
+                <option value="0">{:lang("cash_on_delivery")}</option>
+                <option value="1">{:lang("online_payment")}</option>
+               </select>
+
+      <a class="btn btn-primary" onclick="waituserPayByPage()"><i class="fa fa-search"></i>{:lang("query")}</a>
+      <a class="btn btn-primary" style="float:right;" onclick="javascript:toExport(2,-2,'')"><i class="fa fa-sign-out"></i>{:lang("export")}</a>
+  </div>
+  <div class='wst-grid'>
+    <table class='wst-order-list'>
+       <thead>
+	      <tr class='head'>
+	         <th class="th-padding">{:lang("order_details")}</th>
+	         <th width="115">{:lang("payment_method/delivery_information")}</th>
+	         <th style="text-align: center;">{:lang("money")}</th>
+	         <th width="110" style="text-align: center;">{:lang("op")}</th>
+	      </tr>
+	   </thead>
+	   <tbody id='loadingBdy'>
+	       <tr id='loading' class='empty-row' style='display:none'>
+	            <td colspan='4'><img src="__STORE__/img/loading.gif">{:lang("loading")}</td>
+	       </tr>
+       </tbody>
+       <script id="tblist" type="text/html">
+       {{# for(var i = 0; i < d.length; i++){ }}
+       <tbody class="j-order-row">
+         <tr>
+           <td class='order-head'>
+                  <div class='time'>{{d[i].createTime}}</div>
+                  <div class='orderno'>{:lang("order_no")}：{{d[i].orderNo}}
+                    {{# if(d[i].orderSrc==0){ }}<i class="order-pc"></i>
+                    {{# }else if(d[i].orderSrc==1){ }}<i class="order-wx"></i>
+                    {{# }else if(d[i].orderSrc==2){ }}<i class="order-mo"></i>
+                    {{# }else if(d[i].orderSrc==3){ }}<i class="order-app"></i>
+                    {{# }else if(d[i].orderSrc==4){ }}<i class="order-ios"></i>
+                    {{# }else if(d[i].orderSrc==5){ }}<i class="order-weapp"></i>
+                    {{# } }}
+                    {{# if(d[i].orderCodeTitle!=""){ }}
+                      <span class="order_from">{{d[i].orderCodeTitle}}</span>
+                    {{# } }}
+                  </div>
+           </td>
+           <td></td>
+           <td></td>
+           <td>
+             <div style="text-align: center;">
+              {{#if(d[i].payType==1){}}
+                {{# if(d[i].isPay==1){}}{:lang("paid")}
+                {{# }else{ }}
+                                                {:lang("waiting_for_payment")}
+                {{# } }}
+              {{#}else{}}
+                                                {:lang("waiting_for_delivery")}
+              {{#} }}
+              </div>
+           </td>
+         </tr>
+         {{#
+          var tmp = null,rows = d[i]['list'].length;
+          for(var j = 0; j < d[i]['list'].length; j++){
+             tmp = d[i]['list'][j];
+         }}
+         <tr class='goods-box'>
+            <td>
+               <div class='goods-img'>
+                <a href="{{WST.U('home/goods/detail','goodsId='+tmp.goodsId)}}" target='_blank'>
+                    <span class='weixin'><img class='img gImg' title='{{tmp.goodsName}}' style='height:40px;width:40px;' data-original='__RESOURCE_PATH__/{{tmp.goodsImg}}'><img class='imged' style='height:200px;width:200px;max-width: 200px;max-height: 200px; background: #fff;' title='{{tmp.goodsName}}' src="__RESOURCE_PATH__/{{tmp.goodsImg}}"></span>
+                </a>
+               </div>
+
+               <div class='goods-name'>
+                 <div>{{tmp.goodsName}}</div>
+                 <div>{{tmp.goodsSpecNames}}</div>
+               </div>
+               <div class='goods-extra'>{{tmp.goodsPrice}} x {{tmp.goodsNum}}</div>
+
+            </td>
+            {{# if(j==0){ }}
+            <td rowspan="{{rows}}">
+                <div style="text-align: center;">{{d[i].payTypeName}}</div>
+                <div style="text-align: center;">{{d[i].deliverTypeName}}</div>
+            </td>
+            <td rowspan="{{rows}}">
+                <div>{:lang("commodity_amount")}：<span style="color: red">{:lang('currency_symbol')}{{d[i].goodsMoney}}</span></div>
+                <div class='line'>{:lang("freight")}：<span style="color: red">{:lang('currency_symbol')}{{d[i].deliverMoney}}</span></div>
+                <div>{:lang("amount_actually_paid")}：<span style="color: red">{:lang('currency_symbol')}{{d[i].realTotalMoney}}</span></div>
+            </td>
+            <td rowspan="{{rows}}">
+
+                <!--{{#if(d[i].payType==1 && d[i].isPay==0){}}-->
+                <!--<div style="text-align: center;"><a href='#none' onclick='editOrderMoney({{d[i].orderId}})'>【修改价格】</a></div>-->
+                <!--{{#}}}-->
+                <div style="text-align: center;"><a href='#none' onclick="view({{d[i].orderId}},'waituserPay')">【{:lang("order_details")}】</a></div>
+            </td>
+            {{#}}}
+         </tr>
+         {{# } }}
+         {{# if(WST.blank(d[i].orderRemarks)!=''){  }}
+         <tr>
+          <td colspan="4">
+               <p class="order_remaker">【{:lang("guest_book")}】{{d[i].orderRemarks}}</p>
+          </td>
+         </tr>
+         <tr class='empty-row' style="border: 0px;">
+            <td colspan='4'>&nbsp;</td>
+         </tr>
+        {{# }  }}
+
+
+       </tbody>
+
+       {{# } }}
+       </script>
+       <tr class='empty-row' style="border: 0px;">
+            <td colspan='4' id='pager' align="center" style='padding:5px 0px 5px 0px'>&nbsp;</td>
+       </tr>
+    </table>
+    <div id='editMoneyBox' style='display:none'>
+       <form id='newOrderForm' autocomplete='off'>
+       <table class='wst-form wst-box-top'>
+          <tr>
+            <th width='120'>{:lang("order_no")}：</th>
+            <td><span id='m_orderNo'></span></td>
+          </tr>
+          <tr>
+            <th>{:lang("total_commodity_price")}：</th>
+            <td>{:lang('currency_symbol')}<span id='m_goodsMoney'></span></td>
+          </tr>
+          <tr>
+            <th>{:lang("freight")}：</th>
+            <td>{:lang('currency_symbol')}<span id='m_deliverMoney'></span></td>
+          </tr>
+          <tr>
+            <th>{:lang("total_commodity_price")}：</th>
+            <td>{:lang('currency_symbol')}<span id='m_totalMoney'></span></td>
+          </tr>
+           <tr>
+            <th>{:lang("actual_price_paid")}：</th>
+            <td>{:lang('currency_symbol')}<span id='m_realTotalMoney' class='j-warn-order-money'></span></td>
+          </tr>
+          <tr>
+            <th>{:lang("new_price")}：</th>
+            <td><input type='text' id='m_newOrderMoney' maxLength='10' style='width:150px' onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberdoteKey(event,true)" onblur='javascript:WST.limitDecimal(this,2)'></td>
+          </tr>
+       </table>
+       </form>
+    </div>
+  </div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/js/jquery.min.js?v={$v}"></script>
+<script type="text/javascript" src="__STATIC__/plugins/layer/layer.js?v={$v}"></script>
+<script type='text/javascript' src='__ROOT__/static/plugins/lazyload/jquery.lazyload.min.js?v={$v}'></script>
+<script type='text/javascript' src='__STORE__/orders/orders.js?v={$v}'></script>
+<script>
+$(function(){
+	waituserPayByPage({$p});
+})
+</script>
+{/block}

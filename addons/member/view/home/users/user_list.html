@@ -1,0 +1,99 @@
+{extend name="$LAYOUT_HOME_USER_BASE" /}
+{block name="title"}我的邀请用户-买家中心{__block__}{/block}
+{block name="css"}
+<style>
+<!--
+.wst-order-list tr:hover{background: #f2f2f2;}
+.wst-order-list th{text-align: left;padding: 10px;}
+.wst-order-list td{height: 30px;padding: 10px;border-top: 1px solid #f2f2f2;}
+-->
+</style>
+{/block}
+{block name="top"}
+	{include file="$LAYOUT_HOME_TOP" /}
+{/block}
+
+{block name="content"}
+<div class="wst-user-head"><span>{:lang('addon_member_user_users_i_invite')}</span></div>
+  <div class='wst-user-tbar'>
+             {:lang('addon_member_user_user_name')}：<input type="text" name="userName" id="userName" class="s-query" />
+     <button class="wst-sec-but u-btn" onclick="userByPage()">{:lang('addon_member_user_user_query')}</button>
+  </div>
+  <div class='wst-user-content'>
+    <table class='wst-order-list'>
+       <thead>
+	      <tr class='head'>
+	         <th>{:lang('addon_member_user_user_name')}</th>
+	         <th width="200">{:lang('addon_member_user_user_sex')}</th>
+	         <th width="200">{:lang('addon_member_user_regist_time')}</th>
+	      </tr>
+	   </thead>
+	   <tbody id='list'></tbody>
+       <script id="tblist" type="text/html">
+       {{# for(var i = 0; i < d.length; i++){ }}
+	   	<tr>
+	      <td>
+	         {{d[i]['userName']?d[i]['userName']:d[i]['loginName']}}
+	      </td>
+	      <td>
+	         {{d[i]['userSex']==1?lang('addon_member_user_user_sex1'):(d[i]['userSex']==2?lang('addon_member_user_user_sex0'):lang('addon_member_user_user_sex2'))}}
+	      </td>
+		  <td>
+	         {{d[i]['createTime']}}
+	      </td>
+	   	</tr>
+   		{{# } }}
+       </script>
+       <tr class='empty-row'>
+            <td colspan='4' id='pager' align="center" style='padding:5px 0px 5px 0px'>&nbsp;</td>
+       </tr>
+    </table>
+  </div>
+{/block}  
+{block name="footer"}
+	{include file="$LAYOUT_HOME_FOOTER" /}
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/batchupload.js?v={$v}'></script>
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script type="text/javascript">
+$(function(){
+	userByPage();
+});
+
+function userByPage(p){
+	$('#list').html('<tr><td colspan="11"><img src="'+WST.conf.ROOT+'/wstmart/home/view/default/img/loading.gif">'+WST.lang('addon_member_user_loading')+'</td></tr>');
+	var params = {};
+	params = WST.getParams('.s-query');
+	params.key = $.trim($('#key').val());
+	params.page = p;
+	$.post("{:addon_url('member://member/queryMineUsers')}",params,function(data,textStatus){
+	    var json = WST.toJson(data);
+	    if(json.status==1 && json.data){
+	       	var gettpl = document.getElementById('tblist').innerHTML;
+	       	laytpl(gettpl).render(json.data, function(html){
+	       		$('#list').html(html);
+	       		$('.j-lazyGoodsImg').lazyload({ effect: "fadeIn",failurelimit : 10,skip_invisible : false,threshold: 200,placeholder:WST.conf.RESOURCE_PATH+'/'+WST.conf.GOODS_LOGO});//商品默认图片
+	       	});
+	       	if(json.last_page>1){
+	       		laypage({
+		        	 cont: 'pager', 
+		        	 pages:json.last_page, 
+		        	 curr: json.current_page,
+		        	 skin: '#e23e3d',
+		        	 groups: 3,
+		        	 jump: function(e, first){
+		        		    if(!first){
+		        		    	userByPage(e.curr);
+		        		    }
+		        	    } 
+		        });
+	       	}else{
+	       		$('#pager').empty();
+	       	}
+       	}  
+	});
+}
+</script>
+{/block}

@@ -1,0 +1,268 @@
+{extend name="default/base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+<style>
+    .goodsCat {
+        display: inline-block;
+        width: 150px
+    }
+
+    .webuploader-container {
+        float: left;
+    }
+
+    .accreditPreview {
+        cursor: pointer;
+    }
+
+    .select-brand {
+        cursor: pointer;
+    }
+
+    .select-brand-img {
+        margin: 0 5px;
+    }
+
+    .brand-item {
+        margin-right: 10px;
+    }
+</style>
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/webuploader/webuploader.js?v={$v}" type="text/javascript"></script>
+<script src="__STATIC__/plugins//kindeditor/NKeditor-all.js?v={$v}" type="text/javascript"></script>
+<script src="__SHOP__/brandapplys/brandapplys.js?v={$v}" type="text/javascript"></script>
+<script>
+    $(function () {
+        {if condition = "$object['applyId'] !=0"}
+        WST.setValues({ $object });
+        {/if}
+            $('#brandForm').validator({
+                fields: {
+                    brandName: {
+                        tip: WST.lang('please_enter_the_brand_name'),
+                        rule: '' + WST.lang('brand_name') + ':required;length[~16];'
+                    },
+                    catIds: {
+                        tip: WST.lang('please_select_category'),
+                        rule: 'checked(1~);length[~16];'
+                    },
+                    brandImg: {
+                        tip: WST.lang('please_upload_brand_image'),
+                        rule: "" + WST.lang('brand_image') + ":required;",
+                    },
+                    brandDesc: {
+                        tip: WST.lang('please_input_the_brand_introduction'),
+                        rule: '' + WST.lang('brand_introduction') + ':required;'
+                    },
+                    accreditImg: {
+                        tip: WST.lang('please_upload_the_brand_authorization'),
+                        rule: "" + WST.lang('brand_authorization') + ":required;",
+                    },
+                },
+                valid: function (form) {
+                    var applyId = $('#applyId').val();
+                    toEdits(applyId, {$p});
+                }
+            })
+        });
+</script>
+{/block}
+{block name="main"}
+<input type='hidden' id='applyId' value='{$object["applyId"]}' />
+<input type='hidden' id='brandId' name='brandId' class='ipt' value='{$object["brandId"]}' />
+<input type="hidden" id="type" value="join" />
+<div class="l-loading" style="display: block" id="wst-loading"></div>
+<form id="brandForm" autocomplete="off">
+    <table class='wst-form wst-box-top'>
+        <tr>
+            <td colspan="2">
+                <div class='wst-tips-box'>
+                    <div class='icon'></div>
+                    <div class='tips'>
+                        {:lang('brand_tips1')}<br />
+                        {:lang('brand_tips2')}</div>
+                    <div style="clear:both"></div>
+                </div>
+            </td>
+        </tr>
+        {if $object['applyId']!=0}
+        <tr>
+            <th width='150'>{:lang('brand_name')}<font color='red'>*</font>：</th>
+            <td><input type="text" id='brandName' name='brandName' value="{$object['brandName']}" maxLength='20'
+                    style='width:300px;' class='ipt' /></td>
+        </tr>
+        {else}
+        <tr>
+            <th width='170' valign="top">{:lang('please_enter_the_brand_name')}<font color='red'>*</font>：</th>
+            <td>
+                <input type="text" id='keyName' name='keyName' class='ipt' placeholder='{:lang("please_enter_the_brand_name")}' />
+                <input type='button' value='{:lang("query")}' class='btn btn-primary' onclick='javascript:getBrandByKey()'>
+                <div id='brandNameBox' class="wst-flex-row wst-ac wst-fw"></div>
+            </td>
+        </tr>
+        <tr>
+            <th width='150'>{:lang('brand_name')}<font color='red'>*</font>：</th>
+            <td><input type="text" id='brandName' name='brandName' maxLength='20' style='width:300px;' class='ipt' />
+            </td>
+        </tr>
+        {/if}
+        <tr>
+            <th width='150' align='right'>{:lang('classification')}<font color='red'>*</font>：</th>
+            <td>
+                {volist name="gcatList" id="vo"}
+                <label class='goodsCat'>
+                    <input type='checkbox' id='catIds' name='catIds' class="ipt goods-cat" value='{$vo["catId"]}' {if
+                        condition="$object['applyId'] !=0 " } {if
+                        in_array($vo["catId"],$object['catIds'])==1}checked{/if} {/if}>&nbsp;{$vo["catName"]}&nbsp;
+                </label>
+                {/volist}
+            </td>
+        </tr>
+        <tr width='150'>
+            <th align='right'>{:lang('brand_icon')}<font color='red'>*</font>：</th>
+            <td>
+                <input id="brandImg" name="brandImg" class="text ipt" data-target='#msg_brandImg' autocomplete="off"
+                    type="text" readonly="readonly" value="{$object.brandImg}" data-rule="{:lang('brand_icon')}: required;"
+                    style="float: left;width: 250px;margin:0;" />
+                <div id="filePicker">{:lang('upload')}</div>
+                <span style='margin-left:5px;float:left;line-height: 30px;'>{:lang('brand_tips')}</span>
+                <span class='msg-box' id='msg_brandImg'></span>
+                <div id="preview" style="float: left;margin-left: 5px;">
+                    {if $object['applyId']!=0}
+                    <img src="__RESOURCE_PATH__/{$object['brandImg']}" class="ipt" height='30' />
+                    {/if}
+                </div>
+            </td>
+        </tr>
+        <tr width='150'>
+            <th align='right'>{:lang('brand_authorization')}<font color='red'>*</font>：</th>
+            <td style="line-height:0px;">
+                <input id="accreditImg" name="accreditImg" class="text ipt" data-target='#msg_accreditImg'
+                    autocomplete="off" type="text" readonly="readonly" value="{$object.accreditImg}"
+                    data-rule="{:lang('brand_authorization')}: required;" style="float: left;width: 250px;margin:0;" />
+                <div id="accreditFilePicker">{:lang('upload')}</div>
+                <span style='margin-left:5px;float:left;line-height: 30px;'>{:lang('brand_tips3')}</span>
+                <span class='msg-box' id='msg_accreditImg'></span>
+                <div id="accreditPreview" style="float: left;margin-left: 5px;">
+                    {if $object['applyId']!=0}
+                    {php}$imgArr = explode(',',$object['accreditImg']);{/php}
+                    {volist name="$imgArr" id='voo'}
+                    <div style="height:30px;float:left;margin-right:5px;">
+                        <div class="accreditPreview">
+                            <img class="step_pic" height="30" src="__RESOURCE_PATH__/{$voo}" v="{$voo}"
+                                layer-src="__RESOURCE_PATH__/{$voo}">
+                        </div>
+                        <div style="position: relative;top: -35px;right: -20px;cursor: pointer;background: rgba(0,0,0,0.5);width: 18px;height: 18px;text-align: center;border-radius: 50%;"
+                            onclick='javascript:delVO(this)'>
+                            <img src="__ROOT__/wstmart/shop/View/default/img/seller_icon_error.png">
+                        </div>
+                    </div>
+                    {/volist}
+                    {/if}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th width='150'>{:lang('brand_introduction')}<font color='red'>*</font>：</th>
+            <td>
+                <textarea id='brandDesc' name='brandDesc' class="form-control ipt"
+                    style='width:80%;height:400px'></textarea>
+            </td>
+        </tr>
+        <tr {if $object['applyStatus']!=-1}style='display:none' {/if}>
+            <th>{:lang('reasons_for_failure')}：</th>
+            <td>
+                <textarea id='applyDesc' class='ipt' style='width:500px;height:100px;margin-top:10px;' maxLength='100'
+                    readonly>{$object['applyDesc']}</textarea>
+            </td>
+        </tr>
+        <tr>
+            <td colspan='2' align='center'>
+                {if $object['applyStatus']==0}
+                <button type="submit" class="btn btn-primary btn-mright"><i class="fa fa-check"></i>{:lang('save')}</button>
+                {/if}
+                <button type="button" class="btn"
+                    onclick="javascript:location.href='{:Url(\'shop/brandapplys/index\',\'p=\'.$p.\'&type=\'.$type)}'"><i
+                        class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+            </td>
+        </tr>
+    </table>
+</form>
+<script>
+    $(function () {
+        layer.photos({
+            photos: '.accreditPreview',
+            area: ['50%', 'auto']
+        });
+        //文件上传
+        WST.upload({
+            pick: '#filePicker',
+            formData: { dir: 'brands', mWidth: 500, mHeight: 250 },
+            accept: { extensions: 'gif,jpg,jpeg,png', mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif' },
+            callback: function (f) {
+                var json = WST.toJson(f);
+                if (json.status == 1) {
+                    $('#preview').html('<img src="' + WST.conf.RESOURCE_PATH + "/" + json.savePath + json.thumb + '" height="30" />');
+                    $('#brandImg').val(json.savePath + json.thumb);
+                }
+            }
+        });
+
+        var uploader = WST.upload({
+            pick: '#accreditFilePicker',
+            formData: { dir: 'brandapplys', mWidth: 500, mHeight: 250 },
+            accept: { extensions: 'gif,jpg,jpeg,png', mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif' },
+            fileNumLimit: 3,
+            callback: function (f, file) {
+                var json = WST.toJson(f);
+                if (json.status == 1) {
+                    var tdiv = $("<div style='height:30px;float:left;margin:0px 5px;position:relative'><a target='_blank' href='" + WST.conf.RESOURCE_PATH + "/" + json.savePath + json.name + "'>" +
+                        "<img class='step_pic" + "' height='30' src='" + WST.conf.RESOURCE_PATH + "/" + json.savePath + json.thumb + "' v='" + json.savePath + json.name + "'></a></div>");
+                    var btn = $('<div style="position: absolute;top: -5px;right: 0px;cursor: pointer;background: rgba(0,0,0,0.5);width: 18px;height: 18px;text-align: center;border-radius: 50%;" ><img src="' + WST.conf.ROOT + '/wstmart/shop/view/default/img/seller_icon_error.png"></div>');
+                    tdiv.append(btn);
+                    $('#accreditPreview').append(tdiv);
+                    $('#msg_accreditImg').hide();
+                    var imgPath = [];
+                    $('.step_pic').each(function () {
+                        imgPath.push($(this).attr('v'));
+                    });
+                    $('#accreditImg').val(imgPath.join(','));
+                    btn.on('click', 'img', function () {
+                        uploader.removeFile(file);
+                        $(this).parent().parent().remove();
+                        uploader.refresh();
+                        var imgPath = [];
+                        $('.step_pic').each(function () {
+                            imgPath.push($(this).attr('v'));
+                        });
+                        $('#accreditImg').val(imgPath.join(','));
+                        if ($('#accreditPreview').children().size() <= 0) {
+                            $('#msg_accreditImg').show();
+                        }
+                    });
+                }
+            }
+        });
+        //编辑器
+        KindEditor.ready(function (K) {
+            editor1 = K.create('textarea[name="brandDesc"]', {
+                height: '350px',
+                uploadJson: WST.conf.ROOT + '/shop/brandapplys/editorUpload',
+                allowFileManager: false,
+                themeType: "default",
+                items: ['source', 'undo', 'redo', 'preview', 'print', 'template', 'code', 'cut', 'copy', 'paste',
+                    'plainpaste', 'wordpaste', 'justifyleft', 'justifycenter', 'justifyright',
+                    'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
+                    'superscript', 'clearhtml', 'quickformat', 'selectall', 'fullscreen',
+                    'formatblock', 'fontname', 'fontsize', 'forecolor', 'hilitecolor', 'bold',
+                    'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', 'image', 'multiimage', 'media', 'table', 'hr', 'emoticons', 'baidumap', 'pagebreak',
+                    'anchor', 'link', 'unlink'
+                ],
+                afterBlur: function () { this.sync(); }
+            });
+            initBrandInfo();
+        });
+    });
+</script>
+{/block}

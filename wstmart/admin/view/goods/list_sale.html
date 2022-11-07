@@ -1,0 +1,58 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/goods/goods.js?v={$v}" type="text/javascript"></script>
+
+{/block}
+{block name="main"}
+<style type="text/css">
+    #mmg td:nth-child(5){color: red;}
+</style>
+<div class="wst-toolbar">
+<select id="areaId1" class='j-ipt j-areas hide' level="0" onchange="WST.ITAreas({id:'areaId1',val:this.value,className:'j-areas'});">
+  <option value="">-{:lang('goods_shop_area_select')}-</option>
+  {volist name="areaList" id="vo"}
+  <option value="{$vo['areaId']}">{$vo['areaName']}</option>
+  {/volist}
+</select>
+<select id="cat_0" class='ipt pgoodsCats' level="0" onchange="WST.ITGoodsCats({id:'cat_0',val:this.value,isRequire:false,className:'pgoodsCats'});">
+   <option value="">-{:lang('goods_shop_cat_select')}-</option>
+   {volist name=":WSTGoodsCats(0)" id="vo"}
+	<option value="{$vo['catId']}">{$vo['catName']}</option>
+	{/volist}
+</select>
+<input type="text" name="goodsName"  placeholder='{:lang('goods_name_query_plo')}' id="goodsName" class='j-ipt'/>
+<input type="text" name="shopName"  placeholder='{:lang('goods_shop_query_plo')}' id="shopName" class='j-ipt'/>
+<button class="btn btn-primary" onclick='javascript:loadGrid(0)'><i class='fa fa-search'></i>{:lang('query')}</button>
+
+{if WSTGrant('SJSP_05')} 
+  {if(WSTDatas('ADS_TYPE',2)!='' || WSTDatas('ADS_TYPE',3)!='' || WSTDatas('ADS_TYPE',5)!='')}
+  <button class="btn btn-primary f-right" onclick='javascript:toExplode()'><i class='fa fa-cloud-download'></i>{:lang('goods_export_code')}</button>
+  {/if}
+{/if}
+<div style='clear:both'></div>
+</div>
+<div class='wst-grid'>
+<div id="mmg" class="mmg layui-form"></div>
+<div id="pg" style="text-align: right;"></div>
+</div>
+{if(WSTDatas('ADS_TYPE',2)!='' || WSTDatas('ADS_TYPE',3)!='' || WSTDatas('ADS_TYPE',5)!='')}
+<div id="exportBox" style="display: none;text-align: center;padding-top: 30px;">
+	{:lang('goods_export_code_select')}:<select id="vtype" style="width: 200px;">
+            {if(WSTDatas('ADS_TYPE',2)!='' || WSTDatas('ADS_TYPE',3)!='')}
+    				<option value="1">{:lang('goods_export_code_select1')}</option>
+            {/if}
+            {if(WSTDatas('ADS_TYPE',5)!='')}
+    				<option value="2">{:lang('goods_export_code_select2')}</option>
+            {/if}
+			     </select>
+</div>
+{/if}
+<script>
+$(function(){initSaleGrid({$p});})
+
+</script>
+{/block}

@@ -1,0 +1,36 @@
+ <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+	  <legend>{:lang('aliyunoss_service_title')}</legend>
+	  <table class='wst-form wst-box-top'>
+	  <tr>
+	     <th width='150'>{:lang('aliyunoss_server')}：</th>
+	     <td>
+	     {$data['ossService']}
+	     <input type="hidden" class="ipt" id="ossService" name="ossService" value='{$data['ossService']}'>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>AccessKey ID：</th>
+	     <td>
+	     <input type="text" class="ipt" id="ossAccessKey" name="ossAccessKey" value='{$data['ossAccessKey']}'>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>Access Key Secret：</th>
+	     <td>
+	     <input type="text" class="ipt" id="ossAccessSecret" name="ossAccessSecret" value='{$data['ossAccessSecret']}' style='width:50%'>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>Bucket：</th>
+	     <td>
+	     <input type="text" class="ipt" id="ossBucket" name="ossBucket" value='{$data['ossBucket']}' style='width:50%'>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>Bucket domain：</th>
+	     <td>
+	     <input type="text" class="ipt" id="ossBucketDomain" name="ossBucketDomain"  value='{$data['ossBucketDomain']}'>
+	     </td>
+	  </tr>
+	 </table>
+	</fieldset>

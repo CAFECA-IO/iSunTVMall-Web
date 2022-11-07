@@ -1,0 +1,120 @@
+{extend name="default/users/base" /}
+{block name="title"}{:lang('security_setting')} - {:lang('user_center')}{__block__}{/block}
+{block name="css"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link href="__STYLE__/css/security.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="content"}
+<div class="wst-user-head"><span>{:lang('bind_phone')}</span><a href="{:url('home/users/security')}">{:lang('back')}</a></div>
+<div class="wst-clear"></div>
+<div class="wst-sec-head2">
+	<div class="wst-lfloat wst-sec-min {if ($process=='One')}wst-sec-gr{/if}">{:lang('security_verify_step_1')}</div>
+	<div class="wst-lfloat wst-sec-min1 {if ($process=='One')}wst-sec-gr1{/if}"></div>
+	<div class="wst-lfloat wst-sec-mi">
+		<div class="wst-lfloat wst-sec-min2 {if ($process=='Two')}wst-sec-gr2{/if}"></div>
+		<div class="wst-lfloat wst-sec-min3 {if ($process=='Two')}wst-sec-gr3{/if}"></div>
+	</div>
+	<div class="wst-lfloat wst-sec-min {if ($process=='Two')}wst-sec-gr{/if}">{:lang('security_verify_step_2')}</div>
+	<div class="wst-lfloat wst-sec-min1 {if ($process=='Two')}wst-sec-gr1{/if}"></div>
+	<div class="wst-lfloat wst-sec-mi">
+		<div class="wst-lfloat wst-sec-min2 {if ($process=='Three')}wst-sec-gr2{/if}"></div>
+		<div class="wst-lfloat wst-sec-min3 {if ($process=='Three')}wst-sec-gr3{/if}"></div>
+	</div>
+	<div class="wst-lfloat wst-sec-min {if ($process=='Three')}wst-sec-gr{/if}">{:lang('security_verify_step_3')}</div>
+</div>
+{if ($process=='One')}
+	{if($data['phoneType']==1)}
+	<form method="post" id="getpayForm" autocomplete="off">
+        <table class='wst-form'>
+           <tr>
+             <th align='right'><font color='red'>*</font>{:lang('security_verified_phone')}：</th>
+             <td>+{$data['areaCode']} {$data['userPhone']}</td>
+           </tr>
+       <tr>
+	        <th align='right'><font color='red'>*</font>{:lang('sms_verification_code')}：</th>
+			<td>
+				<input type='text' class="ipt" id='Checkcode' name='Checkcode' data-rule="{:lang('verifycode')}: required;" data-msg-required="{:lang('verify_require')}" data-tip="{:lang('verify_require')}" data-target="#verifyPhone1" style='width:250px;' maxLength='30'/>
+        {if (int)WSTConf('CONF.isAddonCaptcha')!=1}
+				<button id="timeObtain" class="wst-sec-obtain" type="button" onclick="javascript:getPhoneVerify('pay');">{:lang('get_phone_check_code2')}</button>
+        {else}
+        {:hook('homeDocumentVerfiySmsCaptcha')}
+        {/if}
+                <span id="verifyPhone1"></span>
+			</td>
+		</tr>
+           <tr>
+             <td colspan='2' style='padding-left:116px;height:60px;'>
+                 <button class="wst-sec-but" type="submit" style="width:100px;height: 30px;">{:lang('confirm')}</button>
+             </td>
+           </tr>
+        </table>
+      </form>
+      {else}
+      <div class="wst-sec-su">
+			<span class="wst-sec-sub" style="color: #333333;">{:lang('security_not_bind_phone_desc')}</span>
+		</div>
+      {/if}
+{/if}
+{if ($process=='Two')}
+   <form method="post" id="payForm" autocomplete="off">
+   	<input type="hidden" id="token" value='{:WSTConf("CONF.pwdModulusKey")}'/>
+    <input type='hidden' id='process' class='ipt' value='{$process}' autocomplete="off"/>
+      <table class='wst-form'>
+           <tr>
+             <th align='right'> <font color='red'>*</font>{:lang('new_paypwd')}：</th>
+             <td>
+             <input type='password' class="ipt" id='newPass' name='newPass' style='width:250px;' maxLength='6' data-rule="{:lang('new_paypwd')}:required;length(6)"/>
+             </td>
+           </tr>
+           <tr>
+             <th align='right'> <font color='red'>*</font>{:lang('confirm_pay_password')}：</th>
+             <td>
+             <input type='password' class="ipt" id='reNewPass' name='reNewPass' style='width:250px;' maxLength='6' data-rule="{:lang('confirm_pay_password')}:required;length(6)"/>
+             </td>
+           </tr>
+           <tr>
+           <tr>
+             <td colspan='2' style='padding-left:75px;height:60px;'>
+                 <button class='wst-sec-but wst-lfloat' type="submit" style="width:100px;height: 30px;">{:lang('save')}</button>
+                 <button class='wst-sec-but2 wst-lfloat' type="reset" style="width:100px;height: 30px;margin-left:16px;">{:lang('reset')}</button>          
+             </td>
+           </tr>
+        </table>
+     </form>
+<div style="text-align: center;margin-top:50px;"><button  type="button" id="timeSend" class='wst-btn-querys'style="display:none;">{:lang('next_step')}</button></div>
+{/if}
+{if ($process=='Three')}
+<div class="wst-sec-su">
+	<span class="wst-sec-sut"><img src="__STYLE__/img/icon_success.png"/></span>
+	<span class="wst-sec-sub">{:lang('reset_paypwd_success_desc')}</span>
+</div>
+{/if}
+     <form method="post" id="phoneVerify" autocomplete="off" style="display:none;">
+      <input type='hidden' id='VerifyId' value='' autocomplete="off"/>
+      <table class='wst-form' style="min-width:500px;">
+        <tr>
+	        <th align='right'><font color='red'>*</font>{:lang('verifycode')}：</th>
+			<td>
+				<input id="smsVerfy" style="ime-mode:disabled;width:150px;" name="smsVerfy" data-rule="{:lang('verifycode')}: required;" data-msg-required="{:lang('verify_require')}" data-tip="{:lang('verify_require')}" data-target="#verify" class="ipt wst-lfloat" tabindex="6" autocomplete="off" maxlength="6" type="text"/>
+				<label class="wst-sec-img">
+					<img id='verifyImg' src="{:url('home/users/getVerify')}" onclick='javascript:WST.getVerify("#verifyImg","#smsVerfy")' style="width:110px;"> 
+				</label>      	
+			   	<label>&nbsp;{:lang('verifycode_invisibility')}<a href="javascript:WST.getVerify('#verifyImg','#smsVerfy')"style="color:#69b7b5;">{:lang('change_one')}</a></label><span id="verify"></span>
+			</td>
+		</tr>
+         <tr>
+           <td colspan='2' style='padding-left:71px;height:50px;'>
+               <button class="wst-sec-but" type="submit" style="width:100px;height: 30px;">{:lang('confirm')}</button>
+           </td>
+         </tr>
+        </table>
+      </form>
+{/block}
+{block name="js"}
+	<script type="text/javascript" src="__STATIC__/js/rsa.js"></script>
+	<script type='text/javascript' src='__STYLE__/users/security/security.js?v={$v}'></script>
+	<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+	<script>
+	$(function(){vegetpayForm();vepayForm();})
+	</script>
+{/block}

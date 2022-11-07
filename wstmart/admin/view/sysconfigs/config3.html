@@ -1,0 +1,35 @@
+<div class="layui-tab-item layui-form">
+	<table class='wst-form wst-box-top'>
+	<tr>
+	     <th width='150'>{:lang('config_mall_url_secret_key')}：</th>
+	     <td>
+	     	<input type="text" id='urlSecretKey' class='ipt' maxLength='30' value='{$object["urlSecretKey"]}'/>
+	    </td>
+	</tr>
+	<tr>
+	     <th width='150'>{:lang('config_mall_is_crypt_pwd')}：</th>
+	     <td><input type="checkbox" {if $object['isCryptPwd']==1}checked{/if} value='1' class="ipt" id="isCryptPwd" name="isCryptPwd" lay-skin="switch" lay-filter="isCryptPwd" lay-text="{:lang('config_mall_switch_val')}"><span style='color:gray;margin-left:5px;'>{:lang('config_mall_is_crypt_pwd_tips1')}<font color='red'>{:lang('config_mall_is_crypt_pwd_tips2')}</font></span>
+	     </td>
+	</tr>
+	<tr class='pwdCryptKeyTr' {if $object['isCryptPwd']==0}style='display:none'{/if}>
+	    <th width='150'>{:lang('config_mall_private_key')}：</th>
+	    <td>
+	     	<textarea id='pwdPrivateKey' style='height:250px' class="ipt" placeholder='{:lang('config_mall_private_key_plo')}'>{$object['pwdPrivateKey']}</textarea>
+	    </td>
+	</tr>
+	<tr class='pwdCryptKeyTr' {if $object['isCryptPwd']==0}style='display:none'{/if}>
+	    <th width='150'>Modulus：</th>
+	    <td>
+	     	<textarea id='pwdModulusKey' class="ipt" placeholder='{:lang('config_mall_modulus_key')}'>{$object['pwdModulusKey']}</textarea>
+	    </td>
+	</tr>
+	{if ($grant)}
+	<tr>
+	    <td colspan='2' align="center">
+	     	<button  type="button" class="btn btn-primary btn-mright" onclick='javascript:edit()'><i class="fa fa-check"></i>{:lang('submit')}</button> 
+        	<button class="btn" onclick='javascript:resetForm()'><i class="fa fa-refresh"></i>{:lang('reset')}</button>
+	    </td>
+	 </tr>
+	{/if}
+	</table>
+</div>

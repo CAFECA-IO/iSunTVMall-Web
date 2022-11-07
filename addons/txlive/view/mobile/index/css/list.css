@@ -1,0 +1,143 @@
+@CHARSET "UTF-8";
+body{background-color: #f6f6f8;}
+.live-container{
+    width:100%;
+}
+.room{
+    margin:0.12rem 0;
+}
+.live-item{
+    width:96%;
+    margin:0 2%;
+}
+.cover-img-container{
+    width:55%;
+    height:1.87rem;
+    position: relative;
+    border-radius:0.12rem 0 0 0.12rem;
+}
+.cover-img-container img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:0.12rem 0 0 0.12rem;
+}
+.content-container{
+    width:45%;
+    height:1.87rem;
+    background:#fff;
+    border-radius:0 0.12rem 0.12rem 0;
+}
+.cover-label {
+    position: absolute;
+    left:15px;
+    top:10px;
+    z-index:1000;
+    background-color: rgba(0,0,0,.3);
+    text-align: center;
+    height:0.25rem;
+    line-height: 0.25rem;
+    color:#fff;
+    font-size: 0.12rem;
+    border-radius:0.25rem;
+    padding:0 0.15rem 0 0.3rem;
+}
+.room-name{
+    font-size: 0.15rem;
+    color:#000;
+    font-weight: bold;
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    margin:0.12rem;
+}
+.author-info{
+    width:96%;
+    margin-top:0.12rem;
+}
+.author-name{
+    color:#333;
+    font-size:0.12rem;
+    text-align: center;
+}
+.author-img{
+    width:0.3rem;
+    height:0.3rem;
+    border-radius: 100%;
+    margin-right:0.1rem;
+}
+.state-box{
+    position: absolute;
+    left:26px;
+    top:16px;
+    z-index:1001;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    width: 0.1rem;
+    height: 0.1rem;
+    background-color: #FF594D;
+    border-radius: 50%;
+}
+.state-box-bg1{
+    background-color:#FF594D;
+}
+.state-box-bg2{
+    background-color:#b6b6b6;
+}
+
+.state-box .columnar{
+    margin-bottom: 0.05rem;
+    width: 0.03rem;
+    height: 0.1rem;
+    background-color: #fff;
+    border-top-left-radius: 0.05rem;
+    border-top-right-radius: 0.05rem;
+    transition: height .2s;
+}
+
+.state-box .columnar:not(:last-child){
+    margin-right: 0.025rem;
+}
+/* 直播列表商品 */
+.goods-container{
+    margin:0.25rem 0.1rem;
+}
+.goods-item{
+    width:0.625rem;
+    height:0.625rem;
+    position: relative;
+}
+.goods-item img{
+    width:90%;
+    height:90%;
+    border-radius: 0.05rem;
+}
+.goods-price-mask{
+    position: absolute;
+    top:0;
+    left:0;
+    width:0.625rem;
+    height:0.625rem;
+    background-color: rgba(0,0,0,.4);
+    border-radius: 0.05rem;
+    padding-bottom:0.05rem;
+}
+.goods-num{
+    color:#fff;
+    font-size: 0.12rem;
+    font-weight: bold;
+    margin-bottom:0.1rem;
+}
+.goods-price{
+    color:#fff;
+    font-size: 0.12rem;
+    font-weight: bold;
+}
+.wst-load-text {
+    color: #333;
+    font-size: 0.12rem;
+    margin-bottom:0.12rem;
+}

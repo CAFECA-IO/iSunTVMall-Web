@@ -1,0 +1,242 @@
+<input type='hidden' id='goodsId' class='j-ipt' value='{$object["goodsId"]}'/>
+<fieldset>
+  <legend>{:lang('base_info')}</legend>
+  <div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+      <ul class="layui-tab-title">
+        {volist name=":WSTSysLangs()" id='vo'}
+        <li {if $key==0}class="layui-this"{/if}>{$vo['name']}</li>
+        {/volist}
+      </ul>
+      <div class="layui-tab-content">
+        {volist name=":WSTSysLangs()" id='vo'}
+        <div class="layui-tab-item {if $key==0}layui-show{/if}">
+          <table class='wst-form'>
+              <tr>
+                 <th>{:lang('goods_name')}<font color='red'>*</font>：</th>
+                 <td>
+                    <input type="text" class='j-ipt ipwd' id='langParams{$vo["id"]}goodsName' maxLength='150' data-rule='{:lang("goods_name")}:required;' value="{$object['langParams'][$vo['id']]["goodsName"]}">
+                 </td>
+              </tr>
+              <tr>
+                 <th>{:lang('seo_keywords')}：</th>
+                 <td><input type='text' class='j-ipt ipwd' id='langParams{$vo["id"]}goodsSeoKeywords' maxLength='100' value='{$object['langParams'][$vo['id']]["goodsSeoKeywords"]}' /></td>
+              </tr>
+              <tr>
+                 <th>{:lang('seo_description')}：</th>
+                 <td><input type='text' class='j-ipt ipwd' id='langParams{$vo["id"]}goodsSeoDesc' maxLength='200' value='{$object['langParams'][$vo['id']]["goodsSeoDesc"]}' /></td>
+              </tr>
+              <tr>
+                 <th>{:lang('product_promotion_information')}：</th>
+                 <td><input class='j-ipt ipwd' type="text" id='langParams{$vo["id"]}goodsTips' maxLength='100' value="{$object['langParams'][$vo['id']]["goodsTips"]}" /></td>
+              </tr>
+              <tr>
+                 <th>{:lang('product_description')}<font color='red'>*</font>：</th>
+                 <td>
+                     <textarea rows="2" cols="60" id='langParams{$vo["id"]}goodsDesc' class='j-ipt' name='langParams{$vo["id"]}goodsDesc' data-rule='{:lang("product_description")}:required;'>{$object['langParams'][$vo['id']]['goodsDesc']}</textarea>
+                 </td>
+              </tr>
+          </table>
+        </div>
+        {/volist}
+      </div>
+  </div>
+</fieldset>
+<fieldset>
+<legend>{:lang('base_seting')}</legend>
+<table class='wst-form'>
+  <tr>
+     <th>{:lang('commodity_type')}<font color='red'>*</font>：</th>
+     <td>
+       <select id='goodsType' class='j-ipt ipwd' onchange="changeGoodsType(this.value)" {if $object["goodsId"]>0}disabled{/if}>
+         <option value='0' {if($object["goodsType"]==0)}selected{/if}>{:lang('physical_goods')}</option>
+         <option value='1' {if($object["goodsType"]==1)}selected{/if}>{:lang('virtual_goods')}</option>
+       </select>
+     </td>
+  </tr>
+  <tr>
+     <th>{:lang('mall_classification')}<font color='red'>*</font>：</th>
+     <td>
+         <select id="cat_0" class='ipt j-goodsCats' level="0" onchange="WST.ITGoodsCats({id:'cat_0',val:this.value,isRequire:true,className:'j-goodsCats',afterFunc:'lastGoodsCatCallback'});getBrands('brandId',this.value)" style="width: 395px">
+          <option value="">-{:lang('select')}-</option>
+          {volist name=":WSTShopApplyGoodsCats(0)" id="vo"}
+          <option value="{$vo['catId']}">{$vo['catName']}</option>
+          {/volist}
+       </select>
+     </td>
+  </tr>
+  <tr>
+     <th>{:lang('classification_of_our_store')}</th>
+     <td>
+         <select id="shopCatId1" class='j-ipt' onchange="getShopsCats('shopCatId2',this.value,'');" style="width: 395px">
+            <option value="">-{:lang('select')}-</option>
+            {volist name=":WSTShopCats(0)" id="vo"}
+            <option value="{$vo['catId']}" {if $object['shopCatId1']==$vo['catId']}selected{/if}>{$vo['catName']}</option>
+            {/volist}
+         </select>
+         <select id='shopCatId2' class='j-ipt' style="width: 395px">
+             <option value=''>{:lang('select')}</option>
+         </select>
+     </td>
+  </tr>
+  <tr>
+     <th>{:lang('brand')}</th>
+     <td>
+         <select id="brandId" class='j-ipt ipwd'>
+            <option value="0">-{:lang('select')}-</option>
+         </select>
+     </td>
+  </tr>
+  <tr>
+    <th>{:lang('product_picture')}<font color='red'>*</font>：</th>
+    <td>
+        <input type="text" id='goodsImg' readonly="readonly" value='{if $object["goodsImg"]!=''}{$object["goodsImg"]}{else}{:WSTConf('CONF.goodsLogo')}{/if}' class="j-ipt" style="float: left; width: 655px;" />
+        <div id='goodsImgPicker' style="float: left;margin-top: 5px;">{:lang('upload')}</div><span id='uploadMsg'></span>
+        <div id='goodsImgBox' style='margin-bottom:5px; float: left; height: 30px; margin-left: 5px;'>
+            <span class='weixin'>
+                  <img class='img' style='height:16px;width:18px;' src='__STATIC__/images/upload-common-select.png'>
+                  <img class='imged'  id='preview'  style='max-height:150px;max-width: 200px; border:1px solid #dadada; background:#fff' src="__RESOURCE_PATH__/{if $object['goodsImg']!=''}{$object['goodsImg']}{else}{:WSTConf('CONF.goodsLogo')}{/if}">
+                </span>
+        </div>
+        <div class="f-clear"></div>
+        <span class='msg-box' id='msg_goodsImg'></span>
+    </td>
+  </tr>
+  <tr>
+    <th></th>
+    <td><span>{:lang('goods_tips1')}</span></td>
+  </tr>
+  <tr>
+    <th>{:lang('product_video')}</th>
+    <td>
+      <input type='text' id='goodsVideo' class='j-ipt'  value='{$object["goodsVideo"]}' readonly="readonly" style="float: left; width: 655px;" />
+      <div id='goodsVideoPicker' style="float: left;margin-top: 5px;">{:lang('upload')}</div>
+      <span id='uploadVideoMsg'></span>
+
+      <div id='goodsVedioBox' style='margin-bottom:5px; float: left; height: 30px; margin-left: 5px;'>
+          <span  class='weixin'>
+            <img class='img' style='height:16px;width:18px;' src='__STATIC__/images/upload-common-select.png'>
+            <video  class='imged' id='goodsVideoPlayer' src="__RESOURCE_PATH__/{$object["goodsVideo"]}" controls="controls"  style='max-height:150px;max-width: 200px; border:1px solid #dadada; background:#fff'></video>
+            <span class="vedio-del" {if $object["goodsVideo"]!=''}style='display:inline-block'{/if} onclick="javascript:clearVedio(this)"></span>
+          </span>
+
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <th></th>
+    <td><span>{:lang('goods_tips2')}</span></td>
+  </tr>
+  <tr>
+     <th>{:lang('goods_number')}<font color='red'>*</font>：</th>
+     <td><input type='text' class='j-ipt ipwd' id='goodsSn' value='{$object["goodsSn"]}' maxLength='20' data-rule='{:lang("goods_number")}:required;'/></td>
+  </tr>
+  <tr>
+     <th width='150'>{:lang('product_code')}<font color='red'>*</font>：</th>
+     <td>
+        <input type='text' class='j-ipt ipwd' id='productNo' value='{$object["productNo"]}' maxLength='20' data-rule='{:lang("product_code")}:required;'/>
+     </td>
+  </tr>
+  <tr>
+     <th>{:lang('market_price')}<font color='red'>*</font>：</th>
+     <td><input type='text' class='j-ipt ipwd' id='marketPrice' value='{$object["marketPrice"]}' maxLength='10' data-rule='{:lang("market_price")}:required;price' data-rule-price="[/^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/, '{:lang('goods_tips3')}']" onblur="javascript:WST.limitDecimal(this,2)" onkeypress="return WST.isNumberdoteKey(event)" onkeyup="javascript:WST.isChinese(this,1)"/></td>
+  </tr>
+  <tr>
+     <th>{:lang('store_price')}<font color='red'>*</font>：</th>
+     <td><input type='text' class='j-ipt ipwd' id='shopPrice' value='{$object["shopPrice"]}' maxLength='10' data-rule='{:lang("store_price")}:required;price' data-rule-price="[/^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/, '{:lang('goods_tips3')}']" onblur="javascript:WST.limitDecimal(this,2)" onkeypress="return WST.isNumberdoteKey(event)" onkeyup="javascript:WST.isChinese(this,1)"/></td>
+  </tr>
+   {volist name='shopMemberGroups' id='vo' key='k'}
+    {php}
+        $reduceMoney = '';
+        if(isset($object['memberReduceMoney'])){
+            foreach($object['memberReduceMoney'] as $key => $voo){
+                if($voo['groupId'] == $vo['id']){
+                    $reduceMoney = $voo['reduceMoney'];
+                }
+            }
+        }
+    {/php}
+    <tr>
+        <th>{$vo['groupName']}{:lang('price_reduction')}</th>
+        <td><input type='text' class='j-ipt ipwd member-reduce-money'  value="{$reduceMoney}" style='width:200px !important;margin-right:5px;' maxLength='10'  onblur="javascript:WST.limitDecimal(this,2)" onkeypress="return WST.isNumberdoteKey(event)" onkeyup="javascript:WST.isChinese(this,1)"/><span>{:lang('goods_tips4')}</span><input type="hidden" class='member-group-id' value="{$vo['id']}"></td>
+    </tr>
+    {/volist}
+  <tr>
+     <th>{:lang('cost_price')}：</th>
+     <td><input type='text' class='j-ipt ipwd' id='costPrice' value='{$object["costPrice"]}' maxLength='10' onblur="javascript:WST.limitDecimal(this,2)" onkeypress="return WST.isNumberdoteKey(event)" onkeyup="javascript:WST.isChinese(this,1)"/></td>
+  </tr>
+  <tr id='goodsStockTr' {if($object["goodsType"]==1)}style='display:none'{/if}>
+     <th>{:lang('merchandise_inventory')}<font color='red'>*</font>：</th>
+     <td><input type='text' class='j-ipt ipwd' id='goodsStock' value='{$object["goodsStock"]}' maxLength='10' data-rule='{:lang("merchandise_inventory")}:required;integer[+0]' onkeypress="return WST.isNumberKey(event)" onkeyup="javascript:WST.isChinese(this,1)"/></td>
+  </tr>
+  <tr>
+     <th>{:lang('early_warning_inventory')}<font color='red'>*</font>：</th>
+     <td colspan='2'><input type='text' class='j-ipt ipwd' id='warnStock' value='{$object["warnStock"]}' maxLength='10' data-rule='{:lang("early_warning_inventory")}:required;integer[+0]' onkeypress="return WST.isNumberKey(event)" onkeyup="javascript:WST.isChinese(this,1)"/></td>
+  </tr>
+  <tr>
+     <th>{:lang("commodity_unit")}<font color='red'>*</font>：</th>
+     <td>
+      <select class='j-ipt' id='goodsUnit' data-rule='{:lang("commodity_unit")}:required;' style='width:150px'>
+         <option value="">-{:lang('select')}-</option>
+         {volist name=":WSTDatas('GOODS_UNIT')" id="vo"}
+         <option value="{$vo['dataVal']}" {if $object["goodsUnit"]==$vo['dataVal']}selected{/if}>{$vo['dataName']}</option>
+         {/volist}
+      </select>
+     </td>
+  </tr>
+  <tr id='goodsWeightTr' {if($object["goodsType"]==1)}style='display:none'{/if}>
+     <th>{:lang('commodity_weight')}<font color='red'>*</font>：</th>
+     <td><input type='text' class='j-ipt ipwd' id='goodsWeight' value='{$object["goodsWeight"]}' maxLength='10' onblur="javascript:WST.limitDecimal(this,2)" onkeypress="return WST.isNumberdoteKey(event)" onkeyup="javascript:WST.isChinese(this,1)"/></td>
+  </tr {if($object["goodsType"]==1)}style='display:none'{/if}>
+  <tr id='goodsVolumeTr' {if($object["goodsType"]==1)}style='display:none'{/if}>
+     <th>{:lang('commodity_volume')}<font color='red'>*</font>：</th>
+     <td><input type='text' class='j-ipt ipwd' id='goodsVolume' value='{$object["goodsVolume"]}' maxLength='10' onblur="javascript:WST.limitDecimal(this,2)" onkeypress="return WST.isNumberdoteKey(event)" onkeyup="javascript:WST.isChinese(this,1)"/></td>
+  </tr>
+  {:hook('shopDocumentShopEditGoods',['goodsId'=>$object["goodsId"]])}
+  <tr>
+     <th>{:lang('commodity_status')}<font color='red'>*</font>：</th>
+     <td class="layui-form">
+        <label><input type='radio' name='isSale' id="isSale-1" class='j-ipt' value='1' {if $object['isSale']==1}checked{/if} title='{:lang("put_on_the_shelves")}'/></label>
+        <label><input type='radio' name='isSale' id="isSale-0" class='j-ipt' value='0' {if $object['isSale']==0}checked{/if} title='{:lang("off_the_shelf")}'/></label>
+     </td>
+  </tr>
+  <tr>
+     <th>{:lang('commodity_attributes')}：</th>
+     <td class='layui-form'>
+          <input id="isRecom" name='isRecom' lay-skin="primary" class="j-ipt" {if $object['isRecom']==1}checked{/if} value="1" type="checkbox" title='{:lang("recommend")}' />
+          <input id="isBest" name="isBest" lay-skin="primary" class="j-ipt" {if $object['isBest']==1}checked{/if} value="1" type="checkbox" title='{:lang("boutique")}'/>
+          <input id="isNew" name="isNew" lay-skin="primary" class="j-ipt" {if $object['isNew']==1}checked{/if} value="1" type="checkbox" title='{:lang("new_products")}'/>
+          <input id="isHot" name="isHot" lay-skin="primary" class="j-ipt" {if $object['isHot']==1}checked{/if} value="1" type="checkbox" title='{:lang("hot_sale")}'/>
+     </td>
+  </tr>
+  <tr id="isFreeShippingTr" {if($object["goodsType"]==1)}style='display:none'{/if}>
+     <th>{:lang("free_shipping")}：</th>
+     <td class="layui-form">
+        <label><input type='radio' name='isFreeShipping' id="isFreeShipping-1" lay-filter="isFreeShipping" class='j-ipt' value='1' {if $object['isFreeShipping']==1}checked{/if} title='{:lang("free_shipping")}'/></label>
+        <label><input type='radio' name='isFreeShipping' id="isFreeShipping-0" lay-filter="isFreeShipping" class='j-ipt' value='0' {if $object['isFreeShipping']==0}checked{/if} title='{:lang("the_buyer_bears_the_freight")}'/></label>
+     </td>
+  </tr>
+  <tr id="shippingFeeTypeTr" {if $object["goodsType"]==1 || $object['isFreeShipping']==1}style='display:none'{/if}>
+     <th>{:lang('pricing_method')}<font color='red'>*</font>：</th>
+     <td class="layui-form">
+        <label><input type='radio' name='shippingFeeType' lay-filter="shippingFeeType" class='j-ipt' value='1' {if $object['shippingFeeType']==1}checked{/if} title='{:lang("by_the_piece")}'/></label>
+        <label><input type='radio' name='shippingFeeType' lay-filter="shippingFeeType" class='j-ipt' value='2' {if $object['shippingFeeType']==2}checked{/if} title='{:lang("weight")}'/></label>
+        <label><input type='radio' name='shippingFeeType' lay-filter="shippingFeeType" class='j-ipt' value='3' {if $object['shippingFeeType']==3}checked{/if} title='{:lang("volume")}'/></label>
+
+     </td>
+  </tr>
+  <tr id="shopExpressTr" {if $object["goodsType"]==1 || $object['isFreeShipping']==1}style='display:none'{/if}>
+     <th>{:lang('courier_services_company')}<font color='red'>*</font>：</th>
+     <td>
+        <select id='shopExpressId' class='j-ipt ipwd'>
+          <option value="">-{:lang('select')}-</option>
+          {volist name="shopExpressList" id="vo"}
+          <option value="{$vo['id']}" {if($object["shopExpressId"]==$vo['id'])}selected{/if}>{$vo['expressName']}</option>
+          {/volist}
+        </select>
+     </td>
+  </tr>
+  <tr>
+     <td align='center' style='text-align:center;padding-top:10px;'></td>
+  </tr>
+</table>
+</fieldset>

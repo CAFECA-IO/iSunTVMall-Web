@@ -1,0 +1,51 @@
+{extend name="default/base" /}
+{block name="css"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link href="__SUPPLIER__/css/security.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<input type="hidden" id="token" value='{:WSTConf("CONF.pwdModulusKey")}'/>
+	<form method="post" id="payform" autocomplete="off">
+        <table class='wst-form' style="width: auto;">
+        {if ($data['payPwd'])}
+           <tr>
+             <th align='right'> <font color='red'>*</font>{:lang('src_pass')}：</th>
+             <td>
+             <input type='password' class="ipt" id='oldPass' name='oldPass' {if ($data['payPwd'])}data-rule="{:lang('label_security_old_pay_pwd')}: required;length(6)" data-msg-required="{:lang('require_security_old_pay_pass')}" data-tip="{:lang('require_security_old_pay_pass')}"{/if} style='width:250px;' maxLength='6'/>
+             </td>
+           </tr>
+        {/if}
+           <tr>
+             <th align='right'> <font color='red'>*</font>{:lang('label_security_new_pay_pwd')}：</th>
+             <td>
+             <input type='password' class="ipt" id='newPass' name='newPass' style='width:250px;' maxLength='6' data-rule="{:lang('label_security_new_pay_pwd')}:required;length(6)"/>
+             </td>
+           </tr>
+           <tr>
+             <th align='right'> <font color='red'>*</font>{:lang('label_security_confirm_pay_pwd')}：</th>
+             <td>
+             <input type='password' class="ipt" id='reNewPass' name='reNewPass' style='width:250px;' maxLength='6' data-rule="{:lang('label_security_confirm_pay_pwd')}:required;length(6)"/>
+             </td>
+           </tr>
+           <tr>
+             <th align='right'></th>
+             <td><a href="{:url('supplier/users/backPayPass')}">{:lang('label_security_forget_pay_pwd')}？</a></td>
+           </tr>
+           <tr>
+             <td colspan='2' style='padding-left:155px;height:60px;'>
+                 <button class='wst-lfloat btn btn-primary' type="submit" style="width:100px;height: 30px;"><i class="fa fa-check"></i>{:lang('save')}</button>
+                 <button class='wst-sec-but2 wst-lfloat btn' type="reset" style="width:100px;height: 30px;margin-left:16px;"><i class="fa fa-refresh"></i>{:lang('reset')}</button>
+             </td>
+           </tr>
+        </table>
+       </form>
+
+{/block}
+{block name="js"}
+	<script type="text/javascript" src="__STATIC__/js/rsa.js"></script>
+	<script type='text/javascript' src='__SUPPLIER__/security/security.js?v={$v}'></script>
+	<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+	<script>
+	$(function(){vePayForm();})
+	</script>
+{/block}

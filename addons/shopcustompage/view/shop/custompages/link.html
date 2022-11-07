@@ -1,0 +1,875 @@
+{extend name="$LAYOUT_SHOP_BASE" /}
+{block name="css"}
+<style>
+    .wst-flex-row{display: flex;flex-direction:row;}
+    .link-tip-content{padding:0 20px 20px 20px;}
+    .link-tip-content p{font-size: 14px;}
+    .link-tip-item{padding:20px 0;border-bottom: 1px dashed #eee;}
+    .link-tip-title{color:#259fdc;}
+    .link-tip-text{color:#4db14d;}
+    .link-tip-demo{color:#828282;}
+    .link-attr-required{color:#ff0000;}
+</style>
+{/block}
+{block name="js"}
+
+{/block}
+{block name="main"}
+<div>
+    <div class='wst-tips-box'>
+        <div class='icon'></div>
+        <div class='tips'>
+            <ul class='body'>
+                <li>{:lang('shopcustompage_operation_explain')}</li>
+                <li>{:lang('shopcustompage_link_tips1')}</li>
+                <li>{:lang('shopcustompage_link_tips2')}</li>
+            </ul>
+        </div>
+        <div style="clear:both"></div>
+    </div>
+</div>
+<div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+    <ul class="layui-tab-title">
+        <li class="{if $type==1}layui-this{/if}" >{:lang('shopcustompage_mobile')}</li>
+        {if (WSTDatas('ADS_TYPE',2)!='')}
+        <li class="{if $type==2}layui-this{/if}" >{:lang('shopcustompage_wechat')}</li>
+        {/if}
+        {if (WSTDatas('ADS_TYPE',5)!='')}
+        <li class="{if $type==3}layui-this{/if}" >{:lang('shopcustompage_weapp')}</li>
+        {/if}
+        <li class="{if $type==4}layui-this{/if}" >{:lang('shopcustompage_pc')}</li>
+    </ul>
+    <div class="layui-tab-content" style="padding: 10px 0;">
+        <div class="layui-tab-item {if $type==1}layui-show{/if} layui-form" >
+            <div class="link-tip-content">
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_home_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">mobile/index/index</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_goods_cat_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">mcategoty</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">mlist</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">cat</p>&nbsp;<p>{:lang('shopcustompage_goods_cat')}ID&nbsp;--{:lang('shopcustompage_optional')}</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">mlist?cat=10</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">mgoods</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">goodsId</p>&nbsp;<p>{:lang('shopcustompage_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">mgoods-1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_goods_search_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">msearch</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_cart_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">mobile/carts/index</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_user_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">mobile/users/index</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_order_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">mobile/orders/index</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">type</p>&nbsp;<p>{:lang('shopcustompage_order_type')} (  {:lang('shopcustompage_no_pass_param_is_all')}，<span class="link-tip-text">waitPay</span> {:lang('shopcustompage_order_type1')} <span class="link-tip-text">waitDeliver</span> {:lang('shopcustompage_order_type2')} <span class="link-tip-text">waitReceive</span> {:lang('shopcustompage_order_type3')} <span class="link-tip-text">waitAppraise</span> {:lang('shopcustompage_order_type4')} <span class="link-tip-text">finish</span> {:lang('shopcustompage_order_type5')} <span class="link-tip-text">abnormal</span> {:lang('shopcustompage_order_type6')} ) &nbsp;--{:lang('shopcustompage_optional')}</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">mobile/orders/index?type=waitPay</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_article_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">mnews</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_article_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">mnewsdetail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_article')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">mnewsdetail-1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_shop_street_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">mstreet</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_self_shop_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">mshop-1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_brand_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">mbrands</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_coupon_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/coupon-coupons-moindex</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_integral_index_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/integral-goods-molists</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_integral_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/integral-goods-modetail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_integral_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">addon/integral-goods-modetail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_groupon_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/groupon-goods-molists</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_groupon_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/groupon-goods-modetail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_groupon_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">addon/groupon-goods-modetail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_auction_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/auction-goods-molists</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_auction_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/auction-goods-modetail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_auction_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">addon/auction-goods-modetail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_seckill_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/seckill-goods-molists</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_seckill_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/seckill-goods-modetail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_seckill_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">addon/seckill-goods-modetail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_distribut_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/distribut-distribut-mobiledistributgoods</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {if (WSTDatas('ADS_TYPE',2)!='')}
+        <div class="layui-tab-item layui-form {if $type==2}layui-show{/if}">
+            <div class="link-tip-content">
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_home_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">wechat/index/index</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_goods_cat_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">wechat/goodscats/index</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">wechat/goods/lists</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">cat</p>&nbsp;<p>{:lang('shopcustompage_goods_cat')}ID&nbsp;--{:lang('shopcustompage_optional')}</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">wechat/goods/lists?cat=10</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">wechat/goods/detail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">goodsId</p>&nbsp;<p>{:lang('shopcustompage_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">wechat/goods/detail?goodsId=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_goods_search_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">wechat/goods/search</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_cart_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">wechat/carts/index</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_user_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">wechat/users/index</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_order_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">wechat/orders/index</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">type</p>&nbsp;<p>{:lang('shopcustompage_order_type')} (  {:lang('shopcustompage_no_pass_param_is_all')}，<span class="link-tip-text">waitPay</span> {:lang('shopcustompage_order_type1')} <span class="link-tip-text">waitDeliver</span> {:lang('shopcustompage_order_type2')} <span class="link-tip-text">waitReceive</span> {:lang('shopcustompage_order_type3')} <span class="link-tip-text">waitAppraise</span> {:lang('shopcustompage_order_type4')} <span class="link-tip-text">finish</span> {:lang('shopcustompage_order_type5')} <span class="link-tip-text">abnormal</span> {:lang('shopcustompage_order_type6')} ) &nbsp;--{:lang('shopcustompage_optional')}</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">wechat/orders/index?type=waitPay</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_article_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">wechat/news/view</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_article_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">wechat/news/getnews</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_article')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">wechat/news/getnews?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_shop_street_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">wechat/shops/shopstreet</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_self_shop_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">wechat/shops/index</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_brand_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">wechat/brands/index</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_coupon_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/coupon-coupons-wxindex</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_integral_index_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/integral-goods-wxlists</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_integral_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/integral-goods-wxdetail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_integral_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">addon/integral-goods-wxdetail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_groupon_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/groupon-goods-wxlists</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_groupon_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/groupon-goods-wxdetail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_groupon_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">addon/groupon-goods-wxdetail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_auction_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/auction-goods-wxlists</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_auction_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/auction-goods-wxdetail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_auction_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">addon/auction-goods-wxdetail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_seckill_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/seckill-goods-wxlists</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_seckill_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/seckill-goods-wxdetail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_seckill_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">addon/seckill-goods-wxdetail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_distribut_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/distribut-distribut-wechatdistributgoods</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_pintuan_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/pintuan-goods-wxlists</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_pintuan_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/pintuan-goods-wxdetail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_pintuan_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">addon/pintuan-goods-wxdetail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_bargain_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/bargain-goods-wxlists</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_bargain_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/bargain-goods-wxdetail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_bargain_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">addon/bargain-goods-wxdetail?id=1</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {/if}
+        {if (WSTDatas('ADS_TYPE',5)!='')}
+        <div class="layui-tab-item layui-form {if $type==3}layui-show{/if}">
+            <div class="link-tip-content">
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_home_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/index/index</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_goods_cat_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/classify/classify</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/goods-list/goods-list</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">catId</p>&nbsp;<p>{:lang('shopcustompage_goods_cat')}ID&nbsp;--{:lang('shopcustompage_optional')}</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">/pages/goods-list/goods-list?catId=10</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/goods-detail/goods-detail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">goodsId</p>&nbsp;<p>{:lang('shopcustompage_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">/pages/goods-detail/goods-detail?goodsId=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_goods_search_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/goods-search/goods-search</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_cart_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/carts/carts</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_user_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/users/users</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_order_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/users/orders/orders</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">types</p>&nbsp;<p>{:lang('shopcustompage_order_type')} (  {:lang('shopcustompage_no_pass_param_is_all')}，<span class="link-tip-text">waitPay</span> {:lang('shopcustompage_order_type1')} <span class="link-tip-text">waitDeliver</span> {:lang('shopcustompage_order_type2')} <span class="link-tip-text">waitReceive</span> {:lang('shopcustompage_order_type3')} <span class="link-tip-text">waitAppraise</span> {:lang('shopcustompage_order_type4')} <span class="link-tip-text">finish</span> {:lang('shopcustompage_order_type5')} <span class="link-tip-text">abnormal</span> {:lang('shopcustompage_order_type6')} ) &nbsp;--{:lang('shopcustompage_optional')}</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">/pages/users/orders/orders?types=waitPay</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_article_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/news/news</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_article_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/news/news-detail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_article')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">/pages/news/news-detail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_shop_street_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/shop-street/shop-street</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_self_shop_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/shop-self/shop-self</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_brand_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/brands/brands</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_coupon_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/addons/package/pages/coupon/coupon</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_integral_index_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/addons/package/pages/integral/goods/list</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_integral_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/addons/package/pages/integral/goods/detail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_integral_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">/pages/addons/package/pages/integral/goods/detail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_groupon_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/addons/package/pages/groupon/goods/list</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_groupon_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/addons/package/pages/groupon/goods/detail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_groupon_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">/pages/addons/package/pages/groupon/goods/detail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_auction_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/addons/package/pages/auction/goods/list</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_auction_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/addons/package/pages/auction/goods/detail?id=1</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_auction_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">/pages/addons/package/pages/auction/goods/detail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_seckill_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/addons/package/pages/seckill/goods/list</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_seckill_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/addons/package/pages/auction/goods/detail?id=1</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_seckill_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">/pages/addons/package/pages/seckill/goods/detail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_distribut_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/addons/package/pages/distribut/goods/list</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_pintuan_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/addons/package/pages/pintuan/goods/list</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_pintuan_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/addons/package/pages/pintuan/goods/detail?id=1</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_pintuan_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">/pages/addons/package/pages/pintuan/goods/detail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_bargain_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/addons/package/pages/bargain/goods/list</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_bargain_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">/pages/addons/package/pages/bargain/goods/detail?id=1</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_bargain_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">/pages/addons/package/pages/bargain/goods/detail?id=1</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {/if}
+        <div class="layui-tab-item layui-form {if $type==4}layui-show{/if}">
+            <div class="link-tip-content">
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_home_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">index</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">category</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">cat</p>&nbsp;<p>{:lang('shopcustompage_goods_cat')}ID&nbsp;--{:lang('shopcustompage_optional')}</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">category-10</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">goods</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">goodsId</p>&nbsp;<p>{:lang('shopcustompage_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">goods-1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_goods_search_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">search</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_cart_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">home/carts/index</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_user_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">home/users/index</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_order_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">home/orders/type</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">type</p>&nbsp;<p>{:lang('shopcustompage_order_type')} ( <span class="link-tip-text">waitPay</span> {:lang('shopcustompage_order_type1')} <span class="link-tip-text">waitDeliver</span> {:lang('shopcustompage_order_type2')} <span class="link-tip-text">waitReceive</span> {:lang('shopcustompage_order_type3')} <span class="link-tip-text">waitAppraise</span> {:lang('shopcustompage_order_type4')} <span class="link-tip-text">finish</span> {:lang('shopcustompage_order_type5')} <span class="link-tip-text">abnormal</span> {:lang('shopcustompage_order_type6')} ) &nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">home/orders/waitPay</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_article_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">news</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_article_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">news-id</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_article')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">news-1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_shop_street_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">street</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_self_shop_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">shop-1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_brand_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">brands</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_coupon_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/coupon-coupons-index</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_integral_index_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/integral-goods-lists</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_integral_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/integral-goods-detail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_integral_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">addon/integral-goods-detail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_groupon_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/groupon-goods-lists</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_groupon_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/groupon-goods-detail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_groupon_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">addon/groupon-goods-detail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_auction_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/auction-goods-lists</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_auction_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/auction-goods-detail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_auction_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">addon/auction-goods-detail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_seckill_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/seckill-goods-lists</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_seckill_goods_detail_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/seckill-goods-detail</p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_parameter')}：</p><p class="link-tip-text">id</p>&nbsp;<p>{:lang('shopcustompage_seckill_goods')}ID&nbsp;<span class="link-attr-required">--{:lang('shopcustompage_required')}</span></p>
+                    </div>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_example')}：</p><p class="link-tip-demo">addon/seckill-goods-detail?id=1</p>
+                    </div>
+                </div>
+                <div class="link-tip-item">
+                    <p class="link-tip-title">{:lang('shopcustompage_distribut_goods_list_page')}</p>
+                    <div class="wst-flex-row">
+                        <p>{:lang('shopcustompage_url')}：</p><p class="link-tip-text">addon/distribut-goods-glist</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

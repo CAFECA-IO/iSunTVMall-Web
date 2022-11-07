@@ -1,0 +1,215 @@
+{extend name="$LAYOUT_SHOP_BASE" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<style>
+input[type=text]{width:150px;}
+</style>
+<div>
+    <div class='wst-tips-box'>
+        <div class='icon'></div>
+        <div class='tips'>
+            {:lang('presale_add_tips1')}<br/>
+            {:lang('presale_add_tips2')}<br/>
+            {:lang('presale_add_tips3')}
+        </div>
+        <div style="clear:both"></div>
+</div>
+<form id='editform' name='editform' autocomplete="off">
+    <input type='hidden' id='id' class='ipt' value='{$object["id"]}'/>
+    <fieldset>
+        <legend>{:lang('presale_activity_info')}</legend>
+        <div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+            <ul class="layui-tab-title">
+                {volist name=":WSTSysLangs()" id='vo'}
+                <li {if $key==0}class="layui-this"{/if}>{$vo['name']}</li>
+                {/volist}
+            </ul>
+            <div class="layui-tab-content">
+                {volist name=":WSTSysLangs()" id='vo'}
+                <div class="layui-tab-item {if $key==0}layui-show{/if}">
+                    <table class='wst-form'>
+                        <tr>
+                            <th>{:lang('presale_goods_name')}<font color='red'>*</font>：</th>
+                            <td>
+                                <input type="text" class='ipt' style='width:60%' id='langParams{$vo["id"]}goodsName' maxLength='150' data-rule='{:lang("presale_goods_name")}:required;' value="{$object['langParams'][$vo['id']]["goodsName"]}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>{:lang('presale_goods_tips')}：</th>
+                            <td>
+                                <textarea id='langParams{$vo["id"]}goodsTips' name='langParams{$vo["id"]}goodsTips' class='ipt' style='width:60%;height:50px;'>{$object['langParams'][$vo['id']]['goodsTips']}</textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>{:lang('presale_seo_keyword')}：</th>
+                            <td><input type='text' class='ipt' style='width:60%' id='langParams{$vo["id"]}goodsSeoKeywords' maxLength='100' value='{$object['langParams'][$vo['id']]["goodsSeoKeywords"]}' /></td>
+                        </tr>
+                        <tr>
+                            <th>{:lang('presale_seo_desc')}：</th>
+                            <td><input type='text' class='ipt' style='width:60%' id='langParams{$vo["id"]}goodsSeoDesc' maxLength='200' value='{$object['langParams'][$vo['id']]["goodsSeoDesc"]}' /></td>
+                        </tr>
+                    </table>
+                </div>
+                {/volist}
+            </div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>{:lang('presale_activity_setting')}</legend>
+        <table class="wst-form">
+            <tr>
+                <th width='120' align='right'>&nbsp;</th>
+                <td>
+                    <select id="shopCatId1" class='j-ipt' onchange="getShopsCats('shopCatId2',this.value,'');">
+                        <option value="">-{:lang('presale_please_select')}-</option>
+                        {volist name=":WSTShopCats(0)" id="vo"}
+                        <option value="{$vo['catId']}">{$vo['catName']}</option>
+                        {/volist}
+                    </select>
+                    <select id='shopCatId2' class='j-ipt'>
+                        <option value=''>{:lang('presale_please_select')}</option>
+                    </select>
+                    <br/>
+                    <input type='text' id='sgoodsName' style='margin-top:5px;width: 350px;' placeholder="{:lang('presale_input_search_goods_name')}" />
+                    <a type="button" class='btn btn-primary' onclick="searchGoods()"><i class="fa fa-search"></i>{:lang('presale_query')}</a>
+                </td>
+            </tr>
+            {if $object['presaleStatus']==-1}
+            <tr class="wst-order-rate" >
+                <th width='120'>{:lang('presale_no_pass_reason')}：</th>
+                <td colspan='3' style='color:red'>
+                    {$object['auditRemark']}
+                </td>
+            </tr>
+            {/if}
+            <tr>
+                <th width='120' align='right'>{:lang('presale_goods')}：</th>
+                <td>
+                    <select id='goodsId' class='ipt' onchange='changeGoods(this)' style='width:60%'>
+                        <option value="{$object['goodsId']}">{:lang('presale_select_goods')}</option>
+                    </select><br/>
+                </td>
+            </tr>
+            <tr>
+                <th>{:lang('presale_goods_img')}<font color='red'>*</font>：</th>
+                <td>
+                    <input type="text" id='goodsImg' readonly="readonly" value='{if $object["goodsImg"]!=''}{$object["goodsImg"]}{else}{:WSTConf('CONF.goodsLogo')}{/if}' class="ipt" style="float: left; width: 655px;" />
+                    <div id='goodsImgPicker' style="float: left;margin-top: 5px;">{:lang('presale_upload')}</div><span id='uploadMsg'></span>
+                    <div id='goodsImgBox' style='margin-bottom:5px; float: left; height: 30px; margin-left: 5px;'>
+                    <span class='weixin'>
+                          <img class='img' style='height:16px;width:18px;' src='__STATIC__/images/upload-common-select.png'>
+                          <img class='imged'  id='preview'  style='max-height:150px;max-width: 200px; border:1px solid #dadada; background:#fff' src="__RESOURCE_PATH__/{if $object['goodsImg']!=''}{$object['goodsImg']}{else}{:WSTConf('CONF.goodsLogo')}{/if}">
+                        </span>
+                    </div>
+                    <div class="f-clear"></div>
+                    <span class='msg-box' id='msg_goodsImg'></span>
+                </td>
+            </tr>
+            <tr>
+                <th width='120'>{:lang('presale_shop_price_title')}：</th>
+                <td colspan='3' id='shopPrice'>{if $object['isSpec']==0}{:lang('currency_symbol')}{$object['shopPrice']}{else}{:lang('currency_symbol')}{$object['minShopPrice']}~{:lang('currency_symbol')}{$object['maxShopPrice']}{/if}</td>
+            </tr>
+            <tr class="wst-order-rate" >
+                <th width='120'>{:lang('presale_reduce_money')}<font color='red'>*</font>：</th>
+                <td colspan='3'>
+                    <input type='text' id='reduceMoney' name='reduceMoney' class='ipt' maxLength='10' value='{$object["reduceMoney"]}' data-rule="{:lang('presale_reduce_money')}:reduceMoney;price" data-rule-price="[/^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[0-9][0-9]*\.[0-9]+)|([0-9]*[0-9][0-9]*))$/,'{:lang('presale_price_can_not_minus')}']" onblur="javascript:realShopPrice(this.value)" /><span style='margin-left:150px'>{:lang('presale_real_shop_price')}：<span id='realShopPrice' style='font-size: 15px;'>{if $object['isSpec']==0}{:lang('currency_symbol')}{$object['shopPrice']}{else}{:lang('currency_symbol')}{:round($object['minShopPrice']-$object['reduceMoney'],2)}~{:lang('currency_symbol')}{:round($object['maxShopPrice']-$object['reduceMoney'],2)}{/if}</span></span>
+                </td>
+            </tr>
+            <tr class="wst-order-rate" >
+                <th width='120'>{:lang('presale_goods_num')}<font color='red'>*</font>：</th>
+                <td colspan='3'>
+                    <input type='text' id='goodsNum' name='goodsNum' class='ipt' maxLength='8' data-rule="{:lang('presale_goods_num')}:required;integer[+]" value='{$object["goodsNum"]}'/>
+                </td>
+            </tr>
+            <tr class="wst-order-rate" >
+                <th width='120'>{:lang('presale_limit_num')}<font color='red'>*</font>：</th>
+                <td colspan='3'>
+                    <input type='text' id='limitNum' name='limitNum' class='ipt' maxLength='8' data-rule="{:lang('presale_limit_num')}:required;integer[+]" value='{$object["limitNum"]}'/>
+                </td>
+            </tr>
+            <tr class="wst-order-rate" >
+                <th width='120'>{:lang('presale_sale_type')}<font color='red'>*</font>：</th>
+                <td colspan='3' class='layui-form'>
+                    <lable>
+                        <input type='radio' class='ipt' lay-filter="saleType" name='saleType' value='0' title="{:lang('presale_sale_type1')}" {if $object['saleType']==0}checked{/if}/>
+                    </lable>
+                    <lable>
+                        <input type='radio' class='ipt' lay-filter="saleType" name='saleType' value='1' title="{:lang('presale_sale_type3')}" {if $object['saleType']==1}checked{/if}/>
+                    </lable>
+                </td>
+            </tr>
+            <tr class="wst-order-rate depositBox" {if $object['saleType']==0}style='display:none'{/if}>
+            <th width='120'>{:lang('presale_deposit_money_title2')}<font color='red'>*</font>：</th>
+            <td colspan='3' class='layui-form'>
+                <label>
+                    <input type='radio' class='ipt' lay-filter="depositType" name='depositType' value='0' title="{:lang('presale_fixed_amount')}" {if $object['depositType']==0}checked{/if}/>
+                </label>
+                <input type='text' id='depositMoney' class='ipt' value='{$object['depositMoney']}' {if $object['depositType']==1}style='display:none'{/if}/>
+                <label>
+                    <input type='radio' class='ipt' lay-filter="depositType" name='depositType' value='1' title="{:lang('presale_percent')}" {if $object['depositType']==1}checked{/if}/>
+                </label>
+                <span id='depositRateBox' {if $object['depositType']==0}style='display:none'{/if}>
+                <select id='depositRate' class='ipt' lay-ignore>
+                    {php} for($i = 1;$i<10;$i++){ {/php}
+                    <option value='{$i*10}'>{$i*10}%</option>
+                    {php} } {/php}
+                </select>
+                <span>
+            </td>
+            </tr>
+            <tr class="wst-order-rate depositBox" {if $object['saleType']==0}style='display:none'{/if}>
+            <th width='120'>{:lang('presale_deposit_balance_pay_end_time')}<font color='red'>*</font>：</th>
+            <td colspan='3'>
+                {:lang('presale_end')}&nbsp;<input type='text' id='endPayDays' class='ipt' value='{$object['endPayDays']}'/>&nbsp;{:lang('presale_day_pay_deposit_balance')}
+            </td>
+            </tr>
+            <tr class="wst-order-rate depositBox" {if $object['saleType']==0}style='display:none'{/if}>
+            <th width='120'>{:lang('presale_deliver_time')}<font color='red'>*</font>：</th>
+            <td colspan='3'>
+                {:lang('presale_deposit_balance_pay')}&nbsp;<input type='text' id='deliverDays1' class='ipt' value='{$object['deliverDays']}'/>&nbsp;{:lang('presale_day_deliver')}
+            </td>
+            </tr>
+            <tr class="wst-order-rate" >
+                <th width='120'>{:lang('presale_time')}<font color='red'>*</font>：</th>
+                <td colspan='3'>
+                    <input type='text' id='startTime' name='startTime' class='ipt laydate-icon' value='{$object["startTime"]}' data-rule="{:lang('presale_start_date')}: required;datetime;"/>
+                    {:lang('presale_to')}
+                    <input type='text' id='endTime' name='endTime' class='ipt laydate-icon' value='{$object["endTime"]}' data-rule="{:lang('presale_end_date')}: required;datetime;match(gt, startTime, datetime)"/>
+                </td>
+            </tr>
+            <tr class="wst-order-rate ndepositBox"  {if $object['saleType']==1}style='display:none'{/if}>
+            <th width='120'>{:lang('presale_deliver_time')}<font color='red'>*</font>：</th>
+            <td colspan='3'>
+                <select id='deliverType' class='ipt'>
+                    <option value='0'>{:lang('presale_pay_success')}</option>
+                    <option value='1'>{:lang('presale_end')}</option>
+                </select>&nbsp;
+                <input type='text' id='deliverDays0' class='ipt' value='{$object['deliverDays']}'/>&nbsp;{:lang('presale_day_deliver')}
+            </td>
+            </tr>
+            <tr>
+                <td colspan='2' style='text-align:center;padding:20px;'>
+                    <button class='btn btn-primary' type='button' onclick="save({$p})"><i class="fa fa-check"></i>{:lang('presale_save')}</button>&nbsp;&nbsp;
+                    <button class='btn' type='button' onclick="javascript:location.href = WST.AU('presale://shops/index','p={$p}')"><i class="fa fa-angle-double-left"></i>{:lang('presale_back')}</button>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+
+  </form>
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script type="text/javascript" src="__ROOT__/addons/presale/view/shop/shop.js?v={$v}"></script>
+<script>
+var currGoods = {shopPrice:{$object['shopPrice']},isSpec:{$object['isSpec']},minShopPrice:{$object['minShopPrice']},maxShopPrice:{$object['maxShopPrice']}};
+$(function(){
+   initForm();
+})
+</script>
+{/block}

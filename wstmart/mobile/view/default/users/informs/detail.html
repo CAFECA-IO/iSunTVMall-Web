@@ -1,0 +1,180 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('inform_detail')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/informs.css?v={$v}">
+<link rel="stylesheet" href="__STATIC__/plugins/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="__STATIC__/plugins/photoswipe/default-skin/default-skin.css">
+{/block}
+{block name="footer"}
+{/block}
+{block name="header"}
+	<div id="useri_infos">
+      <header style="background:#ffffff;" class="ui-header ui-header-positive ui-border-b wst-header">
+        <a href="javascript:history.go(-1)"><i class="ui-icon-return"></i></a><h1 class="useri_info">{:lang('inform_detail')}</h1>
+      </header>
+{/block}
+
+{block name="main"}
+
+{/* 图片查看层 */}
+<div id="gallery" class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="pswp__bg"></div>
+    <div class="pswp__scroll-wrap">
+        <div class="pswp__container">
+        <div class="pswp__item"></div>
+        <div class="pswp__item"></div>
+        <div class="pswp__item"></div>
+        </div>
+        <div class="pswp__ui pswp__ui--hidden">
+        <div class="pswp__top-bar">
+            <div class="pswp__counter"></div>
+            <button class="pswp__button pswp__button--close" title="{:lang('close')}"></button>
+            <button class="pswp__button pswp__button--fs" title="{:lang('full_screen')}"></button>
+            <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+            <div class="pswp__preloader">
+                <div class="pswp__preloader__icn">
+                    <div class="pswp__preloader__cut">
+                    <div class="pswp__preloader__donut"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+            <div class="pswp__share-tooltip">
+            </div>
+        </div>
+        <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+        <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+        <div class="pswp__caption">
+            <div class="pswp__caption__center">
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+
+    <section class="ui-container" id="Ccontrainer" >
+        <View class="step-container row ac">
+            <View class="flex1 center">
+                <View class="center step">
+                    <Text class="f14 cRed">1</Text>
+                </View>
+                <Text class="f14 cRed">{:lang('inform_step_1')}</Text>
+            </View>
+            <View class="flex1 center">
+                <View class="center step {$step<2?'gray':''}" >
+                    <Text class="f14 {$step<2?'c666':'cRed'}">2</Text>
+                </View>
+                <Text class="f14 {$step<2?'c666':'cRed'}">{:lang('inform_step_2')}</Text>
+            </View>
+            <View class="flex1 center">
+                <View class="center step {$step<3?'gray':''}">
+                    <Text class="f14 {$step<3?'c666':'cRed'}">3</Text>
+                </View>
+                <Text class="f14 {$step<3?'c666':'cRed'}">{:lang('inform_step_3')}</Text>
+            </View>
+        </View>
+
+        <View>
+            <View class="main">
+                <View 
+                    onclick="toTips()"
+                    class="row jsb headOrderInfo mb">
+                    <Text class="f14 c333">{:lang('inform_violation_notice_title')}</Text>
+                    <span class="arrowR" ></span>
+                </View>
+        
+                <View class="row jsb headOrderInfo">
+                    <Text class="f14 c333">{:lang('inform_reported_shop')}</Text>
+                    <Text class="f14 c333">{$data['shopName']}</Text>
+                </View>
+                <!-- 商品 -->
+                <View class="orderGoodsList">
+                    <View class="row ac orderGoodsHead">
+                        <Text class="f14 c333">{:lang('inform_relative_goods')}</Text>
+                    </View>
+                    <View class="goodsItem row">
+                        <img src="__RESOURCE_PATH__/{$data['goodsImg']}" class="goodsImg" />
+                        <View class="flex1 jsb">
+                            <Text class="goodsName">{$data['goodsName']}</Text>
+                        </View>
+                    </View>
+                </View>
+                <View class="row jsb headOrderInfo mb">
+                    <Text class="f14 c333">{:lang('inform_type')}：</Text>
+                    <View class="row ac" id="renderType">
+                        <Text class="f14 c333">{$data['types']['dataName']}</Text>
+                    </View>
+                </View>
+                <View class="row jsb headOrderInfo mb">
+                    <Text class="f14 c333">{:lang('inform_time')}：</Text>
+                    <View class="row ac" id="renderType">
+                        <Text class="f14 c333">{$data['informTime']}</Text>
+                    </View>
+                </View>
+                <!-- 举报内容 -->
+                <View class="item row">
+                    <Text class="f14 c333">{:lang('inform_content')}</Text>
+                </View>
+                <!--  举报内容 -->
+                <View class="textInputBox mb">
+                    <textarea disabled class="textInput ipt">{$data['informContent']}</textarea>
+                </View>
+                {if(isset($data['informAnnex']) && !empty($data['informAnnex']))}
+                <!--  附件 -->
+                <View class="item row">
+                    <Text class="f14 c333">{:lang('annex')}</Text>
+                    <Text>
+                        
+                    </Text>
+                </View>
+                <!--  附件 -->
+                <div class="mb img-box" data-gallery="{:implode(",", $data['informAnnex'])}">
+                    {volist name="$data['informAnnex']" id="ca" key="ckey"}
+                        <span onclick="gViewImg({$ckey},this)">
+                            <img src="__RESOURCE_PATH__/{$ca}" class="img-item" id="imgurl">
+                        </span>
+                    {/volist}
+                </div>
+                {/if}
+
+                
+                <View class="row jsb headOrderInfo mb">
+                    <Text class="f14 c333">{:lang('inform_result')}：</Text>
+                    <View class="row ac" id="renderType">
+                        <Text class="f14 c333">{$data['status']}</Text>
+                    </View>
+                </View>
+
+                {if($data['informStatus']>0)}
+                    <View class="row jsb headOrderInfo mb">
+                        <Text class="f14 c333">{:lang('inform_process_time')}：</Text>
+                        <View class="row ac" id="renderType">
+                            <Text class="f14 c333">{$data['finalHandleTime']}</Text>
+                        </View>
+                    </View>
+                    <View class="item row">
+                        <Text class="f14 c333">{:lang('inform_process_information')}</Text>
+                    </View>
+                    <View class="textInputBox mb">
+                        <textarea disabled class="textInput ipt">{$data['respondContent']}</textarea>
+                    </View>
+                {/if}
+            </View>
+        </View>
+        
+
+</section>
+
+{/block}
+{block name="include"}
+{include file="default/dialog" /}<!-- 对话框模板 -->
+{/block}
+
+{block name="js"}
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script src="__STATIC__/plugins/photoswipe/photoswipe.js"></script>
+<script src="__STATIC__/plugins/photoswipe/photoswipe-ui-default.min.js"></script>
+<script type='text/javascript' src='__MOBILE__/users/informs/index.js?v={$v}'></script>
+{/block}

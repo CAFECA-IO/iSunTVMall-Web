@@ -1,0 +1,43 @@
+<link href="__ROOT__/addons/coupon/view/home/index/coupon.css" rel="stylesheet">
+<script type='text/javascript' src='__ROOT__/addons/coupon/view/home/index/index.js'></script>
+{if count($coupons)>0}
+<div class='shop-coupon'>
+	<a href='javascript:showShowCoupons({$shopId})' class='coupon-btn'></a>
+	<div class='promotion' id='promotion_{$shopId}' show='0'>
+		<div class='promotion-tit'></div>
+		<div class='promotion-cont'>
+			<div class='shop-coupon-title'>{:lang('coupon_receive_number_tips',["<span id='shopCouponNum_".$shopId."'>0</span>"])}</div>
+			<ul id='shopCouponPanel_{$shopId}' class='cart-coupon'></ul>
+		</div>
+	</div>
+</div>
+<script id="couponlist_{$shopId}" type="text/html">
+{{# for(var i=0;i<d.length;++i){}}
+<div class='cart-coupon'>
+    <div class='left'>
+       <s class='border'></s>
+       <span class='price'>{:lang('currency_symbol')}{{d[i].couponValue}}</span>
+       <b class='border'></b>
+    </div>
+    <div class='middle'>
+       <div class='row'>
+       {{#if(d[i].useCondition==0){}}
+           {:lang('coupon_unlimited')}
+	   {{#}else{}}
+        {{WST.lang('coupon_full_reduction_tips',[d[i].useMoney,d[i].couponValue])}}
+	   {{#}}}
+       </div>
+       <div>{{d[i].startDate}}{:lang('coupon_to_title')}{{d[i].endDate}}</div>
+    </div>
+    <div class='right'>
+    {{# if(d[i].isOut==1 || d[i].isReceive==1){  }}
+    <a href="javascript:" >{{# if(d[i].isOut==1){ }}{:lang('coupon_receive_finished')}{{# }else{ }}{:lang('coupon_has_received')}{{# } }}</a>
+    {{# }else{  }}
+    <a href='javascript:' onclick='receive({{d[i].couponId}},{$shopId},this)'>&nbsp;{:lang('coupon_receive')}&nbsp;</a>
+    {{# }  }}
+    </div>
+</div>
+{{#}}}
+</script>
+{/if}
+

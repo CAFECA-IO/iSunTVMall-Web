@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{:lang('app_downpage_title')}</title>
+    <link rel="stylesheet" href="__STATIC__/plugins/font-awesome/css/font-awesome.min.css" type="text/css" />
+    <style>
+    *{margin: 0;padding: 0;}
+    .main{
+        max-width: 750px;
+        margin: 0 auto;
+        height: 100%;
+        background-color: #fafafa;
+    }
+    .head{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+        height: 50%;
+        box-sizing: border-box;
+        background: -webkit-linear-gradient(#4dadfe,#0ee4fe);
+        background: -o-linear-gradient(#4dadfe,#0ee4fe);
+        background: -moz-linear-gradient(#4dadfe,#0ee4fe);
+        background: linear-gradient(#4dadfe,#0ee4fe);
+
+    }
+    .head .app-icon{
+        width: 30%;
+        margin: 0 auto;
+    }
+    .head .app-icon img{width: 100%;height: 100%;}
+    .app-name{color: #fff;font-weight: 600;margin: 15px 0 10px 0;text-align: center}
+    .app-desc{color: #fff;text-align: center;font-size: 14px}
+
+    .footer{
+        height: 50%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        padding: 15% 0px;
+    }
+    .footer .btn{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 60%;
+        margin: 0 auto;
+        background-color: #4dadfe;
+        padding: 10px 20px;
+        border-radius: 10px;
+        text-decoration:none;
+        color: #76ec76;
+    }
+    .footer .btn:nth-child(2){color:#000}
+    .footer .btn span{color:#fff;padding-left: 10px}
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="head">
+            <div class="app-icon">
+                <img src="{:WSTConf('CONF.resourcePath')}/{:WSTConf('CONF.appLogo')}" alt="" />
+            </div>
+            <p class="app-name">{:WSTConf('CONF.appName')}</p>
+            <p class="app-desc">{:WSTConf('CONF.appDesc')}</p>
+        </div>
+        <div class="footer">
+            <a href="{:WSTConf('CONF.apkUrl')}" class="btn">
+                <i class="fa fa-android fa-3x"></i>
+                <span>{:lang('android_down')}</span>
+            </a>
+            <a href="{:WSTConf('CONF.ipaUrl')}" class="btn">
+                <i class="fa fa-apple fa-3x"></i>
+                <span>{:lang('ios_donw')}</span>
+            </a>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="__STATIC__/js/jquery.min.js?v={$v}"></script>
+<script>
+    var goodsId = "{$info['goodsId']?:0}";
+    var sharerId = "{$info['sharerId']?:0}";
+    var shopId = "{$info['shopId']?:0}";
+    $(".main").height($(window).height())
+    $(window).resize(function() {
+        $(".main").height($(window).height())
+    })
+    $(function(){
+        lclick();
+    })
+    var timer = false;
+        // 判断当前是否为微信浏览器
+        function isWeiXin() {
+            var ua = window.navigator.userAgent.toLowerCase();
+            if (ua.match(/MicroMessenger/i) == 'micromessenger'){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        /******************************** 执行跳转 ***********************************/
+        var url_ios = '{$scheme}';
+        if(goodsId>0){
+            url_ios += "/goodsdetail?goodsId="+goodsId+"&sharerId="+sharerId
+        }else if(shopId>0){
+            url_ios += "/shophome?shopId="+shopId;
+        }
+        var url_ios_download= "{:WSTConf('CONF.ipaUrl')}";
+        var url_android = url_ios;
+
+        var url_android_download = "{:WSTConf('CONF.apkUrl')}";
+        //通过window.navigator.userAgent来判断当前设备是IOS还是Android。
+        var Navigator = navigator.userAgent;
+        var ifiPad = (Navigator.match(/(iPad).*OS\s([\d_]+)/)) ? true : false;
+        var ifiPhone = (!ifiPad && Navigator.match(/(iPhone\sOS)\s([\d_]+)/)) ? true : false;
+        var ifIos = (ifiPhone || ifiPad);
+        function lclick() {
+            if(isWeiXin()){
+                return alert('{:lang("select_browser_open_desc")}');
+            }
+            if (ifIos){
+                var loadTime = new Date();
+                location.href = url_ios;
+                timer = setTimeout(function(){
+                            var outTime = new Date()
+                            if(outTime - loadTime > 800){
+                               // location.href = url_ios_download;
+                              // alert("ios..")
+                            }
+                        },3000);
+            }else{
+                var ifr = document.createElement('iframe');
+                ifr.src = url_android;
+                ifr.style.display = 'none';
+                document.body.appendChild(ifr);
+                timer = setTimeout(function(){
+                            document.body.removeChild(ifr);
+                            // 无法打开app跳转到应用下载页
+                            // location.href = url_android_download;
+                            console.log("...")
+                        },3000)
+            }
+        }
+        document.addEventListener("visibilitychange",pageListener);
+        window.onpagehide = function(){
+            if(!timer)return;
+            clearTimeout(timer);
+        }
+        function pageListener(){
+            if(!timer)return;
+            var tag = document.hidden || document.webkitHidden;
+            tag ? clearTimeout(timer):'';
+        }
+</script>
+
+</html>

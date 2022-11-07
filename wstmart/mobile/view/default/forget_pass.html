@@ -1,0 +1,36 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('forget_password')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/user.css?v={$v}">
+<style>body{background:#fff}</style>
+{/block}
+{block name="header"}
+       <header style="background:#ffffff;" class="ui-header ui-header-positive wst-header">
+       	   <i id="return" class="ui-icon-return" onclick="history.go(-1)"></i><h1 id="login-w">{:lang('forget_password')}</h1>
+       </header>
+{/block}
+{block name="footer"}{/block}
+{block name="main"}
+
+      {/* 登录页面 */}
+      <section class="ui-container" id="login1">
+      	<input type="hidden" id="step" name="step" value="1" autocomplete="off">
+      	 <div class="wst-lo-frame">
+    			 <div class="frame">{:lang('account_number')}<input id="loginName" type="text" placeholder="{:lang('account_number')}" value="{$loginName}"></div>
+    			 <div class="verify"><div>{:lang('graphic_verifycode')}</div>
+    				 <input id="loginVerfy" type="text" placeholder="{:lang('verify_require')}" maxlength="10">
+    				 <img id='verifyImg1' src="{:url('mobile/users/getVerify')}" onclick='javascript:WST.getVerify("#verifyImg1")'>
+    			 </div>
+    	   </div>
+    	<div class="wst-lo-button">
+			<button id="loginButton" class="button" onclick="javascript:forgetPwd();">{:lang('next_step')}</button>
+		</div>
+      </section>
+      {/* 登录页面end */}
+
+      
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__MOBILE__/js/forget_pass.js?v={$v}'></script>
+{/block}

@@ -1,0 +1,369 @@
+{extend name="$LAYOUT_MOBILE_BASE" /}
+{block name="title"}{:lang('seckill_confirm_order')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__ROOT__/addons/seckill/view/mobile/index/css/settlement.css?v={$v}">
+{/block}
+{block name="header"}
+	<header style="background:#ffffff;" class="ui-header ui-header-positive wst-header">
+    	<a href="{:addon_url('seckill://goods/molists')}"><i class="ui-icon-return"></i></a><h1>{:lang('seckill_confirm_order')}</h1>
+    </header>
+{/block}
+{block name="main"}
+     {if $carts && $carts['carts']}
+<div class="wst-st">
+	<ul class="ui-list ui-list-text wst-se-address">
+		<input type="hidden" name="" value="{if isset($userAddress['addressId']) }{$userAddress['addressId']}{/if}" id="addressId" autocomplete="off">
+	    <input type="hidden" name="" value="{if isset($userAddress['addressId']) }{$userAddress['areaId2']}{/if}" id="areaId" autocomplete="off">
+		<input type="hidden" name="" value="{if isset($userAddress['addressId']) }{$userAddress['areaId']}{/if}" id="storeAreaId" autocomplete="off">
+		<input type="hidden" name="" value="{if isset($userAddress['addressId']) }{$userAddress['areaName']}{/if}" id="areaName" autocomplete="off">
+	    {if empty($userAddress)}
+	    <li onclick="javascript:addAddress(1);">
+			<div class="wst-flex-row wst-center" style="width:100%;">
+				<i class="icon-add-address"></i><p class="infono">{:lang('seckill_add_address')}</p>
+			</div>
+		</li>
+	    {else}
+	    <li onclick="javascript:addAddress(1,{$userAddress['addressId']});">
+			<div class="wst-flex-row wst-jsb wst-ac" style="width:100%;">
+				<div class="wst-flex-column">
+					<div class="wst-flex-row" style="align-items:baseline;"><i class="icon-address"></i><span class="infot">{$userAddress['userName']}</span><span class="infop">+{$userAddress['areaCode']} {$userAddress['userPhone']}</span></div>
+					<div><span class="infob">{$userAddress['areaName']}{$userAddress['userAddress']}</span></div>
+				</div>
+				<i class="icon-right-arrow"></i>
+			</div>
+		</li>
+	    {/if}
+	</ul>
+	<div class="wst-se-sh">
+		<p class="ui-nowrap-flex shopn wst-flex-row wst-ac"><i></i>{$carts['carts']['shopName']}</p>
+		{if ($carts['carts']['goods'])}
+			<ul class="ui-row goods">
+				<li class="ui-col ui-col-25">
+					<div class="img">
+						<a href="javascript:void(0);" onclick="javascript:goGoods({$carts['carts']['seckillId']});">
+							<img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{:WSTImg($carts['carts']['goods']['goodsImg'],3)}" title="{$carts['carts']['goods']['goodsName']|WSTStripTags}">
+						</a>
+					</div>
+				</li>
+				<li class="ui-col ui-col-75 wst-flex-column wst-jsb" style="height:0.9rem;">
+					<ul class="ui-row info">
+						<li class="ui-col ui-col-100">
+							<div class="name"><p class="names">{$carts['carts']['goods']['goodsName']}</p>
+								{if(!empty($carts['carts']['goods']['specNames']))}
+								<p class="spec">
+									{volist name="$carts['carts']['goods']['specNames']" id="sp"}
+									{$sp['itemName']}
+									{/volist}
+								</p>
+								{/if}</div>
+						</li>
+					</ul>
+					<ul class="ui-row info">
+						<li class="wst-flex-row wst-jsb wst-ac"><p class="price" >{:lang('currency_symbol')}{$carts['carts']['goods']['shopPrice']}</p><p class="number">×{$carts['carts']['goods']['cartNum']}</p></li>
+					</ul>
+				</li>
+			</ul>
+		{/if}
+		<div class='cost'>
+			<input type="hidden" id="totalMoney" value="">
+			<div class="wst-flex-row wst-jsb item"><span class="title">{:lang('seckill_freight')}</span><span id="freight"></span></div>
+			<div class="wst-flex-row wst-jsb item"><span class="title">{:lang('seckill_shop_total_includ_freight')}</span><span id="goodsMoney">{:lang('currency_symbol')}0</span></div>
+		</div>
+		<div class="remarks wst-flex-row wst-jsb wst-ac">
+			<span class="title">{:lang('seckill_order_remark')}</span>
+			<input id="remark" autocomplete="off" placeholder="{:lang('seckill_require_order_remark')}" maxLength='100'  />
+		</div>
+	</div>
+	<input type="hidden" id="shopId" value="{$carts['carts']['shopId']}"/>
+	<input type="hidden" id="givesh"  value="0" autocomplete="off">
+  	<input type="hidden" id="storeId" value="0" class='j-ipt'/>
+
+	<ul class="ui-list ui-list-text ui-list-active wst-se-mode">
+		<li class="mode" onclick="javascript:dataShow('payments');">
+			<h4 class="ui-nowrap">{:lang('seckill_pay_type')}</h4>
+			<div class="wst-flex-row wst-jfe wst-ac mode-content">
+				<div class="ui-txt-info" id="paymentst">{if !empty($payments['1'])}{$payments['1']['0']['payName']}{else}{$payments['0']['0']['payName']}{/if}</div>
+				<i class="icon-right-arrow"></i>
+			</div>
+		</li>
+		{if($carts['goodsType']==0)}
+		<li class="mode" onclick="javascript:dataShow('gives');">
+			<h4 class="ui-nowrap">{:lang('seckill_delivery_mode')}</h4>
+			<div class="wst-flex-row wst-jfe wst-ac mode-content">
+				<div class="ui-txt-info" id="givest">{:lang('seckill_express_delivery')}</div>
+				<i class="icon-right-arrow"></i>
+			</div>
+		</li>
+		{/if}
+		{if($carts['carts']['isInvoice']==1)}
+		<li onclick="javascript:getInvoiceList();">
+			<h4 class="ui-nowrap">{:lang('seckill_invoice_information')}</h4>
+			<div class="wst-flex-row wst-jfe wst-ac mode-content">
+				<div class="ui-txt-info" id="invoicest">{:lang('seckill_no_invoice')}</div>
+				<i class="icon-right-arrow"></i>
+			</div>
+		</li>
+		{/if}
+		{if(WSTConf('CONF.isOpenScorePay')==1)}
+		<li onclick="javascript:dataShow('score');">
+			<h4 class="ui-nowrap">{:lang('seckill_integral_pay')}</h4>
+			<div class="wst-flex-row wst-jfe wst-ac mode-content">
+				<div class="ui-txt-info" id="scoret">{:lang('seckill_no')}</div>
+				<i class="icon-right-arrow"></i>
+			</div>
+		</li>
+		{/if}
+	</ul>
+</div>
+{else if}
+<script>history.back();</script>
+{/if}
+
+
+
+{/block}
+{block name="footer"}
+	<div class='st-footer'>
+		<div class="pay"></div>
+	</div>
+	<footer class="ui-footer wst-footer-btns" style="height:0.49rem;" id="footer">
+		<div class="wst-flex-row wst-jsb">
+			<div class="wst-se-total wst-flex-column wst-jc wst-se-summary"><span class="title">{:lang('seckill_needpay_total_includ_freight')}：</span><span id="realTotalMoney"></span></div>
+			<div class="wst-se-confirm"><button class="button" onclick="javascript:toSubmit();">{:lang('seckill_confirm')}</button></div>
+		</div>
+	</footer>
+{/block}
+
+
+{block name="include"}
+{/* 遮盖层  */}
+<div class="wst-cover" id="cover"></div>
+<div class="wst-cover2" id="cover2"></div>
+{/* 支付方式 */}
+<input type="hidden" name="" value="{if !empty($payments['1'])}1{else}0{/if}" id="paymentsh" autocomplete="off">
+<input type="hidden" name="" value="{if !empty($payments['1'])}{$payments['1']['0']['payCode']}{else}{$payments['0']['0']['payCode']}{/if}" id="paymentsw" autocomplete="off">
+<div class="wst-fr-box frame" id="payments">
+	<div class="title"><span>{:lang('seckill_pay_type')}</span><div class="wst-clear"></div></div>
+	<div class="content" id="content">
+    {if !empty($payments)}
+       {php}$paymentkey = 0;{/php}
+       {volist name='$payments' id='paymentvo'}
+          {volist name='$paymentvo' id='paymentitem'}
+			<div class="fr-list wst-flex-row wst-jsb wst-ac" onclick="javascript:onSwitch(this);" >
+				<div class="wst-list-infose1 wst-flex-row wst-ac"><i class="{$paymentitem['payCode']}"></i><span>{$paymentitem['payName']}</span></div>
+				<i class="ui-icon-push payments_{$paymentitem['payCode']} ui-icon-checked-s" payCode="{$paymentitem['payCode']}" mode="{$paymentitem['isOnline']}" word="{$paymentitem['payName']}"></i>
+			</div>
+          {php}$paymentkey++;{/php}
+          {/volist}
+       {/volist}
+    {/if}
+	</div>
+	<div class="bottom-two-btn-box wst-flex-row wst-center">
+		<button type="button" class="button wst-dialog-b1" onclick="javascript:dataHide('payments');">{:lang('seckill_cancel')}</button>
+		<button type="button" class="button wst-dialog-b2" onclick="javascript:inDetermine('payments');">{:lang('seckill_confirm')}</button>
+	</div>
+</div>
+{/* 配送方式 */}
+<div class="wst-fr-box frame" id="gives">
+	<div class="title"><span>{:lang('seckill_delivery_mode')}</span><div class="wst-clear"></div></div>
+	<div class="content" id="content">
+		<div class="fr-list wst-flex-row wst-jsb wst-ac" onclick="javascript:onSwitch2(this,0);">
+			<div class="wst-list-infose1 wst-flex-row wst-ac"><span>{:lang('seckill_express_delivery')}</span></div>
+			<i class="ui-icon-push gives0 ui-icon-checked-s wst-active" mode="0" word="{:lang('seckill_express_delivery')}"></i>
+		</div>
+		<div id="deliver1" class="fr-list wst-flex-row wst-jsb wst-ac" style="display: none;" onclick="javascript:onSwitch2(this,1);">
+             <div class="wst-list-infose1 wst-flex-row wst-ac"><span>{:lang('seckill_self_extraction')}</span></div>
+             <i class="ui-icon-push gives1 ui-icon-unchecked-s" mode="1" word="{:lang('seckill_self_extraction')}"></i>
+         </div>
+         <ul id="storbox" class="ui-list ui-list-text wst-se-store" style="display: none;">
+
+		</ul>
+		<script id="tblist" type="text/html">
+			<li onclick="dataShow2()" class="li-store" style="margin: 0">
+				<div class="wst-flex-row wst-jsb wst-ac" style="width:100%;">
+					<div class="wst-flex-column">
+						<div class="wst-flex-row" style="align-items:baseline;"><i class="icon-address"></i><span class="infot">{{d.storeName}}</span></div>
+						<div><span class="infob">{:lang('seckill_address')}：{{d.storeAddress}}</span></div>
+					</div>
+					<i class="icon-right-arrow"></i>
+				</div>
+			</li>
+		</script>
+	</div>
+	<div class="bottom-two-btn-box wst-flex-row wst-center">
+		<button type="button" class="button wst-dialog-b1" onclick="javascript:dataHide('gives');">{:lang('seckill_cancel')}</button>
+		<button type="button" class="button wst-dialog-b2" onclick="javascript:inDetermine('gives');">{:lang('seckill_confirm')}</button>
+	</div>
+</div>
+
+
+{/* 地址框  */}
+<div class="wst-fr-box3" id="areaFrame" style="display:none;">
+	<input type="hidden" name="" value="" id="level" autocomplete="off">
+	<div class="title"><span>{:lang('seckill_select_area')}</span><i class="ui-icon-close-page" onclick="javascript:dataHide3();"></i><div class="wst-clear"></div></div>
+	<div class="content" id="content2">
+		<div class="option">
+			<p class="ui-nowrap-flex term active_0 active" onclick="javascript:inOption(this,0)">{:lang('seckill_please_select')}</p>
+		</div>
+		<div class="wst-clear"></div>
+		<div id="area_0" class="list j-areas area_0" areaId="0" level="0">
+			{volist name="area" id="ar"}
+			<p onclick="javascript:inChoice(this,'area_0',{$ar['areaId']},0);">{$ar['areaName']}</p>
+			{/volist}
+		</div>
+	</div>
+</div>
+
+{/* 自提点层  */}
+<div class="wst-fr-box2" id="store">
+	<div class="title" id="boxTitle2"><i onclick="javascript:dataHide2();"></i><span>{:lang('seckill_select_pick_up')}</span><div class="wst-clear"></div></div>
+	<div class="wst-flex-row wst-jsb wst-ac select-store">
+		<div class="ui-form-itemin">
+			<label class="word">{:lang('seckill_region_title')}：</label>
+			<div id="addresst" class="ui-nowrap-flex address" onclick="javascript:dataShow3();">{:lang('seckill_require_select_area')}</div>
+		</div>
+		<i class="icon-right-arrow"></i>
+	</div>
+
+	<div class="content" >
+		<ul id="storelist" class="ui-list ui-list-text wst-se-store">
+
+		</ul>
+	</div>
+</div>
+<script id="tblist2" type="text/html">
+{{# for(var i = 0; i < d.length; i++){ }}
+	<li id="store-info{{d[i].storeId}}" onclick="checkStore(this,{{d[i].storeId}})" class="store-item li-store {{(i==0 || d[i].storeId==currStoreId)?'currchk':''}}">
+		<div  class="wst-flex-row wst-jsb wst-ac" style="width:100%;">
+			<div class="wst-flex-column">
+				<div class="wst-flex-row" style="align-items:baseline;">
+				<i class="icon-address"></i><span class="infot">{{d[i].storeName}}</span>
+				<a href="tel:{{d[i].storeTel}}"><img class="tel" src="__MOBILE__/img/tel.png" style=""></a>
+				</div>
+				<div><span class="infob">{:lang('seckill_address')}：{{d[i].storeAddress}}</span></div>
+			</div>
+			<i class="icon-right-arrow"></i>
+		</div>
+	</li>
+{{# } }}
+</script>
+
+
+{/* 用户发票列表  */}
+<script type="text/html" id="invoiceBox">
+	{{# for(var i = 0; i < d.length; i++){ }}
+	<li class="{{ d[i].invoiceType==0?'j-normal':'j-special'  }}"
+		invType="{{d[i].invoiceType}}"
+		invId="{{d[i].id}}"
+		invCode="{{d[i].invoiceCode}}">{{d[i].invoiceHead}}</li>
+	{{# } }}
+</script>
+
+{/* 发票信息层  */}
+<div class="wst-fr-box " id="frame">
+	<div class="title" id="boxTitle"><span>{:lang('seckill_invoice_information')}</span><div class="wst-clear"></div></div>
+	<div class="content" id="invoice_content" style="height:4.32rem;">
+		<div class="inv_item">
+			<div class="inv_tit">{:lang('seckill_invoice_type')}</div>
+			<div class="ui-list inv_ul wst-flex-row" id="j-normal-btn" onclick="javascript:invTypeSwitch(this,0);">
+				<i class="ui-icon-push invoices0 ui-icon-checked-s wst-active inv_chk" mode="0" word="{:lang('seckill_invoice_normal')}"></i>
+				<div class="pdtb10"><span>{:lang('seckill_invoice_normal')}</span></div>
+			</div>
+			<div class="ui-list inv_ul wst-flex-row" id="j-special-btn" onclick="javascript:invTypeSwitch(this,1);">
+				<i class="ui-icon-push invoices1 ui-icon-unchecked-s inv_chk" mode="1" word="{:lang('seckill_invoice_special_vat')}"></i>
+				<div class="pdtb10"><span>{:lang('seckill_invoice_special_vat')}</span></div>
+			</div>
+			<div class="wst-clear"></div>
+		</div>
+		<div class="inv_item" id="j-special-box">
+			<div class="special_inv_hidebox" style="display: block">
+				<div class="inv_head_inputbox">
+					<input class="inv_head_input" readonly type="text" id="special_invoice_head" placeholder="{:lang('seckill_require_invoice')}" />
+					<div id="special_inv_headlist">
+						<ul class="inv_list_item">
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<input type="hidden" id="invoiceId" value="0" />
+		<input type="hidden" id="invoiceType" value="0" class='j-ipt' />
+		<div class="inv_item" id='j-normal-box'>
+			<div class="inv_tit">{:lang('seckill_invoice_head')}</div>
+			<div class="ui-list inv_ul wst-flex-row" onclick="javascript:invOnSwitch(this,0);">
+				<i class="ui-icon-push invoices0 ui-icon-checked-s wst-active inv_chk" mode="0" word="{:lang('seckill_personal')}"></i>
+				<div class="pdtb10"><span>{:lang('seckill_personal')}</span></div>
+			</div>
+			<div class="ui-list inv_ul wst-flex-row" onclick="javascript:invOnSwitch(this,1);">
+				<i class="ui-icon-push invoices1 ui-icon-unchecked-s inv_chk" mode="1" word="{:lang('seckill_unit')}"></i>
+				<div class="pdtb10"><span>{:lang('seckill_unit')}</span></div>
+			</div>
+			<input type="hidden" id="invoice_obj" value="0" />
+			<div class="wst-clear"></div>
+
+			<div class="inv_hidebox">
+				<div class="inv_head_inputbox">
+					<input class="inv_head_input" type="text" id="invoice_head" placeholder="{:lang('seckill_require_unit_name')}" />
+					<div id="inv_headlist">
+						<ul class="inv_list_item">
+						</ul>
+					</div>
+				</div>
+				<div class="inv_code_inputbox">
+					<input class="inv_code_input" type="text" id="invoice_code" placeholder="{:lang('seckill_require_taxpayer_code')}" />
+				</div>
+			</div>
+		</div>
+		<div class="inv_item">
+			<input type="hidden" id="isInvoice" value="0" />
+			<div class="inv_tit">{:lang('seckill_invoice_content')}</div>
+			<div class="wst-flex-row">
+				<div class="ui-list inv_ul none_float wst-flex-row" onclick="javascript:isInvoice(this,0);">
+					<i class="ui-icon-push invoices0 ui-icon-checked-s wst-active inv_chk" mode="0" word="{:lang('seckill_no_invoice')}"></i>
+					<div class="pdtb10"><span>{:lang('seckill_no_invoice')}</span></div>
+				</div>
+				<div class="ui-list inv_ul none_float wst-flex-row" onclick="javascript:isInvoice(this,1);">
+					<i class="ui-icon-push invoices1 ui-icon-unchecked-s inv_chk" mode="1" word="{:lang('seckill_invoice_detail')}"></i>
+					<div class="pdtb10"><span>{:lang('seckill_invoice_detail')}</span></div>
+				</div>
+			</div>
+			<div class="wst-clear"></div>
+		</div>
+
+		<ul class="inv_tip">
+			<li>{:lang('seckill_invoice_tips_1')}</li>
+			<li>{:lang('seckill_invoice_tips_2')}</li>
+		</ul>
+	</div>
+	<div class="bottom-two-btn-box wst-flex-row wst-center">
+		<button type="button" class="button wst-dialog-b1" onclick="javascript:invoiceHide();">{:lang('seckill_cancel')}</button>
+		<button type="button" class="button wst-dialog-b2" onclick="javascript:saveInvoice();">{:lang('seckill_confirm')}</button>
+	</div>
+</div>
+
+{/* 积分支付 */}
+<input type="hidden" name="" value="0" id="scoreh" autocomplete="off">
+<div class="wst-fr-box frame" id="score">
+	<div class="title"><span>{:lang('seckill_integral_pay')}</span><div class="wst-clear"></div></div>
+	<div class="content" id="content">
+		<div class="fr-list wst-flex-row wst-jsb wst-ac" onclick="javascript:onSwitch(this);">
+			<div class="wst-list-infose1 wst-flex-row wst-ac"><span>{:lang('seckill_yes')}</span></div>
+			<i class="ui-icon-push score1 ui-icon-checked-s wst-active" mode="1" word="{:lang('seckill_yes')}"></i>
+		</div>
+		<div class="fr-list wst-flex-row wst-jsb wst-ac" onclick="javascript:onSwitch(this);">
+			<div class="wst-list-infose1 wst-flex-row wst-ac"><span>{:lang('seckill_no')}</span></div>
+			<i class="ui-icon-push score0 ui-icon-unchecked-s" mode="0" word="{:lang('seckill_no')}"></i>
+		</div>
+		<div class="wst-fr-score">{:lang('seckill_use_score_tips',['<span id="userOrderScore">'.$carts['userOrderScore'].'</span>','<span id="userOrderMoney"></span>'])}</div>
+	</div>
+	<div class="bottom-two-btn-box wst-flex-row wst-center">
+		<button type="button" class="button wst-dialog-b1" onclick="javascript:dataHide('score');">{:lang('seckill_cancel')}</button>
+		<button type="button" class="button wst-dialog-b2" onclick="javascript:inDetermine('score');">{:lang('seckill_confirm')}</button>
+	</div>
+</div>
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__ROOT__/addons/seckill/view/mobile/index/js/settlement.js?v={$v}'></script>
+{/block}

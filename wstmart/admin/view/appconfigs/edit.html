@@ -1,0 +1,95 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+<style>
+body{overflow:hidden}
+.copytip{border:1px solid #eee;background: #f6f6f6;padding: 2px 6px;cursor: pointer;margin:4px;border-radius: 4px;}
+</style>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}' type="text/javascript"></script>
+<script src="__ADMIN__/appconfigs/appconfigs.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<style>
+
+input[type=radio]{
+	vertical-align:middle; margin:0px!important;
+}
+
+</style>
+
+<div id='alertTips' class='alert alert-success alert-tips fade in'>
+	<div id='headTip' class='head'><i class='fa fa-lightbulb-o'></i>{:lang('menu_tips')}</div>
+	<ul class='body'>
+		<li>{:lang('app_config_tips')}</li>
+	</ul>
+</div>
+<form autocomplete='off'>
+<fieldset class="layui-elem-field layui-field-title">
+	<legend>{:lang('app_config_base')}</legend>
+	<table class='wst-form wst-box-top'>
+		<tr>
+			<th width='200'>{:lang('app_config_base_code_url')}：</th>
+			<td>
+				<label for="">
+					<input type="radio" class='ipt' id='appShareOpenType' name="appShareOpenType" value="1" {if($object["appShareOpenType"]==1)}checked{/if} />
+					{:lang('app_config_base_code_url1')}
+				</label>
+				<label for="">
+					<input type="radio" class='ipt' id='appShareOpenType' name="appShareOpenType" value="2" {if($object["appShareOpenType"]==2)}checked{/if} />
+					{:lang('app_config_base_code_url2')}
+				</label>
+			</td>
+		</tr>
+		<tr>
+			<th>app schema：</th>
+			<td>
+				<input type="text" id='appScheme' class='ipt' value="{$object['appScheme']?:''}" maxLength='100' />
+				<span>{:lang('app_config_base_code_url3')}</span>
+			</td>
+		</tr>
+	</table>
+</fieldset>
+<fieldset class="layui-elem-field layui-field-title">
+	<legend>{:lang('app_config_download')}</legend>
+	<table class='wst-form wst-box-top'>
+		<tr>
+			<th width='200'>{:lang('upload_img2')}：</th>
+			<td>
+				<input type="text" readonly="readonly" id='appLogo' class='ipt' value='{$object["appLogo"]?:""}' style="float: left;width: 355px;" />
+				<div id='appLogoPicker'>{:lang('upload')}</div><span id='appLogoMsg'></span>
+				<img src='__RESOURCE_PATH__/{$object["appLogo"]?:""}' height="30" id='appLogoPrevw' style="margin-left: 5px;" />
+			</td>
+		</tr>
+		<tr>
+			<th>{:lang('app_config_download_name')}：</th>
+			<td><input type="text" id='appName' class='ipt' value="{$object['appName']?:''}"
+					maxLength='100' /></td>
+		</tr>
+		<tr>
+			<th>{:lang('app_config_download_desc')}：</th>
+			<td><input type="text" id='appDesc' class='ipt' value="{$object['appDesc']?:''}"
+					maxLength='100' /></td>
+		</tr>
+		<tr>
+			<th>{:lang('app_config_download_android')}：</th>
+			<td><input type="text" id='apkUrl' class='ipt' value="{$object['apkUrl']?:''}" /></td>
+		</tr>
+		<tr>
+			<th>{:lang('app_config_download_ios')}：</th>
+			<td><input type="text" id='ipaUrl' class='ipt' value="{$object['ipaUrl']?:''}" /></td>
+		</tr>
+		{if WSTGrant('APP_CONFIG_04')}
+		<tr>
+			<td colspan='2' style='padding-left:300px;padding-top:30px'>
+				<button type="button"  class='btn btn-primary btn-mright' onclick='javascript:edit()'><i class="fa fa-check"></i>{:lang('submit')}</button>
+				<button type="reset"  class='btn'><i class="fa fa-refresh"></i>{:lang('reset')}</button>
+			</td>
+		</tr>
+		{/if}
+	</table>
+</fieldset>
+    
+</form>
+{/block}

@@ -1,0 +1,15 @@
+{
+    "require": {
+        "workerman/gateway-worker": "^3.0",
+        "workerman/http-client": "^0.1.1"
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "platform": {
+        "ext-pcntl": "7.2",
+        "ext-posix": "7.2"
+        }
+    }
+}

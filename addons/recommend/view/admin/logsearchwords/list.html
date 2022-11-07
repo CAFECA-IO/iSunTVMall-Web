@@ -1,0 +1,28 @@
+{extend name="$LAYOUT_ADMIN_BASE" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ROOT__/addons/recommend/view/admin/logsearchwords/logsearchwords.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div id='alertTips' class='alert alert-success alert-tips fade in'>
+  <div id='headTip' class='head'><i class='fa fa-lightbulb-o'></i>{:lang('recommend_menu_tips')}</div>
+  <ul class='body'>
+    <li>{:lang('recommend_menu_tips2')}</li>
+  </ul>
+</div>
+<div class="wst-toolbar">
+<input type="text" id="startDate" name="startDate" class="laydate-icon ipt" placeholder='{:lang('recommend_start_date')}' maxLength="20"  />
+至
+<input type="text" id="endDate" name="endDate" class="laydate-icon ipt" placeholder='{:lang('recommend_end_date')}' maxLength="20"  />
+<input type="text" id="searchWord" name="searchWord" class="ipt" placeholder='{:lang('recommend_ipt_key_plo')}' maxLength="50" />
+<button class="btn btn-primary" onclick='javascript:loadGrid(0)'><i class='fa fa-search'></i>{:lang('recommend_search')}</button>
+</div>
+
+<div class='wst-grid'>
+<div id="mmg" class="mmg"></div>
+<div id="pg" style="text-align: right;"></div>
+</div>
+{/block}

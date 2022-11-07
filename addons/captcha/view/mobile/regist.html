@@ -1,0 +1,91 @@
+<a id="timeTips" class='send' href="javascript:getSmsCaptch()">{:lang('captcha_press_get_check_code')}</a>
+<div class="ui-dialog wst-reject-box" id="captchBox">
+    
+    <div class="ui-dialog-cnt">
+    <div class="ui-dialog-head"><div class="ma_head"><span class="title">{:lang("captcha_select_picture")}：</span><img height="30" id="maImg">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:getCaptcha()">{:lang("captcha_refresh")}</a><a class="close"  data-role="button">{:lang("captcha_close")}</a></div></div>
+        <div class="ui-dialog-bd" style="border-radius: 0.1rem;">
+          <ul id="maBox"></ul>
+        </div>
+    </div>        
+</div>
+<style>
+.ui-dialog-bd{background: #fff;}
+.ma_loading{position: relative;top: 4px;left: 5px;display: none}
+.ma_head{height: 0.45rem;font-size: 14px;border-bottom: 1px solid #f5f5f5;padding:0 0.1rem 0.1rem 0.1rem;background:#fff;    font-size: 0.13rem!important;    border-radius: 0.1rem 0.1rem 0 0;}
+.ma_head .title{font-weight: bold;}
+.ma_head .close{position: absolute;right: 0.1rem;    top: 0.22rem;}
+.ma_head #maImg{position: relative;top: 11px;float: none;width:0.6rem;}
+#maBox{margin: 0.1rem;padding-left: 0.04rem;}
+#maBox li{width:0.75rem;height:0.75rem;float:left;margin-right:2px;margin-bottom:2px;border:3px solid #fff;cursor: pointer;    position: relative;}
+#maBox li img{width:0.75rem;height:0.75rem;}
+#maBox li.select{border:3px solid #24D798;}
+#maBox li .sign{position: relative;top: -0.5rem;left: -0.24rem;width: 0.25rem;height: 0.25rem;}
+</style>
+<script>
+var box = null;
+function getCaptcha(){
+   $('.ma_loading').show();
+   $.post(WST.AU('captcha://captchas/getCaptcha'),{rnd:Math.random()},function(data,textStatus){
+       var json = WST.toJson(data);
+       $('.ma_loading').hide();
+       if(json.status==1){
+          var data = json.data;
+          $('#maImg').attr('src',WST.AU("captcha://captchas/captcha"));
+          var html = [];
+          for(var i=0;i<data['list'].length;i++){
+             html.push('<li><img src="'+WST.conf.RESOURCE_PATH+'/'+data['list'][i]['imgPath']+'" code="'+data['list'][i]['code']+'"></li>');
+          }
+          $('#maBox').html(html.join(''));
+          var isChk = false;
+          $('#maBox li').each(function(){
+              $(this).click(function(){
+                  if(isChk)return;
+                  isChk = true;
+                  $(this).addClass('select');
+                  $(this).append('<img class="sign" src="'+WST.conf.ROOT+'/addons/captcha/view/images/select.png'+'">');
+                  checkCaptch($(this).find('img').attr('code'));
+              });
+          })
+       }else{
+          WST.msg(json.msg,{icon:2});
+       }
+  });
+}
+function checkCaptch(code){
+    $.post(WST.AU('captcha://captchas/checkRegistCaptcha'),{code:code,userPhone:$('#regName').val()},function(data,textStatus){
+       var json = WST.toJson(data);
+       if(json.status==1){
+           $("#captchBox").dialog("hide");
+           WST.msg(json.msg,'success');
+            var time = 120;
+            var href = $('.send').attr('href');
+            $('.send').attr('href', 'javascript:void(0)').html('120秒获取');
+            var task = setInterval(function(){
+              time--;
+              $('.send').html(''+time+"秒获取");
+              if(time==0){
+                isSend = false;
+                clearInterval(task);
+                $('.send').attr('href', href).html("重新发送");
+              }
+            },1000);
+
+       }else{
+           WST.msg(json.msg,{icon:2});
+           getCaptcha();
+       }
+    });
+}
+function getSmsCaptch(){
+   if($.trim($('#regName').val())==''){
+      WST.msg('请输入要注册的手机号',{icon:2});
+      return;
+   }
+   if(WST.conf.SMS_VERFY!=1){
+       obtainCode();
+   }else{
+      $("#captchBox").dialog("show");
+      getCaptcha();
+  }
+}
+</script>

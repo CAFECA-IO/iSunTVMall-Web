@@ -1,0 +1,44 @@
+{php}$indicatorColor = $vo['indicatorColor'];{/php}
+{php}
+    $indicatorType = $vo['indicatorType'];
+    switch($indicatorType){
+        case 1:
+            $indicatorWidth = "16px";
+            $indicatorBorderRadius = "0";
+            break;
+        case 2:
+            $indicatorWidth = "8px";
+            $indicatorBorderRadius = "0";
+            break;
+        case 3:
+            $indicatorWidth = "8px";
+            $indicatorBorderRadius = "100%";
+            break;
+    }
+{/php}
+<style>
+    .swiper-pagination-bullet-active{background:{$indicatorColor};}
+    .swiper-pagination-bullet{width: {$indicatorWidth};border-radius:{$indicatorBorderRadius};}
+</style>
+{php}$interval = $vo['interval'] * 1000;{/php}
+{php}$style="";{/php}
+{if $vo['paddingTop']}
+    {php}$style.="margin-top:".intval($vo['paddingTop'])."px;";{/php}
+{/if}
+{if $vo['paddingBottom']}
+    {php}$style.="margin-bottom:".intval($vo['paddingBottom'])."px;";{/php}
+{/if}
+{if $vo['paddingLeft']}
+    {php}$style.="margin-left:".intval($vo['paddingLeft'])."px;";{/php}
+{/if}
+{if $vo['paddingRight']}
+    {php}$style.="margin-right:".intval($vo['paddingRight'])."px;";{/php}
+{/if}
+<div class="swiper-container banner custom-banner" style="{$style}">
+    <div class="swiper-wrapper ads">
+        {volist name="$vo['swipers']" id="voo"}
+            <div class="swiper-slide" data-swiper-autoplay="{$interval}"><a class='ms-slide' href="{$voo['link']}"><img src="__RESOURCE_PATH__/{$voo['img']}"></a></div>
+        {/volist}
+    </div>
+    <div class="swiper-pagination" style="background:none;"></div>
+</div>

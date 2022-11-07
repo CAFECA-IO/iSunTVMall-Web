@@ -1,0 +1,35 @@
+{extend name="$LAYOUT_ADMIN_BASE" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ROOT__/addons/seckill/view/admin/seckill_goods.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+	<input type="hidden" id="seckillId" value="{$seckillId}" />
+    <ul class="layui-tab-title">
+    	{volist name="times" id="vo"}
+		    <li data-timeId="{$vo['id']}">{$vo['title']}</li>
+	    {/volist}
+	</ul>
+	<div class="layui-tab-content" style="padding:0px 0;">
+		<div class="layui-tab-item layui-show">
+			<div class="wst-toolbar">
+			<input type="text" name="goodsName"  placeholder="{:lang('seckill_goods_name')}" id="goodsName" class='j-ipt'/>
+			<button class="btn btn-primary" onclick='javascript:loadGrid1(0)'><i class='fa fa-search'></i>{:lang('seckill_query')}</button>
+			<button class="btn btn-gray f-right" onclick="javascript:location.href='{:addon_url('seckill://admin/seckillPage')}'"><i class="fa fa-angle-double-left"></i>{:lang('seckill_back')}</button>
+			<div style='clear:both'></div>
+			</div>
+			<table id="mmg1" class="mmg1">
+			   <tr>
+			      <th rowspan="" colspan=""></th>
+			   </tr>
+			</table>
+			<div id="pg1" style="text-align: right;"></div>
+	   </div>
+   </div>
+</div>
+{/block}

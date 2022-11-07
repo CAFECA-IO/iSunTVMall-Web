@@ -1,0 +1,81 @@
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link href="__STYLE__/css/shopapply-{$lang}.css?v={$v}" rel="stylesheet">
+<div id="wst-shopapp" class="wst-shopapp" style="display:none;">
+	<div class="wst-shopapp-fo">
+	<a href="javascript:void(0)" onclick="javascript:getClose()" class="wst-shopapp-close"></a>
+	<form id="apply_form"  method="post" autocomplete="off">
+	<table class="wst-table" style="margin:15px;margin-left:35px;">
+	    <tr>
+	    	<td class="wst-shopapp-td">{:lang('linkman')}</td>
+	    	<td><input id="linkman" name="linkman" class="wst_ipt2 wst-shopapp-input" tabindex="1" maxlength="30" autocomplete="off" onpaste="return false;" style="ime-mode:disabled;" placeholder="{:lang('linkman')}"  type="text" data-rule="{:lang('linkman')} required;" data-msg-mobile="{:lang('please_input_linkman')}" data-msg-required="{:lang('please_input_linkman')}" data-tip="{:lang('please_input_linkman')}"/></td>
+	    </tr>
+		<tr>
+			<td class="wst-shopapp-td">{:lang('phone_number')}</td>
+			<td><input id="userPhone2" name="userPhone" class="wst_ipt2 wst-shopapp-input" tabindex="1" maxlength="30" autocomplete="off" onpaste="return false;" style="ime-mode:disabled;" placeholder="{:lang('phone_number')}"  type="text"data-rule="{:lang('phone_number')} required;mobile;remote(post:{:url('home/shopapplys/checkShopPhone')})" data-msg-mobile="{:lang('please_input_valid_phone_number')}" data-msg-required="{:lang('phone_number_data_tips')}" data-tip="{:lang('phone_number_data_tips')}" data-target="#userPhone2"/></td>
+		</tr>
+		{if(WSTConf('CONF.smsOpen')==1)}
+		<tr>
+			<td class="wst-shopapp-td">{:lang('sms_verification_code')}</td>
+			<td>
+				<input maxlength="6" autocomplete="off" tabindex="6" class="wst_ipt2 wst-shopapp-input2" name="mobileCode" style="ime-mode:disabled" id="mobileCode" type="text" placeholder="{:lang('sms_verification_code')}" />
+				<button type="button"  onclick="javascript:getShopCode();" class="wst-shopapp-obtain">{:lang('get_sms_verification_code')}</button>
+				<span id="mobileCodeTips"></span>
+			</td>
+		</tr>
+		{else}
+		<tr>
+			<td class="wst-shopapp-td">{:lang('verifycode')}</td>
+			<td>
+				<div class="wst-apply-code">
+				<input id="verifyCodea" style="ime-mode:disabled" name="verifyCodea"  class="wst_ipt2 wst-apply-codein" tabindex="6" autocomplete="off" maxlength="6" type="text" placeholder="{:lang('verifycode')}"/>
+				<img id='verifyImga' class="wst-apply-codeim" src="" onclick='javascript:WST.getVerify("#verifyImga","#verifyCodea")' style="width:101px;border-top-right-radius:2px;border-bottom-right-radius:2px;"><span id="verifya"></span>    	
+			   	</div>
+			</td>
+		</tr>
+		{/if}
+		<tr>
+			<td class="wst-shopapp-td">备注</td>
+			<td>
+				<textarea id="remark" name="remark" class="wst_ipt2 wst-remark" id="rejectionRemarks" autocomplete="off" style="width: 350px;height:170px;"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" style="padding-left:80px;">
+				<label>
+					<input id="protocol" name="protocol" type="checkbox" class="wst_ipt2" value="1"/>{:lang('read_and_agree')}
+	           	</label>
+	           	<a href="javascript:;" style="color:#69b7b5;" id="protocolInfo" onclick="showProtocol();">{:lang('shop_register_protocol')}</a>
+			</td>
+		</tr>
+		<tr style="height:45px;">
+			<td colspan="2" style="padding-left:165px;">
+				<input id="reg_butt" class="wst-shopapp-but" type="submit" value="注册" style="width: 100px;height:30px;"/>
+			</td>
+		</tr>
+	</table>
+	</form>
+	</div>
+</div>
+     <form method="post" id="shopVerifys" autocomplete="off" style="display:none;">
+      <input type='hidden' id='VerifyId' value='' autocomplete="off"/>
+      <table class='wst-table' style="width:400x;margin:15px;margin-left:35px;">
+      	<tr>
+			<td class="wst-shopapp-td">{:lang('verifycode')}</td>
+			<td>
+				<input id="smsVerfy"  name="smsVerfy"  class="wst_ipt2 wst-shopapp-input2" tabindex="6" autocomplete="off" maxlength="6" type="text" data-target="#smsVerfyTips" placeholder="{:lang('verifycode')}" data-rule="{:lang('verifycode')}: required;" data-msg-required="{:lang('verifycode_data_tips')}" data-tip="{:lang('verifycode_data_tips')}"/>
+				<span id="smsVerfyTips" style="float:right;"></span>      	
+			   	<label style="float:right;margin-top:5px;"><a href="javascript:WST.getVerify('#verifyImg3','#smsVerfy')">&nbsp;{:lang('change_one')}</a></label>
+				<label style="float:right;">
+					<img id='verifyImg3' src="" onclick='javascript:WST.getVerify("#verifyImg3","#smsVerfy")' style="width:100px;"> 
+				</label>
+			</td>
+		</tr>
+         <tr>
+           <td colspan='2' style='padding-left:170px;height:50px;'>
+               <button class="wst-shopapp-but" type="submit" style="width:100px;height: 30px;">{:lang('confirm')}</button>
+           </td>
+         </tr>
+        </table>
+      </form>
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script type='text/javascript' src='__STYLE__/js/shop_applys.js?v={$v}'></script>

@@ -1,0 +1,125 @@
+{extend name="$LAYOUT_SHOP_BASE" /}
+{block name="main"}
+<style>
+.green{color:#31c15a;}.red{color:#ef0000;}.orange{color:orange;}
+</style>
+<div class='wst-toolbar'>
+     <input type='hidden' id='presaleId' class="u-query" value='{$presaleId}'/>
+     <input type='text'  class="u-query" id='orderNo' placeholder="{:lang('presale_order_no')}" />
+     <select class="u-query" id="ftype">
+        <option value="-2">{:lang('presale_order_status')}</option>
+        <option value="0">{:lang('presale_wait_pay_deposit_money')}</option>
+        <option value="1">{:lang('presale_wait_pay_deposit_balance')}</option>
+        <option value="2">{:lang('presale_buy_success')}</option>
+        <option value="-1">{:lang('presale_buy_fail')}</option>
+      </select>
+     <button class="btn btn-primary" onclick="javascript:pageQueryOrders()" type='button'><i class="fa fa-search"></i>{:lang('presale_query')}</button>
+     <button class='btn f-right' type='button' onclick="javascript:history.go(-1)"><i class="fa fa-angle-double-left"></i>{:lang('presale_back')}</button>
+  </div>
+  <div class='wst-shop-content'>
+    <table class='wst-order-list'>
+       <thead>
+        <tr class='head'>
+           <th style="padding-left:10px;">{:lang('presale_order_detail')}</th>
+           <th width="115">{:lang('presale_pay_type')}/{:lang('presale_delivery_info')}</th>
+           <th>{:lang('presale_money')}</th>
+           <th width="110">{:lang('presale_operation')}</th>
+        </tr>
+     </thead>
+     <tbody id='loadingBdy'>
+         <tr id='loading' class='empty-row' style='display:none'>
+              <td colspan='4'><img src="__STYLE__/img/loading.gif">{:lang('presale_loading_data')}</td>
+         </tr>
+       </tbody>
+       <script id="tblist" type="text/html">
+       {{# for(var i = 0; i < d.length; i++){ }}
+       <tbody class="j-order-row">
+         <tr class='empty-row'>
+            <td colspan='4'>&nbsp;</td>
+         </tr>
+         <tr class='order-head'>
+            <td colspan='4' align='right'>
+              <div class='time'>{{d[i].createTime}}</div>
+              <div class='orderno'>{{ WST.lang('presale_order_number') }}：{{d[i].orderNo}}
+
+            </div>
+
+              <div>
+                {{# if(d[i].presaleStatus==0){ }}
+                <div class="order-status orange">{{ WST.lang('presale_wait_pay_deposit_money') }}</div>
+                {{# }else if(d[i].presaleStatus==1){ }}
+                    <div class="order-status orange">{{ WST.lang('presale_wait_pay_deposit_balance') }}</div>
+                {{# }else if(d[i].presaleStatus==2){ }}
+                    <div class="order-status green">{{ WST.lang('presale_buy_success') }}</div>
+                {{# }else if(d[i].presaleStatus==-1){ }}
+                    <div class="order-status red">{{ WST.lang('presale_buy_fail') }}</div>
+                {{# } }}
+              </div>
+            </td>
+         </tr>
+
+         <tr class='goods-box'>
+            <td>
+               <div class='goods-img'>
+                <a href="{{WST.U('home/goods/detail','goodsId='+d[i].goodsId)}}" target='_blank'>
+                <img data-original='__RESOURCE_PATH__/{{d[i].goodsImg}}'  title='{{d[i].goodsName}}' class="gImg">
+                </a>
+               </div>
+               <div class='goods-name'>
+                 <div>{{d[i].goodsName}}</div>
+                 <div>{{d[i].shotGoodsSpecNames}}</div>
+               </div>
+               <div class='goods-extra'>{{d[i].goodsPrice}} x {{d[i].goodsNum}}</div>
+            </td>
+
+            <td >
+                <div>{{d[i].payTypeName}}</div>
+                <div>{{d[i].deliverTypeName}}</div>
+            </td>
+            <td >
+                <div>{{ WST.lang('presale_deposit_money_title') }}：{:lang('currency_symbol')}{{d[i].depositMoney}}</div>
+                <div>{{ WST.lang('presale_deposit_balance') }}：{:lang('currency_symbol')}{{d[i].surplusMoney}}</div>
+                <div class='line'></div>
+                <div>{{ WST.lang('presale_real_total_money') }}：{:lang('currency_symbol')}{{d[i].realTotalMoney}}</div>
+            </td>
+            <td>
+
+                {{# if(d[i].presaleStatus==0){ }}
+                    <a href='#none' onclick="choicePay('{{ d[i].pkey }}');">【{{ WST.lang('presale_to_pay_deposit_money') }}】</a>
+                {{# }else if(d[i].presaleStatus==1 && d[i].canPaySurplus==1){ }}
+                    <a href='#none' onclick="choicePay('{{ d[i].pkey }}');">【{{ WST.lang('presale_to_pay_deposit_balance') }}】</a>
+                {{# } }}
+
+                <div><a href='#none' onclick="toView({{d[i].id}})">【{{ WST.lang('presale_view_detail') }}】</a></div>
+
+            </td>
+
+         </tr>
+         {{# if(WST.blank(d[i].orderRemarks)!=''){  }}
+         <tr>
+          <td colspan="4">
+               <div class="order_remaker">【{{ WST.lang('presale_my_order_remark') }}】{{d[i].orderRemarks}}</div>
+          </td>
+         </tr>
+         {{# }  }}
+       </tbody>
+       {{# } }}
+       </script>
+       <tr class='empty-row'>
+            <td colspan='4' id='pager' align="center" style='padding:5px 0px 5px 0px'>&nbsp;</td>
+       </tr>
+    </table>
+  </div>
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type="text/javascript" src="__STATIC__/js/jquery.min.js?v={$v}"></script>
+<script type="text/javascript" src="__STATIC__/plugins/layer/layer.js?v={$v}"></script>
+<script type='text/javascript' src='__ROOT__/static/plugins/lazyload/jquery.lazyload.min.js?v={$v}'></script>
+<script type="text/javascript" src="__ROOT__/addons/presale/view/shop/shop.js?v={$v}"></script>
+<script>
+$(function(){
+  pageQueryOrders();
+})
+</script>
+{/block}

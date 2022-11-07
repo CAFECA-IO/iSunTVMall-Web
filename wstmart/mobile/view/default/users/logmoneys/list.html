@@ -1,0 +1,180 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('my_money')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/logmoneys.css?v={$v}">
+{/block}
+{block name="header"}
+<div style="position: absolute;top:0px;">
+    <header style="background-color: rgba(0,0,0,0);border-bottom:0;" class="ui-header ui-header-positive wst-header">
+        <i style="color: #ffffff" class="ui-icon-return" onclick="history.back()"></i><h1 style="color: #ffffff">{:lang('my_money')}</h1>
+    </header>
+</div>
+{/block}
+{block name="main"}
+    <input type="hidden" name="" value="{$rs['isSetPayPwd']}" id="isSet" autocomplete="off">
+    <section class="ui-container">
+        <div class="head">
+            <div class="available">
+                <label class="available-title">{:lang('can_use_money')}</label> <!--<i class="available-i"></i>-->
+            </div>
+            <div class="available-money">
+                {$rs['userMoney']}
+            </div>
+            <div class="no-ava">
+                <label style="padding-left: 0.2rem" money="{$rs['userMoney']}" cash="{:WSTConf('CONF.drawCashUserLimit')}">{:lang('frozen_money')}</label>
+                <div class="no-money">
+                    {$rs['lockMoney']}
+                </div>
+            </div>
+            <div class="no-ava">
+                <label style="padding-left: 0.2rem" money="{$rs['userMoney']}" cash="{:WSTConf('CONF.drawCashUserLimit')}">{:lang('can_drawal_money')}</label>
+                <div class="no-money">
+                    {:WSTBCMoney($rs['userMoney'],-$rs['rechargeMoney'])}
+                </div>
+            </div>
+        </div>
+        <div class="available-nav">
+            <label class="available-nav-title">{:lang('can_use_balance')}</label>
+            <label class="available-nav-money">{$rs['userMoney']}</label>
+            {if $lang=='en'}<br/><br/>{/if}
+            {if (int)WSTConf('CONF.isOpenRecharge')==1}
+            <label class="av-btn2" onclick="location.href='{:url('mobile/logmoneys/toRecharge')}'">{:lang('recharge')}</label>
+            {/if}
+            <label class="av-btn1" onclick="getCash()">{:lang('cash_drawal')}</label>
+        </div>
+        <div class="item" onclick="javascript:toRecord()">
+            <i class="item-i1"></i><label>{:lang('my_logmoney')}</label><i class="item-i3"></i>
+        </div>
+        <div class="item" onclick="check()" >
+            <i class="item-i2"></i>{:lang('my_drawal_account')}<i class="item-i3"></i>
+        </div>
+        <div class="item" onclick="location.href='{:url('mobile/cashdraws/index')}'">
+            <i class="item-i4"></i>{:lang('drawal_recode')}<i class="item-i3"></i>
+        </div>
+    </section>
+{/block}
+{block name="include"}
+{include file="default/dialog" /}
+
+
+<input type="hidden" value="{:WSTConf('CONF.pwdModulusKey')}" id="key" autocomplete="off">
+{/* 对话框 prompt */}
+<div class="ui-dialog edit-price-box" id="payPwdBox">
+    <div class="ui-dialog-cnt">
+        <div class="ui-dialog-bd">
+            <div class="dialog-content wst-flex-column wst-jc wst-ac">
+                <p id="wst-dialog" class="wst-dialog-t">{:lang('please_input_paypwd')}</p>
+                <input type='password' id='payPwd' maxLength='6' style='width:150px;height:30px' />
+            </div>
+            <div class="dialog-btn wst-flex-row">
+                <button id="wst-event1" type="button" class="wst-dialog-b1" data-role="button">{:lang('cancel')}</button>
+                <button id="wst-event3" type="button" class="wst-dialog-b2">{:lang('confirm')}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+{/* 遮盖层  */}
+<div class="wst-cover" id="cover"></div>
+<div class="wst-cover1" id="cover1"></div>
+{/* 分类层  */}
+<div class="wst-fr-box" id="frame">
+    <div class="title" onclick="javascript:dataHide(3);">
+        <i class="ui-icon-return" style="position:absolute;top:-0.02rem;left: 0.02rem" ></i>
+        <h1 id="header-title" style="text-align: center">{:lang('drawal_apply')}</h1>
+    </div>
+
+    <div class="warn-item">
+        <label class="warn-item-label">{:lang('drawal_apply_tips')}</label>
+    </div>
+
+    <div class="item" onclick="dataShow(2)">
+        <label style="margin-left: 0.13rem">{:lang('drawal_account')}</label>
+        <i style="float: right;" class="item-i3"></i>
+        <div id="accNo" style="float: right;margin-right: 0.07rem"></div>
+
+    </div>
+    <div class="item accType1" style='display: none'>
+        <div class="mar-left wst-flex-row wst-jsb">
+            <label>{:lang('true_name')}</label>
+            <input type="input" style="margin-right: 0.13rem;border: none;text-align: right;"  id="accUser"  maxLength="20"   autocomplete="off" placeholder="{:lang('real_name_authentication')}"/>
+        </div>
+        <div style='color:red;font-size: 0.12rem;margin-top: 0.1rem;padding-left: 0.13rem;'>{:lang('drawal_weixin_bind_desc')}</div>
+    </div>
+    <div class="item">
+        <div class="mar-left">
+            <label class="av-item">
+            {:lang('can_drawal_money2',['<label style="color: #F07D38">'.WSTBCMoney($rs['userMoney'],-$rs['rechargeMoney']).'</label>'])}
+            </label>
+        </div>
+        
+    </div>
+    
+    <div class="item" style="margin-top: 0">
+        <div style="margin-left: 0.13rem;font-size: 0.27rem;position: relative;">
+            {:lang('currency_symbol')}<input style="width: 60%;border: none;margin-left: 0.06rem" type="text"
+                    type="number" name="money" id="money" onkeypress="return WST.isNumberdoteKey(event)" onblur="javascript:WST.limitDecimal(this,2)" onkeyup="javascript:changeDrawMoney(this)" autocomplete="off" placeholder="0.00"/>
+            <i style="float: right;margin-top: 0.1rem" class="item-i5" onclick="cleverMoney()"></i>
+            <label class="rechargeall" onclick="allMoney({:WSTBCMoney($rs['userMoney'],-$rs['rechargeMoney'])})">{:lang('cash_drawal_all')}</label>
+        </div>
+        <div class="tx-box">
+            <div class="left service-box">
+                {:lang('service_charge',['<label id="chargeService" >0</label>'])}
+            </div>
+            <div class="right">
+                <label class="dz-item">{:lang('actual_amount_received',['<label id="actualMoney" style="color: #F07D38">0</label>'])}</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="item" style="padding: 0 0.12rem;">
+        
+    </div>
+    <div class="item" style="margin-top: 0">
+        <div class="mar-left">
+            {if (int)WSTConf('CONF.drawCashCommission')>0}
+            <label class="av-item">
+            {:lang('service_charge_desc',['<span id="commission">'.WSTConf('CONF.drawCashCommission').'%</span>'])}
+            </label>
+            {/if}
+
+            {if (int)WSTConf('CONF.drawCashUserLimit')>0}
+            <div style="margin-top: -0.06rem">
+                <label class="av-item">{:lang('single_charge_limit_desc',[WSTConf('CONF.drawCashUserLimit')])}</label>
+            </div>
+            {/if}
+        </div>
+    </div>
+
+    <div class="item" style="margin-bottom: 0.2rem">
+        <div class="mar-left wst-flex-row wst-jsb">
+            <label>{:lang('pay_password')}</label>
+            <input type="password" style="margin-right: 0.13rem;border: none;text-align: right;"  id="cashPayPwd"  maxLength="6"  onkeyup="javascript:WST.isChinese(this,1)" autocomplete="off" placeholder="{:lang('pay_password')}"/>
+        </div>
+    </div>
+
+    <button class="button" id="submit" onclick="drawMoney()" style="margin-top: 0.1rem">
+        {:lang('cash_drawal')}
+    </button>
+
+
+
+    <div class="wst-fr-box1" id="frame2">
+        <div class="title" id="boxTitle"><span>{:lang('drawal_account')}</span><i class="ui-icon-close-page" onclick="javascript:dataHide(2);"></i><div class="wst-clear"></div></div>
+        <input type="hidden" name="accId" value="" id="accId" autocomplete="off">
+        <div class="content1" name="accInfo" id="accInfo">
+
+        </div>
+    </div>
+
+</div>
+{/block}
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/js/rsa.js"></script>
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__MOBILE__/users/logmoneys/logmoneys.js?v={$v}'></script>
+{/block}

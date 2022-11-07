@@ -1,0 +1,17 @@
+<div class='row'>
+    <dt>{:lang('coupon_shop_coupon')}：</dt>
+    <dd>
+        <select class='j-ipt' id='couponId_{$shopId}' onchange='getCartMoney()'>
+            <option value='0'>{:lang('coupon_not_use_tips')}</option>
+            {volist name="coupons" id='coupon'}
+            <option value='{$coupon['couponId']}'>
+            {if $coupon['useCondition']==1}
+                {:lang('coupon_full_reduction_tips',[$coupon['useMoney'],$coupon['couponValue']])}
+            {else}
+                {:lang('coupon_money_tips2',[$coupon['couponValue']])}
+            {/if}
+            </option>
+            {/volist}
+        </select>
+    </dd>
+</div>

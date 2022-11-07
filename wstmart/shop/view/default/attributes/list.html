@@ -1,0 +1,107 @@
+{extend name="default/base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+<style type="text/css">
+	#mmg td:nth-last-child(8) {
+		color: #777 !important;
+	}
+</style>
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__SHOP__/attributes/attributes.js?v={$v}" type="text/javascript"></script>
+<script>
+	$(function () {
+		initGrid({$p});
+	});
+</script>
+{/block}
+{block name="main"}
+<div class="wst-toolbar">
+	<div class="f-left">
+		<div id="pcat_0_box" class="f-left">
+			<select id="cat_0" class='ipt pgoodsCats' level="0"
+				onchange="WST.ITGoodsCats({id:'cat_0',val:this.value,isRequire:false,className:'pgoodsCats'});">
+				<option value="">-{:lang('classification')}-</option>
+				{volist name=":WSTGoodsCats(0)" id="vo"}
+				<option value="{$vo['catId']}">{$vo['catName']}</option>
+				{/volist}
+			</select>
+		</div>
+		<select id="attrSrc">
+			<option value="">-{:lang('attribute_source')}-</option>
+			<option value="1">{:lang('platform_properties')}</option>
+			<option value="2">{:lang('merchant_attributes')}</option>
+		</select>
+		<input type="text" id="keyName" placeholder="{:lang('please_enter_a_property_name')}" />
+		<button class="btn btn-primary" onclick="loadGrid(0)"><i class='fa fa-search'></i>{:lang('query')}</button>
+	</div>
+
+	<button class="btn btn-success f-right" onclick="javascript:toEdit(0);"><i class='fa fa-plus'></i>{:lang('add')}</button>
+	<div style="clear:both"></div>
+</div>
+<div class='wst-grid'>
+	<div id="mmg" class="mmg layui-form"></div>
+	<div id="pg" style="text-align: right;"></div>
+</div>
+<div id='attrBox' style='display:none'>
+	<form id="attrForm">
+		<table class='wst-form wst-box-top'>
+			<tr>
+				<th width='150'>
+					<input type="hidden" id="attrId" value="" class="ipt" />
+					{:lang('commodity_classification')}<font color='red'>*</font>：
+				</th>
+				<td id="bcat_0_box">
+					<select id="bcat_0" class='ipt goodsCats' level="0"
+						onchange="WST.ITGoodsCats({id:'bcat_0',val:this.value,isRequire:false,className:'goodsCats'});"
+						data-rule='{:lang("commodity_classification")}:required;' data-target="#msg_bcat_0">
+						<option value="">-{:lang('select')}-</option>
+						{volist name=":WSTShopApplyGoodsCats(0)" id="vo"}
+						<option value="{$vo['catId']}">{$vo['catName']}</option>
+						{/volist}
+					</select>
+					<span class='msg-box' id='msg_bcat_0' style='color:red;'>({:lang('select_at_least_one_product_category')})</span>
+				</td>
+			</tr>
+			{volist name=':WSTSysLangs()' id='vo'}
+			<tr>
+				<th>{:lang('property_name')}({$vo['name']})<font color='red'>*</font>：</th>
+				<td><input type="text" id='langParams{$vo["id"]}attrName' name='langParams{$vo["id"]}attrName' class="ipt" maxLength='20' /></td>
+			</tr>
+			{/volist}
+			<tr>
+				<th>{:lang('attribute_type')}<font color='red'>*</font>：</th>
+				<td>
+					<select id='attrType' class='ipt' onchange='changeArrType(this.value)'>
+						<option value='0'>{:lang('input_box')}</option>
+						<option value='1'>{:lang('multiple_options')}</option>
+						<option value='2'>{:lang('drop_down_box')}</option>
+					</select>
+				</td>
+			</tr>
+			<tr id='attrValTr' style='display:none'>
+				<th>{:lang('property_options')}<font color='red'>*</font>：</th>
+				<td>
+					<input type="text" id="attrVal" name="attrVal" class="ipt"
+						placeholder="{:lang('property_name_tips')}" data-msg='{:lang("please_enter_a_property_name")}' />
+				</td>
+			</tr>
+			<tr>
+				<th>{:lang('display')}<font color='red'> </font>：</th>
+				<td class='layui-form'>
+					<input type="checkbox" id="isShow" name="isShow" value="1" class="ipt" lay-skin="switch"
+						lay-filter="isShow" lay-text="{:lang('show')}|{:lang('hide')}">
+				</td>
+			</tr>
+			<tr>
+				<th>{:lang('sort')}<font color='red'>*</font>：</th>
+				<td>
+					<input type="text" id="attrSort" name="attrSort" class="ipt" maxLength='20'  />
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>
+
+{/block}

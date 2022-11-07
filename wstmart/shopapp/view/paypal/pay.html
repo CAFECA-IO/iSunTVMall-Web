@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+	<meta name="format-detection" content="telephone=no">
+	<title>{:lang('order_pay_title')}</title>
+	<link rel="stylesheet"  href="{$APP_PATH}/pay.css?v={$v}">
+</head>
+<body>
+	<div class="ui-container" id="shopBox">
+		{if(empty($message))}
+		<div class="recharge-box">
+			<div>{:lang($payObj=="enter"?'pay_shop_fee':'wallets_recharge')}</div>
+			<div class="paybox"><span class="wst-orders_prices">{:lang('currency_symbol')} {$needPay}</span></div>
+		</div>
+		{/* 按钮渲染区域 */}
+		<div id="paybtnbox" style="text-align: center;padding:0.12rem;"></div>
+	{else}
+		<ul class="ui-row-flex wst-flexslp">
+			<li class="ui-col ui-flex ui-flex-pack-center">
+			<p>{$message}</p>
+			</li>
+		</ul>
+	{/if}
+    </div>
+
+
+</body>
+
+
+{if(empty($message))}
+	{if($payFrom=='paypals')}
+		{php}$paypalClientId = WSTGetPaypalClientId();{/php}
+		{if $paypalClientId!=""}
+		<script src="https://www.paypal.com/sdk/js?client-id={$paypalClientId}&debug=true&currency=HKD"></script>
+		<script>
+			paypal.Buttons({
+				createOrder: function() {
+					var pkey = "{$pkey}";
+					var tokenId = "{$tokenId}";
+					var payUrl = "{$payurl}";
+					var itmeId = "{$itmeId}";
+					var needPay = "{$needPay}";
+					var postData = JSON.stringify({
+				 　　'payObj' : '{$payObj}',
+				 　　'pkey' : pkey,
+					 'tokenId': tokenId,
+					 'itmeId':itmeId,
+					 'needPay':needPay
+				　　});
+					console.log("payUrl``", payUrl);
+					console.log("postData``", postData);
+				  return fetch(payUrl, {
+				    method: 'post',
+				    headers: {
+				      'content-type': 'application/json'
+				    },
+				　　body:postData
+				  }).then(function(res) {
+				  	console.log("res______________",res);
+				    return res.json();
+				  }).then(function(data) {
+				  	console.log("data______________",data);
+				    return data.id; // Use the key sent by your server's response, ex. 'id' or 'token'
+				  });
+				},
+				onApprove: function(data, actions) {
+					console.log("onApprove______________",data);
+			        return actions.order.capture().then(function(details) {
+			        	console.log("details——————————————————————————————————————————",details);
+			        	if(details['purchase_units'][0]['payments']['captures'][0]['status']=='COMPLETED'){
+			        		setTimeout(function(){
+			        			location.href = "{$returnUrl}";
+			        		},3000);
+			        		
+			        	}
+			        });
+			    }
+			}).render('#paybtnbox');
+
+		</script>
+		{/if}
+	{/if}
+	<script type="text/javascript">
+  
+	</script>
+{/if}

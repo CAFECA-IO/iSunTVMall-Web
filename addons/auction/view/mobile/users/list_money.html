@@ -1,0 +1,62 @@
+{extend name="$LAYOUT_MOBILE_BASE" /}
+{block name="title"}{:lang('auction_my_caution_money')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__ROOT__/addons/auction/view/mobile/index/css/users_list.css?v={$v}">
+{/block}
+{block name="header"}
+	<header style="background:#ffffff;" class="ui-header ui-header-positive ui-border-b wst-header">
+        <i class="ui-icon-return" onclick="history.back()"></i><h1>{:lang('auction_my_caution_money')}</h1>
+    </header>
+{/block}
+{block name="footer"}
+	{include file="$LAYOUT_MOBILE_FOOTER" /}
+{/block}
+{block name="main"}
+	 <input type="hidden" name="" value="" id="currPage" autocomplete="off">
+     <input type="hidden" name="" value="" id="totalPage" autocomplete="off">
+     <section class="ui-container" style="margin-bottom:0.5rem;">
+		<ul class="ui-tab-content" id="groupon-container" sc="{:date('Y-m-d H:i:s')}">
+	        <li id="goods-list"></li>
+	    </ul>
+     </section>
+<script id="list" type="text/html">
+{{# if(d && d.length>0){ }}
+{{# for(var i=0; i<d.length; i++){ }}
+		<div class="wst-flex-row wst-jsb wst-ac time">
+			<span>{:lang('auction_time')}</span><p >{{ d[i].startTime }}{:lang('auction_to_title')}{{ d[i].endTime }}</p>
+		</div>
+		<div class="wst-shl-list">
+		   <div class="ui-row-flex goods" onclick="goGoods({{ d[i].auctionId }})" sv="{{ d[i].startTime }}" ev="{{ d[i].endTime }}">
+				<div class="ui-col">
+				<div class="img"><a href="javascript:void(0);" onclick="goGoods({{ d[i].auctionId }})">
+				<img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{{ d[i].goodsImg }}" title="{{ d[i].goodsName }}"></a></div>
+				</div>
+				<div class="ui-col ui-col-2 info">
+					<div class="title ui-nowrap">{{ d[i].goodsName }}</div>
+					<p ><span class="title1">{:lang('auction_curr_price')}：</span><span class="price2">{:lang('currency_symbol')}{{ d[i].currPrice }}</span>&nbsp;</p>
+					<p ><span class="title2">{:lang('auction_status')}：</span><span class="price3">{{#if(d[i]['status']==1){}}{:lang('auction_label_status_1')}{{#}else{}}{:lang('auction_label_status_5')}{{#}}}</span>&nbsp;</p>
+					<p ><span class="title2">{:lang('auction_my_caution_money')}：</span><span class="price">{:lang('currency_symbol')}{{ d[i].cautionMoney }}</span>&nbsp;</p>
+         			{{#if(d[i]['cautionStatus']==2){}}
+         			<span class='state state3'>{:lang('auction_caution_status_1')}</span>
+         			{{# }else if(d[i]['cautionStatus']==-1){}}
+         			<span class='state state'>{:lang('auction_caution_status_2')}</span>
+         			{{#}else{}}
+         			<span class='state state2'>{:lang('auction_caution_status_3')}</span>
+         			{{#}}}
+				</div>
+			</div>
+		</div> 
+{{# } }}
+{{# }else{ }}
+<div class="wst-prompt-icon" style="width:1.395rem;"><img src="__MOBILE__/img/no_data.png"></div>
+<div class="wst-prompt-info">
+	<p>{:lang('auction_no_data')}</p>
+</div>
+{{# } }}
+</script>
+{/block}
+{block name="include"}{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__ROOT__/addons/auction/view/mobile/index/js/list_money.js?v={$v}'></script>
+{/block}

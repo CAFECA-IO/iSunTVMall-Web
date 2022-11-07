@@ -1,0 +1,208 @@
+{extend name="$LAYOUT_HOME_BASE" /}
+{block name="title"}{:lang('auction_check_order_information')}  - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="css"}
+<link href="__ROOT__/addons/auction/view/home/users/css/form.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="top"}
+  {include file="$LAYOUT_HOME_TOP" /}
+{/block}
+{block name="header"}
+  {include file="$LAYOUT_HOME_HEADER" /}
+{/block}
+{block name="main"}
+<div class="wst-container">
+  <div id="stepflex" class="stepflex">
+       <dl class="first doing">
+          <dt class="s-num">1</dt>
+          <dd class="s-text">{:lang('auction_pay_bid')}</dd>
+          <dd></dd>
+       </dl>
+       <dl class="normal doing">
+          <dt class="s-num">2</dt>
+          <dd class="s-text">{:lang('auction_check_order_information')}</dd>
+       </dl>
+       <dl class="last">
+          <dt class="s-num1">3</dt>
+          <dd class="s-text1">{:lang('auction_order_submit_success_title')}</dd>
+       </dl>
+    </div>
+    <div class='wst-clear'></div>
+    <div class='main-head'>{:lang('auction_check_order')}</div>
+    <input type='hidden' class='j-ipt' id='auctionId' value='{$auctionId}'/>
+    <input type='hidden' class='j-ipt' id='s_addressId' value='{if isset($userAddress["addressId"]) }{$userAddress["addressId"]}{/if}'/>
+    <input type='hidden' class='j-ipt' id='s_areaId' value='{if isset($userAddress["addressId"]) }{$userAddress["areaId2"]}{/if}'/>
+    <!-- 用户地址 -->
+    <div class='address-box'>
+       <div class='box-head'>{:lang('auction_consignee_information')} <a class="add-addr" href="javascript:;" onclick="javascript:emptyAddress(this,1)">{:lang('auction_add_address')}</a></div>
+       <!-- 选中地址 -->
+       <div class='j-show-box {if empty($userAddress)}hide{/if}' >
+          <div id="s_userName" class="wst-frame1 j-selected">{if isset($userAddress["addressId"]) }{$userAddress['userName']}{/if}<i></i></div>
+          <div class="address" onmouseover="addrBoxOver(this)" onmouseout="addrBoxOut(this)">
+            <span id='s_address'>
+            {if isset($userAddress["addressId"]) }
+            {$userAddress['userName']}&nbsp;&nbsp;&nbsp;{$userAddress['areaName']}&nbsp;&nbsp;{$userAddress['userAddress']}&nbsp;&nbsp;+{$userAddress['areaCode']}&nbsp;{$userAddress['userPhone']}
+            {/if}
+            </span>
+            &nbsp;&nbsp;
+            <span id="isdefault" {if(isset($userAddress['isDefault'])&&($userAddress['isDefault']==1))} class="j-default">{:lang('auction_default_address')}{else /} >{/if}</span>
+            <div class="operate-box">
+              <a href="javascript:void(0)" onclick="javascript:toEditAddress({if isset($userAddress["addressId"]) }{$userAddress["addressId"]}{/if},this,1,1,1)">{:lang('auction_edit')}</a>&nbsp;&nbsp;
+            </div>
+          </div>
+
+          <div class='wst-clear'></div>
+
+          <div class="address">
+            <a class="wst-lfloat" href='javascript:void(0)' onclick='javascript:showEditAddressBox()' style=''>{:lang('auction_more_address')}</a>
+          </div>
+
+       </div>
+       <!-- 地址列表  -->
+       <ul class='j-list-box hide' id='addressList'></ul>
+
+       <!-- 新增编辑地址 -->
+       <div class='j-edit-box {if !empty($userAddress)}hide{/if}'>
+          <form id='addressForm' autocomplete='off'>
+            <input type='hidden' class='j-eipt' id='addressId' value=''/>
+            <div class='rows'>
+                <div class='label'>{:lang('auction_consignee')}<font color='red'>*</font>：</div>
+                <div class='field'><input type='text' class='j-eipt' id='userName' maxLength='15'/></div>
+                <div class='wst-clear'></div>
+            </div>
+            <div class='rows'>
+                <div class='label'>{:lang('auction_receiving_address')}<font color='red'>*</font>：</div>
+                <div class='field'>
+                <select id="area_0" class='j-areas' level="0" onchange="WST.ITAreas({id:'area_0',val:this.value,isRequire:true,className:'j-areas'});">
+              <option value="">{:lang('auction_please_select')}</option>
+              {volist name="areaList" id="vo"}
+              <option value="{$vo['areaId']}">{$vo['areaName']}</option>
+              {/volist}
+          </select>
+                <input type='text' class='j-eipt' id='userAddress' style='width:300px' maxLength='50'/>
+                </div>
+                <div class='wst-clear'></div>
+            </div>
+            <div class='rows'>
+                <div class='label'>{:lang('auction_contact_number')}<font color='red'>*</font>：</div>
+                <div class='field'>
+                <select class="j-eipt" id="areaCode" name="areaCode" style="height: 28px;">
+                    {volist name=":WSTAareCodes()" id="vo"}
+                      <option value="{$vo}">{$vo}</option>
+                    {/volist}
+                  </select>
+                <input type='text' id='userPhone' class='j-eipt' name="userPhone" maxLength='11'/>  </div>
+                <div class='wst-clear'></div>
+            </div>
+            <div class='rows'>
+                <div class='label'>{:lang('auction_is_default_address')}<font color='red'>*</font>：</div>
+                <div class='radio-box'>
+                  <label style='margin-right:36px;'>
+                     <input type='radio' name='isDefault' value='1' checked class='j-eipt wst-radio' id="isDefault1"/><label class="mt-1" for="isDefault1"></label>{:lang('auction_yes')}
+                  </label>
+                  <label>
+                     <input type='radio' name='isDefault' value='0' class='j-eipt wst-radio' id="isDefault2"/><label class="mt-1" for="isDefault2"></label>{:lang('auction_no')}
+                  </label>
+                </div>
+                <div class='wst-clear'></div>
+            </div>
+            <div class='rows'>
+                <a href='javascript:void(0)' class='wst-cart-reda' id='saveAddressBtn' onclick='javascript:editAddress()' style='width:105px;line-height:33px;padding:6px 15px'>{:lang('auction_save_address_of_consignee')}</a>
+            </div>
+          </form>
+       </div>
+    </div>
+    <div class='cart-box2'>
+    <!-- 送货方式 -->
+      <div class='pay-boxs'>
+         <div class='box-head'>{:lang('auction_delivery_method')}</div>
+         <div class="wst-list-box">
+           <input type="hidden" id="shopId" value="{$shopId}"/>
+          <input type="hidden" id="deliverType" value="0" class='j-ipt j-deliver'/>
+          <input type="hidden" id="storeId" value="0" class='j-ipt'/>
+          <input type="hidden" id="store_areaId" value="{if isset($userAddress['addressId']) }{$userAddress['areaId']}{/if}"/>
+          <input type="hidden" id="store_areaIdPath" value="{if isset($userAddress['addressId']) }{$userAddress['areaIdPath']}{/if}"/>
+
+         <div id="deliverType0" class="wst-frame2 j-selected" onclick="javascript:changeDeliverType(0,'deliverType',this)">快递运输<i></i></div>
+         <div id="deliver_btn" class="wst-frame2 hide" onclick="javascript:changeDeliverType(1,'deliverType',this)">自提<i></i></div>
+          <div id="deliver_info" style="line-height: 40px;display: none;"></div>
+          <div class='wst-clear'></div>
+         </div>
+      </div>
+         <div class='cart-footer'>
+      <!-- 发票信息 -->
+      {if($isInvoice==1)}
+      <div class="pay-boxs">
+         <div class='box-head'>{:lang('auction_invoice_information')}</div>
+         <div class="j-show-box">
+           <div style="float:left;" id="invoice_info">{:lang('auction_no_invoice')}</div>
+           <div style="float:left;color:blue;margin-left:10px;cursor:pointer;" onclick='javascript:changeInvoice(1,"#invoiceClientDiv",this)'>{:lang('auction_update')}</div>
+            <div class="wst-clear"></div>
+             <input type="hidden" id="invoiceId" value="0" class='j-ipt' />
+             <input type='hidden' value='0' id='isInvoice' class='j-ipt' />
+             <input type='hidden' value="{:lang('auction_personal')}" id='invoiceClient' class='j-ipt' />
+         </div>
+         <div class='wst-clear'></div>
+       </div>
+      {/if}
+       <div class='order-remark'>
+         <span class='text'>{:lang('auction_order_remark')}：</span><input type='text' id="remark" class='j-ipt' style='width:700px;' maxLength='100' placeholder='{:lang('auction_leave_message_to_seller')}'/>
+         <div {if WSTConf('CONF.isOrderScore')!=1 }style='display:none'{/if} class='order-score'>{:lang('auction_available_integral')}：<span id='orderScore'>{:WSTMoneyGiftScore($payPrice)}</span>&nbsp;&nbsp;</div>
+      </div>
+    </div>
+    </div>
+     <div class='cart-btn'>
+        <a href='{:addon_url("auction://users/auction")}' class='wst-prev wst-cart-asha' style='width:105px;height:33px;line-height:33px;'>{:lang('auction_back')}</a>
+        <a href='javascript:void(0)' onclick='javascript:submitOrder()' class='wst-order wst-cart-reda' style='width:118px;height:33px;line-height:33px;'>{:lang('auction_order_submit')}</a>
+        <div class='wst-clear'></div>
+     </div>
+</div>
+
+
+<div class='j-store-box store-box hide'>
+  <div style="padding: 20px;">
+    <div>{:lang('auction_self_lift_point_desc')}</div>
+    <div style="padding: 20px 0;">
+      <select id="storearea_0" class='j-storeareas' level="0" onchange="WST.ITAreas({id:'storearea_0',val:this.value,isRequire:true,className:'j-storeareas',afterFunc:'lastAreaCallback'});">
+        <option value="">{:lang('auction_please_select')}</option>
+        {volist name="areaList" id="vo"}
+        <option value="{$vo['areaId']}">{$vo['areaName']}</option>
+        {/volist}
+      </select>
+    </div>
+    <div class="store-container">
+      <div id="storelist" class="pick-sites">
+
+      </div>
+      <script id="tblist" type="text/html">
+       {{# for(var i = 0; i < d.length; i++){ }}
+        <div class="c-site-item ">
+        <label>
+        <div class="c-site-r">
+          <input type="radio" name="storeId" value="{{d[i].storeId}}" {{(i==0 || d[i].storeId==currStoreId)?'checked':''}}>
+        </div>
+        <div class="c-site-name"><span id="storeName_{{d[i].storeId}}">{{d[i].storeName}}</span><b></b></div>
+        </label>
+        <div class="c-site-field">
+          <div class="c-site-field-title"><span></span></div>
+          <div class="c-site-field-detail"><span id="storeAddress_{{d[i].storeId}}" class="tip">{{d[i].storeAddress}}</span></div>
+        </div>
+        <div class="clr"></div>
+        </div>
+       {{# } }}
+       </script>
+    </div>
+  </div>
+</div>
+{/block}
+{block name="footer"}
+  {include file="$LAYOUT_HOME_FOOTER" /}
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type="text/javascript" src="__ROOT__/addons/auction/view/home/users/js/form.js?v={$v}"></script>
+<script type="text/javascript">
+$(function(){
+  checkSupportStores();
+});
+</script>
+{/block}

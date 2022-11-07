@@ -1,0 +1,302 @@
+{extend name="$LAYOUT_HOME_BASE" /}
+{block name="title"}{:lang('integral_confirm_order')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="meta"}
+<meta name="description" content="{:WSTConf('CONF.seointegralDesc')}">
+<meta name="Keywords" content="{:WSTConf('CONF.seointegralKeywords')}">
+{/block}
+{block name="css"}
+<link href="__ROOT__/addons/integral/view/home/index/css/carts.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="top"}
+  {include file="$LAYOUT_HOME_TOP" /}
+{/block}
+{block name="header"}
+  {include file="$LAYOUT_HOME_HEADER" /}
+{/block}
+{block name="main"}
+<div class="wst-container">
+  <div id="stepflex" class="stepflex">
+       <dl class="first doing">
+          <dt class="s-num">1</dt>
+          <dd class="s-text">{:lang('integral_cart_title')}</dd>
+          <dd></dd>
+       </dl>
+       <dl class="normal doing">
+          <dt class="s-num">2</dt>
+          <dd class="s-text">{:lang('integral_fill_check_order_information')}</dd>
+       </dl>
+       <dl class="last">
+          <dt class="s-num1">3</dt>
+          <dd class="s-text1">{:lang('integral_order_submitted_successfully')}</dd>
+       </dl>
+    </div>
+    <div class='wst-clear'></div>
+    <div class='main-head'>{:lang('integral_fill_check_order_information')}</div>
+
+    <!-- 用户地址 -->
+    {if $carts['goodsType']==0}
+    <input type='hidden' class='j-ipt' id='s_addressId' value='{if isset($userAddress["addressId"]) }{$userAddress["addressId"]}{/if}'/>
+    <input type='hidden' class='j-ipt' id='s_areaId' value='{if isset($userAddress["addressId"]) }{$userAddress["areaId2"]}{/if}'/>
+    <div class='address-box'>
+       <div class='box-head'>{:lang('integral_consignee_information')} <a class="add-addr" href="javascript:;" onclick="javascript:emptyAddress(this,1)">{:lang('integral_add_address')}</a></div>
+       <!-- 选中地址 -->
+       <div class='j-show-box {if empty($userAddress)}hide{/if}' >
+          <div id="s_userName" class="wst-frame1 j-selected">{if isset($userAddress["addressId"]) }{$userAddress['userName']}{/if}<i></i></div>
+          <div class="address" onmouseover="addrBoxOver(this)" onmouseout="addrBoxOut(this)">
+            <span id='s_address'>
+            {if isset($userAddress["addressId"]) }
+            {$userAddress['userName']}&nbsp;&nbsp;&nbsp;{$userAddress['areaName']}&nbsp;&nbsp;{$userAddress['userAddress']}&nbsp;&nbsp;+{$userAddress['areaCode']}&nbsp;{$userAddress['userPhone']}
+            {/if}
+            </span>
+            &nbsp;&nbsp;
+            <span id="isdefault" {if(isset($userAddress['isDefault'])&&($userAddress['isDefault']==1))} class="j-default">{:lang('integral_default_address')}{else /} >{/if}</span>
+            <div class="operate-box">
+              <a href="javascript:void(0)" onclick="javascript:toEditAddress({if isset($userAddress["addressId"]) }{$userAddress["addressId"]}{/if},this,1,1,1)">{:lang('integral_edit')}</a>&nbsp;&nbsp;
+            </div>
+          </div>
+
+          <div class='wst-clear'></div>
+
+          <div class="address">
+            <a class="wst-lfloat" href='javascript:void(0)' onclick='javascript:showEditAddressBox()' style=''>{:lang('integral_more_address')}</a>
+          </div>
+
+       </div>
+       <!-- 地址列表  -->
+       <ul class='j-list-box hide' id='addressList'></ul>
+       <!-- 新增编辑地址 -->
+       <div class='j-edit-box {if !empty($userAddress)}hide{/if}'>
+          <form id='addressForm' autocomplete='off'>
+            <input type='hidden' class='j-eipt' id='addressId' value=''/>
+            <div class='rows'>
+                <div class='label'>{:lang('integral_consignee')}<font color='red'>*</font>：</div>
+                <div class='field'><input type='text' class='j-eipt' id='userName' maxLength='15'/></div>
+                <div class='wst-clear'></div>
+            </div>
+            <div class='rows'>
+                <div class='label'>{:lang('integral_receiving_address')}<font color='red'>*</font>：</div>
+                <div class='field'>
+                <select id="area_0" class='j-areas' level="0" onchange="WST.ITAreas({id:'area_0',val:this.value,isRequire:true,className:'j-areas'});">
+              <option value="">{:lang('integral_please_select')}</option>
+              {volist name="areaList" id="vo"}
+              <option value="{$vo['areaId']}">{$vo['areaName']}</option>
+              {/volist}
+          </select>
+                <input type='text' class='j-eipt' id='userAddress' style='width:300px' maxLength='50'/>
+                </div>
+                <div class='wst-clear'></div>
+            </div>
+            <div class='rows'>
+                <div class='label'>{:lang('integral_contact_number')}<font color='red'>*</font>：</div>
+                <div class='field'>
+                <select class="j-eipt" id="areaCode" name="areaCode" style="height: 28px;">
+                    {volist name=":WSTAareCodes()" id="vo"}
+                      <option value="{$vo}">{$vo}</option>
+                    {/volist}
+                  </select>
+                <input type='text' id='userPhone' class='j-eipt' name="userPhone" maxLength='11'/>  </div>
+                <div class='wst-clear'></div>
+            </div>
+            <div class='rows'>
+                <div class='label'>{:lang('integral_is_default_address')}<font color='red'>*</font>：</div>
+                <div class='radio-box'>
+                  <label style='margin-right:36px;'>
+                     <input type='radio' name='isDefault' value='1' checked class='j-eipt wst-radio' id="isDefault1"/><label class="mt-1" for="isDefault1"></label>{:lang('integral_yes')}
+                  </label>
+                  <label>
+                     <input type='radio' name='isDefault' value='0' class='j-eipt wst-radio' id="isDefault2"/><label class="mt-1" for="isDefault2"></label>{:lang('integral_no')}
+                  </label>
+                </div>
+                <div class='wst-clear'></div>
+            </div>
+            <div class='rows'>
+                <a href='javascript:void(0)' class='wst-cart-reda' id='saveAddressBtn' onclick='javascript:editAddress()' style='width:105px;line-height:33px;padding:6px 15px'>{:lang('integral_save_address_of_consignee')}</a>
+            </div>
+          </form>
+       </div>
+    </div>
+    {/if}
+    <!-- 支付方式 -->
+    <div class='pay-box' style='border-top:2px solid #fc7a64'>
+       <div class='box-head'>{:lang('integral_pay_type')}</div>
+       <div class="wst-list-box">
+          {if !empty($payments['0'])}
+          <div class="wst-frame2 j-selected" onclick="javascript:changeSelected(0,'payType',this)">{:lang('integral_cash_on_delivery')}<i></i></div>
+          {/if}
+          {if !empty($payments['1'])}
+          <div class="wst-frame2 <?php echo empty($payments['0'])?'j-selected':''; ?>" onclick="javascript:changeSelected(1,'payType',this)">{:lang('integral_online_payment')}<i></i></div>
+          {/if}
+          <input type='hidden' value="<?php echo empty($payments['0'])?1:0; ?>" id='payType' class='j-ipt' />
+          <div class='wst-clear'></div>
+       </div>
+    </div>
+    {php}$shopFreight = 0;$freight = 0;{/php}
+    {php}$cartShops = $carts["carts"];$cartGoods = $cartShops['goods'];{/php}
+    {php}
+       if($carts['goodsType']==0 && !$cartShops['isFreeShipping']){
+         if(!empty($userAddress)){
+             $freight = WSTOrderFreight($cartShops['shopId'],$userAddress['areaId2'],$cartShops);
+             $shopFreight = $shopFreight + $freight;
+         }else{
+             $freight = 0;
+             $shopFreight = $shopFreight + $freight;
+         }
+       }
+    {/php}
+    <!-- 商品清单 -->
+    <div class='cart-box2'>
+       <div class='box-head2'>{:lang('integral_goods_merchbill')}</div>
+       <div class='cart-head2'>
+          <div class='goods2'>{:lang('integral_goods')}</div>
+          <div class='price2'>{:lang('integral_unit_price')}</div>
+          <div class='num2'>{:lang('integral_score_number')}</div>
+          <div class='num3'>{:lang('integral_quantity')}</div>
+          <div class='t-price2'>{:lang('integral_total_price')}</div>
+       </div>
+       <div class='cart-item'>
+          <div class='shop2'>
+          {$cartShops['shopName']}
+          
+          </div>
+          <div class='goods-list'>
+             <div class='item selected'>
+            <div class='goods2'>
+                <div class='img2'>
+                    <a href='{:Url("home/goods/detail","goodsId=".$cartGoods["goodsId"])}' target='_blank'>
+                  <img src='__RESOURCE_PATH__/{$cartGoods["goodsImg"]}' width='80' height='80' title='{$cartGoods["goodsName"]|WSTStripTags}'/>
+                  </a>
+                </div>
+                <div class='name2'>{$cartGoods["goodsName"]}</div>
+                <div class='spec2'></div>
+            </div>
+            <div class='price2'>{:lang('currency_symbol')}{$cartGoods['shopPrice']}</div>
+            <div class='num2'>{$cartGoods['integralNum']}</div>
+            <div class='num3'>{$cartGoods['cartNum']}</div>
+            <div class='t-price2'>{:lang('currency_symbol')}{$cartGoods['shopPrice']*$cartGoods['cartNum']}</div>
+            <div class='wst-clear'></div>
+             </div>
+             <div class='shop-remark selected2'>
+              {:lang('integral_order_remark')}：<input type='text' id="remark_{$cartShops['shopId']}" class='j-ipt' style='width:700px;' maxLength='100' placeholder="{:lang('integral_leave_message_to_seller')}"/>
+
+             <div style="float: right;position:relative;top:-18px;">
+             <div style="text-align:right;padding-right:13px;">{:lang('integral_score')}：<span id="shopD_{$cartShops['shopId']}" style='font-weight: bold;color: #E55356;'>{$cartGoods['integralNum']*$cartGoods['cartNum']}</span></div>
+             <div style="text-align:right;padding-right:13px;{if $carts['goodsType']==1}display:none{/if}" >
+              <span style="text-align: right;line-height: 30px;">{:lang('integral_freight')}：<span id="shopF_{$cartShops['shopId']}" style='font-weight: bold;color: #E55356;'>{:lang('currency_symbol')}{$freight}</span></span>
+            </div>
+             <span class="shop-money" >{if $carts['goodsType']==0}{:lang('integral_shop_total_includ_freight')}{else}{:lang('integral_shop_total')}{/if}：<span id="shopC_{$cartShops['shopId']}" v="{$cartShops['goodsMoney']}" style='font-weight: bold;color: #E55356;'>{:lang('currency_symbol')}{$freight+$cartShops['goodsMoney']}</span></span>
+             </div>
+
+           </div>
+          </div>
+       </div>
+       <!-- 送货方式 -->
+    {if ($carts['goodsType']==0)}
+    <div class='pay-boxs'>
+        <input type="hidden" id="shopId" value="{$cartShops['shopId']}"/>
+        <input type="hidden" id="deliverType" value="0" class='j-ipt j-deliver'/>
+        <input type="hidden" id="storeId" value="0" class='j-ipt'/>
+        <input type="hidden" id="store_areaId" value="{if isset($userAddress['addressId']) }{$userAddress['areaId']}{/if}"/>
+        <input type="hidden" id="store_areaIdPath" value="{if isset($userAddress['addressId']) }{$userAddress['areaIdPath']}{/if}"/>
+
+       <div id="deliverType0" class="wst-frame2 j-selected" onclick="javascript:changeDeliverType(0,'deliverType',this)">{:lang('integral_express_delivery')}<i></i></div>
+       <div id="deliver_btn" class="wst-frame2 hide" onclick="javascript:changeDeliverType(1,'deliverType',this)">{:lang('integral_self_extraction')}<i></i></div>
+        <div id="deliver_info" style="line-height: 40px;display: none;"></div>
+        <div class='wst-clear'></div>
+    </div>
+    {/if}
+       <div class='cart-footer'>
+          <div class='cart-summary2'>
+            <div class="summarys2">
+    <!-- 发票信息 -->
+    {if($carts['carts']['isInvoice']==1)}
+    <div class="pay-boxs">
+       <div class='box-head'>{:lang('integral_invoice_information')}</div>
+         <div class="j-show-box">
+
+         <div style="float:left;" id="invoice_info">{:lang('integral_no_invoice')}</div>
+         <div style="float:left;color:blue;margin-left:10px;cursor:pointer;" onclick='javascript:changeInvoice(1,"#invoiceClientDiv",this)'>{:lang('integral_update')}</div>
+
+         <div class="wst-clear"></div>
+         <input type="hidden" id="invoice_obj" value="0" />
+           <input type="hidden" id="invoiceId" value="0" class='j-ipt' />
+           <input type='hidden' value='0' id='isInvoice' class='j-ipt' />
+           <input type='hidden' value="{:lang('integral_personal')}" id='invoiceClient' class='j-ipt' />
+       </div>
+       <div class='wst-clear'></div>
+     </div>
+     {/if}
+            </div>
+
+            <div class="summarys3" style='text-align:right;padding-right:20px'>
+
+             <div class='summary2'>{:lang('integral_needpay_total')}：
+             <span style="color:#FE0000;">{:lang('currency_symbol')}</span>
+             <span id='totalMoney' v='{$carts["goodsTotalMoney"]}'>
+             {if empty($userAddress)}
+             {$carts["goodsTotalMoney"]}
+             {else}
+             {$carts["goodsTotalMoney"]+$shopFreight}
+             {/if}
+             </span>+
+            <span>{$carts["totalIntegralNum"]}</span>
+             积分</div>
+
+             <div class='wst-clear'></div>
+          </div>
+       </div>
+    </div>
+     <div class='cart-btn'>
+        <a href='javascript:void(0)' onclick='javascript:submitOrder()' class='wst-order wst-cart-reda' style='width:118px;height:33px;line-height:33px;'>{:lang('integral_submit_order')}</a>
+        <div class='wst-clear'></div>
+     </div>
+</div>
+
+
+<div class='j-store-box store-box hide'>
+  <div style="padding: 20px;">
+    <div>{:lang('integral_self_lift_point_desc')}</div>
+    <div style="padding: 20px 0;">
+      <select id="storearea_0" class='j-storeareas' level="0" onchange="WST.ITAreas({id:'storearea_0',val:this.value,isRequire:true,className:'j-storeareas',afterFunc:'lastAreaCallback'});">
+        <option value="">{:lang('integral_please_select')}</option>
+        {volist name="areaList" id="vo"}
+        <option value="{$vo['areaId']}">{$vo['areaName']}</option>
+        {/volist}
+      </select>
+    </div>
+    <div class="store-container">
+      <div id="storelist" class="pick-sites">
+
+      </div>
+      <script id="tblist" type="text/html">
+       {{# for(var i = 0; i < d.length; i++){ }}
+        <div class="c-site-item ">
+        <label>
+        <div class="c-site-r">
+          <input type="radio" name="storeId" value="{{d[i].storeId}}" {{(i==0 || d[i].storeId==currStoreId)?'checked':''}}>
+        </div>
+        <div class="c-site-name"><span id="storeName_{{d[i].storeId}}">{{d[i].storeName}}</span><b></b></div>
+        </label>
+        <div class="c-site-field">
+          <div class="c-site-field-title"><span></span></div>
+          <div class="c-site-field-detail"><span id="storeAddress_{{d[i].storeId}}" class="tip">{{d[i].storeAddress}}</span></div>
+        </div>
+        <div class="clr"></div>
+        </div>
+       {{# } }}
+       </script>
+    </div>
+  </div>
+</div>
+
+{/block}
+{block name="footer"}
+  {include file="$LAYOUT_HOME_FOOTER" /}
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__ROOT__/addons/integral/view/home/index/js/carts.js?v={$v}'></script>
+<script type="text/javascript">
+$(function(){
+  checkSupportStores();
+});
+</script>
+{/block}

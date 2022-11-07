@@ -1,0 +1,85 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+<style type="text/css">
+  #mmg td:nth-last-child(7){color: red;}
+</style>
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/orders/orders.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<input type="hidden" id="userId" class="j-ipt" value='{$userId}' autocomplete="off"/>
+<div class="wst-toolbar">
+<div id='moreItem' class='hide'>
+  <select id="areaId1" class='ipt j-ipt' level="0" onchange="WST.ITAreas({id:'areaId1',val:this.value,className:'j-ipt'});">
+  <option value="-1">-{:lang('goods_shop_area_select')}-</option>
+  {volist name="areaList" id="vo"}
+  <option value="{$vo['areaId']}">{$vo['areaName']}</option>
+  {/volist}
+</select>
+<select id='orderCode' class='j-ipt'>
+ <option value=''>{:lang('label_order_order_src')}</option>
+ {volist name=":WSTOrderModule()" id="om"}
+ {if in_array($om['name'],['auction','combination','presale','groupon','integral','seckill','order'])}
+ <option value="{$om['name']}">{$om['title']}</option>
+ {/if}
+ {/volist}
+</select>
+<select id='isRefund' class='j-ipt'>
+ <option value='-1'>{:lang('label_order_is_refund')}</option>
+ <option value='1'>{:lang('yes')}</option>
+ <option value='0'>{:lang('no')}</option>
+</select>
+<select id='isInvoice' class='j-ipt'>
+ <option value='-1'>{:lang('label_order_is_invoice')}</option>
+ <option value='1'>{:lang('yes')}</option>
+ <option value='0'>{:lang('no')}</option>
+</select>
+<input type="text" id="startDate" style='width:120px' name="startDate" class="laydate-icon j-ipt" maxLength="20" value='' placeholder='{:lang('label_order_start_date_plo')}'/>
+{:lang('to')}
+<input type="text" id="endDate" name="endDate" style='width:120px' class="laydate-icon j-ipt" maxLength="20" value='' placeholder='{:lang('label_order_end_date_plo')}'/>
+</div>
+<input type="text" name="orderNo"  placeholder='{:lang('label_order_order_no')}' id="orderNo" class='j-ipt'/>
+<input type="text" name="shopName"  placeholder='{:lang('label_order_shop_name1')}' id="shopName" class='j-ipt'/>
+<select id='orderStatus' class='j-ipt' style='margin-top:2px'>
+  <option value='10000'>{:lang('label_order_a_status')}</option>
+  <option value='0'>{:lang('label_order_status')}</option>
+  <option value='-2'>{:lang('label_order_a_status2')}</option>
+  <option value='-1'>{:lang('label_order_a_status3')}</option>
+  <option value='1'>{:lang('label_order_a_status4')}</option>
+  <option value='2'>{:lang('label_order_a_status5')}</option>
+  <option value='-3'>{:lang('label_order_a_status6')}</option>
+</select>
+<select id='payType' class='j-ipt' style='margin-top:2px'>
+   <option value='-1'>{:lang('label_order_payment_type')}</option>
+   <option value='0'>{:lang('label_order_payment_type1')}</option>
+   <option value='1'>{:lang('label_order_payment_type0')}</option>
+</select>
+<select id='deliverType' class='j-ipt' style='margin-top:2px'>
+ <option value='-1'>{:lang('label_order_delivery_type')}</option>
+ <option value='1'>{:lang('label_order_delivery_type1')}</option>
+ <option value='0'>{:lang('label_order_delivery_type0')}</option>
+</select>
+
+<select id='payFrom' class='j-ipt'>
+ <option value=''>{:lang('label_order_payment_src')}</option>
+ {volist name=":WSTLangPayFrom('',1)" id="paySrc"}
+ <option value='{$paySrc.payCode}'>{$paySrc.payName}</option>
+ {/volist}
+</select>
+   <button class="btn btn-primary" onclick='javascript:loadGrid(0)'><i class="fa fa-search"></i>{:lang('query')}</button>
+   <button class="btn btn-primary" onclick='javascript:loadMore()'><i class="fa fa-search"></i>{:lang('label_order_more_query')}</button>
+   {if($userId>0)}<button class="btn f-right btn-fixtop" onclick="javascript:location.href='{:Url(\'admin/users/index\',\'p=\'.$p)}'" style="margin-left: 10px;"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>{/if}
+   <button class="btn btn-primary f-right" style='margin-top:2px' onclick='javascript:toExport(0)'><i class="fa fa-sign-in"></i>{:lang('export')}</button>
+   <div style='clear:both'></div>
+</div>
+<div class='wst-grid'>
+ <div id="mmg" class="mmg"></div>
+ <div id="pg" style="text-align: right;"></div>
+</div>
+<script>
+$(function(){initGrid({$p});})
+</script>
+{/block}

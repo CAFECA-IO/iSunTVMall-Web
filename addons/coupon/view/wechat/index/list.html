@@ -1,0 +1,100 @@
+{extend name="$LAYOUT_WECHAT_BASE" /}
+{block name="title"}领券中心 - {__block__}{/block}
+{block name="meta"}
+<meta name="description" content="{$seoDesc}">
+<meta name="keywords" content="{$seoKeywords}">
+{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__ROOT__/addons/coupon/view/wechat/index/coupon.css?v={$v}">
+{/block}
+{block name="header"}
+    <header class="ui-header ui-header-positive wst-header">
+        <a href="{:url('wechat/index/index')}"><i class="ui-icon-return"></i></a>
+    </header>
+    <div class="wst-in-search tit">
+        领券中心
+    </div>
+{/block}
+{block name="footer"}
+
+{/block}
+{block name="main"}
+     <input type="hidden" name="" value="" id="currPage" autocomplete="off">
+    <input type="hidden" name="" value="" id="totalPage" autocomplete="off">
+    <input type="hidden" name="" value="{$catId}" id="catId" autocomplete="off">
+
+    <script id="shopList" type="text/html">
+    {{# for(var i = 0; i < d.length; i++){ }}
+      <div class="coupon_item">
+            <div class="coupon_item_left">
+                <div class="coupon_left_main">
+                    <div class="coupon_left_main_inner">
+                        <p class="coupon_left_txt1"><span class="yan">{:lang('currency_symbol')}</span>{{d[i].couponValue}}</p>
+                        <span class="coupon_left_txt2">
+                        {{# if(d[i].useCondition==0){ }}
+                            无金额门槛
+                        {{# }else{  }}
+                            满{{d[i].useMoney}}可用
+                        {{# }  }}
+                        </span>
+                    </div>
+                </div>
+                <div class="wst-clear"></div>
+            </div>
+            <div class="coupon_item_right">
+                <div class="coupon_item_right_inner">
+                    <div class="c_item_r_left">
+                        <p class="c_item_txt1 ui-nowrap ui-whitespace">{{d[i].couponValue}}元优惠券</p>
+                        <p class="c_item_txt3 ui-nowrap ui-whitespace">{{d[i].shopName}}</p>
+                        <p class="c_item_txt4 ui-nowrap ui-whitespace">{{d[i].startDate}}~{{d[i].endDate}}</p>
+                    </div>
+                    {{# if(d[i].isOut==1 || d[i].isReceive==1){  }}
+                        <a href="javascript:" class="get_btn unuse_btn">{{# if(d[i].isOut==1){ }}已领完{{# }else{ }}已领取{{# } }}</a>
+                    {{# }else{  }}
+                        <a href="javascript:void(0)" onClick="getCoupon({{d[i].couponId}},this)"  class="get_btn">立即领取</a>
+                    {{# }  }}
+                    <div class="wst-clear"></div>
+                </div>
+            </div>
+            <div class="wst-clear"></div>
+        </div>
+    {{#  } }}
+    </script>
+
+    <section class="ui-container" id="shopBox">
+        <div class="ui-tab" style='height:0.44rem;overflow: hidden'>
+            <ul class="ui-tab-nav coupon-tab">
+                <li class="tab-item {if $catId==''}tab-curr{/if}" catId="0" >全部</li>
+                {volist name=":WSTGoodsCats(0)" id="cats"}
+                    <li class="tab-item" catId="{$cats.catId}">{$cats['simpleName']}</li>
+                {/volist}
+            </ul>
+            <div class='cate-box'><span class="wst-se-icon" onclick="javascript:dataShow();"></span></div>
+        </div>
+
+        <div id="order-box"></div>
+
+    </section>
+    </div>
+{/block}
+{block name="include"}
+{/* 遮盖层  */}
+<div class="wst-cate-cover" id="wst-cate-cover"></div>
+{/* 分类层  */}
+<div class="wst-coupon-cate-box" id="cateframe">
+    <div class="content">
+        <ul class="ui-row">
+            <li class="ui-col ui-col-48 cat_item" id="0">全部</li>
+            {volist name=":WSTGoodsCats(0)" id="cats"}
+                <li class="ui-col ui-col-48 cat_item" id="{$cats['catId']}">{$cats['simpleName']}</li>
+            {/volist}
+        </ul>
+        <div class="wst-clear"></div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__WECHAT__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__ROOT__/addons/coupon/view/wechat/index/list.js'></script>
+
+{/block}

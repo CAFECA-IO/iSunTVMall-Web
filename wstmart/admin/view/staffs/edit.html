@@ -1,0 +1,112 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}' type="text/javascript"></script>
+<script src="__ADMIN__/staffs/staffs.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<form autocomplete='off'> 
+<input type='hidden' id='staffId' class='ipt' value="{$object['staffId']}"/>
+<table class='wst-form wst-box-top'>
+  <tr>
+     <th width='150'>{:lang('login_account')}：</th>
+     <td>{$object['loginName']}</td>
+  </tr>
+  <tr>
+    <th>{:lang('staff_portrait')}：</th>
+    <td>
+       <input type="text" readonly="readonly"  id='staffPhoto' class='ipt' value='{$object["staffPhoto"]}' style="float: left;width: 355px;"/>
+       <div id='photoPicker'>{:lang('upload')}<span id='uploadMsg'></span></div>
+       <div style='float: left;margin-left: 5px;'>
+           <img id='prevwPhoto' height='30' src='__RESOURCE_PATH__/{if $object["staffPhoto"] != '' }{$object["staffPhoto"]} {else}__ADMIN__/img/img_mrtx_gly.png{/if}'/>
+       </div>
+    </td>
+  </tr>
+  <tr>
+     <th>{:lang('label_logoperates_staff_name_plo')}<font color='red'>*</font>：</th>
+     <td><input type="text" id='staffName' class='ipt' value="{$object['staffName']}" maxLength='20' data-rule="{:lang('label_logoperates_staff_name_plo')}: required;"/></td>
+  </tr>
+  <tr>
+     <th>{:lang('employee_number')}：</th>
+     <td><input type="text" id='staffNo' class='ipt' value="{$object['staffNo']}" maxLength='20'/></td>
+  </tr>
+  <tr>
+     <th>{:lang('role')}：</th>
+     <td>
+     <select id='staffRoleId' class='ipt'>
+        <option value='0'>{:lang('select')}</option>
+        {volist name="roles" id="vo"}
+		<option value="{$vo['roleId']}" {if condition="$object['staffRoleId'] == $vo['roleId']"}selected{/if}>{$vo.roleName}</option>
+		{/volist}
+     </select>
+     </td>
+  </tr>
+  <tr>
+     <th>{:lang('label_user_phone')}：</th>
+     <td>
+        <select class="ipt" id="areaCode" name="areaCode" style="height: 36px;border: 0;">
+          {volist name=":WSTAareCodes()" id="acode"}
+            <option value="{$acode}" {if $object['areaCode']==$acode}selected{/if}>{$acode}</option>
+          {/volist}
+        </select>
+        <input type="text" id='staffPhone' class='ipt'  maxLength='100' data-rule="mobile" value="{$object['staffPhone']}"/>
+     </td>
+  </tr>
+  <tr>
+     <th>{:lang('wechat_openid')}：</th>
+     <td><input type="text" id='wxOpenId' class='ipt'  maxLength='100' value="{$object['wxOpenId']}"/></td>
+  </tr>
+  <tr>
+     <th>{:lang('working_condition')}：</th>
+     <td class="layui-form">
+       <label>
+           <input id="workStatus1" name="workStatus" value="1" class='ipt' {if condition="$object['workStatus'] == 1"}checked{/if} type="radio" title='{:lang("on_the_job")}'>
+       </label>
+       <label>
+           <input id="workStatus0" name="workStatus" value="0" class='ipt' {if condition="$object['workStatus'] == 0"}checked{/if} type="radio" title='{:lang("quit")}'>
+       </label>
+             
+     </td>
+  </tr>
+  <tr>
+     <th>{:lang('account_status')}：</th>
+     <td colspan='2' class="layui-form">
+       <label>
+          <input type='radio' id='staffStatus1' class='ipt' name='staffStatus' {if condition="$object['staffStatus'] == 1"}checked{/if} value='1' title='{:lang("label_payment_status1")}'>
+       </label>
+       <label>
+          <input type='radio' id='staffStatus0' class='ipt' name='staffStatus' {if condition="$object['staffStatus'] == 0"}checked{/if} value='0' title='{:lang("user_status_type2")}'>
+       </label>
+     </td>
+  </tr>
+  <tr>
+     <td colspan='3' align='center' class='wst-bottombar'>
+     	 <button type="button" onclick='javascript:save({$p})' class='btn btn-primary btn-mright'><i class="fa fa-check"></i>{:lang('save')}</button>
+       <button type="button" onclick="javascript:location.href='{:Url(\'admin/staffs/index\',\'p=\'.$p)}'" class='btn'><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+     </td>
+  </tr>
+</table>
+</form>
+<script>
+$(function(){
+	WST.upload({
+  	  pick:'#photoPicker',
+  	  formData: {dir:'staffs'},
+  	  accept: {extensions: 'gif,jpg,jpeg,png',mimeTypes: 'image/jpg,image/jpeg,image/png,image/gif'},
+  	  callback:function(f){
+  		  var json = WST.toAdminJson(f);
+  		  if(json.status==1){
+  			$('#uploadMsg').empty().hide();
+  			$('#prevwPhoto').attr('src',WST.conf.RESOURCE_PATH+'/'+json.savePath+json.name);
+  			$('#staffPhoto').val(json.savePath+json.name);
+  		  }
+	  },
+	  progress:function(rate){
+	      $('#uploadMsg').show().html(WST.lang('upload_rate')+rate+"%");
+	  }
+    });
+});
+</script>
+{/block}

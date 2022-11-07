@@ -1,0 +1,155 @@
+{extend name="$LAYOUT_SHOP_BASE" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<style>
+input[type=text]{width:150px;}
+</style>
+<div>
+    <div class='wst-tips-box'>
+        <div class='icon'></div>
+        <div class='tips'>
+            {:lang('auction_shop_goods_rule_tips_1')}<br/>
+            {:lang('auction_shop_goods_rule_tips_2')}<br/>
+            {:lang('auction_shop_goods_rule_tips_3')}<br/>
+            {:lang('auction_shop_goods_rule_tips_4')}</div>
+        <div style="clear:both"></div>
+    </div>
+</div>
+<form id='editform' name='editform' autocomplete="off">
+        <input type='hidden' id='auctionId' class='ipt' value='{$object["auctionId"]}'/>
+        <fieldset>
+            <legend>{:lang('auction_activity_info')}</legend>
+            <div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+                <ul class="layui-tab-title">
+                    {volist name=":WSTSysLangs()" id='vo'}
+                    <li {if $key==0}class="layui-this"{/if}>{$vo['name']}</li>
+                    {/volist}
+                </ul>
+                <div class="layui-tab-content">
+                    {volist name=":WSTSysLangs()" id='vo'}
+                    <div class="layui-tab-item {if $key==0}layui-show{/if}">
+                        <table class='wst-form'>
+                            <tr>
+                                <th>{:lang('auction_goods_name')}<font color='red'>*</font>：</th>
+                                <td>
+                                    <input type="text" class='ipt' style='width:60%' id='langParams{$vo["id"]}goodsName' maxLength='150'  data-rule='{:lang("auction_goods_name")}:required;' value="{$object['langParams'][$vo['id']]["goodsName"]}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>{:lang('auction_seo_key_words')}：</th>
+                                <td><input type='text' class='ipt' style='width:60%' id='langParams{$vo["id"]}goodsSeoKeywords' maxLength='100' value='{$object['langParams'][$vo['id']]["goodsSeoKeywords"]}' /></td>
+                            </tr>
+                            <tr>
+                                <th>{:lang('auction_seo_desc')}：</th>
+                                <td><input type='text' class='ipt' style='width:60%' id='langParams{$vo["id"]}goodsSeoDesc' maxLength='200' value='{$object['langParams'][$vo['id']]["goodsSeoDesc"]}' /></td>
+                            </tr>
+                            <tr>
+                                <th>{:lang('auction_desc')}：</th>
+                                <td>
+                                    <textarea  id='langParams{$vo["id"]}auctionDesc' class='ipt' style='width:99%' name='langParams{$vo["id"]}auctionDesc' >{$object['langParams'][$vo['id']]['auctionDesc']}</textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    {/volist}
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>{:lang('auction_activity_setting')}</legend>
+            <table class="wst-form ">
+                <tr>
+                    <th width='120' align='right'>&nbsp;</th>
+                    <td>
+                        <select id="shopCatId1" class='j-ipt' onchange="WST.shopsCats('shopCatId2',this.value,'');">
+                            <option value="">{:lang('auction_please_select')}</option>
+                            {volist name=":WSTShopCats(0)" id="vo"}
+                            <option value="{$vo['catId']}">{$vo['catName']}</option>
+                            {/volist}
+                        </select>
+                        <select id='shopCatId2' class='j-ipt'>
+                            <option value=''>{:lang('auction_please_select')}</option>
+                        </select>
+                        <br/>
+                        <input type='text' id='sgoodsName' style='margin-top:5px;width: 350px;' placeholder="{:lang('auction_input_search_key')}" />
+                        <a type="button" class='btn btn-primary' onclick="searchGoods()"><i class="fa fa-search"></i>{:lang('auction_query')}</a>
+                    </td>
+                </tr>
+                {if $object['auctionStatus']==-1}
+                <tr class="wst-order-rate" >
+                    <th width='120'>{:lang('auction_failure_reasons')}：</th>
+                    <td colspan='3' style='color:red'>
+                        {$object['illegalRemarks']}
+                    </td>
+                </tr>
+                {/if}
+                <tr>
+                    <th width='120' align='right'>{:lang('auction_select_goods')}：</th>
+                    <td>
+                        <select id='goodsId' class='ipt' onchange='changeGoods(this)'>
+                            <option value="{$object['goodsId']}">{:lang('auction_require_select_goods')}</option>
+                        </select><br/>
+                    </td>
+                </tr>
+                <tr>
+                    <th>{:lang('auction_goods_pic')}<font color='red'>*</font>：</th>
+                    <td>
+                        <input type="text" id='goodsImg' readonly="readonly" value='{if $object["goodsImg"]!=''}{$object["goodsImg"]}{else}{:WSTConf('CONF.goodsLogo')}{/if}' class="ipt" style="float: left; width: 655px;" />
+                        <div id='goodsImgPicker' style="float: left;margin-top: 5px;">上传</div><span id='uploadMsg'></span>
+                        <div id='goodsImgBox' style='margin-bottom:5px; float: left; height: 30px; margin-left: 5px;'>
+                    <span class='weixin'>
+                          <img class='img' style='height:16px;width:18px;' src='__STATIC__/images/upload-common-select.png'>
+                          <img class='imged'  id='preview'  style='max-height:150px;max-width: 200px; border:1px solid #dadada; background:#fff' src="__RESOURCE_PATH__/{if $object['goodsImg']!=''}{$object['goodsImg']}{else}{:WSTConf('CONF.goodsLogo')}{/if}">
+                        </span>
+                        </div>
+                        <div class="f-clear"></div>
+                        <span class='msg-box' id='msg_goodsImg'></span>
+                    </td>
+                </tr>
+                <tr class="wst-order-rate" >
+                    <th width='120'>{:lang('auction_auction_price')}<font color='red'>*</font>：</th>
+                    <td colspan='3'>
+                        <input type='text' id='auctionPrice' name='auctionPrice'class='ipt' maxLength='10' value='{$object["auctionPrice"]}' data-rule="{:lang('auction_auction_price')}:required;"/>
+                    </td>
+                </tr>
+                <tr class="wst-order-rate" >
+                    <th width='120'>{:lang('auction_fareinc_price')}<font color='red'>*</font>：</th>
+                    <td colspan='3'>
+                        <input type='text' id='fareInc' name='fareInc' class='ipt' maxLength='8' data-rule="{:lang('auction_fareinc_price')}:required;integer[+]" value='{$object["fareInc"]}'/>
+                    </td>
+                </tr>
+                <tr class="wst-order-rate" >
+                    <th width='120'>{:lang('auction_caution_money')}<font color='red'>*</font>：</th>
+                    <td colspan='3'>
+                        <input type='text' id='cautionMoney' name='cautionMoney' class='ipt' maxLength='8' data-rule="{:lang('auction_caution_money')}:required;integer[+]" value='{$object["cautionMoney"]}'/>
+                    </td>
+                </tr>
+                <tr class="wst-order-rate" >
+                    <th width='120'>{:lang('auction_time')}<font color='red'>*</font>：</th>
+                    <td colspan='3'>
+                        <input type='text' id='startTime' name='startTime' class='ipt laydate-icon' value='{$object["startTime"]}' data-rule="{:lang('auction_start_date')}: required;datetime;"/>
+                        {:lang('auction_to_title')}
+                        <input type='text' id='endTime' name='endTime' class='ipt laydate-icon' value='{$object["endTime"]}' data-rule="{:lang('auction_end_date')}: required;datetime;match(gt, startTime, datetime)"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan='2' style='text-align:center;padding:20px;'>
+                        <button class='btn btn-primary' type='button' onclick="save({$p})"><i class="fa fa-check"></i>{:lang('auction_save')}</button>&nbsp;&nbsp;
+                        <button class='btn' type='button' onclick="javascript:location.href=WST.AU('auction://shops/auction','p={$p}')"><i class="fa fa-angle-double-left"></i>{:lang('auction_back')}</button>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+</form>
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script src="__STATIC__/plugins/kindeditor/NKeditor-all.js?v={$v}" type="text/javascript" ></script>
+<script type="text/javascript" src="__ROOT__/addons/auction/view/shop/shop.js?v={$v}"></script>
+<script>$(function(){initForm({$p});})</script>
+{/block}

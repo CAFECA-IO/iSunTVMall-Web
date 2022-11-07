@@ -1,0 +1,289 @@
+{extend name="$LAYOUT_HOME_BASE" /}
+{block name="title"}{$goods['goodsName']} - 秒杀活动 - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="meta"}
+<meta name="keywords" content="{$goods['goodsSeoKeywords']}">
+<meta name="description" content="{$goods['goodsSeoDesc']}">
+<meta property="og:url"           content="{$shareInfo['link']}" />
+<meta property="og:type"          content="website" />
+<meta property="og:title"         content="{$shareInfo['title']}" />
+<meta property="og:description"   content="{$goods['goodsSeoDesc']}" />
+<meta property="og:image"         content="{$shareInfo['imgUrl']}" />
+<meta property="og:site_name" content="{:WSTConf('CONF.mallName')}">
+{/block}
+{block name="css"}
+<link href="__ROOT__/addons/seckill/view/home/index/css/goods_detail.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="top"}
+  {include file="$LAYOUT_HOME_TOP" /}
+{/block}
+{block name="header"}
+  {include file="$LAYOUT_HOME_HEADER" /}
+{/block}
+
+{block name="main"}
+<input type="hidden" id="shopId" value="{$goods.shopId}">
+<input type="hidden" id="deliveryStartMoney" value="">
+<div class='wst-filters'>
+<div class='filters'>
+   <div class='item'>
+      <a class='link' href='{:url('home/index/index')}'>{:lang('seckill_home_page')}</a>
+      {if($goods['goodsCatId'])}
+        {volist name=":WSTPathGoodsCat($goods['goodsCatId'])" id='vo'}
+        <i class="arrow"></i>
+        <a class='link' href='{:url("home/goods/lists","cat=".$vo["catId"])}'>{$vo['catName']}</a>
+        {/volist}
+      {/if}
+      <i class="arrow"></i>
+      <a class='link' href='javascript:void(0);'><span style="display: block;width: 120px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">{$goods['goodsName']}</span></a>
+   </div>
+   
+   <div class='wst-clear'></div>
+</div>
+</div>
+<div class='wst-w'>
+   <div class="wst-container" style="background:#fff;">
+      <div class="goods-details">
+      <div class='goods-img-box'>
+          <div class="goods-img spec-preview" id="preview">
+            <img src="__RESOURCE_PATH__/{:WSTImg($goods['goodsImg'])}" class="cloudzoom" data-cloudzoom="zoomImage:'__RESOURCE_PATH__/{$goods['goodsImg']}'" height="350" width="350">
+          </div>
+          <div class="wst-clear"></div>
+          <div class="goods-pics">
+            <i class="prev">&lt;</i>
+            <i class="next">&gt;</i>
+            <div class="items">
+              <ul>
+                {volist name="$goods['gallery']" id='vo'}
+                   <li><img class='cloudzoom-gallery' src="__RESOURCE_PATH__/{:WSTImg($vo)}" data-cloudzoom="useZoom: '.cloudzoom', image:'__RESOURCE_PATH__/{:WSTImg($vo)}', zoomImage:'__RESOURCE_PATH__/{$vo}' " width="60" height="60"></li>
+                {/volist}
+              </ul>
+              <div class="blank"></div>  
+            </div>
+            <div class="wst-clear"></div>
+          </div>
+          <div class="goods-term-box">
+            <a  href='javascript:informs({$goods["goodsId"]})' class="j-inform">{:lang('seckill_report')}</a>
+            <div class="wst-clear"></div>
+          </div>
+          <div class="wst-clear"></div>
+      </div>
+      <div class='intro'>
+          <h2>{$goods['goodsName']}</h2>
+          {if $goods.seckillDes!=""}
+          <div class='tips' style="text-decoration: underline;">{$goods.seckillDes}</div>
+          {/if}
+          <div class="timer timer{$goods.status}" style="">
+            <div style="float: left;width: 300px;line-height: 45px;">
+              <i class="fa fa-clock-o"></i>&nbsp;{:lang('seckill_title2')}
+            </div>
+            <div id="seckillTime" class="seckill-time" data-stime="{$goods.startTime}" data-etime="{$goods.endTime}" data-ntime="{$goods.nowTime}" data-status="{$goods['status']}" style="padding: 10px;line-height: 25px;text-align: right;">
+              <span class="status">{:lang('seckill_to_end')}</span>
+            <label class="lab_timer">
+                <span>00</span><em>:</em>
+                <span>00</span><em>:</em>
+                <span>00</span><em>:</em>
+                <span>0</span>
+            </label>
+            </div>
+          </div>
+          <div class='summary'>
+            <div class="qrcode">
+              <img src="__ROOT__/{$qrcode}" />
+            </div>
+            <div class="infol">
+             <div class='item'>
+               <div class='dt'>{:lang('seckill_shop_price')}</div>
+               <div class='dd market-price' id='j-market-price'>{:lang('currency_symbol')}{$goods['shopPrice']}</div>
+             </div>
+             <div class='item'>
+               <div class='dt'>{:lang('seckill_price')}</div>
+               <div class='dd price j-shop-price'>{:lang('currency_symbol')}{$goods['secPrice']}</div>
+             </div>
+
+             <div class='item'>
+                <div class='dt'>{:lang('seckill_goods_product')}</div>
+                <div class='dd'>{$goods['goodsSn']}</div>
+             </div>
+             <div class='item'>
+                 <div class='dt'>{:lang('seckill_freight')}</div>
+                 <div class='dd'>{if $goods['isFreeShipping']==1}{:lang('seckill_free_shipping')}{else}{:lang('seckill_sys_calculation')}{/if}</div>
+              </div>
+              <div class='item'>
+                <div class='dt'>{:lang('seckill_goods_service')}</div>
+                <div class='dd'>
+                {php}
+                $spurl = Url("home/shops/index","shopId=".$shop["shopId"]);
+                $spurl ="<a href='".$spurl."' target='_blank'>".$shop['shopName']."</a>"; 
+                {/php}
+                {:lang('seckill_goods_service_desc',[$spurl])}</div>
+             </div>
+             </div>
+
+             <div class='wst-clear'></div>
+          </div>
+
+          <div class='buy'>
+             <div class='item'>
+                <div class='dt'>{:lang('seckill_total_appraises')}</div><div class='dd'>{$goods['appraiseNum']}</div>
+                <div class='dt'>{:lang('seckill_trading_volume')}</div><div class='dd'>{$goods['saleNum']} </div>
+             </div>
+          </div>
+          <div class='spec'>
+             {if !empty($goods['spec'])}
+             {volist name="$goods['spec']" id='vo'}
+             <div class='item'>
+               <div class='dt'>{$vo['name']}</div>
+               <div class='dd'>
+               {volist name="$vo['list']" id='vo2'}
+                  {if $vo2['itemImg']!=''}
+                  <div class='j-option img' data-val="{$vo2['itemId']}" style='width:28px;height:28px;padding:0px;'><img class="cloudzoom-gallery j-selected" width="28" height="28" src="__RESOURCE_PATH__/{:WSTImg($vo2['itemImg'])}" data-cloudzoom="useZoom: '.cloudzoom', image:'__RESOURCE_PATH__/{:WSTImg($vo2['itemImg'])}', zoomImage:'__RESOURCE_PATH__/{$vo2['itemImg']}' "  title="{$vo2['itemName']|WSTStripTags}" alt="{$vo2['itemName']|WSTStripTags}"/><i></i></div>
+                  {else}
+                  <div class='j-option j-selected' data-val="{$vo2['itemId']}">{$vo2['itemName']}<i></i></div>
+                  {/if}
+               {/volist}
+               </div>
+               <div class='wst-clear'></div>
+             </div>
+             {/volist}
+             {/if}
+          </div>
+          <div class='buy'>
+             <div class='item'>
+                <div class='dt'>{:lang('seckill_quantity')}</div>
+                <div class='dd'>
+                  <a href='#none' class='buy-btn' id='buy-reduce' style='color:#ccc;' onclick='javascript:WST.changeIptNum(-1,"#buyNum","#buy-reduce,#buy-add")'>-</a>
+                  <input type='text' id='buyNum' class='buy-num' value='1' data-min='1' data-max="{$goods.canBuyNum}" autocomplete="off" onkeyup='WST.changeIptNum(0,"#buyNum","#buy-reduce,#buy-add")' onkeypress="return WST.isNumberKey(event);" maxlength="6"/>
+                  <a href='#none' class='buy-btn' id='buy-add' onclick='javascript:WST.changeIptNum(1,"#buyNum","#buy-reduce,#buy-add")'>+</a>
+                    &nbsp; &nbsp;{:lang('seckill_stock_tips',['<span id="goods-stock">'.($goods['secNum']-$goods['hasBuyNum']).'</span>&nbsp;'.$goods['goodsUnit']])}
+                </div>
+             </div>
+             <div class='item' style='padding-left:75px;margin-top:20px;'>
+              {if ($goods.status==0)}
+              <button class="addBtn tobuy{$goods.status}">{:lang('seckill_wait_start')}</button>
+              {elseif($goods.status==1)}
+                {if ($goods.canBuyNum>0)}
+                <a href="javascript:;" class="open-popup">
+                  <button class="addBtn tobuy{$goods.status}" onclick="addCart();">{:lang('seckill_seckill_now')}</button>
+                </a>
+                {else/}
+                <button class="addBtn tobuy{$goods.status}">{:lang('seckill_has_reached_limit_number',[($goods.secLimit).($goods.goodsUnit)])}</button>
+                {/if}
+              {else/}
+              <button class="addBtn tobuy{$goods.status}">{:lang('seckill_has_complete')}</button>
+              {/if}
+               
+               <div class='wst-clear'></div>
+             </div>
+             
+          <div class="wst-relative" style="margin-top: 35px;margin-left: 10px;">
+            <!-- ShareThis BEGIN -->
+            <div class="sharethis-inline-share-buttons" style="float: right;"></div>
+            <div style="float: right;font-weight: bold;margin-right: 10px;">立即<br/>分享</div>
+            <!-- ShareThis END -->
+          </div>
+          </div>
+      </div>
+      <div class='wst-clear'></div>
+      </div>
+   </div>
+</div>
+  <div class='wst-w'>
+   <div class='wst-container'>
+       <div class='wst-side'>
+           <div class='shop-intro'>
+                <div class='title'>{$shop['shopName']}</div>
+                <div class='body'>
+                    <div class='totalScore'><img class="shopsImg" data-original="__RESOURCE_PATH__/{$shop['shopImg']}" title="{$shop['shopName']|WSTStripTags}" style="width:75px;height:75px;"></div>
+                    <div class='itemScore'>{:lang('seckill_goods_score')}：{if ($shop['scores']['goodsScore']!=0)}{$shop['scores']['goodsScore']}{else /}5{/if}</div>
+                    <div class='itemScore'>{:lang('seckill_service_score')}：{if ($shop['scores']['serviceScore']!=0)}{$shop['scores']['goodsScore']}{else /}5{/if}</div>
+                    <div class='itemScore'>{:lang('seckill_timeliness_score')}：{if ($shop['scores']['timeScore']!=0)}{$shop['scores']['goodsScore']}{else /}5{/if}</div>
+                </div>
+                <div class='footer'>
+                   <a class="home" href='{:Url("home/shops/index","shopId=".$shop["shopId"])}' target='_blank'>{:lang('seckill_go_shop')}</a>
+                   {if ($goods['favShop']>0)}
+                   <a class="j-fav" href='javascript:void(0);' onclick='WST.cancelFavorite(this,1,{$shop["shopId"]},{$goods['favShop']})'>{:lang('seckill_has_favorited')}</a>
+                   {else}
+                   <a class="j-fav2" href='javascript:void(0);' onclick='WST.addFavorite(this,1,{$shop["shopId"]},{$goods['favShop']})'>{:lang('seckill_favorite_shop')}</a>
+                   {/if}
+                   <div class='wst-clear'></div>
+                </div>
+           </div>
+       <div class="goods-side">
+        <div class="guess-like">
+          <div class="title">{:lang('seckill_guess_you_like')}</div>
+          {wst:goods type='best' cat="$goods['goodsCatId']" num='3'}
+          <div class="item">
+            <div class="img"><a target='_blank' href="{:Url('home/goods/detail','goodsId='.$vo['goodsId'])}"><img title="{$vo['goodsName']|WSTStripTags}" alt="{$vo['goodsName']|WSTStripTags}" data-original="__RESOURCE_PATH__/{:WSTImg($vo['goodsImg'])}" class="goodsImg" /></a></div>
+            <div class="p-name"><a class="wst-hide wst-redlink">{$vo['goodsName']}</a></div>
+            <div class="p-price">{:lang('currency_symbol')}{$vo['shopPrice']}<span class="v-price">{:lang('currency_symbol')}{$vo['marketPrice']}</span></div>
+          </div>
+          {/wst:goods}
+        </div>
+        <div class="hot-goods">
+          <div class="title">{:lang('seckill_hot_goods')}</div>
+          {wst:goods type='hot' num='3'}
+          <div class="item">
+            <div class="img"><a target='_blank' href="{:Url('home/goods/detail','goodsId='.$vo['goodsId'])}"><img title="{$vo['goodsName']|WSTStripTags}" alt="{$vo['goodsName']|WSTStripTags}" data-original="__RESOURCE_PATH__/{:WSTImg($vo['goodsImg'])}" class="goodsImg" /></a></div>
+            <div class="p-name"><a class="wst-hide wst-redlink">{$vo['goodsName']}</a></div>
+            <div class="p-price">{:lang('currency_symbol')}{$vo['shopPrice']}<span class="v-price">{:lang('currency_symbol')}{$vo['marketPrice']}</span></div>
+          </div>
+          {/wst:goods}
+        </div>
+      </div>
+    </div>
+    <div class='goods-desc'>
+        <div id='tab' class="wst-tab-box">
+        <ul id='goodsTabs' class="wst-tab-nav">
+           <li>{:lang('seckill_goods_introduction')}</li>
+           
+           {if $goods['read'] || $goods['status']==-1 || $goods['status']==0 }
+                 <a id='addCart2' href='javascript:void(0);' class='un-buy'>{:lang('seckill_buy_it_now')}</a>
+           {else}
+                 <a id='addCart2' href='javascript:addCart(1,"#buyNum")'>{:lang('seckill_buy_it_now')}</a>
+           {/if}
+        </ul>
+          <div class="wst-tab-content" style='width:99%;margin-bottom: 10px;min-height:1312px;'>
+             <div class="wst-tab-item" style="position: relative;">
+             <ul class='wst-attrs-list'>
+                {volist name="$goods['attrs']" id="vo"}
+                  <li title='{$vo['attrVal']}'>{$vo['attrName']}：{$vo['attrVal']}</li>
+                {/volist}
+             </ul>
+             {$goods['goodsDesc']}
+             </div>
+             <input type="hidden" id="filtertype" value="all" />
+             
+        </div>
+    </div>  
+    <div class='wst-clear'></div>
+  </div>
+  <div class='wst-clear'></div>
+</div>
+{/block}
+{block name="footer"}
+  {include file="$LAYOUT_HOME_FOOTER" /}
+{/block}
+{block name="js"}
+<script>
+var goodsInfo = {
+  id:{$goods['goodsId']},
+  seckillId:{$goods['id']},
+  isSpec:{$goods['isSpec']},
+  goodsStock:{$goods['goodsStock']},
+  marketPrice:{$goods['marketPrice']},
+  goodsPrice:{$goods['shopPrice']}
+  {if isset($goods['saleSpec'])}
+  ,sku:{:json_encode($goods['saleSpec'])}
+  {/if}
+}
+</script>
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__STYLE__/js/cloudzoom.js?v={$v}'></script>
+<script type='text/javascript' src='__ROOT__/addons/seckill/view/home/index/js/time.js?v={$v}'></script>
+<script type='text/javascript' src='__ROOT__/addons/seckill/view/home/index/js/goods_detail.js?v={$v}'></script>
+<script>
+function goShop(id){
+  location.href=WST.U('home/shops/index','shopId='+id);
+}
+</script>
+{/block}

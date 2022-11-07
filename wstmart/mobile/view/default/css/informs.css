@@ -1,0 +1,274 @@
+View{
+    display: flex;
+    flex-direction: column;
+}
+.step-container{
+    height:90px;
+    background-color:#fff;
+    margin-bottom:10px
+}
+.step-container .step{
+    width:30px;
+    height:30px;
+    border-radius: 50%;
+    border-width:1px;
+    border-color:#EA4341;
+    border-style: solid;
+    margin-bottom: 5px;
+}
+.step-container .gray{
+    border-color:#666;
+}
+
+.center{
+    align-items: center;
+    justify-content: center;
+}
+.f14{
+    font-size: 0.14rem;
+}
+.cRed{
+    color:#EA4341
+}
+.c666{
+    color:#666;
+}
+.row{
+    flex-direction: row;
+}
+.ac{
+    align-items: center;
+}
+.flex1{
+    flex:1;
+}
+.jsb{
+    justify-content: space-between;
+}
+
+
+.contrainer{
+    flex:1;
+    background-color: #f5f5f5;
+}
+.main{
+}
+.headOrderInfo{
+    padding:0 12px;
+    background-color:#fff;
+    height:41px;
+    align-items:center;
+}
+.typeItem{
+    margin-left:12px;
+}
+.item{
+    background-color: #fff;
+    justify-content: space-between;
+    align-items: center;
+    padding:0 12px;
+    height:54px;
+}
+.arrowR{
+    display: inline-block;
+    width: 0.06rem;
+    height: 0.11rem;
+    background: url(../img/icon-right-arrow.png) center center no-repeat;
+    background-size: 100%;
+    margin-left: 0.1rem;
+}
+.separatorBox{
+    background-color:#fff;
+}
+.itemSeparator{
+    height:1px;
+    background-color:#f2f2f2;
+    flex:1;
+    margin:0 12px
+}
+/* 订单下的商品 */
+.orderGoodsList{
+    background-color: #fff;
+    margin-top: 10px;;
+    margin-bottom: 10px;
+}
+.ml5{margin-left: 5px;}
+.mb{
+    margin-bottom: 10px;;
+}
+.orderGoodsHead{
+    border-bottom: 1px solid #f2f2f2;
+    padding-left: 12px;
+    height:41px;
+}
+.goodsItem{
+    padding:10px 12px;
+}
+.goodsName{
+    font-weight:bold;
+    font-size:0.12rem;
+    color:#333;
+    line-height:calc(0.12rem * 1.5)
+}
+.goodsSpecName{
+    font-size:0.1rem;
+    color:#666;
+    line-height:18px;
+}
+.goodsImg{
+    width: 90px;
+    height: 90px;
+    border-radius:2px;
+    margin-right:10px;
+}
+
+/* 举报内容 */
+.textInputBox{
+    padding-bottom:10px;;
+    background-color: #fff;
+    padding:0 15px;
+}
+.textInput{
+    padding:10px;
+    background-color:#fff;
+    border-radius:6px;
+    font-size: 0.13rem;
+    margin-bottom: 10px
+}
+.textInputBox textarea{
+    background:#f5f5f5;padding:0.1rem;border-radius:0.06rem;border:1px solid #f5f5f5;
+    min-height: 120px;
+    resize: none;
+}
+.btnBox{
+    background-color:#fff;
+    padding:14px 12px;
+}
+/* 提交按钮 */
+.btnBox .btn{
+    width:100%;
+    margin-top: 12px;
+    height:40px;
+    border-radius: 20px;
+    background-color: #EA4341;
+    color:#fff;
+    font-size: 0.14rem;
+}
+
+/* radio*/
+.ui-checkbox input:before,.ui-checkbox-s input:before{font-size:22px!important;left: 5px;}
+.ui-checkbox input:checked:before,.ui-checkbox-s input:checked:before{color:#EA4341!important}
+
+
+.webuploader-pick{padding:5px 6px!important;}
+.complainFileBox{min-height:0.8rem;width:calc(100% - 0.12rem);padding-left:0.12rem;}
+.complainFileBox li{float:left;}
+.complainFileBox img{width:0.8rem;height:0.8rem;margin:0 0.1rem 0.1rem 0;}
+.edit_charts{position:relative}
+.upload-icon-delete{display:block;width:0.16rem;height:0.16rem;background: url(../img/upload-del.png) center center no-repeat;background-size:100%;position: absolute;top:-0.05rem;right:0.05rem;}
+.ui-icon,[class^="ui-icon-de"]{font-size:20px;position:absolute;left:32px;top:-1px;color:red;line-height:17px}
+.uploadfile-box{background:#fff;position:relative;padding-bottom:0.1rem;}
+.ui-icon-thumb{line-height:20px}
+.uploadfile-input{width:12%;height:25px;position:absolute;left:0;top:73px;z-index:-55;opacity:0}
+.upload-btn{width:0.8rem;height:0.8rem;background: url(../img/upload-btn.png) center center no-repeat;background-size:100%;}
+
+.img-box{
+    width: 100%;
+    background-color: #fff;
+    padding: 0 12px;
+    padding-bottom: 10px;
+    box-sizing: border-box;
+}
+.img-box .img-item{
+    width:1rem;height:1rem;margin-right: 0.1rem
+}
+
+
+
+/* list */
+
+.c333{
+    color:#333;
+}
+.fb{
+    font-weight: bold;
+}
+.f13{
+    font-size: 0.13rem;
+}
+
+#informsList{
+
+}
+
+#informsListContainer{
+    flex:1;
+    background-color:#f5f5f5;
+}
+#informsListContainer .listItem{
+    background-color:#fff;
+    padding:5px 12px;
+    margin-bottom: 10px;
+}
+#informsListContainer .innerItem{
+    width:100%;
+    align-items: center;
+    padding: 5px 0;
+}
+#informsListContainer .gImg{
+    width: 25px;
+    height:25px;
+    margin-right:5px;
+}
+#informsList .searchBox{
+    padding:10px 24px;
+    background-color: #fff;
+    border-bottom:1px solid #f5f5f5;
+    position: fixed;
+    top: 0.47rem;
+    left: 0;
+    right: 0;
+}
+#informsList .select{
+    font-size: 0.14rem;
+    height: 28px;
+}
+#informsList .btn{
+    width: 54px;
+    height: 28px;
+    border-radius: 6px;
+    margin-left: 5px;
+    background: #EA4341;
+    color: #fff;
+    font-size: 0.14rem;
+}
+
+#informsListContainer .numOfLine-1{
+    display: block;
+    width: 1rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.data-item {height: 0.44rem;line-height: 0.44rem;text-align: left;font-size: 0.14rem;font-weight:400;color:rgba(51,51,51,1);padding:0rem 0.12rem;background: #FFFFFF;margin-bottom: 0.12rem;}
+.list-i {float: right;width: 0.07rem;height: 0.13rem}
+.edit {background: url(../img/fanhui.png);background-repeat:no-repeat;background-size: 0.07rem 0.13rem;margin-top: 0.15rem;}
+.wst-cover{position:fixed;left:0;top:0;background-color:#000;width:100%;height:100%;filter:alpha(opacity=60);opacity:.6;z-Index:9999;display:none}
+/*弹框*/
+.wst-cancel-box{position:fixed;z-index:9999;left:0;bottom:-5.32rem;width:100%;background:#fff;font-size:.14rem;border-radius: 0.1rem 0.1rem 0 0;}
+.wst-cancel-box .title{color:#333;font-size:0.15rem;padding:0.15rem 0;text-align: center;font-weight: 600;}
+.wst-cancel-box .desc{color:#ccc;font-size:0.14rem;padding-left:0.13rem;}
+.wst-cancel-box .item{height:0.58rem;margin:0 0.12rem;border-bottom:1px solid #f2f2f2;}
+.wst-cancel-box .item .name{color:#333;font-size:0.15rem;}
+.wst-cancel-box .content{height:2.32rem;overflow-y: scroll;}
+
+/*非浮动按钮bottom-btn-box*/
+.bottom-one-btn-box{padding:0 0.12rem;height:0.54rem;background: #fff;}
+.bottom-one-btn-box .wst-dialog-b2{background:#ED413B;border-radius: 0.2rem;width:100%;height:0.4rem;line-height:0.4rem;text-align: center;color:#fff;}
+.bottom-two-btn-box{padding:0 0.12rem;height:0.54rem;background: #fff;}
+.bottom-two-btn-box button{width:50%;height:0.4rem;color:#fff;text-align: center;line-height: 0.4rem;margin:0.07rem 0;}
+.bottom-two-btn-box .wst-dialog-b1{background:#FFAC2A;border-radius:0.2rem 0 0 0.2rem; }
+.bottom-two-btn-box .wst-dialog-b2{background:#ED413B;border-radius:0 0.2rem 0.2rem 0;}
+.bottom-two-btn-box .wst-dialog-b1:not(.disabled):not(:disabled):active,.bottom-two-btn-box .wst-dialog-b1.active{background:#F38F1A;}
+.bottom-two-btn-box .wst-dialog-b2:not(.disabled):not(:disabled):active,.bottom-two-btn-box .wst-dialog-b2.active{background:#DB3735;}

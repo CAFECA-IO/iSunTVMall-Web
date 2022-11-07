@@ -1,0 +1,76 @@
+<link href="__ROOT__/addons/coupon/view/mobile/index/coupon.css" rel="stylesheet">
+<script id="gcoupon_script" type="text/html">
+{{# for(var i = 0; i < d.length; i++){ }}
+  <div class="coupon_item">
+        <div class="coupon_item_left" style="position: relative;z-index:1000;">
+            <div class="coupon_left">
+            </div>
+            <div class="coupon_left_main" style="background-size:104%;">
+                <div class="coupon_left_main_inner">
+                    <p class="coupon_left_txt1"><span class="yan">{:lang('currency_symbol')}</span>{{d[i].couponValue}}</p>
+                    <span class="coupon_left_txt2">
+                    {{# if(d[i].useCondition==0){ }}
+                        {:lang('coupon_no_threshold')}
+                    {{# }else{  }}
+                        {{WST.lang('coupon_upto_available',[d[i].useMoney])}}
+                    {{# }  }}
+                    </span>
+                </div>
+            </div>
+            <div class="wst-clear"></div>
+        </div>
+        <div class="coupon_item_right" style="box-shadow: 0 0 0.1rem 0 #efefef;">
+            <div class="coupon_item_right_inner">
+                <div class="c_item_r_left">
+                    <p class="c_item_txt1 ui-nowrap ui-whitespace">{{WST.lang('coupon_money_tips2',[d[i].couponValue])}}</p>
+                    <p class="c_item_txt2 ui-nowrap ui-whitespace">
+                        {{# if(d[i].useCondition==0){ }}
+                            {:lang('coupon_no_threshold')}
+                        {{# }else{  }}
+                            {{WST.lang('coupon_full_reduction_tips',[d[i].useMoney,d[i].couponValue])}}
+                        {{# }  }}
+                    </p>
+                    <p class="c_item_txt4 ui-nowrap ui-whitespace">{{d[i].startDate}}~{{d[i].endDate}}</p>
+                </div>
+                {{# if(d[i].isOut==1 || d[i].isReceive==1){  }}
+                    <a href="javascript:" class="get_btn unuse_btn">{{# if(d[i].isOut==1){ }}{:lang('coupon_receive_finished')}{{# }else{ }}{:lang('coupon_has_received')}{{# } }}</a>
+                {{# }else{  }}
+                    <a href="javascript:void(0)" onClick="getCoupon({{d[i].couponId}},this)"  class="get_btn">{:lang('coupon_receive_now2')}</a>
+                {{# }  }}
+                <div class="wst-clear"></div>
+            </div>
+        </div>
+        <div class="wst-clear"></div>
+    </div>
+{{#  } }}
+</script>
+	<li id='j-coupon' onclick="couponListShow()" style="display:none;">
+        <div class="ui-list-info">
+            <h5 class="ui-nowrap">
+            	<div style="float: left;">
+	            	<span class="word">{:lang('coupon_receive_coupon')}</span>
+	            	<span class="line">|</span>
+	            </div>
+            	<div class="gc_itembox">
+            		<div class="gc_item">
+            			<div class="gc_item_main" id="coupon_txt1"></div>
+            			<div class="wst-clear"></div>
+            		</div>
+            		<div class="gc_item" id="gc_item2" style="display:none;">
+            			<div class="gc_item_main" id="coupon_txt2"></div>
+            			<div class="wst-clear"></div>
+            		</div>
+            	</div>
+            	<div class="wst-clear"></div>
+            </h5>
+        </div>
+        <span class="icon-right-arrow"></span>
+    </li>
+	<div class="wst-cart-box" id="gcoupon_listbox" style="z-Index:99999;bottom:-539px;">
+		<div class="gcl_tit">
+			{:lang('coupon_receive_coupon')}
+			<div class="icon-close" onclick="couponListHide()"></div>
+		</div>
+		<div class="gcl_content"></div>
+	</div>
+<script type='text/javascript' src='__ROOT__/addons/coupon/view/mobile/index/goods_detail_coupon.js'></script>

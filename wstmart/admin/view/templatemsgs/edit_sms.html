@@ -1,0 +1,43 @@
+{extend name="base" /}
+{block name="js"}
+<script src="__ADMIN__/templatemsgs/templatemsgs.js?v={$v}" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div class="l-loading" style="display: block" id="wst-loading"></div>
+<form autocomplete='off'>
+<input type='hidden' id='id' class='ipt' value="{$object['id']}"/>
+<input type='hidden' id='tplCode' class='ipt' value="{$object['tplCode']}"/>
+<table class='wst-form wst-box-top layui-form'>
+  <tr>
+     <th width='120'>{:lang('label_template_msg_code')}：</th>
+     <td>
+         {volist name=':WSTDatas("TEMPLATE_SMS")' id='vo'}
+         {if $vo['dataVal']==$object['tplCode']}{$vo['dataName']}{/if}
+         {/volist}
+     </td>
+  </tr>
+  <tr>
+     <th>{:lang('label_template_msg_content')}：</th>
+     <td>
+     <textarea id='tplContent' style='width:70%;height:100px;' class='ipt' maxLength='150'>{$object['tplContent']}</textarea>
+     </td>
+  </tr>
+  <tr>
+	     <th>{:lang('label_template_msg_is_show')}：</th>
+	     <td>
+	     <input type="checkbox" {if $object['status']==1}checked{/if} value='1' class="ipt" id="isShow3" name="seoMallSwitch" lay-skin="switch" lay-filter="isShow3" lay-text="{:lang('template_msg_is_show_type1')}|{:lang('template_msg_is_show_type2')}">
+	     </td>
+	  </tr>
+  <tr>
+     <th valign="top" style="line-height: 45px;">{:lang('label_template_msg_desc')}：</th>
+     <td id='tplDesc'>{$object['tplDesc']}</td>
+  </tr>
+  <tr>
+     <td colspan='2' align='center' class='wst-bottombar' style="padding-left: 125px;">
+     	<button type="button" class="btn btn-primary btn-mright" onclick='javascript:save(2,{$p})'><i class="fa fa-check"></i>{:lang('save')}</button>
+        <button type="button" class="btn" onclick="javascript:location.href='{:Url(\'admin/templatemsgs/index\',\'p=\'.$p)}'"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+     </td>
+  </tr>
+</table>
+</form>
+{/block}

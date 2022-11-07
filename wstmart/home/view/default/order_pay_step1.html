@@ -1,0 +1,156 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('cart_title')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="css"}
+<link href="__STYLE__/css/carts-{$lang}.css?v={$v}1" rel="stylesheet">
+{/block}
+{block name="main"}
+<div class="wst-container">
+	
+    <div class="pay-sbox-head">
+    	<a href='{$Request.root.true}'>{:lang('home_page')}</a>&nbsp;&gt;&nbsp;{:lang('pay_title')}
+    </div>
+    <div>
+    	<div class="pay-tip1"></div>
+    </div>
+    <div class='pay-sbox'>
+    	<div>
+	    <div class="tips-box">
+	    	<input type="hidden" id="pkey" value="{$pkey}"/>
+
+	    	{:lang('remind_pay_desc')}<span class="wst-fred">&nbsp;{:lang('currency_symbol')}{$object['totalMoney']}&nbsp;</span><span id="wst-check-orders" class="wst-check-orders">{:lang('check_order_detail')}</span>
+	    </div>
+	    <div>
+		    <div id="wst-orders-box" style="display:none;">
+			    <table class='wst-order-list'>
+				 	{volist name="$rs['list']" id="order"}
+				 	<thead>
+					 	<tr>
+					     	<td colspan="3" class="wst-left-noborder wst-align-left">{:lang('order_no')}：{$order['orderNo']}</td>
+					        <td colspan="3" class="wst-right-noborder wst-align-right">{:lang('order_money')}：{:lang('goods_price_unit')}{$order['needPay']}{:lang('freight_desc',[$order['deliverMoney']])}</td>
+					 	</tr>
+					 	<tr class='head'>
+					         <td colspan="2" class="wst-left-noborder">{:lang('goods')}</th>
+					         <th width="150">{:lang('goods_price')}</th>
+					         <th width="150">{:lang('goods_num')}</th>
+					         <th width="150" class="wst-right-noborder">{:lang('total_goods_price')}</th>
+					   	</tr>
+				   </thead>
+				   <tbody class="otbody">
+				 	{volist name="$rs['goods'][$order['orderId']]" id="vo"}
+				 	<tr>
+				     	<td class="wst-left-noborder" width="64">
+				     		<div class="goods-img">
+					     		<a href="{:url('home/goods/detail',array('goodsId'=>$vo['goodsId']))}" target="_blank">
+					     			<img class='goodsImg' data-original="__RESOURCE_PATH__/{$vo['goodsImg']}"  title="{$vo['goodsName']|WSTStripTags}" width='60'/>
+					     		</a>
+				     		</div>
+				     	</td>
+				        <td class="wst-align-left">
+				        	<div>{$vo['goodsName']}
+				        	{if condition="count($vo['goodsSpecNames']) gt 0"}
+				        		【
+				        		{volist name="$vo['goodsSpecNames']" id="spec"}
+				        		{$spec}&nbsp;
+				        		{/volist}
+				        		】
+				        	{/if}
+				        	</div>
+				        </td>
+				        <td>{$vo['goodsPrice']}</td>
+				        <td>{$vo['goodsNum']}</td>
+				        <td class="wst-right-noborder">{$vo['goodsPrice']*$vo['goodsNum']}</td>
+				 	</tr>
+				 	{/volist}
+				 	{/volist}
+			       </tbody>
+			    </table>
+		    </div>
+		    <div class="pay-type">{:lang('select_pay_type')}</div>
+		    <div class="pay-list">
+		    	<input type="hidden" id="payCode" name="payCode" />
+		    	{volist name="$rs['payments']" id="payment"}
+                 	{if condition="$payment['isOnline'] eq 1"}
+                    	<div class="wst-payCode-{$payment['payCode']}" data="{$payment['payCode']}"></div>
+                 	{/if}
+                 {/volist}
+		         <div class="wst-clear"></div>
+		    </div>
+		    <div class="bnt-box">
+		    	<div onclick='javascript:getPayUrl();' class="wst-pay-bnt"></div>
+		    	<div id='paypalBox'  style="width: 200px;margin: 0 auto;display: none;"></div>
+		    </div>
+	    </div>
+        </div>
+    </div>
+</div>
+<div id="alipayform" style="display:none;"></div>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__STYLE__/js/carts.js?v={$v}'></script>
+{php}$paypalClientId = WSTGetPaypalClientId();{/php}
+{if $paypalClientId!=""}
+<script src="https://www.paypal.com/sdk/js?client-id={$paypalClientId}&debug=true&currency=HKD"></script>
+<script>
+	paypal.Buttons({
+		createOrder: function() {
+			var pkey = "{$pkey}";
+		  return fetch(WST.U('home/paypals/getpaypalsurl'), {
+		    method: 'post',
+		    headers: {
+		      'content-type': 'application/json'
+		    },
+		　　body:JSON.stringify({
+		 　　'payObj' : 'orderPay',
+		 　　'pkey' : pkey
+		　　})
+		  }).then(function(res) {
+		  	console.log("res______________",res);
+		    return res.json();
+		  }).then(function(data) {
+		  	console.log("data______________",data);
+		    return data.id; // Use the key sent by your server's response, ex. 'id' or 'token'
+		  });
+		},
+		onApprove: function(data, actions) {
+			console.log("onApprove______________",data);
+	        return actions.order.capture().then(function(details) {
+	        	console.log("details——————————————————————————————————————————",details);
+	        	if(details['purchase_units'][0]['payments']['captures'][0]['status']=='COMPLETED'){
+	        		setTimeout(function(){
+		        		location.href = WST.U('home/orders/waitReceive');
+		        	},3000);
+	        	}
+	        });
+	    }
+	}).render('#paypalBox');
+
+</script>
+{/if}
+
+<script>
+$(function(){
+	$("#wst-check-orders").click(function(){
+		$("#wst-orders-box").slideToggle(600);
+	});
+	$("div[class^=wst-payCode]").click(function(){
+		var payCode = $(this).attr("data");
+		$("div[class^=wst-payCode]").each(function(){
+			$(this).removeClass().addClass("wst-payCode-"+$(this).attr("data"));
+		});
+		$(this).removeClass().addClass("wst-payCode-"+payCode+"-curr");
+		$("#payCode").val(payCode);
+		if(payCode=="paypals"){
+			$(".wst-pay-bnt").hide();
+			$("#paypalBox").show();
+		}else{
+			$(".wst-pay-bnt").show();
+			$("#paypalBox").hide();
+		}
+	});
+	if($("div[class^=wst-payCode]").length>0){
+		$("div[class^=wst-payCode]")[0].click();
+	}
+});
+
+</script>
+{/block}

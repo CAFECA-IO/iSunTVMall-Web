@@ -1,0 +1,189 @@
+{extend name="default/base_js" /}
+{block name="title"}{:lang('user_regist')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="css"}
+<link href="__STYLE__/css/login.css?v={$v}" rel="stylesheet">
+<script type="text/javascript" src="__STATIC__/js/rsa.js"></script>
+{/block}
+{block name="header"}{/block}
+{block name="main"}
+{php}$registerTypeArr = explode(',',WSTConf('CONF.registerType'));{/php}
+    <div class="wst-login-banner-regist">
+      <div class="wst-icon-banner">
+      	<?php $mallName = WSTConf('CONF.mallName'); ?>
+      	<a href='{$Request.root.true}' title="{$mallName|WSTStripTags}" >
+    	<div class="img-banner" >
+    		<img src="__RESOURCE_PATH__/{:WSTConf('CONF.mallLogo')}">
+    	</div>
+        </a>
+    	<div class="wst-login-action">
+    	  <ul class="wst-icon" style="width: 450px;margin-top: 20px;">
+	     	 <li class="wst-img-icon"></li><li class="wst-remind" style="color:#333;">{:lang('welcome_mall',[WSTMSubstr(WSTConf('CONF.mallName'),0,13)])}<a href="{:Url('home/users/login')}" onclick="WST.currentUrl();" style="color:red;">&nbsp;&nbsp;{:lang('please_login')}</a></li>
+	      </ul>
+    	</div>
+       </div>
+    </div>
+<input type="hidden" id="token" value='{:WSTConf("CONF.pwdModulusKey")}'/>
+<div class="wst-regist-b">
+	<div class="wst-container">
+	<div class="wst-regist">
+	<div class="wst-regist-c">
+	<input type="hidden" id="nameType" class="wst_ipt nameType" value='2' autocomplete="off"/>
+	<div class="wst-regist-head"></div>
+		<div class="wst-register_r">
+		<div id='tab1' class="wst-tab-box">
+			<ul id='goodsTabs1' class="wst-tab-nav">
+				{if count($registerTypeArr)>1}
+					{if in_array(1,$registerTypeArr)}<li>{:lang('account_regist')}</li>{/if}
+					{if in_array(2,$registerTypeArr)}<li>{:lang('phone_regist')}</li>{/if}
+				{else}
+					<li></li>
+				{/if}
+			</ul>
+
+		<div class="wst-tab-content">
+			{if in_array(1,$registerTypeArr)}
+			<div class="wst-tab-item">
+				<form id="reg_form2"  method="post" autocomplete="off" onsubmit="return false;">
+					<table class="wst-table">
+						<tr class="wst-login-tr">
+							<td class="wst-regist-td" style="width: 200px;line-height: 45px"><font color='red'>*</font>{:lang('loginname_data_rule')}</td>
+							<td><input id="loginName2" name="loginName" class="wst_ipt2 wst-regist-input" tabindex="1" maxlength="30" autocomplete="off" onpaste="return false;" style="ime-mode:disabled;" placeholder="{:lang('loginname_word_desc')}"  type="text" onkeyup="javascript:WST.isChinese(this,1)" data-rule="{:lang('loginname_data_rule')}: required;" data-msg-required="{:lang('loginname_data_tips')}" data-tip="{:lang('loginname_data_tips')}"/></td>
+						</tr>
+						<tr class="wst-login-tr">
+							<td class="wst-regist-td"><font color='red'>*</font>{:lang('loginpwd_data_rule')}</td>
+							<td><input id="loginPwd2" name="loginPwd" class="wst_ipt2 wst-regist-input" tabindex="2" style="ime-mode:disabled;" autocomplete="off" type="password" placeholder="{:lang('password_word_desc')}" data-rule="{:lang('loginpwd_data_rule')}: required;" data-msg-required="{:lang('loginpwd_data_tips')}" data-tip="{:lang('loginpwd_data_tips')}"/></td>
+						</tr>
+						<tr class="wst-login-tr">
+							<td class="wst-regist-td"><font color='red'>*</font>{:lang('confirm_password')}</td>
+							<td><input id="reUserPwd2" name="reUserPwd" class="wst_ipt2 wst-regist-input" tabindex="3" autocomplete="off" type="password" placeholder="{:lang('password_word_desc')}" data-rule="{:lang('confirm_password')}: required;" data-msg-required="{:lang('please_input_confirm_password')}" data-tip="{:lang('please_input_confirm_password')}"/></td>
+						</tr>
+						<tr class="wst-login-tr">
+							<td class="wst-regist-td"><font color='red'>*</font>{:lang('graphic_verifycode')}</td>
+							<td><input id="verifyCode" style="ime-mode:disabled;margin-left: 20px; width: 266px;" name="verifyCode"  class="wst_ipt2 wst-regist-codemo" tabindex="6" autocomplete="off" maxlength="6" type="text" data-rule="{:lang('verifycode')}: required;" data-msg-required="{:lang('verify_require')}" data-tip="{:lang('verify_require')}" data-target="#verify" placeholder="{:lang('verifycode')}" />
+								<img id='verifyImg' class="wst-login-codeim-1" src="{:url('home/index/getVerify')}" onclick='javascript:WST.getVerify("#verifyImg","#verifyCode")' style="width:125px;height:36px;border-top-right-radius:6px;border-bottom-right-radius:6px;float: right;margin-top: 1px;margin-right: 22px;">
+								<span id="verify"></span>
+							</td>
+						</tr>
+						<tr class="wst-login-tr">
+							<td class="wst-regist-td"></td>
+							<td>
+								<label style="margin-left: 20px;padding-right: 120px;">
+									<input id="protocol2" name="protocol" type="checkbox" class="wst_ipt2" value="1" data-rule="checked" data-msg="{:lang('please_agree_to_register')}"/>{:lang('read_and_agree')}
+									<a href="javascript:;" style="color:#69b7b5;" id="protocolInfo2" onclick="showProtocol();">《用户注册协议》</a>
+								</label>
+							</td>
+						</tr>
+						<tr style="height:80px;">
+							<td colspan="2" style="padding-left:260px;">
+								<input id="reg_butt2" class="wst-regist-but" type='submit' onclick='javascript:register()' value="{:lang('register')}" style="width: 180px;height:30px;"/>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			{/if}
+			{if in_array(2,$registerTypeArr)}
+			<div class="wst-tab-item">
+				<form id="reg_form"  method="post" autocomplete="off">
+					<table class="wst-table">
+						<tr class="wst-login-tr">
+							<td class="wst-regist-td" style="width: 200px;line-height: 45px"><font color='red'>*</font>{:lang('phone_number')}</td>
+							<td>
+							<select class="wst_ipt" id="areaCode" name="areaCode" style="margin-left: 20px;height: 35px;">
+				                {volist name=":WSTAareCodes()" id="acode"}
+						          <option value="{$acode}">{$acode}</option>
+						        {/volist}
+				          	</select>
+							<input id="loginName" name="loginName" class="wst_ipt wst-regist-input" tabindex="1" maxlength="30" autocomplete="off" onpaste="return false;" placeholder="{:lang('phone_number')}"  type="text" onkeyup="javascript:WST.isChinese(this,1)" onkeypress="return WST.isNumberKey(event)" style="ime-mode:disabled;width:340px;float: none;margin-left: 6px;" autocomplete="off" /></td>
+						</tr>
+						<tr class="wst-login-tr">
+							<td class="wst-regist-td"><font color='red'>*</font>{:lang('loginpwd_placeholder')}</td>
+							<td><input id="loginPwd" name="loginPwd" class="wst_ipt wst-regist-input" tabindex="2" style="ime-mode:disabled;" autocomplete="off" type="password" placeholder="{:lang('password_word_desc')}"/></td>
+						</tr>
+						<tr class="wst-login-tr">
+							<td class="wst-regist-td"><font color='red'>*</font>{:lang('confirm_password')}</td>
+							<td><input id="reUserPwd" name="reUserPwd" class="wst_ipt wst-regist-input" tabindex="3" autocomplete="off" type="password" placeholder="{:lang('password_word_desc')}"/></td>
+						</tr>
+						<tr id="mobileCodeDiv" class="wst-login-tr">
+							<td class="wst-regist-td"><font color='red'>*</font>{:lang('sms_verification_code')}</td>
+							<td>
+								<input maxlength="6" autocomplete="off" tabindex="6" class="wst_ipt wst-regist-codemo" name="mobileCode" style="ime-mode:disabled;margin-left: 20px; width: 266px;" id="mobileCode" type="text" data-target="#mobileCodeTips" placeholder="{:lang('sms_verification_code')}" />
+								{if (int)WSTConf('CONF.isAddonCaptcha')!=1}
+								<button type="button" id="timeTips" onclick="getVerifyCode(1);" class="wst-regist-obtain" style='margin-right:20px;'>{:lang('get_sms_verification_code')}</button>
+								{else}
+								{:hook('homeDocumentRegistSmsCaptcha')}
+								{/if}
+								<span id="mobileCodeTips"></span>
+							</td>
+						</tr>
+						<tr class="wst-login-tr">
+							<td class="wst-regist-td"></td>
+							<td>
+								<label style="margin-left: 20px;padding-right: 120px;">
+									<input id="protocol" name="protocol" type="checkbox" class="wst_ipt" value="1" data-rule="checked" data-msg="{:lang('please_agree_to_register')}"/>{:lang('read_and_agree')}
+									<a href="javascript:;" style="color:#69b7b5;" id="protocolInfo" onclick="showProtocol();">{:lang('user_register_protocol')}</a>
+								</label>
+							</td>
+						</tr>
+						<tr style="height:80px;">
+							<td colspan="2" style="padding-left:260px;">
+								<input id="reg_butt" class="wst-regist-but" type="submit" value="{:lang('register')}" style="width: 180px;height:30px;"/>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			{/if}
+		</div>
+		</div>
+		</div>
+	</div>
+	</div>
+	</div>
+</div>
+<div class="wst-footer">
+		<div class="wst-container">
+		<div class="wst-footer-hp-ck3">
+	        <div class="links">
+	           {php}$navs = WSTNavigations(1);{/php}
+	           {volist name="$navs" id='vo'}
+	           <a href="{$vo['navUrl']}" {if $vo['isOpen']==1}target="_blank"{/if}>{$vo['navTitle']}</a>
+	           {if $i< count($navs)}&nbsp;&nbsp;|&nbsp;&nbsp;{/if}
+	           {/volist}
+	        </div>
+	        <div class="copyright">
+	        {php}
+	        	if(WSTConf('CONF.mallFooter')!=''){
+	         		echo htmlspecialchars_decode(WSTConf('CONF.mallFooter'));
+	        	}
+	        {/php}
+	      	{php}
+				if(WSTConf('CONF.visitStatistics')!=''){
+					echo htmlspecialchars_decode(WSTConf('CONF.visitStatistics'))."<br/>";
+			    }
+			{/php}
+	        {if condition="WSTConf('CONF.mallLicense') eq ''"}
+	        <div>
+				Copyright©2019 Powered By <a target="_blank" href="http://www.wstmart.net">WSTMart</a>
+			</div>
+			{else/}
+				<div id="wst-mallLicense" data='1' style="display:none;">Copyright©2019 Powered By <a target="_blank" href="http://www.wstmart.net">WSTMart</a></div>
+	        {/if}
+	        </div>
+	    </div>
+	    </div>
+	  </div>
+{/block}
+{block name="js"}
+	<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+	<script type='text/javascript' src='__STYLE__/js/login.js?v={$v}'></script>
+	<Script>$(function(){initRegist();})</Script>
+	<script>
+		$(function(){
+			$('#tab1').TabPanel({tab:0,callback:function(no){
+					if(no==1);
+					if(no==2);
+				}});
+		});
+	</script>
+{/block}

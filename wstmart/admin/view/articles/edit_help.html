@@ -1,0 +1,137 @@
+{extend name="base" /}
+{block name="js"}
+<script src="__STATIC__/plugins//kindeditor/NKeditor-all.js?v={$v}" type="text/javascript" ></script>
+<script src="__ADMIN__/articles/help.js?v={$v}" type="text/javascript"></script>
+<script>
+$(function () {
+	{if condition="$object['articleId'] !=0 "}
+	    var json = <?=json_encode($object)?>;
+      WST.setValues(json);
+      var n = 0;
+      for(var key in WST.conf.sysLangs){
+        n = WST.conf.sysLangs[key]['id'];
+        WST.setValue('langParams'+n+'articleTitle',json['langParams'][n]['articleTitle']);
+        WST.setValue('langParams'+n+'articleContent',json['langParams'][n]['articleContent']);
+        WST.setValue('langParams'+n+'articleKey',json['langParams'][n]['articleKey']);
+        WST.setValue('langParams'+n+'articleDesc',json['langParams'][n]['articleDesc']);
+
+      }
+	{/if}
+	$('#articleForm').validator({
+	    fields: {
+	    	{volist name=":WSTSysLangs()" id='vo'}
+        langParams{$vo['id']}articleTitle: {
+          tip: WST.lang('require_article_name'),
+          rule: WST.lang('label_article_name')+':required;length[~50];'
+        },
+        langParams{$vo['id']}articleKey: {
+          tip: WST.lang('require_article_key_word'),
+          rule: WST.lang('label_article_key_word')+':required;length[~100];'
+        },
+        langParams{$vo['id']}articleDesc: {
+          tip: WST.lang('require_article_desc'),
+          rule: WST.lang('label_article_desc')+':required;length[~200];'
+        },
+        langParams{$vo['id']}articleContent: {
+          tip:WST.lang('require_article_content') ,
+          rule: WST.lang('label_article_content')+':required;'
+        },
+        {/volist}
+        a:{}
+	    },
+	    valid: function(form){
+	    	var articleId = $('#articleId').val();
+	    	toEdits(articleId,{$p});
+	    }
+	})
+});
+</script>
+{/block}
+{block name="main"}
+<input type='hidden' id='articleId' value='{$object["articleId"]}'/>
+<form id='articleForm' autocomplete="off">
+<fieldset>
+  <legend>{:lang('base_info')}</legend>
+    <div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+      <ul class="layui-tab-title">
+        {volist name=":WSTSysLangs()" id='vo'}
+        <li {if $key==0}class="layui-this"{/if}>{$vo['name']}</li>
+        {/volist}
+      </ul>
+      <div class="layui-tab-content">
+        {volist name=":WSTSysLangs()" id='vo'}
+        <div class="layui-tab-item {if $key==0}layui-show{/if}">
+          <table class='wst-form wst-box-top '>
+            <tr>
+               <th width='150'>{:lang('label_article_name')}<font color='red'>*</font>：</th>
+               <td><input type="text" id='langParams{$vo["id"]}articleTitle' name='langParams{$vo["id"]}articleTitle' maxLength='50' class='ipt' style='width:60%;'/></td>
+            </tr>
+            <tr>
+               <th width='150'>{:lang('label_article_seo')}<font color='red'>*</font>：</th>
+               <td><input type="text" id='langParams{$vo["id"]}articleKey' name='langParams{$vo["id"]}articleKey' maxLength='120' class='ipt' style='width:80%;'/></td>
+            </tr>
+            <tr>
+               <th width='150'>{:lang('label_article_seo_desc')}<font color='red'>*</font>：</th>
+               <td><textarea id='langParams{$vo["id"]}articleDesc' name='langParams{$vo["id"]}articleDesc' maxLength='200' style='width:80%;height:80px;' class='ipt'></textarea></td>
+            </tr>
+             <tr>
+                 <th width='150'>{:lang('label_article_content')}<font color='red'>*</font>：</th>
+                 <td>
+                 	<textarea id='langParams{$vo["id"]}articleContent' name='langParams{$vo["id"]}articleContent' class="form-control ipt" style='width:80%;'></textarea>
+                 </td>
+              </tr> 
+          </table>
+        </div>
+        {/volist}
+    </div>
+</fieldset>
+<fieldset style='margin-bottom:30px'>
+  <legend>{:lang('article_set')}</legend>
+  <table class='wst-form wst-box-top '>
+    <tr>
+        <th width='150'>{:lang('is_show')}<font color='red'>*</font>：</th>
+        <td height='24' class="layui-form">
+            <input type="checkbox" id="isShow" {if $object['isShow']==1}checked{/if} name="isShow" value="1" class="ipt" lay-skin="switch" lay-filter="isShow" lay-text="{:lang('is_show_val')}">
+        </td>
+    </tr>
+    <tr>
+        <th>{:lang('sort')}：</th>
+        <td>
+            <input type="text" id="catSort" class="ipt" maxLength="20"  value='{$object['catSort']}' />
+        </td>
+    </tr>
+    <tr>
+        <td colspan='2' align='center'>
+            <button type="submit" class="btn btn-primary btn-mright" ><i class="fa fa-check"></i>{:lang('submit')}</button> 
+            <button type="button" class="btn" onclick="javascript:location.href='{:Url(\'admin/articles/help\',\'p=\'.$p)}'"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+        </td>
+    </tr>
+  </table>
+</fieldset>
+ </form>
+  <script>
+$(function(){
+  //编辑器
+    KindEditor.ready(function(K) {
+      {volist name=":WSTSysLangs()" id='vo'}
+		  K.create('#langParams{$vo['id']}articleContent', {
+			height:'500px',
+      uploadJson : WST.conf.ROOT+'/admin/articles/editorUpload',
+			allowFileManager : false,
+			allowImageUpload : true,
+      themeType : "default",
+      items:[     'source', 'undo', 'redo',  'preview', 'print', 'template', 'code', 'cut', 'copy', 'paste',
+                'plainpaste', 'wordpaste', 'justifyleft', 'justifycenter', 'justifyright',
+                'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
+                'superscript', 'clearhtml', 'quickformat', 'selectall',  'fullscreen',
+                'formatblock', 'fontname', 'fontsize',  'forecolor', 'hilitecolor', 'bold',
+                'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', 'image','multiimage','media','table', 'hr', 'emoticons', 'baidumap', 'pagebreak',
+                'anchor', 'link', 'unlink'
+      ],
+			afterBlur: function(){ this.sync(); }
+		});
+    {/volist}
+	});
+});
+</script>
+{/block}

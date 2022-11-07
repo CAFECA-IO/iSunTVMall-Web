@@ -1,0 +1,477 @@
+{extend name="$LAYOUT_MOBILE_BASE" /}
+{block name="title"}{$info['goodsName']} - {:lang('integral_goods_detail')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="meta"}
+<meta name="description" content="{$info['goodsSeoDesc']}，{$seoIntegralDesc}">
+<meta name="keywords" content="{$info['goodsSeoKeywords']}，{$seoIntegralKeywords}">
+<meta property="og:url"           content="{$shareInfo['link']}" />
+<meta property="og:type"          content="website" />
+<meta property="og:title"         content="{$shareInfo['title']}" />
+<meta property="og:description"   content="{$info['goodsSeoDesc']}" />
+<meta property="og:image"         content="{$shareInfo['imgUrl']}" />
+<meta property="og:site_name" content="{:WSTConf('CONF.mallName')}">
+{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__STATIC__/plugins/swiper/swiper.min.css"/>
+<link rel="stylesheet"  href="__ROOT__/addons/integral/view/mobile/index/css/detail.css?v={$v}">
+<!--<link rel="stylesheet"  href="__MOBILE__/js/share/nativeShare.css?v={$v}">-->
+<link rel="stylesheet" href="__STATIC__/plugins/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="__STATIC__/plugins/photoswipe/default-skin/default-skin.css">
+{/block}
+{block name="header"}
+	{php}$cartNum = WSTCartNum();{/php}
+	<header class="ui-header ui-header-positive wst-header" id="goods-header" style="display:none;">
+	    <a href="{:addon_url('integral://goods/molists')}"><i class="ui-icon-return"></i></a>
+		<ul class="ui-tab-nav">
+			<div>
+				<li class="switch active" onclick="javascript:pageSwitch(this,1);">{:lang('integral_goods')}</li>
+			</div>
+			<div>
+				<li class="switch" onclick="javascript:pageSwitch(this,2);">{:lang('integral_detail')}</li>
+			</div>
+			<div>
+				<li class="switch" id="appr" onclick="javascript:pageSwitch(this,3);">{:lang('integral_appraise')}</li>
+			</div>
+		</ul>
+		<span class="share" onclick="javascript:shareShow();"></span>
+    </header>
+{/block}
+{block name="footer"}
+    <div class="ui-loading-wrap wst-Load" id="Load">
+	    <i class="ui-loading"></i>
+	</div>
+	<input type="hidden" name="" value="{$info['goodsId']}" id="goodsId" autocomplete="off">
+	<input type="hidden" name="" value="{$info['goodsType']}" id="goodsType" autocomplete="off">
+    <footer class="ui-footer wst-footer-btns" style="height:0.49rem;" id="footer">
+        <div class="wst-toTop" id="toTop">
+	  	<i class="wst-toTopimg"></i>
+		</div>
+		<div class="ui-row-flex">
+		<div class="ui-col wst-go-icon">
+			<div class="ui-row-flex" style="height:0.49rem;">
+				<div class="ui-col ui-col" >
+					<div class="icon">
+						
+						<a class="J_service" href="tel:{$info['shop']['shopTel']}">
+							<span class="img tel"></span><span class="word">{:lang('integral_service')}</span>
+						</a>
+						
+						{:hook('mobileDocumentContact',['type'=>'goodsDetail','shopId'=>$info['shop']['shopId'],'goodsId'=>$info['goodsId']])}
+					</div>
+				</div>
+				<div class="ui-col ui-col" >
+					<div class="icon"><a href="{:url('mobile/shops/index',['shopId'=>$info['shop']['shopId']])}"><span class="img shop"></span><span class="word">{:lang('integral_shop')}</span></a></div>
+				</div>
+				<div class="ui-col ui-col" >
+					<div class="icon">
+						<a href="{:url('mobile/carts/index')}">
+							<span class="img cart" style="left:0.1rem"></span>
+							<span class="word" style="width:0.4rem">{:lang('integral_cart')}</span>
+							{if($cartNum>0)}<span id="cartNum">{php} echo $cartNum;{/php}</span>{/if}
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	    <div  class="wst-goods_buy wst-flex-row wst-ac" style="margin:0  0.12rem 0 0.46rem;">
+	    {if $Think.session.WST_USER.userId > 0}
+		{if $info['read'] || $info['status']==-1 || $info['status']==0 }
+			<button id="buyBtn" class="wst-goods_buym active" type="button" onclick="javascript:cartShow(1);" disabled>{:lang('integral_buy_it_now')}</button>
+		{else}
+			<button id="buyBtn" class="wst-goods_buym" type="button" onclick="javascript:cartShow(1);">{:lang('integral_buy_it_now')}</button>
+		{/if}
+		{else}
+		    <button id="buyBtn" class="wst-goods_buym" type="button" onclick="javascript:WST.inLogin();">{:lang('integral_login_member_privileges')}</button>
+		{/if}
+	    </div>
+	    </div>
+    </footer>
+{/block}
+{block name="main"}
+{/* 图片查看层 */}
+<div id="gallery" class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="pswp__bg"></div>
+    <div class="pswp__scroll-wrap">
+        <div class="pswp__container">
+        <div class="pswp__item"></div>
+        <div class="pswp__item"></div>
+        <div class="pswp__item"></div>
+        </div>
+        <div class="pswp__ui pswp__ui--hidden">
+        <div class="pswp__top-bar">
+            <div class="pswp__counter"></div>
+            <button class="pswp__button pswp__button--close" title="{:lang('integral_close')}"></button>
+            <button class="pswp__button pswp__button--fs" title="{:lang('integral_full_screen')}"></button>
+            <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+            <div class="pswp__preloader">
+                <div class="pswp__preloader__icn">
+                    <div class="pswp__preloader__cut">
+                    <div class="pswp__preloader__donut"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+            <div class="pswp__share-tooltip">
+            </div>
+        </div>
+        <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+        <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+        <div class="pswp__caption">
+            <div class="pswp__caption__center">
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+{if($info['goodsId']>0)}
+	 {/* 商品  */}
+	<div class="wst-go-more" id="arrow" style="display: none;"><i class="arrow"></i>
+		<ul class="ui-row ui-list-active more">
+			<li class="ui-col"><div class="column line"><a href="{:url('mobile/index/index')}"><i class="home"></i><p>{:lang('integral_home_page')}</p></a></div></li>
+			<li class="ui-col"><div class="column line"><a href="{:url('mobile/goodscats/index')}"><i class="category"></i><p>integral_cat</p></a></div></li>
+			<li class="ui-col"><div class="column line"><a href="{:url('mobile/carts/index')}"><i class="cart"></i><p>{:lang('integral_cart')}</p></a></div></li>
+			<li class="ui-col"><div class="column line"><a href="{:url('mobile/favorites/goods')}"><i class="follow"></i><p>{:lang('integral_follow')}</p></a></div></li>
+			<li class="ui-col"><div class="column"><a href="{:url('mobile/users/index')}"><i class="user"></i><p>{:lang('integral_mine')}</p></a></div></li>
+		</ul>
+	</div>
+	<div class="wst-ca-layer" id="layer" onclick="javascript:inMore();"></div>
+     <section class="ui-container" id="goods1" style="border-top: 0px solid transparent;">
+        <div id="integral-time" sc="{:date("Y-m-d H:i:s")}" sv="{$info['startTime']}" ev="{$info['endTime']}" st="{$info['status']}">
+		    <div class="swiper-container">
+	          <div class="swiper-wrapper" data-gallery="<?php echo implode(',',$info['gallery']);?>">
+	          		{if $info['goodsVideo']!=""}
+	          		<div class="swiper-slide" style="width:100%;">
+				        <div class="wst-video-box">
+				          <video muted src="__RESOURCE_PATH__/{$info["goodsVideo"]}" id='previewVideo' controls="controls" autoplay="autoplay" style="width:3.75rem;height:3.75rem;"></video>
+				        </div>
+				    </div>
+					{/if}
+					{volist name="info['gallery']" id="ga" key="i"}
+					{php}$_i = $i-1;{/php}
+					<div onclick="gViewImg({$_i},this)" class="swiper-slide" style="width:100%;">
+	                	<div class="wst-go-img"><a><img src="__RESOURCE_PATH__/{:WSTImg($ga,2)}"></a></div>
+	                </div>
+	                {/volist}
+	          </div>
+	   		  {if(count($info['gallery'])>1)}<div class="swiper-pagination"></div>{/if}
+				<div class="wst-go-return" onclick="history.back()"><i class="ui-icon-prev"></i></div>
+				<div class="wst-go-mores" onclick="javascript:inMore()"><i></i></div>
+	        </div>
+		</div>
+		<div class="ui-nowrap-multi ui-whitespace wst-go-name">{if $info['isFreeShipping']==1}<span class='wst-red'>{:lang('integral_free_shipping_tips')}</span>{/if}{$info['goodsName']}</div>
+		<div class="ui-row-flex wst-go-price">
+		    <div class="ui-col ui-col-2">
+				<p class="prices">{:lang('integral_conversion_price')}：<span class="price">{:lang('currency_symbol')}{$info['goodsPrice']} + {$info['integralNum']} {:lang('integral_score')}</span></p>
+		    	<p class="shop-price">{:lang('integral_shop_price')}：{:lang('currency_symbol')}{$info['shopPrice']}</p>
+		    </div>
+		</div>
+		{if($info['integralDesc'])}
+		<div class="ui-row-flex wst-go-pdesc">
+			<div class="ui-col">
+			    <p class="desc">{:lang('integral_goods_explain')}：{$info['integralDesc']}</p>
+			</div>
+		</div>
+		{/if}
+		   {if!empty($info['spec'])}
+		    <div class="wst-go-spec">
+				{volist name="$info['spec']" id="sp"}
+				<div class="spec">
+					{volist name="sp['list']" id="sp2"}
+					{if $sp2['itemImg']!=''}
+						<span class="introduce">{$sp['name']}：</span><img class="j-option img active" data-val="{$sp2['itemId']}" src="__RESOURCE_PATH__/{$sp2['itemImg']}" title="{$sp2['itemName']|WSTStripTags}">
+					{else}
+						<span class="introduce">{$sp['name']}：</span><span class="j-option words active" data-val="{$sp2['itemId']}">{$sp2['itemName']}</span>
+					{/if}
+					{/volist}
+					<div class="wst-clear"></div>
+				</div>
+				{/volist}
+			</div>
+			{/if}
+		<ul class="ui-list ui-list-text wst-go-ul ui-list-active">
+		    {if !empty($info['attrs']) }
+		    <li onclick="javascript:dataShow();">
+		        <div class="ui-list-info">
+		            <h5 class="ui-nowrap"><span class="word">{:lang('integral_parameter')}</span></h5>
+		        </div>
+				<span class="icon-right-arrow"></span>
+		    </li>
+		    {/if}
+		</ul>
+
+		 <div>
+			 <div class="title gc-title" onclick="javascript:pageSwitch($('#appr'),3);">
+				 <div class="wst-flex-row wst-jsb wst-ac" style="height:0.54rem;">
+					 <p>{:lang('integral_goods_appraises')}(<span>{$info['appraiseNum']}</span>)</p>
+					 <div class="wst-flex-row wst-ac">
+						 <p class="appraise">{:lang('integral_see_all')}</p>
+						 <i class="icon-right-arrow"></i>
+					 </div>
+				 </div>
+				 {if $info['goodsAppr']}
+				 <div class="appraise-content">
+					 <div class="wst-flex-row wst-ac">
+						 <img class="user-photo" src="{$info['goodsAppr']['userPhoto']}" >
+						 <div>
+							 <p class="login-name">{$info['goodsAppr']['loginName']}</p>
+							 <p class="time">{$info['goodsAppr']['createTime']}
+								 {volist name="$info['goodsAppr']['goodsSpecNames']" id="sp"}
+								 {$sp}
+								 {/volist}
+							 </p>
+						 </div>
+
+					 </div>
+					 <div class="content">{$info['goodsAppr']['content']}</div>
+					 {if $info['goodsAppr']['images']}
+					 <div class="images" data-gallery="<?php echo implode(',',$info['goodsAppr']['images']);?>">
+						 {volist name="$info['goodsAppr']['images']" id="vo" key="k"}
+						 {php}if($key>2)break;{/php}
+						 <img onclick="gViewImg({$k-1},this)" src="__RESOURCE_PATH__/{$vo}" >
+						 {/volist}
+					 </div>
+					 {/if}
+					 {if $info['goodsAppr']['shopReply']}
+					 <div class="reply"><p>{:lang('integral_shop_reply')}：<br>{$info['goodsAppr']['shopReply']}</p></div>
+					 {/if}
+				 </div>
+				 {/if}
+			 </div>
+		 </div>
+
+		 <ul class="ui-list ui-list-one ui-list-link wst-go-shop">
+			 <div class="info">
+				 <div class="img"><a><img src="__RESOURCE_PATH__/{:WSTImg($info['shop']['shopImg'],3)}" title="{$info['shop']['shopName']|WSTStripTags}"></a></div>
+				 <div class="name"><p class="ui-nowrap-flex name1">{$info['shop']['shopName']}</p><p class="ui-nowrap-flex name2"><span>{:lang('integral_main_business')}: {$info['shop']['cat']}</span></p></div>
+				 <div class="wst-clear"></div>
+			 </div>
+			  <div class="ui-row-flex score">
+			    <div class="ui-col ui-col" style="text-align:center;">
+			    	<div class="red">{$info['shop']['scores']['goodsScore']}</div>
+				    <div>{:lang('integral_goods_score')} </div>
+			    </div>
+			    
+			    <div class="ui-col ui-col" style="text-align:center;border-left: 1px solid #f2f2f2;border-right: 1px solid #f2f2f2;">
+			    	<div class="red">{$info['shop']['scores']['timeScore']}</div>
+				    <div>{:lang('integral_timeliness_score')}</div>
+				    
+			    </div>
+			    
+			    <div class="ui-col ui-col" style="text-align:center;">
+			    	<div class="red">{$info['shop']['scores']['serviceScore']}</div>
+				    <div>{:lang('integral_service_score')}</div>
+				    
+			    </div>
+			</div>
+			 <div class="ui-row-flex button">
+				 <div class="ui-col ui-col"><a href="{:url('mobile/shops/goods',['shopId'=>$info['shop']['shopId']])}" class="goods">{:lang('integral_all_goods')}</a></div>
+				 <div class="ui-col ui-col"><a href="{:url('mobile/shops/index',['shopId'=>$info['shop']['shopId']])}" class="shop">{:lang('integral_enter_shop')}</a></div>
+			 </div>
+		 </ul>
+		<div class="wst-shl-ads">
+			<div class="wst-flex-row wst-center">
+				<div class="line"></div>
+				<p class="title">{:lang('integral_guess_you_like')}</p>
+				<div class="line"></div>
+			</div>
+			<div class="wst-guess-goods">
+				{wst:goods type='best' cat="$info['shop']['catId']" num='6'}
+				<div class="wst-go-goods" onclick="javascript:WST.intoGoods({$vo['goodsId']});">
+					<div class="img j-imgAdapt">
+						<a href="javascript:void(0);" onclick="javascript:WST.intoGoods({$vo['goodsId']});"><img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{:WSTImg($vo['goodsImg'],3)}" title="{$vo['goodsName']|WSTStripTags}"></a>
+					</div>
+					<p class="name ui-nowrap-multi">{$vo['goodsName']}</p>
+					<div class="info"><span class="ui-nowrap-flex price">{:lang('currency_symbol')}{$vo['shopPrice']}</span></div>
+				</div>
+				{/wst:goods}
+				<div class="wst-clear"></div>
+			</div>
+	    </div>
+     </section>
+    {/* 详情  */}
+	<section class="ui-container" id="goods2" style="margin-bottom:0.6rem;border-top:0;">
+    	<div class="wst-go-details">{$info['goodsDesc']}</div>
+    </section>
+    {/* 评价  */}
+<input type="hidden" name="" value="{$info['goodsId']}" id="goodsId" autocomplete="off">
+<input type="hidden" name="" value="" id="evaluateType" autocomplete="off">
+<input type="hidden" name="" value="" id="currPage" autocomplete="off">
+<input type="hidden" name="" value="" id="totalPage" autocomplete="off">
+<section class="ui-container" id="goods3" style="display: none;">
+	<div class="ui-row-flex wst-ev-term">
+		<div class="ui-col ui-col active" onclick="javascript:evaluateSwitch(this,'');"><p>{:lang('integral_all')}</p><p class="number">{$info['appraises']['sum']}</p></div>
+		<div class="ui-col ui-col" onclick="javascript:evaluateSwitch(this,'best');"><p>{:lang('integral_praise_appraise')}</p><p class="number">{$info['appraises']['best']}</p></div>
+		<div class="ui-col ui-col" onclick="javascript:evaluateSwitch(this,'good');"><p>{:lang('integral_middle_appraise')}</p><p class="number">{$info['appraises']['good']}</p></div>
+		<div class="ui-col ui-col" onclick="javascript:evaluateSwitch(this,'bad');"><p>{:lang('integral_bad_appraise')}</p><p class="number">{$info['appraises']['bad']}</p></div>
+		<div class="ui-col ui-col" onclick="javascript:evaluateSwitch(this,'pic');"><p>{:lang('integral_pic_goods_appraises')}</p><p class="number">{$info['appraises']['pic']}</p></div>
+	</div>
+	<div id="evaluate-list"></div>
+</section>
+<script id="list" type="text/html">
+	{{# if(d && d.length>0){ }}
+	{{# for(var i=0; i<d.length; i++){ }}
+	<div class="ui-whitespace wst-go-evaluate">
+		<div class="info">
+			<p>
+				<img src="{{ d[i].userPhoto }}" class="portrait">
+			<div class="wst-flex-column">
+				<span class="name">{{ d[i].loginName }}</span>
+				<span class="time">{{ d[i].createTime }}&nbsp;{{ d[i].goodsSpecNames }}</span>
+			</div>
+			<div class="wst-clear"></div>
+			</p>
+		</div>
+		<div class="content" data-gallery="{{d[i].images}}">
+			<p>
+				{{# var score = (d[i].goodsScore+d[i].serviceScore+d[i].timeScore)/3; }}
+				{{# for(var j=1; j<6; j++){ }}
+				{{# if(j <= score.toFixed(0)){ }}
+				<i class="bright"></i>
+				{{# }else{ }}
+				<i class="dark"></i>
+				{{# } }}
+				{{# } }}
+			</p>
+			<p class="content2">{{ d[i].content }}</p>
+			{{# if(d[i].images){ }}
+			{{# for(var m=0; m<d[i].images.length; m++){ }}
+			<img onclick="gViewImg({{m}},this)" src="__RESOURCE_PATH__/{{ d[i].images[m] }}">
+			{{# } }}
+			{{# } }}
+			<div class="wst-clear"></div>
+		</div>
+		{{# if(d[i].shopReply){ }}
+		<div class="reply"><p>{:lang('integral_shop_reply')}：<br>{{ d[i].shopReply }}</p></div>
+		{{# } }}
+	</div>
+	{{# } }}
+	{{# }else{ }}
+	<div class="wst-prompt-icon" style="width:1.84rem;"><img src="__MOBILE__/img/nothing-evaluate.png" ></div>
+	<div class="wst-prompt-info">
+		<p>{:lang('integral_no_data')}</p>
+	</div>
+	{{# } }}
+</script>
+{else}
+ <ul class="ui-row-flex wst-flexslp">
+	<li class="ui-col ui-flex ui-flex-pack-center">
+	<p>{:lang('integral_no_data')}</p>
+	</li>
+</ul>
+{/if}
+{/block}
+{block name="include"}
+{/* 遮盖层  */}
+<div class="wst-cover" id="cover"></div>
+{/* 参数框  */}
+{if !empty($info['attrs']) }
+<div class="wst-fr-box" id="frame">
+	<div class="title"><span>{:lang('integral_parameter')}</span><div class="wst-clear"></div></div>
+	<div style="overflow-y: scroll;height:3rem;">
+		{volist name="$info['attrs']" id="at"}
+		<div class="content wst-flex-row" >
+			<div class="name">{$at['attrName']}</div><div class="val">{$at['attrVal']}</div>
+		</div>
+		{/volist}
+	</div>
+	<div class="determine"><button class="button" onclick="javascript:dataHide();">{:lang('integral_confirm')}</button></div>
+</div>
+{/if}
+
+
+<div class="wst-fr-box" id="frame-share" style="height: 2.5rem">
+	<div class="title"><span>{:lang('integral_share')}</span><div class="wst-clear"></div></div>
+	<div style="overflow-y: scroll;height:1rem;">
+		<!-- ShareThis BEGIN -->
+	    <div class="sharethis-inline-share-buttons" style="margin:0.2rem"></div>
+	    <!-- ShareThis END -->
+	</div>
+	<div class="determine"><button class="button" onclick="javascript:shareHide();">{:lang('integral_confirm')}</button></div>
+</div>
+
+{/*分享 */}
+<!--二维码海报-->
+<div class="ui-dialog" id="wst-di-qrcod" >
+    <div class="ui-dialog-cnt wst-dialog-cnt5" style="width:auto;height:auto;background: none;">
+        <div class="wst-dialog-bd">
+            <div id="qrcodes" style="width: 3rem;height: 4.96rem;">
+            	<div id="shareImg"></div>
+            	<div data-role="button" class="close-dialog">
+					<img src="__MOBILE__/img/icon-close2.png">
+				</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{/*加入购物车框  */}
+<div class="wst-cart-box wst-flex-column wst-jsb" id="frame-cart">
+	<div class="title">
+		<div class="picture"><div class="img"><a href="javascript:void(0);"><img src="__RESOURCE_PATH__/{:WSTImg($info['goodsImg'],3)}" title="{$info['goodsName']|WSTStripTags}" id="specImage"></a></div></div>
+		<i class="icon-close" onclick="javascript:cartHide();"></i>
+		<p class="ui-nowrap-flex price"><span id="j-shop-price">{:lang('currency_symbol')}{$info['shopPrice']}</span><span id="j-market-price" class="price2">{:lang('currency_symbol')}{$info['marketPrice']}</span></p>
+		<div class="wst-clear"></div>
+	</div>
+	{php}$gunit = WSTDatas('GOODS_UNIT',$goods['goodsUnit']);$unit = ($gunit && isset($gunit['dataName']))?$gunit['dataName']:'';{/php}
+	<div class="number wst-flex-row wst-jsb wst-ac">
+		<div class="wst-flex-row wst-ac">
+			<p style="color:#333;font-weight: bold;">{:lang('integral_quantity')}</p>
+			<div class="stock">{:lang('integral_stock')}：<span id="goods-stock">{$info['totalNum']-$info['orderNum']}</span>{$unit}</div>
+		</div>
+		<div class="wst-buy_l wst-flex-row wst-ac">
+			<div class="wst-buy-minus" onclick='javascript:WST.changeIptNum(-1,"#buyNum")'></div><input id="buyNum" class="wst-buy_l2" data-min='1' data-max='' type="number" value="1" autocomplete="off" onkeyup='WST.changeIptNum(0,"#buyNum")'><div class="wst-buy-add"  onclick='javascript:WST.changeIptNum(1,"#buyNum")'></div>
+		</div>
+	</div>
+	<button class="button" onclick="javascript:addCart({$info['goodsType']});">{:lang('integral_confirm')}</button>
+</div>
+{/block}
+{block name="js"}
+<script>
+
+//弹框
+function shareShow(){
+	jQuery('#cover').attr("onclick","javascript:shareHide();").show();
+	jQuery('#frame-share').animate({"bottom": 0}, 500);
+}
+function shareHide(){
+	var shareHeight = parseInt($("#frame-share").height())+52+'px';
+	jQuery('#frame-share').animate({'bottom': '-'+shareHeight}, 500);
+	jQuery('#cover').hide();
+}
+
+
+{php}
+	$gallery = implode(',',$info['gallery']);
+{/php}
+var goodsInfo = {
+	id:{$info['goodsId']},
+	integralId:{$info['id']},
+	isSpec:{$info['isSpec']},
+	goodsStock:{$info['goodsStock']},
+	marketPrice:{$info['marketPrice']},
+	goodsPrice:{$info['shopPrice']}
+	{if isset($info['saleSpec'])}
+	,sku:{:json_encode($info['saleSpec'])}
+	{/if}
+	,gallery:"{$gallery}",
+}
+
+//弹框
+function shareShow(){
+	jQuery('#cover').attr("onclick","javascript:shareHide();").show();
+	jQuery('#frame-share').animate({"bottom": 0}, 500);
+}
+function shareHide(){
+	var cartHeight = parseInt($("#frame-cart").css('height'))+52+'px';
+	jQuery('#frame-share').animate({'bottom': '-'+cartHeight}, 500);
+	jQuery('#cover').hide();
+}
+</script>
+<script type='text/javascript' src='__STATIC__/plugins/swiper/swiper.min.js'></script>
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__ROOT__/addons/integral/view/mobile/index/js/detail.js?v={$v}'></script>
+
+<script src="__STATIC__/plugins/photoswipe/photoswipe.min.js"></script>
+<script src="__STATIC__/plugins/photoswipe/photoswipe-ui-default.min.js"></script>
+{/block}

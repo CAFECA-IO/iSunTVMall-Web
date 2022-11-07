@@ -1,0 +1,21 @@
+<div class='images'>
+    {php}$bgColor = $vo['backgroundColor'];{/php}
+    {for start="0" end="intval(count($vo['images']))"  }
+        {php}$style="";$style.="background:".$bgColor.';';{/php}
+        {if $vo['paddingTop']}
+            {php}$style.="padding-top:".intval($vo['paddingTop'])."px;";{/php}
+        {/if}
+        {if $vo['paddingBottom']}
+            {php}$style.="padding-bottom:".intval($vo['paddingBottom'])."px;";{/php}
+        {/if}
+        {if $vo['paddingLeft']}
+            {php}$style.="padding-left:".intval($vo['paddingLeft'])."px;";{/php}
+        {/if}
+        {if $vo['paddingRight']}
+            {php}$style.="padding-right:".intval($vo['paddingRight'])."px;";{/php}
+        {/if}
+        <div class='images-item' style="{$style}">
+            <img src="__RESOURCE_PATH__/{$vo['images'][$i]['img']}" />
+        </div>
+    {/for}
+</div>

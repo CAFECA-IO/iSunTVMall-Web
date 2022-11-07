@@ -1,0 +1,24 @@
+.goods-tpl{}
+.goods-tpl .header{margin: 10px 20px;}
+.goods-tpl .main{margin: 5px 20px;min-height: 375px !important;background:#fff;}
+.wst-list .gimg{width: 60px;height: 60px;}
+
+.goods-tpl .table_list{ max-height:435px; position:relative; float:left; width: 960px; overflow-y:auto; border:1px solid #e9e6e6;}
+
+.goods-tpl .table_list .ga-goods-ul li{ float:left; width:189px; padding:11px; border:1px solid #e9e6e6; margin:-1px 0 0 -1px; border-right-color:#fff;}
+.goods-tpl .table_list .ga-goods-ul li:last-child{ border-right-color:#e9e6e6;}
+.goods-tpl .table_list .ga-goods-ul li .img{ width:158px; height:158px;}
+.goods-tpl .table_list .ga-goods-ul li .img img{ width:158px; height:158px;}
+.goods-tpl .table_list .ga-goods-ul li .name{ height:20px; line-height:20px; color:#31b4e1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:5px;}
+.goods-tpl .table_list .ga-goods-ul li .price{ font-size:14px; color:#ec5051; margin-top:5px}
+.goods-tpl .table_list .ga-goods-ul li .choose{ margin-top:5px;}
+.goods-tpl .table_list .ga-goods-ul li .choose a{ height:20px; line-height:20px; display:inline-block; padding:0 10px; border-radius:2px; color:#fff; background: #5cb85c;border: 1px solid #5cb85c; float:left;}
+.goods-tpl .table_list .ga-goods-ul li .choose a.on{ background: #f0ad4e; border: 1px solid #eea236;}
+.goods-tpl .table_list .ga-goods-ul li .choose a .iconfont{ font-size:12px; margin:0 5px 0 0; vertical-align:middle; display:inline-block;}
+#pager2{float: right; padding-right: 20px;}
+div.nodata {
+    color: #666;
+    text-align: center !important;
+    height: 80px;
+    line-height: 80px;
+}

@@ -1,0 +1,108 @@
+<div class="layui-tab-item layui-form">
+	{php}
+		$loginTypeArr = explode(',',$object['loginType']);
+		$mobileLoginTypeArr = explode(',',$object['mobileLoginType']);
+		$registerTypeArr = explode(',',$object['registerType']);
+		$mobileRegisterTypeArr = explode(',',$object['mobileRegisterType']);
+	{/php}
+	<fieldset class="layui-elem-field layui-field-title">
+		<legend>{:lang('config_mall_login_set')}</legend>
+		 <table class='wst-form wst-box-top'>
+		  <tr>
+			 <th width='150'>{:lang('config_mall_login_pc_set')}：</th>
+			 <td>
+				 <div class='login-type'>
+					 <input type='checkbox' class='ipt' name='loginType' value='1' {if empty($object['loginType']) || in_array(1,$loginTypeArr)}checked{/if} />{:lang('config_mall_login_pc_set_login_name')}
+				 </div>
+				 <div class='login-type'>
+					 <input type='checkbox' class='ipt' name='loginType' value='2' {if in_array(2,$loginTypeArr)}checked{/if} />{:lang('config_mall_login_pc_set_mobile')}
+				 </div>
+				 <div class='login-type' style='display: none'>
+					 <input type='checkbox' class='ipt' name='loginType' value='3' {if in_array(3,$loginTypeArr)}checked{/if} />{:lang('config_mall_login_pc_set_scan')}
+				 </div>
+			 </td>
+		  </tr>
+		 <tr>
+			 <th width='150'>{:lang('config_mall_login_mobile_set')}：</th>
+			 <td>
+				 <div class='login-type'>
+					 <input type='checkbox' class='ipt' name='mobileLoginType' value='1' {if empty($object['mobileLoginType']) || in_array(1,$mobileLoginTypeArr)}checked{/if} />{:lang('config_mall_login_pc_set_login_name')}
+				 </div>
+				 <div class='login-type'>
+					 <input type='checkbox' class='ipt' name='mobileLoginType' value='2' {if in_array(2,$mobileLoginTypeArr)}checked{/if} />{:lang('config_mall_login_pc_set_mobile')}
+				 </div>
+
+			 </td>
+		 </tr>
+		 </table>
+	</fieldset>
+	<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+		<legend>{:lang('config_mall_regist_set')}</legend>
+		<table class='wst-form wst-box-top'>
+			<tr>
+				<th width='150'>{:lang('config_mall_regist_set_pc')}：</th>
+				<td>
+					<div class='login-type'>
+						<input type='checkbox' class='ipt' name='registerType' value='1' {if empty($object['registerType']) || in_array(1,$registerTypeArr)}checked{/if} />{:lang('config_mall_regist_set_pc_login_name')}
+					</div>
+					<div class='login-type'>
+						<input type='checkbox' class='ipt' name='registerType' value='2' {if in_array(2,$registerTypeArr)}checked{/if} />{:lang('config_mall_regist_set_pc_mobile')}
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<th width='150'>{:lang('config_mall_regist_set_pc')}：</th>
+				<td>
+					<div class='login-type'>
+						<input type='checkbox' class='ipt' name='mobileRegisterType' value='1' {if empty($object['mobileRegisterType']) || in_array(1,$mobileRegisterTypeArr)}checked{/if} />{:lang('config_mall_regist_set_pc_login_name')}
+					</div>
+					<div class='login-type'>
+						<input type='checkbox' class='ipt' name='mobileRegisterType' value='2' {if in_array(2,$mobileRegisterTypeArr)}checked{/if} />{:lang('config_mall_regist_set_pc_mobile')}
+					</div>
+				</td>
+			</tr>
+		</table>
+		<table class='wst-form wst-box-top'>
+		 {if (WSTDatas('ADS_TYPE',2)!='')}
+			 <tr>
+				 <th width='150'>{:lang('config_mall_regist_set_wechat')}：
+				 <td>
+					 <div class='login-type'>
+						 <input type='checkbox' class='ipt' name='wechatAutoRegister' value='1' {if  $object['wechatAutoRegister']==1}checked{/if} />{:lang('config_mall_regist_set_wechat_auto')}
+					 </div>
+
+				 </td>
+			 </tr>
+		 {/if}
+		 {if (WSTDatas('ADS_TYPE',5)!='')}
+			 <tr>
+				 <th width='150'>{:lang('config_mall_regist_set_weapp')}：
+				 <td>
+					 <div class='login-type'>
+						 <input type='checkbox' class='ipt' name='weappAutoRegister' value='1' {if  $object['weappAutoRegister']==1}checked{/if} />{:lang('config_mall_regist_set_wechat_auto')}
+					 </div>
+
+				 </td>
+			 </tr>
+		 {/if}
+		 {if (WSTDatas('ADS_TYPE',2)!='') || (WSTDatas('ADS_TYPE',5)!='')}
+			 <tr>
+				 <th width='150'></th>
+				 <td >
+					 <div >
+						 {:lang('config_mall_regist_tips')}
+					 </div>
+				 </td>
+			 </tr>
+		  {/if}
+		  <tr>
+			{if ($grant)}
+			 <td colspan='2' align='center'>
+				<button type="button" class="btn btn-primary btn-mright" onclick='javascript:edit()'><i class="fa fa-check"></i>{:lang('submit')}</button>
+				<button type="reset" class="btn" onclick='javascript:resetForm()'><i class="fa fa-refresh"></i>{:lang('reset')}</button>
+			 </td>
+			 {/if}
+		  </tr>
+	 </table>
+	</fieldset>
+</div>

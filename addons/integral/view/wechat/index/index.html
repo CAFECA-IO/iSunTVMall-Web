@@ -1,0 +1,42 @@
+{if count($rs)>0}
+<style>
+    .wst-in-integral{width:100%;margin-top:0.1rem;background: #fff;}
+    .wst-in-integral .integral-header{padding:0.15rem 0.12rem 0.15rem 0.12rem;}
+    .wst-in-integral .integral-title p{font-size:0.17rem;font-weight: bold;color:#000;}
+    .wst-in-integral .integral-title .more{color:#999;font-size:0.12rem;font-weight: normal;}
+    .wst-in-integral .wst-in-integral-goods{width:100%;position: relative;border-top: 1px solid #f2f2f2;padding:0.12rem;}
+    .wst-in-integral .wst-in-integral-goods .title{height:0.35rem;color:#333;font-size: 0.13rem;overflow: hidden;text-overflow: ellipsis;-webkit-box-orient:vertical;-webkit-line-clamp:2;margin-bottom:0.25rem;}
+    .wst-in-integral .wst-in-integral-goods .price{color:#999;font-size: 0.11rem;}
+    .wst-in-integral .wst-in-integral-goods .integral{color:#EA4341;font-size: 0.13rem;font-weight: bold;margin-top:0.2rem;}
+    .wst-in-integral .wst-in-integral-goods .goods-img{width:1.15rem;height:1.15rem;}
+    .wst-in-integral .wst-in-integral-goods .goods-img img{width:1.15rem;height:1.15rem;}
+    .wst-in-integral .wst-in-integral-goods .goods-info{padding:0 0 0 0.1rem;}
+</style>
+<div class="wst-in-integral">
+    <div class="integral-header">
+        <div class="integral-title wst-flex-row wst-jsb wst-ac">
+            <div class="wst-flex-row wst-jsb wst-ac">
+                <p>积分商城</p>
+            </div>
+            <p class="more" onclick="javascript:location.href=WST.AU('integral://goods/wxlists')">查看更多></p>
+        </div>
+    </div>
+    <div class="integral-content wst-flex-row wst-fw">
+        {volist name="rs" id="vo"}
+        <div class="wst-in-integral-goods wst-flex-row"  onclick="javascript:location.href=WST.AU('integral://goods/wxdetail','id='+{$vo['id']});">
+            <div class="wst-flex-row wst-center goods-img">
+                <img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{:WSTImg($vo['goodsImg'],3)}" title="{$vo['goodsName']}" >
+            </div>
+            <div class="goods-info">
+                <p class="title">{$vo['goodsName']}</p>
+                <div class="wst-flex-column">
+                    <p class="price">店铺价{:lang('currency_symbol')}{$vo['shopPrice']}</p>
+                    <p class="integral">{:lang('currency_symbol')}{$vo['goodsPrice']}+{$vo['integralNum']}积分</p>
+                </div>
+            </div>
+        </div>
+        {/volist}
+    </div>
+</div>
+{/if}
+

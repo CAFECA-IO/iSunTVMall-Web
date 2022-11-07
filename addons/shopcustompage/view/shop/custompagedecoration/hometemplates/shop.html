@@ -1,0 +1,87 @@
+<input type="hidden" value="{$vo['searchRadius']}" class="search-radius">
+{if WSTConf('CONF.mapKey')!=''}
+<script type="text/javascript" src="{:WSTProtocol()}3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
+<script charset="utf-8" src="{:WSTProtocol()}map.qq.com/api/js?v=2.exp&key={:WSTConf('CONF.mapKey')}"></script>
+
+{/if}
+<script>
+    var latitude = '';
+    var longitude = '';
+    var locationObject = {};
+    $(function(){
+        var cityservice = new qq.maps.CityService({
+            complete: function (result) {
+                latitude = result.detail.latLng.lat;
+                longitude = result.detail.latLng.lng;
+                shopsList();
+            }
+        });
+        cityservice.searchLocalCity();
+    });
+    function shopsList(){
+        params = {};
+        params.radius = $('.search-radius').val();
+        params.latitude = latitude;
+        params.longitude = longitude;
+        $.post(WST.AU('custompage://index/customPageShopsList'), params,function(data) {
+            var json = WST.toJson(data);
+            if(json){
+                if(json.location){
+                    $(".location-text").html(json.location);
+                }else{
+                    $(".location-text").html("未知");
+                }
+                var gettpl = document.getElementById('shop-list').innerHTML;
+                laytpl(gettpl).render(json, function(html){
+                    $('#shops-list').append(html);
+                });
+            }
+        });
+    }
+</script>
+<div class="shop-container">
+    <div class='shop-title'>——&nbsp;&nbsp;<span class='shop-title-text'>{$vo['title']}</span>&nbsp;&nbsp;——</div>
+    <div class='current-location'>
+        <div class='location-icon'></div>
+        <div>当前：<span class='location-text'></span></div>
+    </div>
+    <div id="shops-list"></div>
+</div>
+<script id="shop-list" type="text/html">
+    {{# if(d.shops.length>0){ }}
+    {{# for(var i=0; i<d.shops.length; i++){ }}
+    <div class='shop-item' onclick="javascript:location.href=WST.U('home/shops/index','shopId='+{{d.shops[i].shopId}})">
+        <div class='shop-left'>
+            {{# if(d.shops[i].shopImg!=''){ }}
+            <img src="__RESOURCE_PATH__/{{ d.shops[i].shopImg }}" alt="">
+            {{# }else{ }}
+            <img src="__RESOURCE_PATH__/{:WSTConf('CONF.shopLogo')}" >
+            {{# } }}
+        </div>
+        <div class='shop-right'>
+            <div>
+                <p class='shop-name'>{{ d.shops[i].shopName }}</p>
+                <p class='shop-desc'>主营：{{ d.shops[i].catshops }}</p>
+                <div class='shop-score'>
+                    <p class="shop-score">店铺评分：</p>
+                    {{# for(var j=0; j<parseInt(d.shops[i].totalScore); j++){ }}
+                    <div class='star-icon'></div>
+                    {{# } }}
+                    {{# for(var k=0; k<(5-parseInt(d.shops[i].totalScore)); k++){ }}
+                    <div class='none-star-icon'></div>
+                    {{# } }}
+                </div>
+            </div>
+            <div class='wst-flex-row wst-jsb'>
+                <div class='shop-location'>
+                    <div class='location-icon'></div>
+                    <p class='shop-address'>{{ d.shops[i].shopAddress }}</p>
+                </div>
+                <p class='distince'>{{ d.shops[i].distince }}km</p>
+            </div>
+        </div>
+    </div>
+    {{# } }}
+    {{# } }}
+    <div class="wst-clear"></div>
+</script>

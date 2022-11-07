@@ -1,0 +1,27 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('account_security')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/security.css?v={$v}">
+{/block}
+{block name="header"}
+	{php}$Title = lang('account_security');{/php}
+	{include file="default/header" /}
+{/block}
+{block name="main"}
+    <section class="ui-container">
+    	<ul class="ui-list ui-list-text ui-list-link wst-se-l">
+    	    <li class="line" onclick="javascript:inLogin();">
+		        <h5 class="ui-nowrap">{if($user['loginPwd']==0)}{:lang('setting_login_password')}{else}{:lang('update_login_password')}{/if}</h5></a>
+		    </li>
+		    <li class="line" onclick="javascript:inPay();">
+		        <h5 class="ui-nowrap">{if($user['payPwd']==0)}{:lang('setting_pay_password')}{else}{:lang('update_pay_password')}{/if}</h5></a>
+		    </li>
+		    <li class="line" onclick="javascript:inPhone();">
+		        <h5 class="ui-nowrap">{if($user['userPhone']==0)}{:lang('bind_phone_number')}{else}{:lang('update_phone_number')}{/if}</h5>
+		    </li>
+		</ul>
+    </section>
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__MOBILE__/users/security/security.js?v={$v}'></script>
+{/block}

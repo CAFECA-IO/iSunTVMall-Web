@@ -1,0 +1,42 @@
+<?php
+
+return array(
+	'kd_tips1'=>array(
+		'title'=>lang('kuaidi_config_tips_1'),
+		'type'=>'hidden',
+		'value'=>''
+	),
+	'kuaidiCode'=>array(
+		'title'=>lang('kuaidi_config_code'),
+		'type'=>'hidden',
+		'value'=>'',
+		'tips'=>''
+	),
+	'kuaidiDes'=>array(
+		'title'=>'<span ><a target="_blank" href="https://www.kuaidi100.com/openapi/applyapi.shtml" style="color:blue">'.lang('kuaidi_config_tips_2').'<span style="color:red;font-size:15px;">'.lang('kuaidi_config_tips_3').'</span></div>',
+		'type'=>'hidden',
+		'value'=>'',
+		'tips'=>''
+	),
+	'kuaidiType'=>array(
+		'title'=>lang('kuaidi_config_type'),
+		'type'=>'radio',
+		'options'=>array(
+			'1'=>lang('kuaidi_config_type_1'),	
+			'2'=>lang('kuaidi_config_type_2')
+		),
+		'value'=>'1',
+	),
+	'kuaidiKey'=>array(
+		'title'=>lang('kuaidi_config_tips_4'),
+		'type'=>'text',
+		'value'=>'',
+		'tips'=>''
+	),
+	'kuaidiCustomer'=>array(
+		'title'=>lang('kuaidi_config_tips_5'),
+		'type'=>'text',
+		'value'=>'',
+		'tips'=>''
+	)
+);

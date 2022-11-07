@@ -1,0 +1,144 @@
+{extend name="$LAYOUT_WECHAT_BASE" /}
+{block name="title"}我的 - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__WECHAT__/css/user.css?v={$v}">
+<link rel="stylesheet"  href="__ROOT__/addons/member/view/wechat/users/member.css?v={$v}">
+{/block}
+{block name="header"}
+{php}
+$we = WSTWechat();
+$datawx = $we->getJsSignature(request()->scheme().'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+{/php}
+{/block}
+{block name="main"}
+<section class="ui-container">
+	<div class="wst-users_info">
+		<div class="wst-flex-row wst-center" >
+			<div class="wst-flex-column">
+				<div class="wst-users_infol" id="previewImages">
+					<img src="{:WSTUserPhoto($user['userPhoto'])}" class="wst-useri_portrait" id="imgurl">
+				</div>
+				<div class="wst-flex-column">
+					<p class="wst-users_infor wst-users_infortop">{:$user['userName']?$user['userName']:$user['loginName']}</p>
+				</div>
+			</div>
+		</div>
+		<div class="ui-whitespace wst-sha_icon wst-flex-row wst-center">
+			<div class="wst-flex-row wst-center item" onclick="WST.dialogShare();">
+				<i class="icon-qrcode"></i>
+				<div>
+					<p class="title">{:lang('addon_member_user_qr_code_sharing')}</p>
+					<p class="desc">{:lang('addon_member_user_qr_code_invite_friends')}</p>
+				</div>
+			</div>
+			<div class="wst-flex-row wst-center item" onclick="javascript:WST.share();">
+				<i class="icon-money"></i>
+				<div>
+					<p class="title">{:lang('addon_member_user_benefits_immediately')}</p>
+					<p class="desc">{:lang('addon_member_user_invite_friends_to_earn_benefits')}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="wst-sha_icon2">
+		<a href="{:url('addon/member-member-wechatmemberawards')}">
+			<ul class="ui-list wst-users_list ui-list-active wst-flex-row wst-jsb wst-ac">
+				<li>
+					<div class="wst-list-thumb-sus">
+						<span class="wst-sha_chart1"></span>
+					</div>
+					<div class="ui-list-info">
+						<h5 class="ui-nowrap">{:lang('addon_member_user_my_reward')}</h5>
+					</div>
+				</li>
+				<li><i class="icon-right-arrow"></i></li>
+			</ul>
+		</a>
+		<a href="{:url('addon/member-member-wechatmemberusers')}">
+			<ul class="ui-list wst-users_list ui-list-active wst-flex-row wst-jsb wst-ac">
+				<li>
+					<div class="wst-list-thumb-sus">
+						<span class="wst-sha_chart2"></span>
+					</div>
+					<div class="ui-list-info">
+						<h5 class="ui-nowrap">{:lang('addon_member_user_invitation_list')}</h5>
+					</div>
+				</li>
+				<li><i class="icon-right-arrow"></i></li>
+			</ul>
+		</a>
+	</div>
+</section>
+<!--二维码对话框-->
+<div class="ui-dialog" id="wst-di-qrcod" >
+	<div class="ui-dialog-cnt wst-dialog-cnt5" style="width:auto;height:auto;background: none;">
+		<div class="wst-dialog-bd">
+			<div id="qrcodes" style="width: 3.2rem;height: 4.96rem;">
+				<div class="reload-btn-box" onclick="reloadPoster(1)">
+					<img src="__ROOT__/addons/member/view/images/reload.png" class="reload-icon">
+				</div>
+				<div id="shareImg"></div>
+				<div data-role="button" class="close-dialog">
+					<img src="__ROOT__/addons/member/view/images/icon-close.png" alt="">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="footer"}
+{include file="$LAYOUT_WECHAT_DIALOG" /}<!-- 对话框模板 -->
+{include file="$LAYOUT_WECHAT_FOOTER" /}
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__WECHAT__/js/jquery.min.js'></script>
+<script src="{:request()->scheme()}://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type='text/javascript' src='__WECHAT__/users/user.js?v={$v}'></script>
+<script type="text/javascript" src="__STATIC__/js/qrcode.js?v={$v}"></script>
+<script>
+	jQuery.noConflict();
+	wx.config({
+		debug: false,
+		appId: '<?php echo $we->appId;?>', //公众号的唯一标识
+		timestamp: '<?php echo $datawx['timestamp'];?>', //生成签名的时间戳
+		nonceStr: '<?php echo $datawx['noncestr'];?>', //生成签名的随机串
+		signature: '<?php echo $datawx['signature'];?>',//签名
+		jsApiList: [ //需要使用的JS接口
+			'onMenuShareTimeline',
+			'onMenuShareAppMessage',
+			'onMenuShareQQ',
+			'onMenuShareWeibo',
+			'onMenuShareQZone'
+		]
+	});
+
+	wx.ready(function(){
+		var shareData = {
+			title: '{$shareInfo["title"]}',
+			desc: '{$shareInfo["desc"]}',
+			link: '{$shareInfo["link"]}',
+			imgUrl: '{:WSTConf('CONF.resourceDomain')}/{$shareInfo["imgUrl"]}'
+		};
+		wx.onMenuShareAppMessage(shareData);
+		wx.onMenuShareTimeline(shareData);
+		wx.onMenuShareQQ(shareData);
+		wx.onMenuShareWeibo(shareData);
+		wx.onMenuShareQZone(shareData);
+	});
+	WST.dialogShare = function(){
+		reloadPoster(0);
+	}
+	function reloadPoster(isNew){
+		$('#Load').show();
+		$.post(WST.U('addon/member-member-wxcreatePoster'), {isNew:isNew},function(data){
+			$('#Load').hide();
+			var json = WST.toJson(data);
+			if(json.status==1){
+				$("#shareImg").html("<img src='__RESOURCE_PATH__/"+json.data.shareImg+"?v="+Math.random()+"' style='width:3.2rem;border-radius: 6px;'/>");
+				$(".reload-btn-box").show();
+				$("#wst-di-qrcod").dialog("show");
+			}
+		});
+	}
+</script>
+{/block}

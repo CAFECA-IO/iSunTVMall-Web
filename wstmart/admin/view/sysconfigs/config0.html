@@ -1,0 +1,146 @@
+<?php $grant = WSTGrant('SCPZ_02');  ?>
+<div class="layui-tab-item layui-show layui-form">
+     <table class='wst-form wst-box-top'>
+	  <tr>
+	     <th width='150'>{:lang('config_mall_name')}：</th>
+	     <td><input type="text" id='mallName' class='ipt' value="{$object['mallName']}" maxLength='100' placeholder='{:lang('config_mall_name_plo')}'/></td>
+	  </tr>
+	  <tr>
+	     <th width='150'>{:lang('config_mall_slogan')}：</th>
+	     <td><input type="text" id='mallSlogan' class='ipt' style='width:70%' value="{$object['mallSlogan']}" maxLength='50' placeholder='{:lang('config_mall_slogan_plo')}'/></td>
+	  </tr>
+	  <tr>
+	     <th width='150'>{:lang('config_cctype_title')}：</th>
+	     <td>
+			<select id="ccType" name="ccType" class="ipt" lay-ignore>
+				<option {$object['ccType']=='btc'?"selected":''} value="btc">BTC</option>
+				<option {$object['ccType']=='usdc'?"selected":''} value="usdc">USDC</option>
+				<option {$object['ccType']=='etc'?"selected":''} value="etc">ETC</option>
+			</select>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_switch')}：</th>
+	     <td>
+	     <input type="checkbox" {if $object['seoMallSwitch']==1}checked{/if} value='1' class="ipt" id="seoMallSwitch" name="seoMallSwitch" lay-skin="switch" lay-filter="seoMallSwitch" lay-text="{:lang('config_mall_switch_val')}">
+	     </td>
+	  </tr>
+	  <tr id="close" {if $object['seoMallSwitch']==1}style="display:none;"{/if}>
+	     <th width='150'>{:lang('config_mall_switch_desc')}：</th>
+	     <td><input type="text" id='seoMallSwitchDesc' class='ipt' style='width:70%'  value="{$object['seoMallSwitchDesc']}" maxLength='50' placeholder='{:lang('config_mall_switch_desc2')}'/></td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_open_cache')}：</th>
+	     <td>
+	     <input type="checkbox" {if $object['isOpenCache']==1}checked{/if} class="ipt" value='1' id="isOpenCache" name="isOpenCache" lay-skin="switch" lay-filter="isOpenCache" lay-text="{:lang('config_mall_goods_verify_val')}"><span style='color:gray;margin-left:5px;'>{:lang('config_mall_open_cache_tips')}</span>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_default_lang')}：</th>
+	     <td>
+	     <select id='defaultSysLang' class='ipt' lay-ignore>
+            {volist name='$langs' id='vo'}
+            <option value='{$vo['id']}' {if $object['defaultSysLang']==$vo['id']}selected{/if}>{$vo['name']}</option>
+	     	{/volist}
+	     </select>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_goods_verify')}：</th>
+	     <td>
+	     <input type="checkbox" {if $object['isGoodsVerify']==1}checked{/if} class="ipt" value='1' id="isGoodsVerify" name="isGoodsVerify" lay-skin="switch" lay-filter="isGoodsVerify" lay-text="{:lang('config_mall_goods_verify_val')}">
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_open_shop_apply')}：</th>
+	     <td>
+	     <input type="checkbox" {if $object['isOpenShopApply']==1}checked{/if} value='1' class="ipt" id="isOpenShopApply" name="isOpenShopApply" lay-skin="switch" lay-filter="isOpenShopApply" lay-text="{:lang('config_mall_switch_val')}">
+	     </td>
+	  </tr>
+	  {if isset($object['isOpenSupplierApply']) && $object['isOpenSupplierApply']==1}
+	  <tr>
+	     <th>{:lang('config_mall_open_supplier_apply')}：</th>
+	     <td>
+	     <input type="checkbox" {if $object['isOpenSupplierApply']==1}checked{/if} value='1' class="ipt" id="isOpenSupplierApply" name="isOpenSupplierApply" lay-skin="switch" lay-filter="isOpenSupplierApply" lay-text="{:lang('config_mall_switch_val')}">
+	     </td>
+	  </tr>
+	  {/if}
+	  <tr>
+	     <th>{:lang('config_mall_open_recharge')}：</th>
+	     <td>
+	     <input type="checkbox" {if $object['isOpenRecharge']==1}checked{/if} value='1' class="ipt" id="isOpenRecharge" name="isOpenRecharge" lay-skin="switch" lay-filter="isOpenRecharge" lay-text="{:lang('config_mall_switch_val')}">
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_footer')}：</th>
+	     <td>
+	       <textarea id='mallFooter' class='ipt' placeholder='{:lang('config_mall_footer_plo')}'>{$object['mallFooter']}</textarea>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_visitStatistics')}：</th>
+	     <td><textarea id='visitStatistics' class='ipt' placeholder='{:lang('config_mall_visitStatistics_plo')}'>{$object['visitStatistics']}</textarea></td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_qq')}：</th>
+	     <td><input type="text" id='serviceQQ' class='ipt' value="{$object['serviceQQ']}" maxLength='200' placeholder='{:lang('config_mall_qq_plo')}'/></td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_tel')}：</th>
+	     <td><input type="text" id='serviceTel' class='ipt' value="{$object['serviceTel']}" maxLength='200' placeholder="{:lang('config_mall_tel_plo')}"/></td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_email')}：</th>
+	     <td><input type="text" id='serviceEmail' class='ipt' value="{$object['serviceEmail']}" maxLength='200' placeholder="{:lang('config_mall_email_plo')}"/></td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_copyright')}：</th>
+	     <td><input type="text" id='copyRight' class='ipt' value="{$object['copyRight']}" maxLength='200' placeholder="{:lang('config_mall_copyright_plo')}"/></td>
+	  </tr>
+	  <tr>
+	     <th width='150'>{:lang('config_mall_sys_title')}：</th>
+	     <td><input type="text" id='sysTitle' class='ipt' style='width:70%' value="{$object['sysTitle']}" maxLength='6' placeholder='{:lang('config_mall_sys_title_plo')}'/></td>
+	  </tr>
+	  <tr>
+	     <th width='150'>{:lang('config_mall_short_sys_title')}：</th>
+	     <td><input type="text" id='sysShortTitle' class='ipt' style='width:70%' value="{$object['sysShortTitle']}" maxLength='2' placeholder='{:lang('config_mall_short_sys_title_plo')}'/></td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_hot_word_serach')}：</th>
+	     <td><input type="text" id='hotWordsSearch' class='ipt' value="{$object['hotWordsSearch']}" maxLength='100' placeholder='{:lang('config_mall_hot_word_serach_plo')}' style='width:70%'/></td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_goods_hot_word_serach')}：</th>
+	     <td><input type="text" id='adsGoodsWordsSearch' class='ipt' value="{$object['adsGoodsWordsSearch']}" maxLength='100' placeholder='{:lang('config_mall_goods_hot_word_serach_plo')}' style='width:70%'/></td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_shop_hot_word_serach')}：</th>
+	     <td><input type="text" id='adsShopWordsSearch' class='ipt' value="{$object['adsShopWordsSearch']}" maxLength='100' placeholder='{:lang('config_mall_shop_hot_word_serach_plo')}' style='width:70%'/></td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_limit_word')}：</th>
+	     <td><textarea id='registerLimitWords' class='ipt' placeholder='{:lang('config_mall_limit_word_plo')}'>{$object['registerLimitWords']}</textarea></td>
+	  </tr>
+	 <tr>
+		 <th>{:lang('config_mall_sensitive_word')}：</th>
+		 <td><textarea id='sensitiveWords' class='ipt' placeholder='{:lang('config_mall_sensitive_word_plo')}'>{$object['sensitiveWords']}</textarea></td>
+	 </tr>
+
+	  <tr>
+	     <th width='150'>{:lang('config_mall_map_key')}</th>
+	     <td><input type="text" id='mapKey' class='ipt' style='width:70%' value="{$object['mapKey']}" maxLength='100' placeholder='{:lang('config_mall_map_key_plo')}'/></td>
+	  </tr>
+	  <tr>
+	     <th width='150'>{:lang('config_mall_debug')}</th>
+	     <td><input type="checkbox" {if $object['isDebug']==1}checked{/if} class="ipt" value='1' id="isDebug" name="isDebug" lay-skin="switch" lay-filter="isDebug" lay-text="{:lang('config_mall_switch_val')}"></td>
+	  </tr>
+	  {if ($grant)}
+	  <tr>
+	     <td colspan='2' align='center'>
+	     	<button type="button" onclick='javascript:edit()' style='margin-right:15px;' class='btn btn-primary btn-mright'><i class="fa fa-check"></i>{:lang('submit')}</button>
+            <button type="reset"  class='btn'><i class="fa fa-refresh"></i>{:lang('reset')}</button>
+	     </td>
+	  </tr>
+	  {/if}
+	 </table>
+</div>

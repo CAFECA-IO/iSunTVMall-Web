@@ -1,0 +1,16 @@
+body{background-color:#f1f1f1;}
+.send_box{color:#fff!important}
+.layui-layer-setwin .layui-layer-close1{color:#fff!important;}
+.tc{text-align: center;}
+.dialog_content_box{background-color: #fff; margin: 0px auto; padding-top: 10px;height: 100%; }
+.dialog_content_titbox{padding:0 10px; box-sizing: border-box; }
+.dialog_content_tit{background-color: rgb(226, 62, 61); width: 100%; text-align: center; color: #fff; padding: 5px; font-size: 18px; }
+.dialog_content_item:before{display: table; content: " ";}
+.dialog_content_item:after{display: table; content: " "; clear:both;}
+.reply_box{float: left; margin: 10px; padding: 10px; border-radius: 10px; background-color: #f1f1f1; }
+.send_box{float: right; margin: 10px; padding: 10px; border-radius: 10px; background-color: rgb(226, 62, 61); }
+.reply_name{}
+.dcr_content,.dcs_content{margin: 5px 0; color: #333; }
+.dcs_send{color: #fff}
+.msg_reply_time{color:#a3afb7;}
+.msg_send_time{color:#e5e5e5;}

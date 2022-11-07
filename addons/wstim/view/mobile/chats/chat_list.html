@@ -1,0 +1,61 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="format-detection" content="telephone=no">
+  <title>{:lang('wstim_session_list')}</title>
+  <script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+  <link rel="stylesheet" href="__ROOT__/addons/wstim/view/mobile/static/frozenui/css/frozen.css">
+  <link rel="stylesheet" href="__ROOT__/addons/wstim/view/mobile/chats/chat_list.css">
+</head>
+
+<body>
+    
+    <header style="background:#EB3019;" class="ui-header ui-header-positive wst-header">
+           <i class="ui-icon-return" onclick="history.back()"></i><h1>{:lang('wstim_session_list')}</h1>
+      </header>
+    <section class="ui-container">
+    <div class="sysmsg-box" onclick="location.href='{:url('mobile/messages/index')}'">
+      <div class="sysmsg-main row ac">
+        <img src="__ROOT__/addons/wstim/view/mobile/img/msg_icon.png" class="sysmsg-icon" />
+        <div class="flex1">
+          <div class="row">
+            <span class="f14 c333 fb">{:lang('wstim_news5')}</span>
+            <span class="f11 c999 mla">{$createTime}</span>
+          </div>
+          <span class="f12 c666 mt5 msg-content">{$msgContent}</span>
+        </div>
+      </div>
+    </div>
+    <ul class="cl_ul">
+      
+    </ul>
+    </section>
+    <footer class="ui-footer wst-footer-btns" style="height:0.44rem; border-top: 1px solid #f2f2f2;" id="footer">
+      <div class="wst-ca-se">
+        <div class="wst-ca-layout">
+          <div class="wst-ca-10 totall"><i class="ui-icon-choose ui-icon-unchecked-s" cartId="0" mval="0"></i>&nbsp;</div>
+          <div class="wst-ca-90 totalr">
+            <span>{:lang('wstim_select_all')}</span>
+            <button id="delete" class="del-button" type="button" onclick="javascript:del();">{:lang('wstim_del')}</button>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+
+    <script type='text/javascript' src='__ROOT__/addons/wstim/view/static/js/jquery.min.js'></script>
+    <script type='text/javascript' src='__ROOT__/addons/wstim/view/static/js/common.js'></script>
+    <script type='text/javascript' src='__ROOT__/addons/wstim/view/static/layer/layer.js'></script>
+    <script type='text/javascript' src='__ROOT__/addons/wstim/view/mobile/static/frozenui/js/zepto.min.js'></script>
+    <script type='text/javascript' src='__ROOT__/addons/wstim/view/mobile/static/frozenui/js/frozen.js'></script>
+    <script type='text/javascript' src='__ROOT__/addons/wstim/view/mobile/chats/chat_list.js'></script>
+    
+    <script>
+      $(function(){
+        getApis(getChatList);
+      })
+    </script>
+  
+</body>
+</html>

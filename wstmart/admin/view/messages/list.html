@@ -1,0 +1,131 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+<style>
+body{overflow:hidden;}
+.layui-tab-content{padding:0px;}
+</style>
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ADMIN__/messages/message.js?v={$v}" type="text/javascript"></script>
+<script src="__STATIC__/plugins/kindeditor/NKeditor-all.js?v={$v}" type="text/javascript" ></script>
+<script>
+    $(function(){
+        form = layui.form;
+        form.on('radio(sendType)', function(data){
+            if(data.value=='theUser'){
+                $('#user_query').show();
+                $('#send_to').show();
+            }else{
+                $('#user_query').hide();
+                $('#send_to').hide();
+            }
+        });
+        var element = layui.element;
+        var isInit = false;
+        element.on('tab(msgTab)', function(data){
+            if(data.index==1){
+                if(!isInit){
+                    isInit = true;
+                    initGrid({$p});
+                }else{
+                    msgQuery({$p});
+                }
+            }
+        });
+    });
+</script>
+{/block}
+{block name="main"}
+<div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+  <ul class="layui-tab-title">
+    <li class="layui-this">{:lang('label_message_title')}</li>
+    <li >{:lang('label_message_title1')}</li>
+  </ul>
+  <div class="layui-tab-content" >
+    <div class="layui-tab-item layui-show">
+    <table class='wst-form wst-box-top'>
+      <tr>
+          <th width='150'>{:lang('label_message_send_type')}<font color='red'>*</font>：</th>
+          <td style="text-align:left;" colspan='3' class='layui-form'>
+            <label><input type="radio" lay-filter="sendType" name="sendType" id="sendType" value="users" class='ipt'  checked title='{:lang('label_message_send_type1')}'></label>
+            <label><input type="radio" lay-filter="sendType" name="sendType" id="sendType" value="shop" class='ipt' title='{:lang('label_message_send_type2')}'></label>
+            {if (WSTConf('CONF.isOpenSupplier')==1)}
+            <label><input type="radio" lay-filter="sendType" name="sendType" id="sendType" value="supplier" class='ipt' title='{:lang('label_message_send_type3')}'></label>
+            {/if}
+            <label><input type="radio" lay-filter="sendType" name="sendType" id="theUser" value="theUser" class='ipt' title='{:lang('label_message_send_type4')}'></label>
+          </td>
+       </tr>
+       <tr id="user_query" style="display:none;">
+          <th></th>
+          <td>
+            <input type='text' id='loginName' name="loginName" value=''  style="width:200px;" maxLength='20' placeholder="{:lang('label_message_send_user_plo')}"/>
+            
+          </td>
+          <td><button type="button"  class='btn btn-primary btn-mright' onclick="userQuery()"><i class="fa fa-search"></i>{:lang('query')}</button></td>
+       </tr>
+       <tr id="send_to" style="display:none;">
+          <th>{:lang('label_message_send_type4_title')}<font color='red'>*</font>：</th>
+          <td width="200">
+            <select ondblclick="WST.multSelect({left:'ltarget',right:'rtarget',vtarget:'rtarget',val:'htarget'})" size="12" id="ltarget" multiple="" style="width:200px;height:160px;">
+             </select>
+          </td>
+         <td width="10">
+         <input type='hidden' id='htarget' value='' class='ipt'/>
+         <button onclick="javascript:WST.multSelect({left:'ltarget',right:'rtarget',vtarget:'rtarget',val:'htarget'})" class="btn btn-primary" type="button">&gt;&gt;</button>
+         <br>
+         <br>
+         <button onclick="javascript:WST.multSelect({left:'rtarget',right:'ltarget',vtarget:'rtarget',val:'htarget'})" class="btn btn-primary" type="button">&lt;&lt;</button>
+         </td>
+         <td>
+         <select ondblclick="WST.multSelect({left:'rtarget',right:'ltarget',vtarget:'rtarget',val:'htarget'})" size="12" id="rtarget" multiple="" style="width:200px;height:160px;">
+        </select>
+          </td>
+       </tr>
+
+       <tr>
+          <th>{:lang('label_message_send_content')}<font color='red'>  </font>：</th>
+          <td colspan="10">
+            <textarea class='ipt' name="msgContent" id="msgContent" style="width:85%;height:150px;"></textarea>
+          </td>
+       </tr>
+{if WSTGrant('SCXX_01')} 
+  <tr>
+     <td colspan='4' align='center'>
+       <button type="button" onclick="sendMsg()" class='btn btn-primary btn-mright'><i class="fa fa-share"></i>{:lang('label_message_send_btn')}</button>
+       <button type="button" onclick='javascript:history.go(-1)' class='btn'><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+     </td>
+  </tr>
+{/if}
+ </table>
+
+</div>
+
+<div class="layui-tab-item">
+    <div autocomplete='off' class="wst-toolbar"> 
+        <select style="float:left;" name="msgType" id="msgType" class="query">
+          <option value="-1">{:lang('label_message_type')}</option>
+          <option value="0">{:lang('label_message_type0')}</option>
+          <option value="1">{:lang('label_message_type1')}</option>
+        </select>
+        <input type="text" name="msgContent"  placeholder='{:lang("system_content")}' id="msgContent" class="query" />
+        <button type="button"  class='btn btn-primary btn-mright' onclick="javascript:msgQuery()"><i class="fa fa-search"></i>{:lang('query')}</button>
+        {if WSTGrant('SCXX_03')}
+		<button class="btn btn-danger f-right" onclick='javascript:toBatchDelete()' style='margin-left:10px;'><i class='fa fa-trash-o'></i>{:lang('bath_del')}</button>
+		{/if}
+    </div>
+    <div style="clear:both"></div>
+    <table id="mmg" class="mmg">
+       <tr>
+          <th rowspan="" colspan=""></th>
+       </tr>
+    </table>
+    <div id="pg" style="text-align: right;"></div>
+</div>
+
+
+</div>
+
+{/block}
+

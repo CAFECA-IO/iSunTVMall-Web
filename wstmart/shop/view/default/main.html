@@ -1,0 +1,380 @@
+{extend name="default/base" /}
+{block name="js"}
+<script src="__STATIC__/plugins/echarts/echarts.min.js?v={$v}" type="text/javascript"></script>
+<script>
+	// 销售统计
+	function saleCount() {
+		$.post(WST.U('shop/reports/getStatSales'), WST.getParams('.ipt'), function (data, textStatus) {
+			var json = WST.toJson(data);
+			var myChart = echarts.init(document.getElementById('saleMain'));
+			myChart.clear();
+			$('#mainTable').hide();
+			if (json.status == '1' && json.data) {
+				var option = {
+					tooltip: {
+						trigger: 'axis'
+					},
+					calculable: true,
+					xAxis: [
+						{
+							type: 'category',
+							data: json.data.days
+						}
+					],
+					yAxis: [
+						{
+							type: 'value'
+						}
+					],
+					series: [
+						{
+							name: WST.lang('sales_volume'),
+							type: 'line',
+							data: json.data.dayVals
+						}
+					]
+				};
+				myChart.setOption(option);
+			}
+		});
+	}
+</script>
+{/block}
+{block name="css"}
+<link href="__SHOP__/css/main.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<style type="text/css">
+
+</style>
+<!---->
+<div class="wst-shop-info">
+	<div class="wst-shop-na">
+		<div class='wst-shop-name'><a target='_blank'
+				href='{:Url("home/shops/index","shopId=".$data["shop"]["shopId"])}'>{$data['shop']['shopName']}</a>
+		</div>
+		<span class="wst-shop-img">
+			<a target='_blank' href="{:url('home/shops/index',array('shopId'=>$data['shop']['shopId']))}">
+				<img src="__RESOURCE_PATH__/{:WSTImg($data['shop']['shopImg'])}"
+					title="{$data['shop']['shopName']|WSTStripTags}" alt="{$data['shop']['shopName']|WSTStripTags}">
+			</a>
+		</span>
+		<div class="wst-shop-na2">
+			{php}$isExpire = ((strtotime($data['shop']['expireDate'])-strtotime(date('Y-m-d')))<2592000)?true:false;{/php}
+				<span class="wst-shop-na3">{:lang('username')}：{$Think.session.WST_USER.loginName}</span>
+				<div style="clear: both;"></div>
+			<span class="accred">{:lang('certification_level')}：
+				{volist name="$data['shop']['accreds']" id="sv"}
+				<img src="__RESOURCE_PATH__/{$sv['accredImg']}">
+				{/volist}
+			</span><div style="clear: both;"></div>
+			
+				<span class="wst-shop-na3">{:lang('last_login')}：{:session('WST_USER.lastTime')}</span>
+				<div style="clear: both;"></div>
+				<span class="wst-shop-na3">{:lang('shop_address')}：{:WSTMSubstr($data['shop']['shopAddress'],0,10)}</span>
+				<div style="clear: both;"></div>
+				<span class="wst-shop-na3">{:lang('store_expiration_date')}：<span
+						style="float:none;{if $isExpire}color:red;{/if}">{$data['shop']['expireDate']}</span> <a
+						href="{:url('shop/logmoneys/torenew')}">{:lang('renew')}</a></span>
+				<div style="clear: both;"></div>
+				{if(WSTDatas('ADS_TYPE',2)!='' || WSTDatas('ADS_TYPE',3)!='' || WSTDatas('ADS_TYPE',5)!='')}
+
+				<div id="shopQrbox" style="position: relative;">
+					<div id="qrTitle" class="qrtitle"><i class="fa fa-qrcode"></i>&nbsp;{:lang('store_qr_code')}</div>
+				</div>
+				<div id="shopQrcode"
+					style="width: <?php echo ((WSTDatas('ADS_TYPE',2)!='' || WSTDatas('ADS_TYPE',3)!='') && (WSTDatas('ADS_TYPE',5)!='')?460:223) ?>px;">
+					<div class='wst-form wst-box-top'>
+						<div>
+							{if(WSTDatas('ADS_TYPE',2)!='' || WSTDatas('ADS_TYPE',3)!='')}
+							<div class="qritem">
+								<div>{:lang('mobile/wechat_QR_code')}</div>
+								<div id="moQrcode" class="qcode"></div>
+							</div>
+							{/if}
+							{if(WSTDatas('ADS_TYPE',5)!='')}
+							<div class="qritem">
+								<div>{:lang('small_program_qr_code')}</div>
+								<div id="weQrcode" class="qcode"></div>
+							</div>
+							{/if}
+							<div style="clear: both;"></div>
+						</div>
+					</div>
+				</div>
+				{/if}
+
+		</div>
+	</div>
+	<div style="width: 30%;float: left;">
+		<div class='wst-shop-name' style="margin-left: 20px;"><a>{:lang('store_rating')}</a></div>
+		<div class="wst-shop-eva" style="margin-left: 8%">
+			<p>{:lang('product_rating')}</p>
+			<div class="wst-shop-evai">
+				{for start="0" end="$data['shop']['scores']['goodsScore']"}
+				<img src="__STATIC__/plugins/raty/img/star-on.png">
+				{/for}
+				{for start="1" end="6-$data['shop']['scores']['goodsScore']"}
+				<img src="__STATIC__/plugins/raty/img/star-off.png">
+				{/for}
+			</div>
+		</div>
+		<div class="wst-shop-eva">
+			<p>{:lang('timeliness_score')}</p>
+			<div class="wst-shop-evai">
+				{for start="0" end="$data['shop']['scores']['timeScore']"}
+				<img src="__STATIC__/plugins/raty/img/star-on.png">
+				{/for}
+				{for start="1" end="6-$data['shop']['scores']['timeScore']"}
+				<img src="__STATIC__/plugins/raty/img/star-off.png">
+				{/for}
+			</div>
+		</div>
+		<div class="wst-shop-eva">
+			<p>{:lang('service_score')}</p>
+			<div class="wst-shop-evai">
+				{for start="0" end="$data['shop']['scores']['serviceScore']"}
+				<img src="__STATIC__/plugins/raty/img/star-on.png">
+				{/for}
+				{for start="1" end="6-$data['shop']['scores']['serviceScore']"}
+				<img src="__STATIC__/plugins/raty/img/star-off.png">
+				{/for}
+			</div>
+		</div>
+	</div>
+	<div class="wst-shop-con">
+		<div class='wst-shop-name' style="margin-left: 20px;"><a>{:lang('platform_contact_information')}</a></div>
+		<p style="margin-left: 8%;"><span>{:lang('telephone')}：{$data['shop']['shopTel']}</span><span></span>
+		</p>
+		<p style="margin-left: 8%;"><span>{:lang('mailbox')}：{:WSTConf('CONF.serviceEmail')}</span><span>{:lang('service_time')}：{php}echo
+				date("H:i",strtotime($data['shop']['serviceStartTime']));{/php}-{php}echo
+				date("H:i",strtotime($data['shop']['serviceEndTime']));{/php}</span></p>
+		<p></p>
+	</div>
+	<div class="f-clear"></div>
+</div>
+
+
+<div class="main">
+	<div class="main_middle">
+		<ul class="main_mid_box">
+			<li class="mid_l">
+				<div class="mid_l_item">
+					<div class="main_title">
+						<div class="wst-lfloat">
+
+							<span class="c16_555">{:lang('order_prompt')}</span>
+						</div>
+						<div class="f-clear"></div>
+					</div>
+					<div class="mid_main">
+						<ul class="order_info">
+							{if WSTShopGrant('shop/ordercomplains/shopcomplain')}
+							<li><a id="menuItem25" href="{:Url('shop/ordercomplains/shopcomplain')}" dataid="25">
+									<div class="complain_num">{$data['stat']['complainNum']}</div>
+									<div class="complain_title">{:lang('pending_complaint')}</div>
+								</a></li>
+							{/if}
+							{if WSTShopGrant('shop/orders/delivered')}
+							<li><a id="menuItem53" href="{:Url('shop/orders/delivered')}" dataid="53">
+									<div class="complain_num">{$data['stat']['waitReceiveCnt']}</div>
+									<div class="complain_title">{:lang('received')}</div>
+								</a></li>
+							{/if}
+							{if WSTShopGrant('shop/orders/waitdelivery')}
+							<li><a id="menuItem24" href="{:Url('shop/orders/waitdelivery')}" dataid="24">
+									<div class="complain_num">{$data['stat']['waitDeliveryCnt']}</div>
+									<div class="complain_title">{:lang('delivered')}</div>
+								</a></li>
+							{/if}
+							{if WSTShopGrant('shop/orders/waituserpay')}
+							<li><a id="menuItem55" href="{:Url('shop/orders/waituserpay')}" dataid="55">
+									<div class="complain_num">{$data['stat']['orderNeedpayCnt']}</div>
+									<div class="complain_title">{:lang('paid')}</div>
+								</a></li>
+							{/if}
+							{if WSTShopGrant('shop/orders/failure')}
+							<li><a id="menuItem45" href="{:Url('shop/orders/failure')}" dataid="45">
+									<div class="complain_num">{$data['stat']['cancel']}</div>
+									<div class="complain_title">{:lang('cancellation/rejection')}</div>
+								</a></li>
+							{/if}
+							{if WSTShopGrant('shop/orders/failure')}
+							<li><a id="menuItem45" href="{:Url('shop/orders/refund')}" dataid="45">
+									<div class="complain_num">{$data['stat']['orderRefundCnt']}</div>
+									<div class="complain_title">{:lang('refunded')}</div>
+								</a></li>
+							{/if}
+						</ul>
+					</div>
+				</div>
+
+				<div class="mid_l_item" style="margin-top:10px;">
+					<div class="main_title">
+						<div class="wst-lfloat">
+							<span class="c16_555">{:lang('product_information')}</span>
+						</div>
+					</div>
+					<div class="f-clear"></div>
+					<div class="mid_main">
+						<ul class="order_info">
+							{if WSTShopGrant('shop/goods/store')}
+							<li><a id="menuItem34" href="{:Url('shop/goods/store')}" dataid="34">
+									<div class="complain_num">{$data['stat']['unSaleCnt']}</div>
+									<div class="complain_title">{:lang('warehouse')}</div>
+								</a></li>
+							{/if}
+							{if WSTShopGrant('shop/goods/stockwarnbypage')}
+							<li><a id="menuItem54" href="{:Url('shop/goods/stockwarnbypage')}" dataid="54">
+									<div class="complain_num">{$data['stat']['stockWarnCnt']}</div>
+									<div class="complain_title">{:lang('early_warning_inventory')}</div>
+								</a></li>
+							{/if}
+							{if WSTShopGrant('shop/goods/sale')}
+							<li><a id="menuItem32" href="{:Url('shop/goods/sale')}" dataid="32">
+									<div class="complain_num">{$data['stat']['onSaleCnt']}</div>
+									<div class="complain_title">{:lang('sale')}</div>
+								</a></li>
+							{/if}
+							{if WSTShopGrant('shop/goods/audit')}
+							<li><a id="menuItem33" href="{:Url('shop/goods/audit')}" dataid="33">
+									<div class="complain_num">{$data['stat']['waitAuditCnt']}</div>
+									<div class="complain_title">{:lang('reviewed')}</div>
+								</a></li>
+							{/if}
+							{if WSTShopGrant('shop/goods/illegal')}
+							<li><a id="menuItem56" href="{:Url('shop/goods/illegal')}" dataid="56">
+									<div class="complain_num">{$data['stat']['illegalCnt']}</div>
+									<div class="complain_title">{:lang('illegal_goods')}</div>
+								</a></li>
+							{/if}
+							{if WSTShopGrant('shop/goodsconsult/shopReplyConsult')}
+							<li><a id="menuItem102" href="{:Url('shop/goodsconsult/shopReplyConsult')}" dataid="102">
+									<div class="complain_num">{$data['stat']['consult']}</div>
+									<div class="complain_title">{:lang('consultation_to_be_answered')}</div>
+								</a></li>
+							{/if}
+						</ul>
+					</div>
+				</div>
+			</li>
+
+			<li class="mid_r">
+
+				<div class='mid_r_rbottom' style="margin-bottom: 10px;">
+					<div class="main_title">
+						<div class="wst-lfloat">
+
+							<span class="c16_555">{:lang('business_help')}</span>
+						</div>
+						<div class="f-clear"></div>
+					</div>
+					<div class="rbottom_main">
+						<ul class="shop_tips">
+							{wst:article cat="300" id="vo" num="8"}
+							<li class="wst-textover"><a href="{:url('home/news/view',['id'=>$vo['articleId']])}"
+									target="_blank"
+									title="{$vo.articleTitle}"><i></i>{$key+1}、{$vo.articleTitle}</a><span>{:date('Y-m-d',strtotime($vo['createTime']))}</span>
+							</li>
+							{/wst:article}
+						</ul>
+					</div>
+				</div>
+				<div class='mid_r_rbottom'>
+					<div class="main_title">
+						<div class="wst-lfloat">
+
+							<span class="c16_555">{:lang('business_announcement')}</span>
+						</div>
+						<div class="f-clear"></div>
+					</div>
+					<div class="rbottom_main">
+						<ul class="shop_tips2">
+							{wst:article cat="51" id="vo" num="5"}
+							<li class="wst-textover"><a href="{:url('home/news/view',['id'=>$vo['articleId']])}"
+									target="_blank"
+									title="{$vo.articleTitle}">{$key+1}、{$vo.articleTitle}</a><i>NEWS</i>&nbsp;&nbsp;&nbsp;&nbsp;<span>{:date('Y-m-d',strtotime($vo['createTime']))}</span>
+							</li>
+							{/wst:article}
+						</ul>
+					</div>
+				</div>
+			</li>
+			{if WSTShopGrant('shop/reports/topSaleGoods')}
+			<li class="mid_c">
+				<div class="index-right">
+					<div class="index-right-item">
+						<div class="main_title" style="padding-left:10px;">
+							<div class="wst-lfloat">
+
+								<span class="c16_555">{:lang('sales_ranking_in_recent_30_days')}</span>
+							</div>
+							<div class="f-clear"></div>
+						</div>
+						<ul class="right-list-tit">
+							<li class="c12_555">{:lang('serial_number')}</li>
+							<li class="c12_555">{:lang('orders')}</li>
+							<li class="c12_555">{:lang('number')}</li>
+						</ul>
+						{volist name="$data['stat']['goodsTop']" id="glist" key="gkey" length="10"}
+						<ul class="right-list-tit right-list">
+							<li class="c14_ff66">
+								<div class="gTop{$gkey} top-num">{$gkey}</div>
+							</li>
+							<li class="wst-textover"><a class="c14_ff90 atop{$gkey}" target="_blank"
+									href="{:url('home/goods/detail',['goodsId'=>$glist.goodsId])}">{$glist.goodsName}</a>
+							</li>
+							<li class="c14_ff66 gTop{$gkey}">{$glist.goodsNum?:0}</li>
+						</ul>
+						{/volist}
+
+					</div>
+				</div>
+			</li>
+			{/if}
+			{if WSTShopGrant('shop/reports/statSales')}
+			<li class="mid_r">
+				<div class="sale_info">
+					<div class="main_title">
+						<div class="wst-lfloat">
+
+							<span class="c16_555">{:lang('sales_in_recent_30_days')}</span>
+						</div>
+						<div class="f-clear"></div>
+					</div>
+					<div id="saleMain" style="width:100%;height:335px;"></div>
+				</div>
+			</li>
+			<script>$(function () { saleCount() });</script>
+			{/if}
+		</ul>
+	</div>
+	<div class="f-clear"></div>
+
+</div>
+
+
+{/* 近30天 */}
+<input type="hidden" id="startDate" class="ipt" value='{:date("Y-m-d",strtotime("-30 day"))}' />
+<input type="hidden" id="endDate" class="ipt" value='{:date("Y-m-d")}' />
+
+<script type="text/javascript">
+	{if(WSTDatas('ADS_TYPE',2)!='' || WSTDatas('ADS_TYPE',3)!='' || WSTDatas('ADS_TYPE',5)!='')}
+	$(function(){
+		var qtop = $("#qrTitle").offset().top;
+		var qleft = $("#qrTitle").offset().left;
+		$("#shopQrbox").on({
+			click : function(){
+				$("#shopQrcode").css({'top':(qtop+30)+"px",'left':qleft+"px"}).toggle();
+			}
+		}) ;
+		{if(WSTDatas('ADS_TYPE',2)!='' || WSTDatas('ADS_TYPE',3)!='')}
+		WST.createShopQrcode(1);
+		{/if}
+		{if(WSTDatas('ADS_TYPE',5)!='')}
+		WST.createShopQrcode(2);
+		{/if}
+	});
+	{/if}
+</script>
+{/block}

@@ -1,0 +1,160 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('register')} - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/user.css?v={$v}">
+<style>
+body{background:#fff}
+.ui-dialog .ui-dialog-cnt {height: auto;}
+.wst-protocol {
+    overflow: auto;
+    padding: 10px 20px 0 10px;
+    color: #333;
+    font-family: Arial,Lucida,Verdana,Helvetica,sans-serif;
+    font-size: 12px;
+}
+.wst-protocol h4{line-height: 30px;margin:0px;}
+.wst-protocol p{line-height: 20px;margin:0px;}
+.wst-protocol strong{margin-right:2px;}
+</style>
+{/block}
+{block name="header"}
+		{php}$mobileRegisterTypeArr = explode(',',WSTConf('CONF.mobileRegisterType'));{/php}
+       <header style="background:#ffffff;" class="ui-header ui-header-positive wst-header">
+       	   <i id="return" class="ui-icon-return" onclick="javascript:history.go(-1)" ></i><h1 id="login-w">{:lang('register')}</h1>
+       </header>
+{/block}
+{block name="footer"}
+		{/* 大加载 */}
+		<div class="ui-loading-block" id="Loadl">
+		    <div class="ui-loading-cnt">
+		        <i class="ui-loading-bright"></i>
+		        <p id="j-Loadl">{:lang('loading')}</p>
+		    </div>
+		</div>
+{/block}
+{block name="main"}
+      {/* 注册页面 */}
+      <input type="hidden" value="{:WSTConf('CONF.pwdModulusKey')}" id="key" autocomplete="off">
+		{if in_array(2,$mobileRegisterTypeArr) && $type==2}
+		  <section class="ui-container" id="login2">
+			 <div class="wst-lo-frame">
+				<div class="frame-head">
+					<h2>{:lang('phone_regist')}</h2>
+					<span class='tip'>{:lang('regist_info_title')}</span>
+				</div>
+				<div class="frame">
+					<span>{:lang('phone_number')}</span><br/>
+					{php}$areaCode = WSTAareCodes()[0];{/php}
+					<span id="area_code" onclick="WST.showAreacodeBox()">{$areaCode}</span>
+					<input id="areaCode" type="hidden" value="{$areaCode}">
+					<input id="regName" type="text" placeholder="{:lang('phone_number')}" onkeypress="return WST.isNumberKey(event)" onkeyup="javascript:onTesting(this)" style="width:80%">
+				</div>
+				<div class="frame"><span>{:lang('password')}</span><input id="regPwd" type="password" placeholder="{:lang('password')}"></div>
+				{/* 获取验证码的验证prompt */}
+				{if(WSTConf('CONF.smsVerfy')==1)}
+				{if (int)WSTConf('CONF.isAddonCaptcha')!=1}
+				<div class="verify">
+					<div>{:lang('graphic_verifycode')}</div>
+					<input id="smsVerfy" type="text" placeholder="{:lang('verify_require')}" maxlength="10">
+					<img id='verifyImg3' src="{:url('mobile/users/getVerify')}" onclick='javascript:WST.getVerify("#verifyImg3")'>
+				</div>
+				{/if}
+				{/if}
+				{/* 获取验证码 prompt */}
+				<div class="verify phone">
+					<input id="phoneCode" type="text" placeholder="{:lang('require_mobile_verifycode')}" maxlength="8">
+					{if (int)WSTConf('CONF.isAddonCaptcha')!=1}
+					<a class='send' href="javascript:obtainCode()">{:lang('press_get_check_code')}</a>
+					{else}
+					{:hook('mobileDocumentRegistSmsCaptcha')}
+					{/if}
+					
+				</div>
+			</div>
+			<div class="wst-lo-agreement">
+			   <i id="defaults2" class="ui-icon-chooses ui-icon-success-block wst-active" onclick="javascript:inAgree(this,2)"></i>{:lang('read_and_agree')}<span onclick="javascript:wholeShow('protocol');">{:lang('user_register_protocol')}</span>
+			</div>
+			<div class="wst-lo-button">
+				<button id="regButton" class="button" onclick="javascript:register();">{:lang('register')}</button>
+			</div>
+			  <ul class="ui-row wst-lo-term reg-change">
+				  <li class="ui-col ui-col-50">
+					  {php}if(in_array(1,$mobileRegisterTypeArr)){{/php}<a href="{:url('mobile/users/toRegister')}" class="term">{:lang('account_regist')}</a>{php}}{/php}&nbsp;
+				  </li>
+			  </ul>
+		  </section>
+		{/if}
+		{if in_array(1,$mobileRegisterTypeArr) && $type==1}
+			<section class="ui-container" id="login1">
+				<div class="wst-lo-frame">
+					<div class="frame-head">
+						<h2>{:lang('account_regist')}</h2>
+						<span class='tip'>{:lang('regist_info_title')}</span>
+					</div>
+					<div class="frame"><span>{:lang('user_name')}</span><input id="regName2" type="text" placeholder="{:lang('loginname_word_desc')}" onkeyup="javascript:onTesting(this)"></div>
+					<div class="frame"><span>{:lang('password')}</span><input id="regPwd2" type="password" placeholder="{:lang('require_password_desc')}"></div>
+					<div class="frame"><span>{:lang('confirm_password')}</span><input id="reRegPwd" type="password" placeholder="{:lang('require_password_desc')}"></div>
+					<div class="verify">
+						<div>{:lang('graphic_verifycode')}</div>
+						<input id="verifyCode" type="text" placeholder="{:lang('verify_require')}" maxlength="10">
+						<img id='verifyImg4' src="{:url('mobile/users/getVerify')}" onclick='javascript:WST.getVerify("#verifyImg4")'>
+					</div>
+				</div>
+				<div class="wst-lo-agreement">
+					<i id="defaults" class="ui-icon-chooses ui-icon-success-block wst-active" onclick="javascript:inAgree(this,1)"></i>{:lang('read_and_agree')}<span onclick="javascript:wholeShow('protocol');">{:lang('user_register_protocol')}</span>
+				</div>
+				<div class="wst-lo-button">
+					<button id="regButton2" class="button" onclick="javascript:register2();">{:lang('register')}</button>
+				</div>
+				<ul class="ui-row wst-lo-term reg-change">
+					<li class="ui-col ui-col-50">
+						{php}if(in_array(2,$mobileRegisterTypeArr)){{/php}<a href="{:url('mobile/users/toRegister','registertype=2')}" class="term">{:lang('phone_regist')}</a>{php}}{/php}&nbsp;
+					</li>
+				</ul>
+			</section>
+		{/if}
+{/block}
+{block name="include"}
+{/* 用户注册协议 */}
+<div class="wst-fr-protocol" id="protocol">
+    <div class="title"><span>{:lang('user_register_protocol_title')}</span><i class="ui-icon-close-page" onclick="javascript:wholeHide('protocol');"></i><div class="wst-clear"></div></div>
+    <div class="wst-protocol">
+        {$data['articleContent']}
+    </div>
+</div>
+
+{/* 遮盖层  */}
+<div class="wst-cover" id="cover2"></div>
+{/* 取消订单  */}
+<div class="wst-areacode-box" id="areacodeBox">
+    <input type="hidden" id="reason">
+    <div class="title">{:lang('phone_area_code')}</div>
+    <div class="desc"></div>
+    <div class="content">
+        {volist name=":WSTAareCodes()" id="vo"}
+        <label class="ui-checkbox">
+	        <div class="wst-flex-row wst-jsb wst-ac item">
+	            <div class="name">{$vo}</div>
+	          	<input class="active" type="radio" name="data" value='{$vo}' {$key==0?'checked':''}>
+	        </div>
+        </label>
+        {/volist}
+    </div>
+    <div class="bottom-two-btn-box wst-flex-row wst-center">
+        <button id="wst-event1" type="button" class="wst-dialog-b1" data-role="button" onclick="javascript:WST.hideCancelBox();">{:lang('cancel')}</button>
+        <button id="wst-event0" type="button" class="wst-dialog-b2" onclick="javascript:WST.checkAreaCode();">{:lang('confirm')}</button>
+    </div>
+</div>
+
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__MOBILE__/js/jquery.min.js'></script>
+<script type="text/javascript" src="__STATIC__/js/rsa.js"></script>
+<script type='text/javascript' src='__MOBILE__/js/login.js?v={$v}'></script>
+<script type="text/javascript">
+	function pageSwitch(obj,type){
+		$(obj).addClass('active').siblings('.ui-tab-nav li.switch').removeClass('active');
+		$('#login'+type).show().siblings('section.ui-container').hide();
+	}
+</script>
+{/block}

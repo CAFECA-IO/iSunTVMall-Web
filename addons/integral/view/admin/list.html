@@ -1,0 +1,34 @@
+{extend name="../../../wstmart/admin/view/base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script src="__ROOT__/addons/integral/view/admin/list.js?v={$v}" type="text/javascript"></script>
+<script>
+    $(function(){
+        initGrid({$p});
+    })
+</script>
+{/block}
+{block name="main"}
+<div class="wst-toolbar">
+	<select id="cat1_0" class='ipt pgoodsCats' level="0" onchange="WST.ITGoodsCats({id:'cat1_0',val:this.value,isRequire:false,className:'pgoodsCats'});">
+		<option value="">{:lang('integral_goods_cat')}</option>
+		   {volist name=":WSTGoodsCats(0)" id="vo"}
+	    <option value="{$vo['catId']}">{$vo['catName']}</option>
+			{/volist}
+	</select>
+	<input type="text" name="goodsName1"  placeholder="{:lang('integral_goods_name_id')}" id="goodsName1" class='j-ipt'/>
+	<button class="btn btn-primary" onclick='javascript:loadGrid(0)'><i class='fa fa-search'></i>{:lang('integral_query')}</button>
+	<button class="btn btn-success f-right btn-fixtop" onclick='javascript:toEdit(0)'><i class='fa fa-plus'></i>{:lang('integral_add')}</button>
+	<div style='clear:both'></div>
+</div>
+<table id="mmg" class="mmg">
+	<tr>
+		<th rowspan="" colspan=""></th>
+	</tr>
+</table>
+<div id="pg" style="text-align: right;"></div>
+{/block}

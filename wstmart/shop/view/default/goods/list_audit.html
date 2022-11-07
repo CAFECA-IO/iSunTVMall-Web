@@ -1,0 +1,52 @@
+{extend name="default/base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="main"}
+<div class="wst-toolbar">
+    <select name="cat1" id="cat1" onchange="getCat(this.value)" class="s-query">
+        <option value="">-{:lang('select')}-</option>
+      {volist name=":WSTShopCats(0)" id="vo"}
+            <option value="{$vo['catId']}" >{$vo['catName']}</option>
+      {/volist}
+    </select>
+      <select name="cat2" id="cat2" class="s-query"><option value="">-{:lang('select')}-</option></select>
+  <span style="float: left;line-height: 40px;">{:lang('commodity_type')}：</span>
+  <select id='goodsType' class="s-query">
+     <option value=''>{:lang('all')}</option>
+     <option value='0'>{:lang('physical_goods')}</option>
+     <option value='1'>{:lang('virtual_goods')}</option>
+  </select>
+    <input type="text" name="goodsName" id="goodsName" class="s-query" placeholder='{:lang('goods_name_serch_plo')}'/>
+    <select id='goodsAttr' class="s-query" style='width:80px'>
+        <option value='-1'>{:lang('all')}</option>
+        <option value='0'>{:lang('recommend')}</option>
+        <option value='3'>{:lang('new_products')}</option>
+        <option value='2'>{:lang('boutique')}</option>
+        <option value='1'>{:lang('hot_sale')}</option>
+  </select>
+    <a class="s-btn btn btn-primary" onclick="loadGrid(0)"><i class="fa fa-search"></i>{:lang('query')}</a>
+</div>
+<div class="wst-toolbar">
+   <div class="s-menu">
+      <a href='javascript:;' onclick="changeSale(0,'audit')" class="s-sale"><span>{:lang('off_the_shelf')}</span></a>
+      <a href='javascript:void(0);' onclick="changeGoodsStatus('isRecom','audit')" class="s-rec"><span>{:lang('recommend')}</span></a>
+      <a href='javascript:void(0);' onclick="changeGoodsStatus('isNew','audit')" class="s-new"><span>{:lang('new_products')}</span></a>
+      <a href='javascript:void(0);' onclick="changeGoodsStatus('isBest','audit')" class="s-best"><span>{:lang('boutique')}</span></a>
+      <a href='javascript:void(0);' onclick="changeGoodsStatus('isHot','audit')" class="s-hot"><span>{:lang('hot_sale')}</span></a>
+      <a href='javascript:void(0);' onclick="benchDel('audit')" class="s-del btn btn-danger wst-rfloat" style="float: right;"><span><i class="fa fa-trash-o"></i>{:lang('del')}</span></a>
+      <a href='javascript:void(0);' onclick="toAdd('audit')" class="s-add btn btn-success wst-rfloat" style="float: right;"><span><i class="fa fa-plus"></i>{:lang('add')}</span></a>
+   </div>
+</div>
+<div class='wst-grid'>
+    <div id="mmg" class="mmg"></div>
+    <div id="pg" style="text-align: right;"></div>
+</div>
+{/block}  
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__SHOP__/goods/goods.js?v={$v}'></script>
+<script>
+$(function(){auditByPage({$p})})
+</script>
+{/block}

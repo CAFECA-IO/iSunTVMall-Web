@@ -1,0 +1,59 @@
+{php}$floorKey=$key;{/php}
+<div class="floor-goods-container">
+    <div class="floor-box">
+        <div class="floor-header wst-flex-row wst-jsb wst-ac">
+            <div class=" wst-flex-row wst-ac">
+                <img class="floor-icon" src="__RESOURCE_PATH__/{$vo['icon']}" />
+                <p class="floor-right-title">{$vo['title']}</p>
+            </div>
+            <ul class="tab">
+                {for start="0" end="count($vo['columnsTitle'])"  }
+                <li class="tab-item">
+                    <a href="{$vo['columnsLink'][$i]}">{$vo['columnsTitle'][$i]}</a>
+                </li>
+                {/for}
+            </ul>
+        </div>
+    </div>
+    <div class="floor-main" style="background:{$vo['backgroundColor']}">
+        <div class="floor-main-container">
+            {/* 含右侧广告 */}
+            <div class="floor-right" >
+                <div class="floor-right-ads">
+                    {/* 楼层左侧上方轮播广告 */}
+                    <div class="wst-floor-slide-{$floorKey}" id="wst-floor-slide-{$floorKey}">
+                        <ul class="wst-floor-slide-items">
+                            <li style="z-index: 1;">
+                                <a href="{$vo['link']}"><img class='goodsImg' data-original="__RESOURCE_PATH__/{$vo['img']}"></a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="goods-list" style="background:{$vo['backgroundColor']}">
+                    {for start="0" end="1"  }
+                    {/* 楼层分类下的商品 */}
+                    {volist name="$vo['goods'][$i]" id='cs' key="key2"}
+                    <div class="goods">
+                        <div class="img"><a target='_blank' href="{:Url('home/goods/detail','goodsId='.$cs['goodsId'])}" title="{$cs['goodsName']|WSTStripTags}"><img title="{$cs['goodsName']|WSTStripTags}" class='goodsImg' data-original="__RESOURCE_PATH__/{:WSTImg($cs['goodsImg'])}" src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}"/></a></div>
+                        <div class="p-name"><a target='_blank' href="{:Url('home/goods/detail','goodsId='.$cs['goodsId'])}" class="wst-redlink" title="{$cs['goodsName']|WSTStripTags}">{:WSTMSubstr($cs['goodsName'],0,33)}</a></div>
+                        <div class="info wst-flex-row wst-jsb wst-ac">
+                            <div class="p-price">{:lang('currency_symbol')}{$cs['shopPrice']}</div>
+                            <div class="cart" onclick="javascript:WST.addCart({$cs['goodsId']});"></div>
+                        </div>
+                    </div>
+                    {/volist}
+                    {/for}
+                    <div class='wst-clear'></div>
+                </div>
+                <div class="wst-clear"></div>
+            </div>
+            <div class="wst-clear"></div>
+        </div>
+    </div>
+</div>
+<script>
+
+</script>
+

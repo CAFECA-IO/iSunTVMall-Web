@@ -1,0 +1,25 @@
+{extend name="default/base" /}
+{block name="title"}{:lang('lost_page')} - {:WSTConf('CONF.mallName')}{__block__}{/block}
+{block name="commoncss"}{/block}
+{block name="css"}
+
+<link rel="stylesheet" href="__STATIC__/plugins/font-awesome/css/font-awesome.min.css" type="text/css" />
+<link href="__SHOP__/supplier/css/common.css?v={$v}" rel="stylesheet">
+<link href="__SHOP__/supplier/css/goods.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="nav"}
+  {include file="default/header" /}
+{/block}
+{block name="main"}
+<div class="wst-container">
+	<div class="wst-empty empty3">
+		<div class="prompt3">
+		<p>{:lang('supplier_tips25')}</p>
+		<p>{:lang('supplier_tips26')}</p>
+		</div>
+		<div class="button3">
+		   <a href="{:url('shop/supplierindex/index')}" class="wst-empty-btn wst-empty-btn1">{:lang('back_to_home_page')}</a>
+		</div>
+	</div>
+</div>
+{/block}

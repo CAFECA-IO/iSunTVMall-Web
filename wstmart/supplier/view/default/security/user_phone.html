@@ -1,0 +1,70 @@
+{extend name="default/base" /}
+{block name="css"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+<link href="__SUPPLIER__/css/security.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<div class="f-clear"></div>
+{if ($process=='One')}
+	<form method="post" id="phoneForm" autocomplete="off">
+      <table class='wst-form' style="width: auto;">
+       <tr>
+         <th align='right'>{:lang('label_security_bind_phone')}<font color='red'>*</font>：</th>
+         <td>
+         <input type='text' class="ipt" id='userPhone' name='userPhone' style='width:250px;' maxLength='30' data-rule="{:lang('phone_num')} required;mobile;remote(post:{:url('supplier/users/checkLoginKey')})" data-msg-mobile="{:lang('require_security_phone_check')}" data-msg-required="{:lang('require_security_phone')}" data-tip="{:lang('require_security_phone')}" data-target="#verifyPhone"/>
+         {if (int)WSTConf('CONF.isAddonCaptcha')!=1}
+         <button id="timeObtain" class="btn btn-primary" type="button" onclick="javascript:getPhoneVerify('b');" style="line-height: 22px;">{:lang('get_phone_code')}</button>
+         {else}
+         {:hook('supplierDocumentBindSmsCaptcha')}
+         {/if}
+         <span id="verifyPhone"></span>
+         </td>
+       </tr>
+       <tr>
+	        <th align='right'><font color='red'>*</font>{:lang('label_security_phone_code')}：</th>
+			<td>
+				<input type='text' class="ipt" id='Checkcode' name='Checkcode' style='width:250px;' maxLength='30' data-rule="{:lang('label_security_phone_code')}: required;" data-msg-required="{:lang('require_security_phone_code')}" data-tip="{:lang('require_security_phone_code')}"/>
+			</td>
+		</tr>
+           <tr>
+             <td colspan='2' style='padding-left:155px;height:60px;'>
+                 <button class="wst-sec-but btn btn-primary" type="submit" style="width:100px;height: 30px;"><i class="fa fa-check"></i>{:lang('bind_now')}</button>
+             </td>
+           </tr>
+        </table>
+      </form>
+     <form method="post" id="phoneVerify" autocomplete="off" style="display:none;">
+      <input type='hidden' id='VerifyId' value='' autocomplete="off"/>
+      <table class='wst-form' style="width:500px;">
+        <tr>
+	        <th align='right'><font color='red'>*</font>{:lang('verify_code')}：</th>
+			<td>
+				<input id="smsVerfy" style="ime-mode:disabled;width:150px;" name="smsVerfy" data-rule="{:lang('verify_code')}: required;" data-msg-required="{:lang('require_security_verify')}" data-tip="{:lang('require_security_verify')}" data-target="#verify" class="ipt wst-lfloat" tabindex="6" autocomplete="off" maxlength="6" type="text"/>
+				<label class="wst-sec-img">
+					<img id='verifyImg' src="{:url('supplier/users/getVerify')}" onclick='javascript:WST.getVerify("#verifyImg")' style="width:110px;height: 30px;margin-left: 5px;">
+				</label>
+			   	<label>&nbsp;{:lang('verify_vague')}？<a href="javascript:WST.getVerify('#verifyImg')"style="color:#69b7b5;">{:lang('verify_change')}</a></label><span id="verify"></span>
+			</td>
+		</tr>
+         <tr>
+           <td colspan='2' style='padding-left:71px;height:50px;'>
+               <button class="wst-sec-but btn btn-primary" type="submit" style="width:100px;height: 30px;"><i class="fa fa-check"></i>{:lang('confirm')}</button>
+           </td>
+         </tr>
+        </table>
+      </form>
+{/if}
+{if ($process=='Three')}
+<div class="wst-sec-su">
+	<span class="wst-sec-sut"><img src="__SUPPLIER__/img/icon_success.png"/></span>
+	<span class="wst-sec-sub">{:lang('bind_phone_success')}</span>
+</div>
+{/if}
+{/block}
+{block name="js"}
+	<script type='text/javascript' src='__SUPPLIER__/security/security.js?v={$v}'></script>
+	<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+	<script>
+	$(function(){vephoneForm();})
+	</script>
+{/block}

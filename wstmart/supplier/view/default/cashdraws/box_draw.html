@@ -1,0 +1,65 @@
+  <form id='drawForm' autocomplete='off' >
+  	<input type="hidden" id="token" value='{:WSTConf("CONF.pwdModulusKey")}'/>
+    <table width='100%' style='margin-top:10px;' class='wst-form' style='dislay:none'>
+      <tr>
+          <th width='120' align='right'>{:lang("withdrawal_type")}：</th>
+          <td style='line-height:25px;'>
+              <select id='accType' class='j-ipt' onchange='javascript:changeAccType(this.value)'>
+                  <option value='3'>{:lang("bank_card")}</option>
+                  {if WSTConf('CONF.wxenabled')==1}
+                  <option value='1'>{:lang("withdrawal_via_wechat")}</option>
+                  {/if}
+              </select>
+          </td>
+      </tr>
+      <tr class='accType accType1' style='display: none'>
+          <th width='120' align='right'>{:lang("real_name")}：</th>
+          <td style='line-height:25px;'><input type='text' style='width:250px' id='accUser' class='j-ipt' maxlength="20" placeholder="{:lang("certified_real_name")}"/></td>
+      </tr>
+      <tr class='accType accType1' style='display: none'> 
+          <th align='right'>&nbsp;</th>
+          <td style='color:red'>{:lang("cashdraws_tips1")}</td>
+      </tr>
+      <tr class='accType accType3'>
+        <th width='120' align='right'>{:lang("withdrawal_account_number")}：</th>
+          <td style='line-height:25px;'>
+              【{$object['bankName']}】{$object['bankNo']}
+          </td>
+        </tr>
+        <tr class='accType accType3'>
+          <th width='120' align='right'>{:lang("account_holder")}：</th>
+          <td>{$object['bankUserName']}</td>
+        </tr>
+        <tr> 
+          <th align='right'>{:lang("withdrawal_amount")}<font color='red'>*</font>：</th>
+          <td>
+            <input type='text' id='money' class='j-ipt' style='width:250px' data-rule="{:lang("withdrawal_amount")}: required;" onkeypress="return WST.isNumberdoteKey(event)" onblur="javascript:WST.limitDecimal(this,2)" onkeyup="javascript:changeDrawMoney(this)"  placeholder="{:lang("can_drawal_money")}：{:lang('currency_symbol')}{$supplier['supplierMoney']-$supplier['rechargeMoney']}"/>
+          </td>
+        </tr>
+        {if (int)WSTConf('CONF.drawCashCommission')>0}
+        <tr>
+            <input type="hidden" id="commission" value="{:WSTConf('CONF.drawCashCommission')}" />
+            <th align='right'>{:lang("service_charge")}（{:WSTConf('CONF.drawCashCommission')}%）：</th>
+            <td style="padding-left:8px;"><span id="chargeService">0</span>{:lang("money_unit")}</td>
+        </tr>
+        {/if}
+        <tr>
+            <th align='right'> {:lang("actual_amount_received")}：</th>
+            <td style="padding-left:8px;"><span id="actualMoney">0</span>{:lang("money_unit")}</td>
+        </tr>
+        <tr height='40'>
+            <th align='right'>{:lang("pay_pwd")}<font color='red'>*</font>：</th>
+            <td>
+              <input type="password" style="display:none">
+              <input type='password' id='payPwd' class='j-ipt' maxlength="6" style='width:250px' data-rule="{:lang("pay_pwd")}: required;"/>
+            </td>
+        </tr>
+        <tr>
+           <td colspan='2' style='text-align: center;padding-top:5px;'>
+               <a class='s-btn btn btn-primary' onclick="drawMoney()"><i class="fa fa-check"></i>{:lang("save")}</a>
+               <a class='s-btn2 btn btn-primary' style='margin-left:10px;' onclick='layerclose()'><i class="fa fa-close"></i>{:lang("cancel")}</a>
+           </td>
+        </tr>
+     </table>
+  </form>
+  <script type="text/javascript" src="__STATIC__/js/rsa.js"></script>

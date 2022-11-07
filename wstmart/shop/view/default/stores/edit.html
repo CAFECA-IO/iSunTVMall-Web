@@ -1,0 +1,147 @@
+{extend name="default/base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/webuploader/webuploader.css?v={$v}" />
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+<form name="editForm"  id="editForm" autocomplete="off">
+      <table class='wst-form uinfo-form wst-box-top' style="margin-bottom: 30px;">
+        <tr>
+             <td colspan="2">
+               <div class='wst-tips-box'>
+               <div class='icon'></div>
+               <div class='tips'>
+               {:lang('stores_tips7')}<br/>
+              
+               </div> <div style="clear:both"></div>
+             </td>
+           </tr>
+        <tr>
+          <th width="100" height='25'>{:lang('account_name')}：</th>
+          <td>
+            <input type="hidden" id="token" value='{:WSTConf("CONF.pwdModulusKey")}'/>
+            <input type='hidden' id='storeId' name='storeId' class="ipt" value='{$object["storeId"]}' />
+            {$object["loginName"]}
+          </td>
+        </tr>
+        <tr>
+          <th>{:lang('password')}：</th>
+          <td class="uinfo">
+            <input id="loginPwd" name="loginPwd" class="ipt wst-regist-input" tabindex="2" style="ime-mode:disabled;" autocomplete="off" type="password" placeholder="{:lang('shopUsers_tips04')}"/>
+          </td>
+        </tr>
+        <tr>
+          <th>{:lang('re_pass')}：</th>
+          <td class="uinfo">
+            <input id="reUserPwd" name="reUserPwd" class="ipt wst-regist-input" tabindex="3" autocomplete="off" type="password" placeholder="{:lang('shopUsers_tips04')}" data-rule="match(loginPwd)"/>
+          </td>
+        </tr>
+        <tr>
+          <th style="vertical-align: top;">{:lang('store_name')}<font color='red'>*</font>：</th>
+          <td class="uinfo">
+            <input id="storeName" name="storeName" value="{$object['storeName']}" class="ipt wst-regist-input" tabindex="3" autocomplete="off" type="text" data-rule="{:lang('store_name')}: required;"/>
+            <div class="notic">{:lang('stores_tips8')}</div>
+          </td>
+        </tr>
+        <tr>
+          <th style="vertical-align: top;">{:lang('stores_tips9')}<font color='red'>*</font>：</th>
+          <td class="uinfo">
+            <select id="areaIdPath_0" class="j-areaIdPath" data-name="areaIdPath" level="0" onchange="WST.ITAreas({id:'areaIdPath_0',val:this.value,isRequire:true,className:'j-areaIdPath'});">
+                  <option value="">-{:lang('select')}-</option>
+                  {php}
+                  $areas = WSTTable('areas',['isShow'=>1,'dataFlag'=>1,'parentId'=>0],'areaId,areaName',100,'areaSort desc');
+                  foreach($areas as $aky => $area){
+                  {/php}
+                  <option value="{$area['areaId']}">{$area['areaName']}</option>
+                  {php}}{/php}
+              </select>
+              {if(WSTConf('CONF.mapKey'))}
+              <button type="button" class="btn btn-primary" data-name="areaIdPath" onclick="javascript:mapCity(this)" style="top: 8px;height: 28px;line-height: 28px;font-size: 14px;font-weight: 400;"><i class="fa fa-map-marker"></i>{:lang('map_positioning')}</button> 
+              {/if}
+              <div class="notic">{:lang('stores_tips10')}</div>
+          </td>
+        </tr>
+        {if(WSTConf('CONF.mapKey'))}
+            <tr>
+                <th>&nbsp;</th>
+                <td>
+                    <div id="container"  style='width:700px;height:400px'></div>
+                    <input type='hidden' id='mapLevel' class='ipt'  value="{$object['mapLevel']}"/>
+                    <input type='hidden' id='longitude' class='ipt'  value="{$object['longitude']}"/>
+                    <input type='hidden' id='latitude' class='ipt'  value="{$object['latitude']}"/>
+                </td>
+            </tr>
+        {/if}
+        <tr>
+          <th style="vertical-align: top;">{:lang('detailed_address')}<font color='red'>*</font>：</th>
+          <td class="uinfo">
+            <input id="storeAddress" name="storeAddress" value="{$object['storeAddress']}" class="ipt wst-regist-input" tabindex="3" autocomplete="off" type="text" data-rule="{:lang('detailed_address')}: required;"/>
+            <div class="notic">{:lang('stores_tips11')}</div>
+          </td>
+        </tr>
+        <tr>
+          <th style="vertical-align: top;">{:lang('contact_information')}<font color='red'>*</font>：</th>
+          <td class="uinfo">
+            <input id="storeTel" name="storeTel" value="{$object['storeTel']}" class="ipt wst-regist-input" tabindex="3" autocomplete="off" type="text" data-rule="{:lang('contact_information')}: required;"/>
+            <div class="notic">{:lang('stores_tips12')}</div>
+          </td>
+        </tr>
+        <tr>
+           <th width='150'>{:lang('real_map_of_the_store')}<font color='red'>*</font>：</th>
+           <td>
+            <input type='text' id='storeImg' value="{$object['storeImg']}" class='ipt' value='' style="width: 500px; float: left;" />
+            <div id='storeImgPicker' style='float: left; margin-top:5px;'>{:lang('upload')}</div><span id='uploadMsg'></span>
+            <div id='storeImgBox' style='margin-bottom:5px; float: left; height: 30px; margin-left: 5px;'>
+              <span class='weixin'>
+                <img class='img' style='height:16px;width:18px;' src='__STATIC__/images/upload-common-select.png'>
+                <img class='imged'  id='preview'  style='max-height:150px;max-width: 200px; border:1px solid #dadada; background:#fff' src="__RESOURCE_PATH__/{if $object['storeImg']!=''}{$object['storeImg']}{else}{:WSTConf('CONF.goodsLogo')}{/if}">
+              </span>
+            </div>
+           </td>
+        </tr>
+        <tr>
+         <th>{:lang('store_status')}<font color='red'>*</font>：</th>
+         <td  colspan='2' class="layui-form">
+           <label>
+              <input type='radio' id='storeStatus1' class='ipt' name='storeStatus' checked value='1' title='{:lang("enabled")}'>
+           </label>
+           <label>
+              <input type='radio' id='storeStatus0' class='ipt' name='storeStatus'  value='0' title='{:lang("close")}'>
+           </label>
+         </td>
+      </tr>
+        <tr>
+           <td colspan='2' class='wst-bottombar'>
+              <button type="button" class="btn btn-primary btn-mright" onclick="javascript:edit({$p})"><i class="fa fa-check"></i>{:lang('save')}</button>
+              <button type="button" class="btn" onclick="javascript:location.href='{:Url(\'shop/stores/index\',\'p=\'.$p)}'"><i class="fa fa-angle-double-left"></i>{:lang('back')}</button>
+           </td>
+        </tr>
+      </table>
+    </form>
+   </div>
+</div>
+{/block}
+
+{block name="js"}
+<script type="text/javascript" src="__STATIC__/js/rsa.js"></script>
+<script type='text/javascript' src='__STATIC__/plugins/webuploader/webuploader.js?v={$v}'></script>
+<script type='text/javascript' src='__SHOP__/stores/stores.js?v={$v}'></script>
+<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
+<script charset="utf-8" src="{:WSTProtocol()}map.qq.com/api/js?v=2.exp&key={:WSTConf('CONF.mapKey')}"></script>
+<script type="text/javascript">
+$(function(){
+  var areaIdPath = "{$object['areaIdPath']}";
+  var areaIdPath = areaIdPath.split("_");
+  $('#areaIdPath_0').val(areaIdPath[0]);
+  var aopts = {id:'areaIdPath_0',val:areaIdPath[0],childIds:areaIdPath,className:'j-areaIdPath',isRequire:true}
+  WST.ITSetAreas(aopts);
+})
+if(window.conf.MAP_KEY){
+    var longitude = $('#longitude').val();
+    var latitude = $('#latitude').val();
+    var mapLevel = $('#mapLevel').val();
+    initQQMap(longitude,latitude,mapLevel);
+}
+</script>
+
+{/block}

@@ -1,0 +1,21 @@
+<table class='wst-form' style='margin-top:10px;width:90%'>
+   <tr>
+     <td colspan='2' style='padding-left:70px;'>{:lang('order_reject_reason_desc')}</td>
+   </tr>
+   <tr>
+     <th width='120'>{:lang('cancel_reason')}：</th>
+     <td>
+        <select id='reason' onchange='javascript:changeRejectType(this.value)'>
+           {volist name=":WSTDatas('ORDER_REJECT')" id="vo"}
+           <option value='{$vo["dataVal"]}'>{$vo["dataName"]}</option>
+           {/volist}
+        </select>
+     </td>
+   </tr>
+   <tr id='rejectTr' style='display:none'>
+     <th width='120'>{:lang('reason')}<font color='red'>*</font>：</th>
+     <td>
+       <textarea id='content' style='width:99%;height:80px;' maxLength='200'></textarea>
+     </td>
+   </tr>
+</table>

@@ -1,0 +1,38 @@
+<link href="__ROOT__/addons/shopcustompage/view/home/css/shop_home_decoration.css" rel="stylesheet">
+{volist name="customPageData" id="vo"}
+    {if condition="$vo['name'] == 'swiper'"}
+        {include file='/shop/custompagedecoration/hometemplates/swiper' /}
+    {elseif condition="$vo['name'] == 'image'"}
+        {include file='/shop/custompagedecoration/hometemplates/image' /}
+    {elseif condition="$vo['name'] == 'floor_goods'"}
+        {include file='/shop/custompagedecoration/hometemplates/floor-goods' /}
+    {elseif condition="$vo['name'] == 'goods_recommend'"}
+        {include file='/shop/custompagedecoration/hometemplates/goods-recommend' /}
+    {elseif condition="$vo['name'] == 'goods_group'"}
+        {include file='/shop/custompagedecoration/hometemplates/goods-group' /}
+    {elseif condition="$vo['name'] == 'nav'"}
+        {include file='/shop/custompagedecoration/hometemplates/nav' /}
+    {elseif condition="$vo['name'] == 'search'"}
+        {include file='/shop/custompagedecoration/hometemplates/search' /}
+    {elseif condition="$vo['name'] == 'notice'"}
+        {include file='/shop/custompagedecoration/hometemplates/notice' /}
+    {elseif condition="$vo['name'] == 'coupon'"}
+         <custompage-coupon @{$vo['id']}@></custompage>
+    {elseif condition="$vo['name'] == 'video'"}
+        {include file='/shop/custompagedecoration/hometemplates/video' /}
+    {elseif condition="$vo['name'] == 'shopwindow'"}
+        {include file='/shop/custompagedecoration/hometemplates/shopwindow' /}
+    {elseif condition="$vo['name'] == 'text'"}
+        {include file='/shop/custompagedecoration/hometemplates/text' /}
+    {elseif condition="$vo['name'] == 'txt'"}
+        {include file='/shop/custompagedecoration/hometemplates/txt' /}
+    {elseif condition="$vo['name'] == 'image_text'"}
+        {include file='/shop/custompagedecoration/hometemplates/image-text' /}
+    {elseif condition="$vo['name'] == 'blank'"}
+        {include file='/shop/custompagedecoration/hometemplates/blank' /}
+    {elseif condition="$vo['name'] == 'new'"}
+        {include file='/shop/custompagedecoration/hometemplates/new' /}
+    {elseif condition="$vo['name'] == 'marketing'"}
+        <custompage-marketing @{$vo['type']}@{$vo['id']}@></custompage>
+    {/if}
+{/volist}

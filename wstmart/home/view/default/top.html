@@ -1,0 +1,202 @@
+
+{wst:ads code="index-top-ads" cache='86400' id="tads"}
+{if ($tads['adFile']!='')}
+<div class="index-top-ads">
+  <a href="{$tads['adURL']}" {if ($tads['isOpen'])}target='_blank'{/if} {if ($tads['adURL']!='')}onclick="WST.recordClick({$tads['adId']})"{/if} onfocus="this.blur();">
+    <img src="__RESOURCE_PATH__/{$tads['adFile']}"></a>
+  <a href="javascript:;" class="close-ads" onclick="WST.closeAds(this)"></a>
+</div>
+{/if}
+{/wst:ads}
+
+<div class="wst-header">
+    <div class="wst-nav">
+		<ul class="headlf">
+		{if condition="session('WST_USER.userId') >0"}
+		   <li class="drop-info">
+			  <div class="drop-infos">
+			  <a href="{:Url('home/users/index')}">
+			  {:lang('top_welcom_message_des',[session('WST_USER.userName')?session('WST_USER.userName'):session('WST_USER.loginName')])}</a>
+			  </div>
+			  <div class="wst-tag dorpdown-user">
+			  	<div class="wst-tagt">
+			  	   <div class="userImg" >
+				  	<img class='usersImg' data-original="{:WSTUserPhoto(session('WST_USER.userPhoto'))}"/>
+				   </div>	
+				  <div class="wst-tagt-n">
+				    <div style="height: 30px;overflow: hidden;">
+					  	<span class="wst-tagt-na">{:session('WST_USER.userName')?session('WST_USER.userName'):session('WST_USER.loginName')}</span>
+					  	{if (int)session('WST_USER.rankId') > 0 }
+					  		<?php $rankName = session('WST_USER.rankName');?>
+					  		<img src="__RESOURCE_PATH__/{:session('WST_USER.userrankImg')}" title="{$rankName|WSTStripTags}"/>
+					  	{/if}
+				  	</div>
+				  	<div class='wst-tags'>
+			  	     <span class="w-lfloat"><a onclick='WST.position(15,0)' href='{:Url("home/users/edit")}'>{:lang('user_information')}</a></span>
+			  	     <span class="w-lfloat" style="margin-left:10px;"><a onclick='WST.position(16,0)' href='{:Url("home/users/security")}'>{:lang('security_setting')}</a></span>
+			  	    </div>
+				  </div>
+			  	  <div class="wst-tagb" >
+			  		<a onclick='WST.position(5,0)' href='{:Url("home/orders/waitReceive")}'>{:lang('wait_receive_order')}</a>
+			  		<a onclick='WST.position(60,0)' href='{:Url("home/logmoneys/usermoneys")}'>{:lang('my_balance')}</a>
+			  		<a onclick='WST.position(49,0)' href='{:Url("home/messages/index")}'>{:lang('my_messages')}</a>
+			  		<a onclick='WST.position(13,0)' href='{:Url("home/userscores/index")}'>{:lang('my_integral')}</a>
+			  		<a onclick='WST.position(41,0)' href='{:Url("home/favorites/goods")}'>{:lang('my_attention')}</a>
+			  		<a style='display:none'>{:lang('consultation_reply')}</a>
+			  	  </div>
+			  	<div class="wst-clear"></div>
+			  	</div>
+			  </div>
+			</li>
+			<li class="spacer">|</li>
+			<li class="drop-info">
+			<a href='{:Url("home/messages/index")}' target='_blank' onclick='WST.position(49,0)'>{:lang('message')}（<span id='wst-user-messages'>0</span>）</a>
+			</li>
+			<li class="spacer">|</li>
+			<li class="drop-info">
+			  <div><a href="javascript:WST.logout();">{:lang('sign_out')}</a></div>
+			</li>
+			{else /}
+			<li class="drop-info">
+			  <div>{:lang('wellcome_visitor')}<a href="{:Url('home/users/login')}" onclick="WST.currentUrl();">&nbsp;&nbsp;{:lang('login')}</a></div>
+			</li>
+			<li class="spacer">|</li>
+			<li class="drop-info">
+			  <div><a href="{:Url('home/users/regist')}" onclick="WST.currentUrl();">{:lang('free_register')}</a></div>
+			</li>
+			{/if}
+		</ul>
+		<ul class="headrf" style='float:right;'>
+		    <li class="j-dorpdown" style="width: 86px;">
+				<div class="drop-down drop-down6 ">
+					<a href="{:Url('home/users/index')}" target="_blank">{:lang('my_order')}<i class="di-right"><s>◇</s></i></a>
+				</div>
+				<div class='j-dorpdown-layer order-list'>
+				   <div><a href='{:Url("home/orders/waitPay")}' onclick='WST.position(3,0)'>{:lang('wait_pay_order')}</a></div>
+				   <div><a href='{:Url("home/orders/waitReceive")}' onclick='WST.position(5,0)'>{:lang('wait_pending_order')}</a></div>
+				   <div><a href='{:Url("home/orders/waitAppraise")}' onclick='WST.position(6,0)'>{:lang('wait_appraise_order')}</a></div>
+				</div>
+			</li>	
+			{if(WSTDatas('ADS_TYPE',4))}
+			<li class="spacer">|</li>
+			<li class="j-dorpdown">
+				<div class="drop-down drop-down1 "><i class="di-left"></i><a href="#" target="_blank">{:lang('mobile_mall')}</a></div>
+				<div class='j-dorpdown-layer sweep-list'>
+				   <div class="qrcodea">
+					   <div id='qrcodea' class="qrcodeal"></div>
+					   <div class="qrcodear">
+					   	<p>{:lang('scan_qr_code')}</p><span>{:lang('down_app_client')}</span>
+					   	<br/>
+					   	<a href="{:url('home/index/download')}" target="_blank">Android</a>
+					   	<br/>
+					   	<a href="{:url('home/index/download')}" target="_blank">iPhone</a>
+					   </div>
+				   </div>
+				</div>
+			</li>
+			{/if}
+			{if(WSTConf('CONF.wxenabled')==1)}
+			<li class="spacer">|</li>
+			<li class="j-dorpdown">
+				<div class="drop-down drop-down3 "><a href="#" target="_blank">{:lang('focus_us')}</a></div>
+				<div class='j-dorpdown-layer des-list' style="width:120px;">
+					<div style="height:114px;">{if(WSTConf('CONF.wxAppLogo'))}<img src="__RESOURCE_PATH__/{:WSTConf('CONF.wxAppLogo')}" style="height:114px;">{/if}</div>
+					<div>{:lang('focus_us')}</div>
+				</div>
+			</li>
+			{/if}
+			<li class="spacer">|</li>
+			<li class="j-dorpdown">
+				<div class="drop-down drop-down5 "><a href="#" target="_blank">{:lang('my_collection')}</a></div>
+				<div class='j-dorpdown-layer foucs-list'>
+				   <div><a href="{:Url('home/favorites/goods')}" onclick='WST.position(41,0)'>{:lang('goods_collection')}</a></div>
+				   <div><a href="{:Url('home/favorites/shops')}" onclick='WST.position(46,0)'>{:lang('shop_collection')}</a></div>
+				</div>
+			</li>
+			<li class="spacer">|</li>
+			<li class="j-dorpdown">
+				<div class="drop-down drop-down2 " ><a href="#" target="_blank"> {:lang('customer_service')}</a></div>
+				<div class='j-dorpdown-layer des-list'>
+				   <div><a href='{:Url("home/helpcenter/view","id=1")}' target='_blank'>{:lang('help_center')}</a></div>
+				   <div><a href='{:Url("home/helpcenter/view","id=8")}' target='_blank'>{:lang('after_sale_service')}</a></div>
+				   <div><a href='{:Url("home/helpcenter/view","id=3")}' target='_blank'>{:lang('common_problem')}</a></div>
+				   <div><a href='{:Url("home/feedbacks/index")}' target='_blank'>{:lang('function_feedback')}</a></div>
+				</div>
+			</li>
+			{if (WSTConf('CONF.isOpenShopApply')==1 || WSTConf('CONF.isOpenSupplierApply')==1)}
+			<li class="spacer">|</li>
+			<li class="j-dorpdown">
+				<div class="drop-down drop-down6 " ><a href="#" target="_blank"> {:lang('investment_cooperation')}</a></div>
+				<div class='j-dorpdown-layer des-list'>
+					{if WSTConf('CONF.isOpenShopApply')==1}
+				   	<div><a href="{:url('home/shops/join')}" rel="nofollow" onclick="WST.currentUrl('{:url("home/shops/join")}');">{:lang('shop_enter')}</a></div>
+				   	{/if}
+				   	{if WSTConf('CONF.isOpenSupplier')==1 && WSTConf('CONF.isOpenSupplierApply')==1}
+				   	<div><a href="{:url('home/suppliers/join')}" rel="nofollow" onclick="WST.currentUrl('{:url("home/suppliers/join")}');">{:lang('supplier_enter')}</a></div>
+				   	{/if}
+				</div>
+			</li>
+			{/if}
+			<li class="spacer">|</li>
+			{if condition="(session('WST_USER.userId') > 0) && (session('WST_USER.userType') == 1 || session('WST_SUPPLIER.userType') == 3)"}
+				{if condition="(session('WST_USER.userType') == 1 && session('WST_SUPPLIER.userType') == 3)"}
+					<li class="j-dorpdown">
+						<div class="drop-down drop-down4 " ><a href="#" target="_blank">{:lang('management_center')}<i class="di-right"><s>◇</s></i></a></div>
+						<div class='j-dorpdown-layer foucs-list'>
+						   <div><a href="{:Url('supplier/index/index')}" target="_blank">{:lang('management_supplier_center')}</a></div>
+						   <div><a href="{:Url('shop/index/index')}" target="_blank">{:lang('management_shop_center')}</a></div>
+						</div>
+					</li>
+				{else}
+					{if session('WST_SUPPLIER.supplierId') gt 0}
+					<li style='text-align: center'><a target="_blank" href="{:Url('supplier/index/index')}" rel="nofollow">{:lang('management_supplier_center')}</a></li>
+					{else}
+					<li style='text-align: center'><a target="_blank" href="{:Url('shop/index/index')}" rel="nofollow">{:lang('management_shop_center')}</a></li>
+					{/if}
+				{/if}
+            {else}
+				<li class="j-dorpdown">
+					<div class="drop-down drop-down4 " ><a href="#" target="_blank">{:lang('management_center')}<i class="di-right"><s>◇</s></i></a></div>
+					<div class='j-dorpdown-layer foucs-list'>
+					   <div><a href="{:url('shop/index/login')}" target="_blank">{:lang('shop_login')}</a></div>
+					   {if WSTConf('CONF.isOpenSupplier')==1}
+					   <div><a href="{:url('supplier/index/login')}" target="_blank">{:lang('supplier_login')}</a></div>
+					   {/if}
+					</div>
+				</li>
+            {/if}
+            <li class="j-dorpdown">
+				<div class="drop-down" >
+					{volist name=":WSTSysLangs()" id='lvo'}
+					{if $lang==$lvo['code']}
+					<a href="{:url('home/index/index')}?lang={$lvo['code']}">{$lvo['name']}<i class="di-right" style='right: 10px;'><s>◇</s></i></a>
+					{/if}
+					{/volist}
+				</div>
+				<div class='j-dorpdown-layer wst-lang'>
+					{volist name=":WSTSysLangs()" id='lvo'}
+					<div style='text-align: left;'><a href="{:url('home/index/index')}?lang={$lvo['code']}">{$lvo['name']}</a></div>
+					{/volist}
+				</div>
+			</li>
+		</ul>
+		<div class="wst-clear"></div>
+  </div>
+</div>
+<script>
+{if(WSTDatas('ADS_TYPE',4))}
+$(function(){
+	//二维码
+	var url = window.location.host+window.conf.APP;
+	var qrcode = new QRCode(document.getElementById("qrcodea"), {
+        width : 260,
+        height : 260
+    });
+    qrcode.makeCode(url);
+});
+{/if}
+function goShop(id){
+  location.href=WST.U('home/shops/index','shopId='+id);
+}
+</script>
+<script type='text/javascript' src='__STATIC__/js/qrcode.js'></script>

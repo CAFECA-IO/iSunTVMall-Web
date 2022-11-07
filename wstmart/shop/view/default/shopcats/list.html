@@ -1,0 +1,49 @@
+{extend name="default/base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__SHOP__/js/wstgridtree.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__SHOP__/shopcats/shopcats.js?v={$v}'></script>
+<script>
+    $(function(){initGrid();})
+</script>
+{/block}
+{block name="main"}
+<div class='wst-toolbar'>
+    <a class="btn btn-success f-right" href='javascript:toEdit(0);'><i class="fa fa-plus"></i>{:lang('add')}</a>
+    <div style="clear:both"></div>
+</div>
+<div class="wst-grid">
+    <div class='mmGrid layui-form' id="maingrid"></div>
+</div>
+
+<div id='catBox' style='display:none' class="layui-form">
+    <form id='catForm' autocomplete="off">
+        <input type='hidden' id='parentId' name="parentId" class='ipt' />
+        <table class='wst-form wst-box-top'>
+            {volist name=':WSTSysLangs()' id='vo'}
+            <tr>
+                <th width='150'>{:lang('label_cat_name')}（{$vo['name']}）<font color='red'>*</font>：</th>
+                <td><input type='text' id='langParams{$vo["id"]}catName' name='langParams{$vo["id"]}catName' class='ipt' maxLength='20' style='width:200px;'/></td>
+            </tr>
+            {/volist}
+            <tr>
+                <th width='150'>{:lang('display')}<font color='red'>*</font>：</th>
+                <td height='24'>
+                    <input type="checkbox" id="isShow" name="isShow" value="1" class="ipt" lay-skin="switch" lay-filter="isShow1" lay-text="{:lang('is_show_val')}">
+                </td>
+            </tr>
+            <tr>
+                <th width='150'>{:lang('sort')}<font color='red'>*</font>：</th>
+                <td><input type='text' id='catSort' name='catSort' class='ipt' style='width:60px;' onkeypress='return WST.isNumberKey(event);' onkeyup="javascript:WST.isChinese(this,1)" maxLength='10' value='0'/></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+{/block}
+{block name="footer"}
+{include file="default/footer" /}
+{/block}
+

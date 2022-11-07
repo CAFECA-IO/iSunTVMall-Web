@@ -1,0 +1,110 @@
+{extend name="base" /}
+{block name="css"}
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script src="__STATIC__/plugins//kindeditor/NKeditor-all.js?v={$v}" type="text/javascript" ></script>
+<script src="__ADMIN__/supplierarticles/guide.js?v={$v}" type="text/javascript"></script>
+<script>
+$(function(){initGrid({$p});})
+</script>
+{/block}
+{block name="main"}
+<div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+  <ul class="layui-tab-title">
+    <li class="layui-this">{:lang('label_article_join_shop')}</li>
+    <li >{:lang('label_article_join_proto')}</li>
+  </ul>
+  <div class="layui-tab-content" >
+    <div class="layui-tab-item layui-show">
+		<div class="wst-toolbar">
+		   <input type='text' id='key' placeholder='{:lang("title")}'/> 
+		   <button class="btn btn-primary" onclick='javascript:loadGrid(0)'><i class='fa fa-search'></i>{:lang('query')}</button>
+		   {if WSTGrant('GRZZN_03')}
+		   <button class="btn btn-danger f-right btn-fixtop" onclick='javascript:toBatchDel()' style='margin-left:10px;'><i class='fa fa-trash'></i>{:lang('bath_del')}</button>
+		   {/if}
+		   {if WSTGrant('GRZZN_01')}
+		   <button class="btn btn-success f-right btn-fixtop" onclick='javascript:toEdit(0)'><i class='fa fa-plus'></i>{:lang('add')}</button>
+		   {/if}
+		   <div style='clear:both'></div>
+		</div>
+		<div class='wst-grid'>
+		<div id="mmg" class="mmg"></div>
+		<div id="pg" style="text-align: right;"></div>
+		</div>
+    </div>
+    <div class="layui-tab-item">
+        <input type='hidden' id='articleId' value='{$object["articleId"]}'/>
+		<form id='articleForm' autocomplete="off">
+	    <div class="layui-tab layui-tab-brief" lay-filter="msgTab">
+	      <ul class="layui-tab-title">
+	        {volist name=":WSTSysLangs()" id='vo'}
+	        <li {if $key==0}class="layui-this"{/if}>{$vo['name']}</li>
+	        {/volist}
+	      </ul>
+	      <div class="layui-tab-content">
+	        {volist name=":WSTSysLangs()" id='vo'}
+	        <div class="layui-tab-item {if $key==0}layui-show{/if}">
+				<table class='wst-form wst-box-top '>
+				   <tr>
+				       <td align='center'>{:lang('label_article_join_proto')}</th>
+				   </tr>
+				       <td align='center'>
+				       	{if WSTGrant('GRZZN_02')} 
+				       	<textarea  id='langParams{$vo["id"]}articleContent' name='langParams{$vo["id"]}articleContent' class="form-control ipt" style='width:80%;'>{$object['langParams'][$vo['id']]['articleContent']}</textarea>
+				       	{else}
+				       	<div style='width:80%;text-align:left;'>
+		                {$object['articleContent']|htmlspecialchars_decode}
+		                <div>
+				       	{/if}
+				       </td>
+				    </tr>
+				    {if WSTGrant('GRZZN_02')}
+				    <tr>
+				       <td align='center'>
+				       	<button type="button" class="btn btn-primary btn-mright" onclick="javascript:saveAgreement()"><i class="fa fa-check"></i>{:lang('save')}</button> 
+				        <button type="button" class="btn" onclick="javascript:clearHtml()"><i class="fa fa-refresh"></i>{:lang('clear')}</button>
+				       </td>
+				    </tr>
+				    {/if}
+				</table>
+			</div>
+			{/volist}
+		   </div>
+		</div>
+    </div>
+  </div>
+</div>
+{if WSTGrant('GRZZN_02')} 
+<script>
+var editor1 = null;
+$(function(){
+  //编辑器
+    KindEditor.ready(function(K) {
+    	{volist name=":WSTSysLangs()" id='vo'}
+		K.create('#langParams{$vo['id']}articleContent', {
+			height:'600px',
+            uploadJson : WST.conf.ROOT+'/admin/articles/editorUpload',
+			allowFileManager : false,
+			allowImageUpload : true,
+            themeType : "default",
+		    items:[     'source', 'undo', 'redo',  'preview', 'print', 'template', 'code', 'cut', 'copy', 'paste',
+		                'plainpaste', 'wordpaste', 'justifyleft', 'justifycenter', 'justifyright',
+		                'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
+		                'superscript', 'clearhtml', 'quickformat', 'selectall',  'fullscreen',
+		                'formatblock', 'fontname', 'fontsize',  'forecolor', 'hilitecolor', 'bold',
+		                'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', 'image','multiimage','media','table', 'hr', 'emoticons', 'baidumap', 'pagebreak',
+		                'anchor', 'link', 'unlink'
+		    ],
+			afterBlur: function(){ this.sync(); }
+		});
+		{/volist}
+	});
+});
+function clearHtml(){
+    editor1.html("");
+}
+</script>
+{/if}
+{/block}

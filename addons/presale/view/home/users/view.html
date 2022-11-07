@@ -1,0 +1,213 @@
+{extend name="$LAYOUT_HOME_USER_BASE" /}
+{block name="title"}{:lang('presale_order_detail_title')} - {:lang('presale_user_center')}{/block}
+{block name="top"}
+  {include file="$LAYOUT_HOME_TOP" /}
+{/block}
+{block name="content"}
+<div class="wst-user-head"><span>{:lang('presale_order_detail')}</span>
+  <a href="{:addon_url('presale://users/plist')}">{:lang('presale_back')}</a>
+</div>
+<div class='wst-user-content'>
+
+   <!-- 订单信息 -->
+   <div class='order-box'>
+      <div class='box-head'>{:lang('presale_order_info')}</div>
+      <table class='wst-form'>
+         <tr>
+           <th width='100'>{:lang('presale_order_number')}：</th>
+           <td>{$object['orderNo']}</td>
+         </tr>
+
+         <tr>
+           <th>{:lang('presale_create_time')}：</th>
+           <td>{$object['createTime']}</td>
+         </tr>
+         <tr>
+           <th>{:lang('presale_pay_type')}：</th>
+           <td>{:WSTLangPayType($object['payType'])}</td>
+         </tr>
+
+
+         <tr>
+            <th>{:lang('presale_delivery_mode')}：</th>
+            <td>{:WSTLangDeliverType($object['deliverType'])}</td>
+         </tr>
+         <tr>
+            <th valign="top">{:lang('presale_user_order_remark')}：</th>
+            <td style='line-height: 20px'>{$object['orderRemarks']}</td>
+         </tr>
+      </table>
+   </div>
+
+   <!-- 发票信息 -->
+   <div class='order-box'>
+      <div class='box-head'>{:lang('presale_invoice_information')}</div>
+      <table class='wst-form'>
+         <tr>
+           <th width='100'>{:lang('presale_is_need_invoice')}：</th>
+           <td>{if $object['isInvoice']==1}{:lang('presale_need')}{else}{:lang('presale_no_need')}{/if}</td>
+         </tr>
+         {if $object['isInvoice']==1}
+              {php}$invoiceArr = json_decode($object['invoiceJson'],true);{/php}
+
+
+         <tr>
+           <th>{:lang('presale_invoice_head')}：</th>
+           <td>
+            {if $object['isInvoice']==1}
+              {$invoiceArr['invoiceHead']}
+            {/if}
+          </td>
+         </tr>
+        {if isset($invoiceArr['invoiceCode'])}
+         <tr>
+           <th>{:lang('presale_invoice_code')}：</th>
+           <td>
+              {$invoiceArr['invoiceCode']}
+          </td>
+         </tr>
+         {/if}
+        {/if}
+      </table>
+   </div>
+   <!-- 收货人信息 -->
+   {if ($object['orderType']==0)}
+
+       <div class='order-box'>
+          <div class='box-head'>{:lang('presale_consignee_information')}</div>
+          <table class='wst-form'>
+             <tr>
+               <th width='100'>{:lang('presale_consignee')}：</th>
+               <td>{$object['userName']}</td>
+             </tr>
+             {if ($object['deliverType']==0)}
+             <tr>
+               <th>{:lang('presale_receiving_address')}：</th>
+               <td>{$object['userAddress']}</td>
+             </tr>
+             {/if}
+             <tr>
+                <th>{:lang('presale_contact_number')}：</th>
+                <td>+{$object['areaCode']} {$object['userPhone']}</td>
+             </tr>
+          </table>
+       </div>
+     {if ($object['deliverType']==1)}
+       <div class='order-box'>
+          <div class='box-head'>{:lang('presale_pick_up_info')}</div>
+          <table class='wst-form'>
+            {if (isset($object['store']))}
+            <tr>
+               <th width='100'>{:lang('presale_store_name')}：</th>
+               <td>{$object['store']['storeName']}</td>
+             </tr>
+             <tr>
+               <th width='100'>{:lang('presale_contact_number')}：</th>
+               <td>{$object['store']['storeTel']}</td>
+             </tr>
+             <tr>
+               <th width='100'>{:lang('presale_store_address')}：</th>
+               <td>{$object['store']['areaNames']}{$object['store']['storeAddress']}</td>
+             </tr>
+            {else}
+            <tr>
+               <th width='100'>{:lang('presale_store_address')}：</th>
+               <td>{$object['shopAddress']}</td>
+            </tr>
+            {/if}
+          </table>
+       </div>
+     {/if}
+   {/if}
+   <!-- 商品信息 -->
+   <div class='order-box'>
+       <div class='box-head'>{:lang('presale_goods_merchbill')}</div>
+       <div class='goods-head'>
+          <div class='goods'>{:lang('presale_goods_title')}</div>
+          <div class='price'>{:lang('presale_unit_price')}</div>
+          <div class='num'>{:lang('presale_buy_num')}</div>
+          <div class='t-price'>{:lang('presale_total_price')}</div>
+       </div>
+       <div class='goods-item'>
+          <div class='shop'>
+          {$object['shopName']}
+
+          </div>
+          <div class='goods-list'>
+
+            <div class='item j-g{$object['goodsId']}'>
+            <div class='goods'>
+                <div class='img'>
+                    <a href='{:addon_url("presale://goods/detail","id=".$object["goodsId"])}' target='_blank'>
+                  <img src='__RESOURCE_PATH__/{$object["goodsImg"]}' width='80' height='80' title='{$object["goodsName"]|WSTStripTags}'/>
+                  </a>
+                </div>
+                <div class='name'>{$object["goodsName"]}</div>
+                <div class='spec'>{:str_replace('@@_@@','<br/>',$object["goodsSpecNames"])}</div>
+            </div>
+            <div class='price'>{:lang('currency_symbol')}{$object['goodsPrice']}</div>
+            <div class='num'>{$object['goodsNum']}</div>
+            <div class='t-price'>{:lang('currency_symbol')}{$object['goodsPrice']*$object['goodsNum']}</div>
+            <div class='wst-clear'></div>
+            </div>
+
+          </div>
+       </div>
+       <div class='goods-footer' style="border-top: 1px solid #ddd;border-bottom: 1px solid #ddd;padding: 10px;">
+          <div class='goods-summary'>
+             <div class='summary'>
+                 {:lang('presale_deposit_money')}：{:lang('currency_symbol')}<span>{$object['depositMoney']}</span>
+               【{$object['payMap'][1]?lang("presale_is_pay"):"<span style='color: red'>".lang('presale_no_pay')."</span>"}】
+               {if($object['payMap'][1] && $object['failType']==2)}
+                  {$object['refundMap'][1]?"-- ".lang('presale_is_refund'):"-- ".lang('presale_no_refund')}
+               {/if}
+               {if($object['payMap'][1] && $object['failType']==1)}
+                  -- {:lang('presale_deposit_money_confiscate')}
+               {/if}
+             </div>
+             <div class='summary'>
+                 {:lang('presale_deposit_balance_title')}：{:lang('currency_symbol')}<span>{$object['surplusMoney']}</span>
+               【<?php echo ($object['presaleStatus']==2 || $object['payMap'][2])?lang("presale_is_pay"):"<span style='color: red'>".lang('presale_no_pay')."</span>";?>】
+               {if($object['payMap'][2] && $object['failType']==2)}
+                  {$object['refundMap'][1]?"-- ".lang('presale_is_refund'):"-- ".lang('presale_no_refund')}
+               {/if}
+             </div>
+             {if($object['presaleStatus']!=0 && $object['payMap'][1])}
+              {:lang('presale_deposit_balance_pay_time')}：<span>{$object['startPayTime']} {:lang('presale_to')} {$object['endPayTime']}</span>
+             {/if}
+
+          </div>
+       </div>
+       <div class='goods-footer'>
+          <div class='goods-summary' style='text-align:right'>
+             <div class='summary'>{:lang('presale_goods_money')}：{:lang('currency_symbol')}<span>{$object['goodsMoney']}</span></div>
+             <div class='summary'>{:lang('presale_freight')}：{:lang('currency_symbol')}<span>{$object['deliverMoney']}</span></div>
+             <div class='summary line'>{:lang('presale_need_pay_total_money')}：{:lang('currency_symbol')}<span>{$object['totalMoney']}</span></div>
+             <div class='summary'>{:lang('presale_pay_real_total_money')}：{:lang('currency_symbol')}<span>{$object['realTotalMoney']}</span></div>
+             <div>{:lang('presale_can_get_score')}：<span class='orderScore'>{$object["orderScore"]}</span>{:lang('presale_score_unit')}</div>
+          </div>
+       </div>
+   </div>
+</div>
+{/block}
+{block name="footer"}
+  {include file="$LAYOUT_HOME_FOOTER" /}
+{/block}
+{block name="js"}
+<script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+<script type="text/javascript" src="__ROOT__/addons/presale/view/home/users/js/list.js?v={$v}"></script>
+<script type="text/javascript">
+$(function(){
+  queryByPage(0);
+});
+</script>
+{/block}
+
+
+
+
+
+
+
+
+

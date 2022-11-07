@@ -1,0 +1,136 @@
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/colpick/css/colpick.css" />
+<script src="__STATIC__/plugins/colpick/js/colpick.js"></script>
+<div class="layui-tab-item layui-form">
+    <table class='wst-form wst-box-top'>
+	<tr>
+	 <th width='160'>{:lang('config_mall_wm_posi')}：</th>
+	 <td>
+	 	<label><input type="radio" id='watermarkPosition' name='watermarkPosition' class='ipt' value="0" {if ($object['watermarkPosition']==0)}checked{/if} title='{:lang('config_mall_wm_posi0')}'/></label>
+	 	<label><input type="radio" id='watermarkPosition' name='watermarkPosition' class='ipt' value="1" {if ($object['watermarkPosition']==1)}checked{/if} title='{:lang('config_mall_wm_posi1')}'/></label>
+	 	<label><input type="radio" id='watermarkPosition' name='watermarkPosition' class='ipt' value="3" {if ($object['watermarkPosition']==3)}checked{/if} title='{:lang('config_mall_wm_posi2')}'/></label>
+	 	<label><input type="radio" id='watermarkPosition' name='watermarkPosition' class='ipt' value="5" {if ($object['watermarkPosition']==5)}checked{/if} title='{:lang('config_mall_wm_posi3')}'/></label>
+	 	<label><input type="radio" id='watermarkPosition' name='watermarkPosition' class='ipt' value="7" {if ($object['watermarkPosition']==7)}checked{/if} title='{:lang('config_mall_wm_posi4')}'/></label>
+	 	<label><input type="radio" id='watermarkPosition' name='watermarkPosition' class='ipt' value="9" {if ($object['watermarkPosition']==9)}checked{/if} title='{:lang('config_mall_wm_posi5')}'/></label>
+	 	<span style="color:gray;">{:lang('config_mall_wm_posi_tips')}</span>
+	 </td>
+	</tr>
+	  <tr>
+	     <th>{:lang('config_mall_wm_offset')}：</th>
+	     <td>
+	     	<input type="text" placeholder="-10,-10" id='watermarkOffset' class='ipt' value="{$object['watermarkOffset']}"/>
+	     	<span style="color:gray;">{:lang('config_mall_wm_offset_tips')} </span>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th width='150'>{:lang('config_mall_wm_word')}：</th>
+	     <td>
+	     	<input type="text" id='watermarkWord' class='ipt' value="{$object['watermarkWord']}" maxLength='50' />
+	     	<span style="color:gray;">{:lang('config_mall_wm_word_tips')}</span>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_wm_size')}：</th>
+	     <td>
+	     	<input type="text" id='watermarkSize' class='ipt' value="{$object['watermarkSize']}" maxLength='2'/>
+	     	<span style="color:gray;">{:lang('config_mall_wm_size_tips')}</span>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_wm_color')}：</th>
+	     <td>
+	     	<input type="text" id='watermarkColor' class='ipt' value="{$object['watermarkColor']}" />
+	     	<span style="color:gray;">{:lang('config_mall_wm_color_tips')}</span>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_wm_color')}：</th>
+	     <td>
+	     	<input type="text" id='watermarkTtf' class='ipt' value="{$object['watermarkTtf']}" placeholder="extend/verify/verify/ttfs/test.ttf" />
+	     	<span style="color:gray;">{:lang('config_mall_wm_color_tips')}</span>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_wm_file')}：</th>
+	     <td>
+	     	<input type="text" readonly="readonly" id='watermarkFile' class='ipt' value="{$object['watermarkFile']}" style="float: left;width: 355px;" />
+	     	<div id='watermarkFilePicker'>{:lang('upload')}</div><span id='watermarkFileMsg'></span>
+	     	<span style="color:gray;line-height: 30px;float: left; padding-left: 5px;">{:lang('config_mall_wm_file')}</span>
+	     	<div style="min-height:30px; float: left;line-height: 30px;margin-left: 5px;" id="preview">
+          	{if (isset($object['watermarkFile']))}
+          	 <img id='watermarkFilePrevw' src="__RESOURCE_PATH__/{$object['watermarkFile']}" style="max-height:30px;" /> 
+          	{/if}
+          	</div>
+	     </td>
+	  </tr>
+	  
+	  <tr>
+	     <th>{:lang('config_mall_wm_opacity')}：</th>
+	     <td>
+	     	<input type="text" id='watermarkOpacity' class='ipt' value="{$object['watermarkOpacity']}" />
+	     	<span style="color:gray;">{:lang('config_mall_wm_opacity_tips')}</span>
+	     </td>
+	  </tr>
+      <tr>
+	     <th>{:lang('config_mall_wm_logo')}：</th>
+	     <td>
+	     	<input type="text" readonly="readonly" id='mallLogo' class='ipt' value='{$object["mallLogo"]}' style="float: left;width: 355px;" />
+	     <div id='mallLogoPicker'>{:lang('upload')}</div><span id='mallLogoMsg'></span>
+	     <span style="color:gray;line-height: 30px;float: left; padding-left: 5px;">{:lang('config_mall_wm_logo')}</span>	
+	     <img src='__RESOURCE_PATH__/{$object["mallLogo"]}' height='30px' id='mallLogoPrevw' style="margin-left: 5px;" />
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_wm_shop_logo')}：</th>
+	     <td>
+	     <input type="text" readonly="readonly" id='shopLogo' class='ipt' value='{$object["shopLogo"]}' style="float: left;width: 355px;"/>	
+	     <div id='shopLogoPicker'>{:lang('upload')}</div><span id='shopLogoMsg'></span>
+	     <span style="color:gray;line-height: 30px;float: left; padding-left: 5px;">{:lang('config_mall_wm_shop_logo_tips')}</span>
+	     <img src='__RESOURCE_PATH__/{$object["shopLogo"]}' height='30' id='shopLogoPrevw' style="margin-left: 5px;"/>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_wm_mobile_top_bg')}：</th>
+	     <td>
+	     <input type="text" readonly="readonly" id='shopAdtop' class='ipt' value='{$object["shopAdtop"]}' style="float: left;width: 355px;"/>
+	     <div id='shopAdtopPicker'>{:lang('upload')}</div><span id='shopAdtopMsg'></span>
+	     <span style="color:gray;line-height: 30px;float: left; padding-left: 5px;">{:lang('config_mall_wm_mobile_top_tips')}</span>
+	     <img src='__RESOURCE_PATH__/{$object["shopAdtop"]}' height='30' id='shopAdtopPrevw' style="margin-left: 5px;"/>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_wm_mobile_hb_bg')}：</th>
+	     <td>
+	     <input type="text" readonly="readonly" id='goodsPosterBg' class='ipt' value='{$object["goodsPosterBg"]}' style="float: left;width: 355px;"/>
+	     <div id='goodsPosterBgPicker'>{:lang('upload')}</div><span id='goodsPosterBgMsg'></span>
+	     <span style="color:gray;line-height: 30px;float: left; padding-left: 5px;">{:lang('config_mall_wm_mobile_hb_bg_tips')}</span>
+	     <img src='__RESOURCE_PATH__/{$object["goodsPosterBg"]}' height='30' id='goodsPosterBgPrevw' style="margin-left: 5px;"/>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_wm_user_logo')}：</th>
+	     <td>
+	     	<input type="text" readonly="readonly" id='userLogo' class='ipt' value='{$object["userLogo"]}' style="float: left;width: 355px;"/>
+	     <div id='userLogoPicker'>{:lang('upload')}</div><span id='userLogoMsg'></span>
+	     <span style="color:gray;line-height: 30px;float: left; padding-left: 5px;">{:lang('config_mall_wm_user_logo_tips')}</span>
+	     <img src='__RESOURCE_PATH__/{$object["userLogo"]}' height='30' id='userLogoPrevw' style="margin-left: 5px;"/>
+	     </td>
+	  </tr>
+	  <tr>
+	     <th>{:lang('config_mall_wm_goods_logo')}：</th>
+	     <td>
+	     	<input type="text" readonly="readonly" id='goodsLogo' class='ipt' value='{$object["goodsLogo"]}' style="float: left;width: 355px;"/>
+	     <div id='goodsLogoPicker'>{:lang('upload')}</div><span id='goodsLogoMsg'></span>
+	     <span style="color:gray;line-height: 30px;float: left; padding-left: 5px;">{:lang('config_mall_wm_goods_logo')}</span>
+	     <img src='__RESOURCE_PATH__/{$object["goodsLogo"]}' height='30' id='goodsLogoPrevw' style="margin-left: 5px;"/>
+	     </td>
+	  </tr>
+	  {if ($grant)}
+	    <tr>
+	      <td colspan='2' align="center">
+	     	<button type="button" class="btn btn-primary btn-mright" onclick='javascript:edit()'><i class="fa fa-check"></i>{:lang('submit')}</button> 
+        	<button class="btn" onclick='javascript:resetForm()'><i class="fa fa-refresh"></i>{:lang('reset')}</button>
+	     </td>
+	    </tr>
+	 {/if}
+	 </table>
+</div>

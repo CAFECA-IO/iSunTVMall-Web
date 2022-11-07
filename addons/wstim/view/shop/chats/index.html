@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+  <meta name="keywords" content=""> 
+  <meta name="description" content="">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <title>{:lang('wstim_customer_service')}</title> 
+  <link rel="stylesheet" type="text/css" href="__ROOT__/addons/wstim/view/shop/chats/skin-min.css">
+  <script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="__ROOT__/addons/wstim/view/static/webuploader/webuploader.css" />
+  <script type="text/javascript" src="__ROOT__/addons/wstim/view/static/js/jquery.min.js"></script>
+  <script type='text/javascript' src='__ROOT__/addons/wstim/view/static/js/common.js'></script>
+  <script type='text/javascript' src='__ROOT__/addons/wstim/view/static/webuploader/webuploader.js'></script>
+  <script src="__ROOT__/addons/wstim/view/static/layer/layer.js"></script>
+</head> 
+ <body>
+   <div class="wrapper">
+     <div class="im-content" style="margin-left: -600px; width: 1200px;"> 
+    <div class="im-main-content"> 
+     <div class="im-left-sidebar"> 
+        <div class="user-info"> 
+         <div class="info-lcol"> 
+          <div class="info-m"> 
+           <div class="u-name"> 
+             <a href="#" target="_blank" id="serviceName"></a> 
+           </div>
+          </div>
+         </div> 
+         <div class="info_line"></div>
+        </div> 
+        <div class="connect_info clearfix">
+          <div class="ci_item">
+            <p class="c20_666">{:lang('wstim_to_be_connected')}</p>
+            <span id="waitCount" class="c14_e50">0</span>
+          </div>
+          <div class="ci_item">
+            <p class="c20_666">{:lang('wstim_connected')}</p>
+            <span id="chatCount" class="c14_e50">0</span>
+          </div>
+        </div>
+        <div class="u-wrap" id="listDetails"> 
+         <ul class="u-lst">
+
+        </ul> 
+        </div> 
+     </div> 
+     <div class="im-middle" id="im-middle" conver=""> 
+      <div class="im-header im-chat-t"> 
+       <div class="im-shop">
+        <a href="#" class="enter"></a> 
+        <h1>
+          <span class="im-chat-object" id="logoTitle">{:lang('wstim_shop_name')}</span>
+          <i class="shop-on"></i>
+        </h1> 
+       </div> 
+       <div class="im-ads">
+       </div> 
+      </div> 
+      <div class="im-chat-window" style="margin-right: 300px;"> 
+       <!-- -- scrollDiv 消息渲染区域 -- --> 
+       <div class="im-chat-list" id="scrollDiv"> 
+    </div>
+       <div class="im-edit-area"> 
+        <div class="im-edit-toolbar">
+          <p class="im-icon-out"> 
+            <span class="im-txt">  </span>
+          </a>
+           <a href="javascript:;" id="uploadBtn" class="pic" title="{:lang('wstim_mapping')}" style="position: relative; z-index: 1;overflow: hidden;"> 
+            <i class="im-pic" id="sendImageButton"></i> 
+           </a> 
+           </p> 
+        </div> 
+        <div class="im-edit-ipt-area"> 
+         <div id="text_in" class="im-edit-ipt" style="overflow-y: auto; font-weight: normal; font-size: 12px; overflow-x: hidden; word-break: break-all; font-style: normal; outline: none;" contenteditable="true" hidefocus="true" tabindex="0"></div> 
+        </div> 
+        <div class="im-edit-btn-area"> 
+         <div class="im-link-area"></div> 
+
+         <div class="im-btn-send-area"> 
+            <a href="javascript:;" 
+              onclick="sendMsg()"
+              class="im-btn im-btn-send" 
+              id="sendMsg"> 
+              <span class="im-txt">{:lang('wstim_send_out')}</span> <span class="im-btn-l"></span> 
+            </a> 
+            <i id="switch_send" class="switch-send"></i>
+            <ul id="enter_set" class="enter-set">
+              <li id="enter_set_13" keycode="13" class="curr-set">{:lang('wstim_send1')}</li>
+              <li id="enter_set_10" keycode="10" >{:lang('wstim_send2')}</li>
+            </ul>
+          </div> 
+
+         
+        </div> 
+       </div>
+      </div> 
+      <div class="im-right-sidebar" style="width: 300px;">
+        <div class="curr_visit">
+            <div class="cv_tit">
+              {:lang('wstim_tips29')}
+              <a onclick="closeCurrVisit()">{:lang('wstim_close')}</a>
+            </div>
+            <a target="_blank" href="" class="cv_main clearfix">
+              <div class="cv_l">
+                <img src="" alt="" />
+              </div>
+              <div class="cv_r">
+                <div class="cv_gname">{:lang('wstim_trade_name')}</div>
+                <div class="cv_price">{:lang('currency_symbol')}9.90</div>
+              </div>
+            </a>
+        </div>
+
+
+       <div class="imr-titbox">
+         {:lang('user_information')}
+       </div>
+       <div class="imr-mainbox">
+         <div class="imr-pic-name clearfix">
+           <div class="imr-pic">
+             <img id="imr_upic" src="" alt="">
+           </div>
+           <div class="imr-name" id="imr_loginName">
+             -
+           </div>
+         </div>
+         <ul class="imr-uinfo">
+           <li>{:lang('wstim_tips30')}：<span id="imr_qq" class="c6">-</span></li>
+           <li>{:lang('wstim_tips31')}：<span id="imr_rankName" class="c6">-</span></li>
+           <li>{:lang('wstim_mobile_phone')}：<span id="imr_phone" class="c6">-</span></li>
+         </ul>
+       </div>
+      </div> 
+     </div> 
+     <!-- 新咨询提示框 --> 
+     <div class="popupbox" id="orther_new" style="display:none;"> 
+      <div class="warning im-pop-order"> 
+       <div class="tiptop"> 
+        <div class="tip_title title">
+         {:lang('wstim_tips')}
+        </div> 
+        <a href="javascript:;" class="tip_close">X</a> 
+       </div> 
+       <div class="tipbox"></div> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
+  </div> 
+
+<script>
+var shopId, shopName, sendId, workerName;
+$(function(){
+  // 获取接口信息
+  getApis(getConfig);
+})
+
+function getConfig(){
+  var chatBaseUrl = APIS['shopBaseData'];
+  $.get(chatBaseUrl, function(res){
+
+    res = WST.imToJson(res);
+    if(res.status!=1){
+        return alert(res.msg);
+    }
+    var _baseData = res.data;
+    if(!_baseData || !_baseData.shopId || !_baseData.serviceId){
+      return alert(WST.lang('wstim_tips5'));
+    }
+
+    $('#logoTitle').html(_baseData.shopName);
+
+    $(document).attr('title',_baseData.shopName+WST.lang('wstim_customer_service'))
+
+    $('#serviceName').html(_baseData.workerName);
+
+    shopId = _baseData.shopId;
+    shopName = _baseData.shopName;
+    sendId = _baseData.serviceId;
+    workerName = _baseData.workerName;
+
+    // 连接
+    imInit();
+
+  })
+}
+</script>
+<input type="hidden" value="0" id="userId">
+<input type="hidden" value="" id="loginName">
+<input type="hidden" value="1" id="currPage">
+<input type="hidden" value="1" id="totalPage">
+<script type="text/javascript" src="__ROOT__/addons/wstim/view/shop/chats/index.js"></script>
+</body>
+</html>

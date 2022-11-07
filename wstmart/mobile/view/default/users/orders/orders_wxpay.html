@@ -1,0 +1,157 @@
+{extend name="default/base" /}
+{block name="title"}
+{$payObj=='recharge'?lang('recharge'):lang('order_pay_title')}
+- {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__MOBILE__/css/orders.css?v={$v}">
+{/block}
+{block name="header"}
+	<div id="info_list">
+    <header class="ui-header ui-header-positive wst-header">
+    	{if($payObj=='recharge')}
+    		<a class="ui-icon-return" href='{:Url('mobile/logmoneys/usermoneys')}'></a><h1>{:lang('recharge')}</h1>
+    	{else}
+	    	<a class="ui-icon-return" href='{:Url('mobile/orders/index')}'></a><h1>{:lang('order_pay_title')}</h1>
+	    {/if}
+    </header>
+{/block}
+{block name="main"}
+	<section class="ui-container" id="shopBox">
+	{if(empty($message))}
+		{if($payObj=='recharge')}
+			<div class="recharge-box">
+				<div>{:lang('recharge_wallet')}</div>
+				<div class="paybox"><span class="wst-orders_prices">{:lang('currency_symbol')} {$needPay}</span></div>
+			</div>
+	    {else}
+		   	{volist name="$rs['list']" id="order"}
+			  	<div class="order-item">
+			  		<div class="ui-row-flex item-head" onclick="getOrderDetail({{d[i].orderId}})">
+			   			<div class="ui-col ui-col-2 ui-nowrap-flex" style="font-size: 0.14rem;color:#333;">{:lang('order_no')}：{$order['orderNo']}<span style="float : right;">{:lang('freight')}：{$order['deliverMoney']}</span></div>
+			 		</div>
+			     	{volist name="$rs['goods'][$order['orderId']]" id="vo"}
+					<div class="ui-row-flex ui-whitespace border-b" style="border-bottom:1px solid #f2f2f2;">
+						<div class="">
+							<img src="__RESOURCE_PATH__/{$vo['goodsImg']}" class="o-Img">
+						</div>
+						<div class="o-gInfo-container">
+							<div class="o-gInfo">
+								<p class="o-gName ui-nowrap-multi ">{$vo['goodsName']}</p>
+								{if condition="count($vo['goodsSpecNames']) gt 0"}
+								<p class="o-gSpec ui-nowrap-flex">
+									{volist name="$vo['goodsSpecNames']" id="spec"}
+									{$spec}
+									{/volist}
+								</p>
+								{/if}
+							</div>
+							<div class="o-gInfo2 wst-flex-row wst-ac wst-jsb">
+								<p class="o-gPrice">{:lang('currency_symbol')} {$vo['goodsPrice']}</p><p class="o-gNum">x {$vo['goodsNum']}</p>
+							</div>
+						</div>
+					</div>
+			       	{/volist}
+
+					<div class="ui-btn-wrap" style="text-align: right;padding:10px 0">
+						<span class="wst-orders_pricet">{:lang('needpay_total_money')}：<span class="wst-orders_prices">{:lang('currency_symbol')} <?php echo sprintf("%.2f", $order['needPay']);?></span></span>
+					</div>
+			      	<div class="wst-clear"></div>
+				</div>
+			{/volist}
+	    {/if}
+	    
+		<div id="paybtnbox" style="text-align: center;padding:0.12rem;">
+			{if($payFrom=='weixinpays')}
+			<button type="button" class="wst-btn-dangerlo" onclick="javascript:callpay();" style="width: 100%;  display: inline-block;">{:lang('confirm_pay')}</button>
+			{/if}
+		</div>
+		
+	</section>
+	{else}
+		<ul class="ui-row-flex wst-flexslp">
+			<li class="ui-col ui-flex ui-flex-pack-center">
+			<p>{$message}</p>
+			</li>
+		</ul>
+	{/if}
+    </div>
+{if($payFrom=='weixinpays')}
+<div class="ui-dialog" id="wst-di-wxpay">
+    <div class="ui-dialog-cnt">
+      	<header class="ui-dialog-hd ui-border-b">
+          <h3>{:lang('confirm_wxpay_status_1')}</h3>
+          <i class="ui-dialog-close" data-role="button"></i>
+    	</header>
+        <div class="ui-dialog-hd ui-border-b">
+           	<a href="{$returnUrl}"><div style="color:red;">{:lang('confirm_wxpay_status_2')}</div></a>
+        </div>
+        <div class="ui-dialog-hd ui-border-b">
+            <a href=""><div >{:lang('confirm_wxpay_status_3')}</div></a>
+        </div>
+    </div>
+</div>
+{/if}
+{/block}
+{block name="footer"}{/block}
+{block name="js"}
+
+{if(empty($message))}
+	{if($payFrom=='paypals')}
+		{php}$paypalClientId = WSTGetPaypalClientId();{/php}
+		{if $paypalClientId!=""}
+		<script src="https://www.paypal.com/sdk/js?client-id={$paypalClientId}&debug=true&currency=HKD"></script>
+		<script>
+			paypal.Buttons({
+				createOrder: function() {
+					var pkey = "{$pkey}";
+				  return fetch(WST.U('mobile/paypals/getpaypalsurl'), {
+				    method: 'post',
+				    headers: {
+				      'content-type': 'application/json'
+				    },
+				　　body:JSON.stringify({
+				 　　'payObj' : '{$payObj}',
+				 　　'pkey' : pkey
+				　　})
+				  }).then(function(res) {
+				  	console.log("res______________",res);
+				    return res.json();
+				  }).then(function(data) {
+				  	console.log("data______________",data);
+				    return data.id; // Use the key sent by your server's response, ex. 'id' or 'token'
+				  });
+				},
+				onApprove: function(data, actions) {
+					console.log("onApprove______________",data);
+			        return actions.order.capture().then(function(details) {
+			        	console.log("details——————————————————————————————————————————",details);
+			        	if(details['purchase_units'][0]['payments']['captures'][0]['status']=='COMPLETED'){
+			        		setTimeout(function(){
+			        			location.href = WST.U('mobile/orders/index');
+			        		},3000);
+			        		
+			        	}
+			        });
+			    }
+			}).render('#paybtnbox');
+
+		</script>
+		{/if}
+	{/if}
+	<script type="text/javascript">
+	{if($payFrom=='weixinpays')}
+	function callpay(){
+		$("#wst-di-wxpay").dialog("show");
+		location.href = "{$mweb_url}";
+	}
+	{/if}
+    $(document).ready(function(){
+    	{if($payObj=='recharge')}
+			backPrevPage(WST.U('mobile/logmoneys/usermoneys'));
+		{else}
+			backPrevPage(WST.U('mobile/orders/index'));
+	    {/if}
+    });
+	</script>
+{/if}
+{/block}

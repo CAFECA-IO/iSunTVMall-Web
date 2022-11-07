@@ -1,0 +1,47 @@
+{extend name="default/base" /}
+{block name="css"}
+<link href="__STATIC__/plugins/ztree/css/zTreeStyle/zTreeStyle.css?v={$v}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/plugins/mmgrid/mmGrid.css?v={$v}" />
+{/block}
+{block name="main"}
+<div class='wst-toolbar'>
+   <input type='text' id="roleName" name='groupName1' class="s-query" placeholder='{:lang("group_name")}'/>
+   <a class="btn btn-primary" onclick="loadGrid(0)"><i class="fa fa-search"></i>{:lang("query")}</a>
+   <a class="btn btn-success" style="float:right;" href="javaScript:toEdit(0)"><i class="fa fa-plus"></i>{:lang('add')}</a>
+</div>
+<div class='wst-grid'>
+    <div id="mmg" class="mmg"></div>
+    <div id="pg" style="text-align: right;"></div>
+</div>
+<div id='editBox' style='display:none'>
+    <form id='editForm' autocomplete="off">
+    <table class='wst-form wst-box-top'>
+       <tr>
+          <th width='80'>{:lang('group_name')}<font color='red'>*</font>：</th>
+          <td><input type='text' id='groupName' name="groupName"  class='ipt' maxLength='20' style='width:200px'/></td>
+       </tr>
+       <tr>
+          <th >{:lang('sort')}：</th>
+          <td><input type='text' id='groupOrder' name="groupOrder"  class='ipt' maxLength='5' style='width:150px'/></td>
+       </tr>
+        <tr>
+            <th >{:lang('lable_shopMemBergroups1')}<font color='red'>*</font>：</th>
+            <td><input type='text' id='minMoney' name="minMoney"  class='ipt' maxLength='10' onblur="javascript:WST.limitDecimal(this,2)" onkeypress="return WST.isNumberdoteKey(event)" onkeyup="javascript:WST.isChinese(this,1)" style='width:150px'/></td>
+        </tr>
+        <tr>
+            <th >{:lang('lable_shopMemBergroups2')}<font color='red'>*</font>：</th>
+            <td><input type='text' id='maxMoney' name="maxMoney"  class='ipt' maxLength='10' onblur="javascript:WST.limitDecimal(this,2)" onkeypress="return WST.isNumberdoteKey(event)" onkeyup="javascript:WST.isChinese(this,1)" style='width:150px'/></td>
+        </tr>
+    </table>
+    </form>
+ </div>
+{/block}
+{block name="js"}
+<script src="__STATIC__/plugins/mmgrid/mmGrid.js?v={$v}" type="text/javascript"></script>
+<script type='text/javascript' src='__SHOP__/shopmembergroups/list.js?v={$v}'></script>
+<script>
+    $(function(){
+        initGrid({$p});
+    });
+</script>
+{/block}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="__ROOT__/addons/wstim/view/static/mmgrid/mmGrid.css" />
+    <link rel="stylesheet" href="__ROOT__/addons/wstim/view/static/bootstrap/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="__ROOT__/addons/wstim/view/static/layui/css/layui.css" type="text/css" />
+    <script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+    <script src="__ROOT__/addons/wstim/view/static/js/jquery.min.js"></script>
+    <script src="__ROOT__/addons/wstim/view/static/layer/layer.js"></script>
+    <title>{:lang('wstim_view_wstim_chat_management')}</title>
+</head>
+
+<body>
+    <div class="layui-form layui-form-pane">
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label" style="margin-bottom:0">{:lang('wstim_tips1')}：</label>
+            <div class="layui-input-block">
+                <textarea placeholder="{:lang('wstim_tips2')}" class="layui-textarea" id="dis_keywords" style="margin-top: 0px; margin-bottom: 0px; height: 100px;"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item" style="text-align: center">
+            <button class="layui-btn" onclick="submit()" lay-filter="formDemoPane">{:lang('wstim_submit_immediately')}</button>
+        </div>
+    </div>
+    
+    <script src="__ROOT__/addons/wstim/view/static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="__ROOT__/addons/wstim/view/static/layui/layui.all.js"></script>
+    <script src="__ROOT__/addons/wstim/view/static/js/common.js"></script>
+
+    <script>
+        $(function(){
+            getApis(getKeywords)
+        })
+        function getKeywords(){
+            $.get(APIS['adminDiskeyQuery'],function(data){
+                $('#dis_keywords').val(data);
+            })
+        }
+        function submit(){
+            var val = $('#dis_keywords').val();
+            $.post(APIS['adminDiskeySet'],{keywords:val},function(res){
+                layer.msg(res.msg)
+            });
+        }
+    </script>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+{extend name="default/users/base" /}
+{block name="title"}{:lang('integral_management')}-{:lang('user_center')}{__block__}{/block}
+{block name="content"}
+<div class='score-head'>
+  <div class='user-logo'><img height='100' width='100'src='{:WSTUserPhoto(session('WST_USER.userPhoto'))}'></div>
+  <div class='user-info'> 
+     <div class='userName'>{:session('WST_USER.loginName')}</div>
+     <div class='userScore'>{:lang('can_use_integral')}：<font color='red'>{$object['userScore']}</font></div>
+  </div>
+</div>
+<div class='wst-user-content'>
+   <div id='tab' class="wst-tab-box">
+		<ul class="wst-tab-nav">
+		   <li>{:lang('score_detail')}</li>
+		   <li>{:lang('integral_income')}</li>
+		   <li>{:lang('integral_expend')}</li>
+		</ul>
+	    <table class='wst-list' style="font-size:13px;">
+           <thead>
+             <tr>
+               <th width='*'>{:lang('source_use')}</th>
+               <th width='120'>{:lang('integral_change')}</th>
+               <th width='160'>{:lang('date')}</th>
+               <th width='260'>{:lang('remark')}</th>
+             </tr>
+           </thead>
+           <script id="tblist" type="text/html">
+			{{# for(var i = 0; i < d.length; i++){ }}
+            <tr>
+               <td width='160'>{{d[i].dataSrc}}</td>
+               <td width='120'>
+				{{# if(d[i].scoreType==1){ }}
+					<span class="score-add">+ {{ d[i].score }}</span>
+				{{# }else{ }}
+					<span class='score-reduce'> - {{ d[i].score }}</span>
+				{{# } }}
+				</td>
+			   <td width='160'>{{ d[i].createTime }}</td>
+               <td width='*'>{{ d[i].dataRemarks }}</td>
+             </tr>
+			{{# } }}
+			</script>
+           <tbody id="page-list"></tbody>
+           <tfoot>
+             <tr>
+                <td colspan='4' align="center" style='padding:5px 0px 5px 0px'>
+					<div id="pager"></div>
+				</td>
+             </tr>
+           </tfoot>
+        </table>
+    </div>  
+</div>
+{/block}  
+{block name="js"}
+<script type='text/javascript' src='__STYLE__/users/userscores/userscores.js?v={$v}'></script>
+{/block}

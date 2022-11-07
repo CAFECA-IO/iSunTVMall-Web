@@ -1,0 +1,283 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="format-detection" content="telephone=no">
+  <title>{:lang('wstim_session_list')}</title>
+  <link rel="stylesheet" href="__ROOT__/addons/wstim/view/mobile/static/frozenui/css/frozen.css">
+  <link rel="stylesheet" href="__ROOT__/addons/wstim/view/mobile/shopchats/chat_list.css">
+  <link rel="stylesheet" href="__ROOT__/addons/wstim/view/mobile/shopchats/app.css">
+  <link rel="stylesheet" href="__ROOT__/addons/wstim/view/static/webuploader/webuploader.css" />
+
+  <script src="__ROOT__/runtime/js/addons/lang-{$lang}.js?v={$v}" type="text/javascript"></script>
+  <link rel="stylesheet" href="__ROOT__/addons/wstim/view/static/photoswipe/photoswipe.css">
+  <link rel="stylesheet" href="__ROOT__/addons/wstim/view/static/photoswipe/default-skin/default-skin.css">
+  <script src="__ROOT__/addons/wstim/view/static/photoswipe/photoswipe.min.js"></script>
+  <script src="__ROOT__/addons/wstim/view/static/photoswipe/photoswipe-ui-default.min.js"></script>
+
+</head>
+<body>
+  <header style="background:#EB3019;" class="ui-header ui-header-positive ui-border-b wst-header">
+      <i class="ui-icon-return" onclick="history.back()"></i><h1>{:lang('wstim_chat')}</h1>
+  </header>
+    <div class="sysmsg-box" onclick="location.href='{:url('mobile/messages/index')}'">
+        <div class="sysmsg-main row ac">
+            <img src="__ROOT__/addons/wstim/view/mobile/img/msg_icon.png" class="sysmsg-icon" />
+            <div class="flex1">
+                <div class="row">
+                    <span class="f14 c333 fb">{:lang('wstim_news5')}</span>
+                    <span class="f11 c999 mla">{$createTime}</span>
+                </div>
+                <span class="f12 c666 mt5 msg-content">{$msgContent}</span>
+            </div>
+        </div>
+    </div>
+
+
+  <input type="hidden" id="loginName" value="" />
+      <script id="userUnReadList" type="text/html">
+        {{# for(var i=0;i<d.length;++i){  }}
+          <li class="cl_li" id="shopId_{{d[i].shopId}}">
+            <div class="chk-box">
+                <i id="s_{{d[i].shopId}}" class="ui-icon-chooseg ui-icon-unchecked-s"></i>
+            </div>
+            <a onclick="javascript:dataShow(this,'{{d[i].shopName}}',{{d[i].shopId}},0);" href="#">
+              <div class="cl_imgbox">
+                <img 
+                    class="shopImg" 
+                    src="{{d[i].shopImg}}" />
+
+                  <span class="un_read" 
+                  {{# if(d[i].unReadNum==0){  }}
+                  style="display:none;"
+                  {{# }  }}
+                    >{{d[i].unReadNum}}</span>
+                
+              </div>
+              <div class="cl_infobox">
+                <p class="cl_sname">
+                  <span class="user_name">{{d[i].shopName}}</span>
+                  <span class='fr last_time'>{{d[i].createTime}}</span>
+                </p>
+                <p class="cl_desc">{{d[i].content.content}}</p>
+              </div>
+              <div class="wst-clear"></div>
+            </a>
+          </li>
+        {{# } }}
+        
+      </script>
+
+      <section class="ui-container">
+        <ul class="cl_ul">
+        </ul>
+        <div id="empty" class="wst-prompt-info">
+          <p style="font-size:16px">{:lang('wstim_no_session_record')}</p>
+        </div>
+      </section>
+
+    <footer class="ui-footer wst-footer-btns" style="padding-top:0;height:0.44rem; border-top: 1px solid #f2f2f2;" id="footer">
+        <div class="wst-ca-se">
+            <div class="wst-ca-layout">
+                <div class="wst-ca-10 totall"><i class="ui-icon-choose ui-icon-unchecked-s" cartId="0" mval="0"></i>&nbsp;</div>
+                <div class="wst-ca-90 totalr">
+                    <span>{:lang('wstim_select_all')}</span>
+                    <button id="delete" class="del-button" type="button" onclick="javascript:del();">{:lang('wstim_del')}</button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+      {/* 遮盖层  */}
+      <div class="wst-cover" id="cover"></div>
+      {/* 对话层  */}
+      <div class="wst-fr-box" id="frame">
+          <div class="title" id="boxTitle">
+            <span>{:lang('wstim_tip20')}</span>
+            <i class="ui-icon-close-page" onclick="javascript:dataHide();"></i>
+            <div class="wst-clear"></div>
+          </div>
+          <div class="content" id="content">
+              <div class="main">
+                <div id="J_Wrapper" class="im-chat-window">
+                    <div id="J_ScrollDiv" class="scroll-div" style="transform: translate(0px, 0px) translateZ(0px);">
+                        <div class="pull-down" id="J_PullDown">
+                            <span class="pull-down-icon"></span>
+                            <span class="pull-down-label">{:lang('wstim_loading')}</span>
+                        </div>
+                        <ul class="im-chat-list im-chat-pb" id="J_ImChatList">
+                        </ul>
+                    </div>
+                </div>
+                <!--footer-->
+                <footer id="J_Toolbar">
+                    <div class="J_FastLinkWrap">
+                    </div>
+                    <div class="J_ImKey im-key im-key-open">
+                        <span class="cell01" style="width: 89%;">
+                            <input maxlength="360" placeholder="{:lang('wstim_tips17')}" class="text-in" id="J_TextIn" type="text" autocomplete="off" style="width: 335px;">
+                        </span>
+                        <span class="cell02">
+                            <a class="btn-link" onclick="sendMsg()" id="J_SendToggle" href="javascript:void(0);">
+                                {:lang('wstim_send_out')}
+                            </a>
+                        </span>
+                    </div>
+                    <div class="tool-main">
+                        <ul class="J_ToolNav tool-nav">
+                            <li class="">
+                                <a href="javascript:void(0);" id="J_Photo" class="J_Photo btn-photo"><span>{:lang('wstim_uploade')}</span></a>
+                            </li>
+                            <li class="">
+                                <a href="javascript:void(0);" id="J_Order" class="btn-order"><span>{:lang('wstim_my_order')}</span></a>
+                            </li>
+                            <li class="">
+                                <a href="javascript:void(0);" id="J_Recent" class="btn-recent"><span>{:lang('wstim_recent_browsing')}</span></a>
+                            </li>
+                            <li class="">
+                                <a href="javascript:void(0);" id="J_Eval" class="btn-eval"><span>{:lang('wstim_tip21')}</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                </footer>
+                <div class="loading-instance" id="Global_Loading" style="display: none;">
+                    <p class="loading-img">
+                    <i></i>
+                        {:lang('wstim_tips10')} 
+                    </p>
+                     <a class="wait_btn" href="#">{:lang('wstim_tips11')}</a>
+                </div>
+              
+                <div class="im-list-pop has-mask" id="Im_PopUp" style="display: none;">
+                      <div class="im-list-sub"><div class="im-pop-close"><a href="javascript:;"></a></div>
+                          <div class="im-box-pop" id="Im_test" style="max-height: 500px;">
+                              <div class="im-box-title">{:lang('wstim_tip18')}</div>
+                              <div class="im-scroll-pop" id="J_ImScrollPop" style="max-height: 336px; height: 307px;">
+                                  <div class="im-scroll-cont" style="transform: translate(0px, 0px) translateZ(0px);">
+                                      <div class="im-order">
+                                          <div class="pull-Up"><span class="pull-icon"></span><span class="pull-label"></span></div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+               </div>
+            </div>
+          </div>
+
+          {/* 图片查看层 */}
+            <div id="gallery" class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="pswp__bg"></div>
+                <div class="pswp__scroll-wrap">
+                    <div class="pswp__container">
+                    <div class="pswp__item"></div>
+                    <div class="pswp__item"></div>
+                    <div class="pswp__item"></div>
+                    </div>
+                    <div class="pswp__ui pswp__ui--hidden">
+                    <div class="pswp__top-bar">
+                        <div class="pswp__counter"></div>
+                        <button class="pswp__button pswp__button--close" title="{:lang('wstim_close')}"></button>
+                        <button class="pswp__button pswp__button--fs" title="{:lang('wstim_full_screen')}"></button>
+                        <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                        <div class="pswp__preloader">
+                            <div class="pswp__preloader__icn">
+                                <div class="pswp__preloader__cut">
+                                <div class="pswp__preloader__donut"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                        <div class="pswp__share-tooltip">
+                        </div>
+                    </div>
+                    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+                    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+                    <div class="pswp__caption">
+                        <div class="pswp__caption__center">
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+
+      </div>
+
+
+  <input type="hidden" value="" id="shopId">
+  <input type="hidden" value="" id="receiveId">
+  <input type="hidden" value="" id="serviceId">
+  <input type="hidden" value="" id="userId">
+  <input type="hidden" value="{:lang('wstim_self_operated_shop')}" id="shopName">
+  <input type="hidden" value="1" id="currPage">
+  <input type="hidden" value="1" id="totalPage">
+  <input type="hidden" value="0" id="currOrderPage">
+  <input type="hidden" value="1" id="totalOrderPage">
+
+  <img 
+    id="serviceImg"
+    style="display: none"
+    src="" />
+  <img 
+      id="userPhoto"
+      style="display: none;"
+      src=""
+      />
+
+
+  <div class="ui-dialog" id="wst-di-prompt">
+      <div class="ui-dialog-cnt">
+          <div class="ui-dialog-bd">
+              <p id="wst-dialog" class="wst-dialog-t">{:lang('wstim_tips')}</p>
+              <p class="wst-dialog-l"></p>
+              <button id="wst-event1" type="button" class="ui-btn-s wst-dialog-b1" data-role="button">{:lang('wstim_cancel')}</button>&nbsp;&nbsp;
+              <button id="wst-event2" type="button" class="ui-btn-s wst-dialog-b2">{:lang('wstim_ok')}</button>
+          </div>
+      </div>      
+  </div>
+
+  <div>
+    <div class="evaluate-box" style="display: none">
+        <div class="star-box">
+            <div class="eval-star"></div>
+            <div class="eval-star"></div>
+            <div class="eval-star"></div>
+            <div class="eval-star"></div>
+            <div class="eval-star"></div>
+            <div class="clear"></div>
+        </div>
+        <div class="star-text-box">
+            <span id="star-text">{:lang('wstim_very_satisfied')}</span>
+        </div>
+        <div class="eval-btm">
+            <a href="javascript:void(0)" onclick="submitEval()">{:lang('wstim_submit')}</a>
+        </div>
+    </div>
+</div>
+    
+
+  <script type="text/javascript" src="__ROOT__/addons/wstim/view/static/js/jquery.min.js"></script>
+  <script type='text/javascript' src='__ROOT__/addons/wstim/view/static/layer/layer.js'></script>
+  <script type='text/javascript' src='__ROOT__/addons/wstim/view/static/js/common.js'></script>
+  <script type='text/javascript' src='__ROOT__/addons/wstim/view/static/webuploader/webuploader.js'></script>
+
+  <script type='text/javascript' src='__ROOT__/addons/wstim/view/mobile/static/laytpl/laytpl.js'></script>
+  <script type='text/javascript' src='__ROOT__/addons/wstim/view/mobile/shopchats/chat_list.js'></script>
+
+  <script>
+    IMAGE_DOMAIN = "{:WSTConf('CONF.resourceDomain')}";
+    var sendId, shopId, loginName, workerName;
+
+    $(function(){
+      getApis(getConfig);
+    })
+
+
+  </script>
+
+</body>
+</html>
+

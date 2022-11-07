@@ -1,0 +1,27 @@
+<table class='wst-form' style='margin-top:10px;width:90%'>
+   <tr>
+     <th width='120'>{:lang('order_no')}：</th>
+     <td>{$object['orderNo']}</td>
+   </tr>
+   <tr>
+     <th width='120'>{:lang('label_real_total_money')}：</th>
+     <td>{:lang('currency_symbol')}{$object['realTotalMoney']}</td>
+   </tr>
+   <tr>
+     <th width='120'>{:lang('label_refund_money')}：</th>
+     <td style='color:red'>{:lang('currency_symbol')}{$object['backMoney']}</td>
+   </tr>
+   <tr>
+     <th width='120'>{:lang('label_order_supp_advice')}：</th>
+     <td>
+       <label><input type='radio' onclick='WST.showHide(0,"#tr")' name='refundStatus' id='refundStatus1' value='1' checked/>{:lang('agree')}</label>
+       <label style='margin-left:15px;'><input type='radio' onclick='WST.showHide(1,"#tr")' name='refundStatus' id='refundStatus0' value='-1'/>{:lang('disagree')}</label>
+     </td>
+   </tr>
+   <tr id='tr' style='display:none'>
+     <th width='120'>{:lang('reason')}<font color='red'>*</font>：</th>
+     <td>
+       <textarea id='supplierRejectReason' style='width:90%;height:50px;'></textarea>
+     </td>
+   </tr>
+</table>

@@ -1,0 +1,88 @@
+{extend name="$LAYOUT_WECHAT_BASE" /}
+{block name="title"}收货地址管理 - {__block__}{/block}
+{block name="css"}
+<link rel="stylesheet"  href="__WECHAT__/css/address.css?v={$v}">
+{/block}
+{block name="header"}
+    <header style="background:#ffffff;" class="ui-header ui-header-positive wst-header js-address">
+        <i class="ui-icon-return" {if($type==1)}onclick="javascript:chooseAddress({$addressId});"{else}onclick="history.back();"{/if}></i><h1>我的地址</h1>
+    </header>
+{/block}
+{block name="footer"}
+	<div class="wst-ad-footer js-address"><button class="button" onclick="javascript:editAddress(0);">新增</button></div>
+{/block}
+{block name="main"}
+<input type="hidden" name="" value="{$type}" id="type" autocomplete="off">
+<input type="hidden" name="" value="{$addressId}" id="addressId2" autocomplete="off">
+
+
+<div class="data-box js-address" id="address">
+	<div class="add-wechat-address wst-flex-row wst-jc wst-ac" onclick="javascript:addWechatAddress()">
+		<img src="__WECHAT__/img/weixin_icon.png" /><span>一键导入微信地址</span>
+	</div>
+	{volist name="list" id="li"}
+	<div class="data-item">
+		<div {if($type==1)}onclick="javascript:chooseAddress({$li['addressId']});"{/if}>
+			<div class="item-title">
+				{$li['userName']}&nbsp;&nbsp;{$li['userPhone']}
+				{if($li['isDefault']==1)}
+				<i style="margin-top: 0.03rem;" class="default-img"></i>
+				{/if}
+			</div>
+			<div class="item-address">
+				{$li['areaName']}-{$li['userAddress']}
+			</div>
+		</div>
+		<div style="margin-top: 0.1rem;">
+
+			<!-- 1为默认地址 -->
+			{if($li['isDefault']==1)}
+			<i class="ui-icon-checked-s wst-active" style="float: left;line-height:0.2rem;margin-left: -0.06rem"></i>设为默认
+			{else}
+			<i onclick="javascript:inDefault(this,{$li['addressId']});" class="ui-icon-unchecked-s" style="float: left;line-height:0.2rem;margin-left: -0.06rem"></i>设为默认
+
+
+			{/if}
+			<p onclick="javascript:delAddress({$li['addressId']});" class="right-edit"><i style="margin-top: 0.03rem;" class="delete list-i"></i>删除</p>
+			<p onclick="javascript:editAddress({$li['addressId']});" class="right-del"><i style="margin-top: 0.03rem;" class="edit list-i"></i>编辑</p>
+		</div>
+	</div>
+	{/volist}
+	{empty name="list"}
+	<div style="text-align: center;">
+		<div class="wst-prompt-icon" style="width: 1.53rem;height: 1.03rem">
+			<img src="__WECHAT__/img/nothing-address.png">
+		</div>
+		<div class="wst-prompt-info">
+			<p>暂无地址</p>
+		</div>
+	</div>
+	{/empty}
+</div>
+{/block}
+{block name="include"}
+{include file="$LAYOUT_WECHAT_DIALOG" /}<!-- 对话框模板 -->
+{include file="./wechat/index/useraddress/edit" /}<!-- 新增/编辑收货地址模板 -->
+{/block}
+{block name="js"}
+<script type='text/javascript' src='__WECHAT__/js/jquery.min.js'></script>
+<script type='text/javascript' src='__ROOT__/addons/integral/view/wechat/index/useraddress/address.js?v={$v}'></script>
+{if(!empty($datawx))}
+<script src="{:request()->scheme()}://res.wx.qq.com/open/js/jweixin-1.1.0.js"></script>
+<script>
+	wx.config({
+		debug: false,
+		appId: '<?php echo WSTConf('CONF.wxAppId'); ?>', //公众号的唯一标识
+		timestamp: '<?php echo $datawx['timestamp'];?>', //生成签名的时间戳
+		nonceStr: '<?php echo $datawx['noncestr'];?>', //生成签名的随机串
+		signature: '<?php echo $datawx['signature'];?>',//签名
+		jsApiList: [ //需要使用的JS接口
+			'checkJsApi',
+			'openAddress'
+		]
+	});
+	wx.ready(function(){
+	});
+</script>
+{/if}
+{/block}

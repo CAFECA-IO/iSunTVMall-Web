@@ -1,0 +1,50 @@
+<div>
+    <div class="ui_tab">
+        {if count($vo['columnsTitle'])>1}
+        <ul class="tab_nav wst-flex-row wst-jc {if $vo['showColumnsTitle']==0}none{/if}" style="height:auto;">
+            {for start="0" end="count($vo['columnsTitle'])"  }
+            <li class="tab_item {if $i==0}tab_curr{/if}" data="{$i}" cid="{$vo['id']}" onclick="changeTab(this)">{$vo['columnsTitle'][$i]}</li>
+            {/for}
+        </ul>
+        {else}
+        <div class="wst-flex-row wst-center">
+            <div class="line"></div>
+            <p class="title">{$vo['columnsTitle'][0]}</p>
+            <div class="line"></div>
+        </div>
+        {/if}
+    </div>
+    <div class="tab_content">
+        {for start="0" end="count($vo['goods'])"  }
+        <div id="item_content_{$vo['id']}_{$i}" class="item_content {if $i==0}tab_show{else}tab_hide{/if} {if $vo['columns'] == 1} wst-go-switch{/if} {if $vo['columns'] == 3} wst-go-switch2{/if}"  cid="{$vo['id']}">
+            {volist name="$vo['goods'][$i]" id="voo" key="k"}
+            <div class="wst-in-goods {if $k%2==0}right{else}left{/if}">
+                <div class="img j-imgAdapt"><a href="javascript:void(0);" onclick="javascript:WST.intoGoods({$voo['goodsId']});"><img src="__RESOURCE_PATH__/{:WSTConf('CONF.goodsLogo')}" data-echo="__RESOURCE_PATH__/{$voo['goodsImg']}" title="{$voo['goodsName']|WSTStripTags}"/></a></div>
+                {if $vo['showGoodsName'] == 1}<div class="name ui-nowrap-multi" onclick="javascript:WST.intoGoods({$voo['goodsId']});">{$voo['goodsName']}</div>{/if}
+                {if $vo['showGoodsPrice'] == 1}<div class="info"><span class="price">{:lang('currency_symbol')} <span>{$voo['shopPrice']}</span></span><span class="cart deal"  onclick="javascript:WST.addCart({$voo['goodsId']});"></span></div>{/if}
+                <div class="info2">{if $vo['showPraiseRate'] == 1}<span class="price">好评率{$voo['praiseRate']}</span>{/if}{if $vo['showSaleNum'] == 1}<span class="deal">成交数:{$voo['saleNum']}</span>{/if}</div>
+            </div>
+            {/volist}
+        </div>
+        {/for}
+        <div class="wst-clear"></div>
+    </div>
+</div>
+<script>
+    function changeTab(obj){
+        var id = $(obj).attr("data");
+        var componentId = $(obj).attr("cid");
+        $('.tab_item').each(function(idx,item){
+            if($(item).attr('cid') == componentId){
+                $(item).removeClass("tab_curr");
+            }
+        });
+        $(obj).addClass("tab_curr");
+        $('.item_content').each(function(idx,item){
+            if($(item).attr('cid') == componentId){
+                $(item).removeClass("tab_show").addClass("tab_hide");
+                $("#item_content_"+componentId+'_'+id).addClass("tab_show").removeClass("tab_hide");
+            }
+        });
+    }
+</script>
